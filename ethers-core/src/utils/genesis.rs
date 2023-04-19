@@ -272,7 +272,7 @@ pub struct CliqueConfig {
 mod tests {
     use super::{ChainConfig, Genesis, GenesisAccount, H256};
     use crate::{
-        types::{Address, Bytes, H160, U256},
+        types::{Address, Bytes, H176, U256},
         utils::EthashConfig,
     };
     use std::{collections::HashMap, str::FromStr};
@@ -319,28 +319,28 @@ mod tests {
             "nonce": "0x0000000000000042",
             "difficulty": "34747478",
             "mixHash": "0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234",
-            "coinbase": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "coinbase": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "timestamp": "0x123456",
             "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "extraData": "0xfafbfcfd",
             "gasLimit": "0x2fefd8",
             "alloc": {
-                "0x3E951C9f69a06Bc3AD71fF7358DbC56bEd94b9F2": {
+                "0x00003E951C9f69a06Bc3AD71fF7358DbC56bEd94b9F2": {
                   "balance": "1000000000000000000000000000"
                 },
-                "0xe228C30d4e5245f967ac21726d5412dA27aD071C": {
+                "0x0000e228C30d4e5245f967ac21726d5412dA27aD071C": {
                   "balance": "1000000000000000000000000000"
                 },
-                "0xD59Ce7Ccc6454a2D2C2e06bbcf71D0Beb33480eD": {
+                "0x0000D59Ce7Ccc6454a2D2C2e06bbcf71D0Beb33480eD": {
                   "balance": "1000000000000000000000000000"
                 },
-                "0x1CF4D54414eF51b41f9B2238c57102ab2e61D1F2": {
+                "0x00001CF4D54414eF51b41f9B2238c57102ab2e61D1F2": {
                   "balance": "1000000000000000000000000000"
                 },
-                "0x249bE3fDEd872338C733cF3975af9736bdCb9D4D": {
+                "0x0000249bE3fDEd872338C733cF3975af9736bdCb9D4D": {
                   "balance": "1000000000000000000000000000"
                 },
-                "0x3fCd1bff94513712f8cD63d1eD66776A67D5F78e": {
+                "0x00003fCd1bff94513712f8cD63d1eD66776A67D5F78e": {
                   "balance": "1000000000000000000000000000"
                 }
             },
@@ -384,29 +384,29 @@ mod tests {
             "eip155Block": 0,
             "eip158Block": 0
           },
-          "coinbase": "0x0000000000000000000000000000000000000000",
+          "coinbase": "0x00000000000000000000000000000000000000000000",
           "difficulty": "0x20000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
           "gasLimit": "0x2fefd8",
           "nonce": "0x0000000000000000",
           "timestamp": "0x1234",
           "alloc": {
-            "cf49fda3be353c69b41ed96333cd24302da4556f": {
+            "0000cf49fda3be353c69b41ed96333cd24302da4556f": {
               "balance": "0x123450000000000000000"
             },
-            "0161e041aad467a890839d5b08b138c1e6373072": {
+            "00000161e041aad467a890839d5b08b138c1e6373072": {
               "balance": "0x123450000000000000000"
             },
-            "87da6a8c6e9eff15d703fc2773e32f6af8dbe301": {
+            "000087da6a8c6e9eff15d703fc2773e32f6af8dbe301": {
               "balance": "0x123450000000000000000"
             },
-            "b97de4b8c857e4f6bc354f226dc3249aaee49209": {
+            "0000b97de4b8c857e4f6bc354f226dc3249aaee49209": {
               "balance": "0x123450000000000000000"
             },
-            "c5065c9eeebe6df2c2284d046bfc906501846c51": {
+            "0000c5065c9eeebe6df2c2284d046bfc906501846c51": {
               "balance": "0x123450000000000000000"
             },
-            "0000000000000000000000000000000000000314": {
+            "00000000000000000000000000000000000000000314": {
               "balance": "0x0",
               "code": "0x60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063a223e05d1461006a578063abd1a0cf1461008d578063abfced1d146100d4578063e05c914a14610110578063e6768b451461014c575b610000565b346100005761007761019d565b6040518082815260200191505060405180910390f35b34610000576100be600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506101a3565b6040518082815260200191505060405180910390f35b346100005761010e600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919080359060200190919050506101ed565b005b346100005761014a600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610236565b005b346100005761017960048080359060200190919080359060200190919080359060200190919050506103c4565b60405180848152602001838152602001828152602001935050505060405180910390f35b60005481565b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490505b919050565b80600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055505b5050565b7f6031a8d62d7c95988fa262657cd92107d90ed96e08d8f867d32f26edfe85502260405180905060405180910390a17f47e2689743f14e97f7dcfa5eec10ba1dff02f83b3d1d4b9c07b206cbbda66450826040518082815260200191505060405180910390a1817fa48a6b249a5084126c3da369fbc9b16827ead8cb5cdc094b717d3f1dcd995e2960405180905060405180910390a27f7890603b316f3509577afd111710f9ebeefa15e12f72347d9dffd0d65ae3bade81604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390a18073ffffffffffffffffffffffffffffffffffffffff167f7efef9ea3f60ddc038e50cccec621f86a0195894dc0520482abf8b5c6b659e4160405180905060405180910390a28181604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390a05b5050565b6000600060008585859250925092505b935093509390505600a165627a7a72305820aaf842d0d0c35c45622c5263cbb54813d2974d3999c8c38551d7c613ea2bc1170029",
               "storage": {
@@ -414,7 +414,7 @@ mod tests {
                 "0x6661e9d6d8b923d5bbaab1b96e1dd51ff6ea2a93520fdc9eb75d059238b8c5e9": "0x01"
               }
             },
-            "0000000000000000000000000000000000000315": {
+            "00000000000000000000000000000000000000000315": {
               "balance": "0x9999999999999999999999999999999",
               "code": "0x60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063ef2769ca1461003e575b610000565b3461000057610078600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190803590602001909190505061007a565b005b8173ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051809050600060405180830381858888f1935050505015610106578173ffffffffffffffffffffffffffffffffffffffff167f30a3c50752f2552dcc2b93f5b96866280816a986c0c0408cb6778b9fa198288f826040518082815260200191505060405180910390a25b5b50505600a165627a7a72305820637991fabcc8abad4294bf2bb615db78fbec4edff1635a2647d3894e2daf6a610029"
             }
@@ -430,7 +430,7 @@ mod tests {
         let geth_genesis = r#"
         {
             "config"     : {},
-            "coinbase"   : "0x8888f1f195afa192cfee860698584c030f4c9db1",
+            "coinbase"   : "0x00008888f1f195afa192cfee860698584c030f4c9db1",
             "difficulty" : "0x020000",
             "extraData"  : "0x42",
             "gasLimit"   : "0x2fefd8",
@@ -439,7 +439,7 @@ mod tests {
             "parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
             "timestamp"  : "0x54c98c81",
             "alloc"      : {
-                "a94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+                "0000a94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
                     "balance" : "0x09184e72a000"
                 }
             }
@@ -470,29 +470,29 @@ mod tests {
             "yolov3Block": 0,
             "londonBlock": 0
           },
-          "coinbase": "0x0000000000000000000000000000000000000000",
+          "coinbase": "0x00000000000000000000000000000000000000000000",
           "difficulty": "0x30000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
           "gasLimit": "0x2fefd8",
           "nonce": "0x0000000000000000",
           "timestamp": "0x1234",
           "alloc": {
-            "cf49fda3be353c69b41ed96333cd24302da4556f": {
+            "0000cf49fda3be353c69b41ed96333cd24302da4556f": {
               "balance": "0x123450000000000000000"
             },
-            "0161e041aad467a890839d5b08b138c1e6373072": {
+            "00000161e041aad467a890839d5b08b138c1e6373072": {
               "balance": "0x123450000000000000000"
             },
-            "87da6a8c6e9eff15d703fc2773e32f6af8dbe301": {
+            "000087da6a8c6e9eff15d703fc2773e32f6af8dbe301": {
               "balance": "0x123450000000000000000"
             },
-            "b97de4b8c857e4f6bc354f226dc3249aaee49209": {
+            "0000b97de4b8c857e4f6bc354f226dc3249aaee49209": {
               "balance": "0x123450000000000000000"
             },
-            "c5065c9eeebe6df2c2284d046bfc906501846c51": {
+            "0000c5065c9eeebe6df2c2284d046bfc906501846c51": {
               "balance": "0x123450000000000000000"
             },
-            "0000000000000000000000000000000000000314": {
+            "00000000000000000000000000000000000000000314": {
               "balance": "0x0",
               "code": "0x60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063a223e05d1461006a578063abd1a0cf1461008d578063abfced1d146100d4578063e05c914a14610110578063e6768b451461014c575b610000565b346100005761007761019d565b6040518082815260200191505060405180910390f35b34610000576100be600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506101a3565b6040518082815260200191505060405180910390f35b346100005761010e600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919080359060200190919050506101ed565b005b346100005761014a600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610236565b005b346100005761017960048080359060200190919080359060200190919080359060200190919050506103c4565b60405180848152602001838152602001828152602001935050505060405180910390f35b60005481565b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490505b919050565b80600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055505b5050565b7f6031a8d62d7c95988fa262657cd92107d90ed96e08d8f867d32f26edfe85502260405180905060405180910390a17f47e2689743f14e97f7dcfa5eec10ba1dff02f83b3d1d4b9c07b206cbbda66450826040518082815260200191505060405180910390a1817fa48a6b249a5084126c3da369fbc9b16827ead8cb5cdc094b717d3f1dcd995e2960405180905060405180910390a27f7890603b316f3509577afd111710f9ebeefa15e12f72347d9dffd0d65ae3bade81604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390a18073ffffffffffffffffffffffffffffffffffffffff167f7efef9ea3f60ddc038e50cccec621f86a0195894dc0520482abf8b5c6b659e4160405180905060405180910390a28181604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390a05b5050565b6000600060008585859250925092505b935093509390505600a165627a7a72305820aaf842d0d0c35c45622c5263cbb54813d2974d3999c8c38551d7c613ea2bc1170029",
               "storage": {
@@ -500,15 +500,15 @@ mod tests {
                 "0x6661e9d6d8b923d5bbaab1b96e1dd51ff6ea2a93520fdc9eb75d059238b8c5e9": "0x01"
               }
             },
-            "0000000000000000000000000000000000000315": {
+            "00000000000000000000000000000000000000000315": {
               "balance": "0x9999999999999999999999999999999",
               "code": "0x60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063ef2769ca1461003e575b610000565b3461000057610078600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190803590602001909190505061007a565b005b8173ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051809050600060405180830381858888f1935050505015610106578173ffffffffffffffffffffffffffffffffffffffff167f30a3c50752f2552dcc2b93f5b96866280816a986c0c0408cb6778b9fa198288f826040518082815260200191505060405180910390a25b5b50505600a165627a7a72305820637991fabcc8abad4294bf2bb615db78fbec4edff1635a2647d3894e2daf6a610029"
             },
-            "0000000000000000000000000000000000000316": {
+            "00000000000000000000000000000000000000000316": {
               "balance": "0x0",
               "code": "0x444355"
             },
-            "0000000000000000000000000000000000000317": {
+            "00000000000000000000000000000000000000000317": {
               "balance": "0x0",
               "code": "0x600160003555"
             }
@@ -538,9 +538,9 @@ mod tests {
             "gasLimit": "0x80000000",
             "difficulty": "0x20000",
             "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-            "coinbase": "0x0000000000000000000000000000000000000000",
+            "coinbase": "0x00000000000000000000000000000000000000000000",
             "alloc": {
-                "71562b71999873db5b286df957af199ec94617f7": {
+                "000071562b71999873db5b286df957af199ec94617f7": {
                     "balance": "0xffffffffffffffffffffffffff"
                 }
             },
@@ -584,12 +584,12 @@ mod tests {
           "gasLimit": "0x4c4b40",
           "difficulty": "0x1",
           "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "coinbase": "0x0000000000000000000000000000000000000000",
+          "coinbase": "0x00000000000000000000000000000000000000000000",
           "alloc": {
-            "658bdf435d810c91414ec09147daa6db62406379": {
+            "0000658bdf435d810c91414ec09147daa6db62406379": {
               "balance": "0x487a9a304539440000"
             },
-            "aa00000000000000000000000000000000000000": {
+            "0000aa00000000000000000000000000000000000000": {
               "code": "0x6042",
               "storage": {
                 "0x0000000000000000000000000000000000000000000000000000000000000000": "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -600,7 +600,7 @@ mod tests {
               "balance": "0x1",
               "nonce": "0x1"
             },
-            "bb00000000000000000000000000000000000000": {
+            "0000bb00000000000000000000000000000000000000": {
               "code": "0x600154600354",
               "storage": {
                 "0x0000000000000000000000000000000000000000000000000000000000000000": "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -642,29 +642,29 @@ mod tests {
             "eip155Block": 0,
             "eip158Block": 0
           },
-          "coinbase": "0x0000000000000000000000000000000000000000",
+          "coinbase": "0x00000000000000000000000000000000000000000000",
           "difficulty": "0x020000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
           "gasLimit": "0x2fefd8",
           "nonce": "0x0000000000000000",
           "timestamp": "0x1234",
           "alloc": {
-            "cf49fda3be353c69b41ed96333cd24302da4556f": {
+            "0000cf49fda3be353c69b41ed96333cd24302da4556f": {
               "balance": "0x123450000000000000000"
             },
-            "0161e041aad467a890839d5b08b138c1e6373072": {
+            "00000161e041aad467a890839d5b08b138c1e6373072": {
               "balance": "0x123450000000000000000"
             },
-            "87da6a8c6e9eff15d703fc2773e32f6af8dbe301": {
+            "000087da6a8c6e9eff15d703fc2773e32f6af8dbe301": {
               "balance": "0x123450000000000000000"
             },
-            "b97de4b8c857e4f6bc354f226dc3249aaee49209": {
+            "0000b97de4b8c857e4f6bc354f226dc3249aaee49209": {
               "balance": "0x123450000000000000000"
             },
-            "c5065c9eeebe6df2c2284d046bfc906501846c51": {
+            "0000c5065c9eeebe6df2c2284d046bfc906501846c51": {
               "balance": "0x123450000000000000000"
             },
-            "0000000000000000000000000000000000000314": {
+            "00000000000000000000000000000000000000000314": {
               "balance": "0x0",
               "code": "0x60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063a223e05d1461006a578063abd1a0cf1461008d578063abfced1d146100d4578063e05c914a14610110578063e6768b451461014c575b610000565b346100005761007761019d565b6040518082815260200191505060405180910390f35b34610000576100be600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506101a3565b6040518082815260200191505060405180910390f35b346100005761010e600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919080359060200190919050506101ed565b005b346100005761014a600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610236565b005b346100005761017960048080359060200190919080359060200190919080359060200190919050506103c4565b60405180848152602001838152602001828152602001935050505060405180910390f35b60005481565b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490505b919050565b80600160008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055505b5050565b7f6031a8d62d7c95988fa262657cd92107d90ed96e08d8f867d32f26edfe85502260405180905060405180910390a17f47e2689743f14e97f7dcfa5eec10ba1dff02f83b3d1d4b9c07b206cbbda66450826040518082815260200191505060405180910390a1817fa48a6b249a5084126c3da369fbc9b16827ead8cb5cdc094b717d3f1dcd995e2960405180905060405180910390a27f7890603b316f3509577afd111710f9ebeefa15e12f72347d9dffd0d65ae3bade81604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390a18073ffffffffffffffffffffffffffffffffffffffff167f7efef9ea3f60ddc038e50cccec621f86a0195894dc0520482abf8b5c6b659e4160405180905060405180910390a28181604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390a05b5050565b6000600060008585859250925092505b935093509390505600a165627a7a72305820aaf842d0d0c35c45622c5263cbb54813d2974d3999c8c38551d7c613ea2bc1170029",
               "storage": {
@@ -672,7 +672,7 @@ mod tests {
                 "0x6661e9d6d8b923d5bbaab1b96e1dd51ff6ea2a93520fdc9eb75d059238b8c5e9": "0x01"
               }
             },
-            "0000000000000000000000000000000000000315": {
+            "00000000000000000000000000000000000000000315": {
               "balance": "0x9999999999999999999999999999999",
               "code": "0x60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063ef2769ca1461003e575b610000565b3461000057610078600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190803590602001909190505061007a565b005b8173ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051809050600060405180830381858888f1935050505015610106578173ffffffffffffffffffffffffffffffffffffffff167f30a3c50752f2552dcc2b93f5b96866280816a986c0c0408cb6778b9fa198288f826040518082815260200191505060405180910390a25b5b50505600a165627a7a72305820637991fabcc8abad4294bf2bb615db78fbec4edff1635a2647d3894e2daf6a610029"
             }
@@ -685,7 +685,7 @@ mod tests {
         let genesis: Genesis = serde_json::from_str(geth_genesis).unwrap();
         let alloc_entry = genesis
             .alloc
-            .get(&H160::from_str("0000000000000000000000000000000000000314").unwrap())
+            .get(&H176::from_str("00000000000000000000000000000000000000000314").unwrap())
             .expect("missing account for parsed genesis");
         let storage = alloc_entry.storage.as_ref().expect("missing storage for parsed genesis");
         let expected_storage = HashMap::from_iter(vec![
@@ -724,39 +724,39 @@ mod tests {
             "nonce": "0x0000000000000042",
             "difficulty": "0x2123456",
             "mixHash": "0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234",
-            "coinbase": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "coinbase": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "timestamp": "0x123456",
             "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "extraData": "0xfafbfcfd",
             "gasLimit": "0x2fefd8",
             "alloc": {
-                "dbdbdb2cbd23b783741e8d7fcf51e459b497e4a6": {
+                "0000dbdbdb2cbd23b783741e8d7fcf51e459b497e4a6": {
                     "balance": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
                 },
-                "e6716f9544a56c530d868e4bfbacb172315bdead": {
+                "0000e6716f9544a56c530d868e4bfbacb172315bdead": {
                     "balance": "0x11",
                     "code": "0x12"
                 },
-                "b9c015918bdaba24b4ff057a92a3873d6eb201be": {
+                "0000b9c015918bdaba24b4ff057a92a3873d6eb201be": {
                     "balance": "0x21",
                     "storage": {
                         "0x0000000000000000000000000000000000000000000000000000000000000001": "0x22"
                     }
                 },
-                "1a26338f0d905e295fccb71fa9ea849ffa12aaf4": {
+                "00001a26338f0d905e295fccb71fa9ea849ffa12aaf4": {
                     "balance": "0x31",
                     "nonce": "0x32"
                 },
-                "0000000000000000000000000000000000000001": {
+                "00000000000000000000000000000000000000000001": {
                     "balance": "0x41"
                 },
-                "0000000000000000000000000000000000000002": {
+                "00000000000000000000000000000000000000000002": {
                     "balance": "0x51"
                 },
-                "0000000000000000000000000000000000000003": {
+                "00000000000000000000000000000000000000000003": {
                     "balance": "0x61"
                 },
-                "0000000000000000000000000000000000000004": {
+                "00000000000000000000000000000000000000000004": {
                     "balance": "0x71"
                 }
             },
@@ -779,14 +779,14 @@ mod tests {
             nonce: 0x0000000000000042.into(),
             difficulty: 0x2123456.into(),
             mix_hash: H256::from_str("0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234").unwrap(),
-            coinbase: Address::from_str("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").unwrap(),
+            coinbase: Address::from_str("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").unwrap(),
             timestamp: 0x123456.into(),
             parent_hash: Some(H256::from_str("0x0000000000000000000000000000000000000000000000000000000000000000").unwrap()),
             extra_data: Bytes::from_str("0xfafbfcfd").unwrap(),
             gas_limit: 0x2fefd8.into(),
             alloc: HashMap::from_iter(vec![
                 (
-                    Address::from_str("0xdbdbdb2cbd23b783741e8d7fcf51e459b497e4a6").unwrap(),
+                    Address::from_str("0x0000dbdbdb2cbd23b783741e8d7fcf51e459b497e4a6").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").unwrap(),
                         nonce: None,
@@ -795,7 +795,7 @@ mod tests {
                     },
                 ),
                 (
-                    Address::from_str("0xe6716f9544a56c530d868e4bfbacb172315bdead").unwrap(),
+                    Address::from_str("0x0000e6716f9544a56c530d868e4bfbacb172315bdead").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0x11").unwrap(),
                         nonce: None,
@@ -804,7 +804,7 @@ mod tests {
                     },
                 ),
                 (
-                    Address::from_str("0xb9c015918bdaba24b4ff057a92a3873d6eb201be").unwrap(),
+                    Address::from_str("0x0000b9c015918bdaba24b4ff057a92a3873d6eb201be").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0x21").unwrap(),
                         nonce: None,
@@ -818,7 +818,7 @@ mod tests {
                     },
                 ),
                 (
-                    Address::from_str("0x1a26338f0d905e295fccb71fa9ea849ffa12aaf4").unwrap(),
+                    Address::from_str("0x00001a26338f0d905e295fccb71fa9ea849ffa12aaf4").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0x31").unwrap(),
                         nonce: Some(0x32u64),
@@ -827,7 +827,7 @@ mod tests {
                     },
                 ),
                 (
-                    Address::from_str("0x0000000000000000000000000000000000000001").unwrap(),
+                    Address::from_str("0x00000000000000000000000000000000000000000001").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0x41").unwrap(),
                         nonce: None,
@@ -836,7 +836,7 @@ mod tests {
                     },
                 ),
                 (
-                    Address::from_str("0x0000000000000000000000000000000000000002").unwrap(),
+                    Address::from_str("0x00000000000000000000000000000000000000000002").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0x51").unwrap(),
                         nonce: None,
@@ -845,7 +845,7 @@ mod tests {
                     },
                 ),
                 (
-                    Address::from_str("0x0000000000000000000000000000000000000003").unwrap(),
+                    Address::from_str("0x00000000000000000000000000000000000000000003").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0x61").unwrap(),
                         nonce: None,
@@ -854,7 +854,7 @@ mod tests {
                     },
                 ),
                 (
-                    Address::from_str("0x0000000000000000000000000000000000000004").unwrap(),
+                    Address::from_str("0x00000000000000000000000000000000000000000004").unwrap(),
                     GenesisAccount {
                         balance: U256::from_str("0x71").unwrap(),
                         nonce: None,

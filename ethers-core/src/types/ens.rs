@@ -32,13 +32,12 @@ impl Encodable for NameOrAddress {
 
 impl Decodable for NameOrAddress {
     fn decode(rlp: &rlp::Rlp) -> Result<Self, rlp::DecoderError> {
-        // An address (H160) is 20 bytes, so let's only accept 20 byte rlp string encodings.
         if !rlp.is_data() {
             return Err(rlp::DecoderError::RlpExpectedToBeData)
         }
 
-        // the data needs to be 20 bytes long
-        match rlp.size().cmp(&20usize) {
+        // the data needs to be 22 bytes long - ICAN Address
+        match rlp.size().cmp(&22usize) {
             Ordering::Less => Err(rlp::DecoderError::RlpIsTooShort),
             Ordering::Greater => Err(rlp::DecoderError::RlpIsTooBig),
             Ordering::Equal => {
@@ -150,7 +149,7 @@ mod tests {
 
     #[test]
     fn rlp_address_serialized() {
-        let addr = "f02c1c8e6114b1dbe8937a39260b5b0a374432bb".parse().unwrap();
+        let addr = "0000f02c1c8e6114b1dbe8937a39260b5b0a374432bb".parse().unwrap();
         let union = NameOrAddress::Address(addr);
 
         let mut expected = RlpStream::new();
@@ -167,7 +166,7 @@ mod tests {
 
     #[test]
     fn rlp_address_deserialized() {
-        let addr = "3dd6f334b732d23b51dfbee2070b40bbd1a97a8f".parse().unwrap();
+        let addr = "00003dd6f334b732d23b51dfbee2070b40bbd1a97a8f".parse().unwrap();
         let expected = NameOrAddress::Address(addr);
 
         let mut rlp = RlpStream::new();
@@ -187,7 +186,7 @@ mod tests {
 
     #[test]
     fn serde_address_serialized() {
-        let addr = "f02c1c8e6114b1dbe8937a39260b5b0a374432bb".parse().unwrap();
+        let addr = "0000f02c1c8e6114b1dbe8937a39260b5b0a374432bb".parse().unwrap();
         let union = NameOrAddress::Address(addr);
 
         assert_eq!(bincode::serialize(&addr).unwrap(), bincode::serialize(&union).unwrap(),);

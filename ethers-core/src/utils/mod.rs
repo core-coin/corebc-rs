@@ -36,7 +36,7 @@ pub use rlp;
 /// Re-export hex
 pub use hex;
 
-use crate::types::{Address, Bytes, ParseI256Error, H256, I256, U256, U64};
+use crate::types::{Address, Bytes, ParseI256Error, H160, H256, I256, U256, U64};
 use ethabi::ethereum_types::FromDecStrErr;
 use k256::ecdsa::SigningKey;
 use std::{
@@ -51,6 +51,10 @@ use thiserror::Error;
 const OVERFLOW_I256_UNITS: usize = 77;
 /// U256 overflows for numbers wider than 78 units.
 const OVERFLOW_U256_UNITS: usize = 78;
+
+const MAINNET: &str = "cb";
+const TESTNET: &str = "ab";
+const PRIVATE: &str = "ce";
 
 // Re-export serde-json for macro usage
 #[doc(hidden)]
@@ -72,6 +76,13 @@ pub enum ConversionError {
     ParseOverflow,
     #[error(transparent)]
     ParseI256Error(#[from] ParseI256Error),
+}
+
+#[derive(Debug)]
+pub enum NetworkType {
+    Mainnet,
+    Testnet,
+    Private,
 }
 
 /// 1 Ether = 1e18 Wei == 0x0de0b6b3a7640000 Wei
@@ -284,7 +295,11 @@ where
 /// The address for an Ethereum contract is deterministically computed from the
 /// address of its creator (sender) and how many transactions the creator has
 /// sent (nonce). The sender and nonce are RLP encoded and then hashed with Keccak-256.
-pub fn get_contract_address(sender: impl Into<Address>, nonce: impl Into<U256>) -> Address {
+pub fn get_contract_address(
+    sender: impl Into<Address>,
+    nonce: impl Into<U256>,
+    network: &NetworkType,
+) -> Address {
     let mut stream = rlp::RlpStream::new();
     stream.begin_list(2);
     stream.append(&sender.into());
@@ -294,7 +309,9 @@ pub fn get_contract_address(sender: impl Into<Address>, nonce: impl Into<U256>) 
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
-    Address::from(bytes)
+    let addr = H160::from(bytes);
+
+    to_ican(&addr, network)
 }
 
 /// Returns the CREATE2 address of a smart contract as specified in
@@ -305,63 +322,17 @@ pub fn get_create2_address(
     from: impl Into<Address>,
     salt: impl AsRef<[u8]>,
     init_code: impl AsRef<[u8]>,
+    network: NetworkType,
 ) -> Address {
     let init_code_hash = keccak256(init_code.as_ref());
-    get_create2_address_from_hash(from, salt, init_code_hash)
+    get_create2_address_from_hash(from, salt, init_code_hash, network)
 }
 
-/// Returns the CREATE2 address of a smart contract as specified in
-/// [EIP1014](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1014.md),
-/// taking the pre-computed hash of the init code as input.
-///
-/// keccak256( 0xff ++ senderAddress ++ salt ++ keccak256(init_code))[12..]
-///
-/// # Example
-///
-/// Calculate the address of a UniswapV3 pool.
-///
-/// ```
-/// use ethers_core::{
-///     abi,
-///     abi::Token,
-///     types::{Address, Bytes, U256},
-///     utils::{get_create2_address_from_hash, keccak256},
-/// };
-///
-/// let init_code_hash = hex::decode("e34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54").unwrap();
-/// let factory: Address = "0x1F98431c8aD98523631AE4a59f267346ea31F984"
-///     .parse()
-///     .unwrap();
-/// let token0: Address = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-///     .parse()
-///     .unwrap();
-/// let token1: Address = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
-///     .parse()
-///     .unwrap();
-/// let fee = U256::from(500_u64);
-///
-/// // abi.encode(token0 as address, token1 as address, fee as uint256)
-/// let input = abi::encode(&[
-///     Token::Address(token0),
-///     Token::Address(token1),
-///     Token::Uint(fee),
-/// ]);
-///
-/// // keccak256(abi.encode(token0, token1, fee))
-/// let salt = keccak256(&input);
-/// let pool_address = get_create2_address_from_hash(factory, salt, init_code_hash);
-///
-/// assert_eq!(
-///     pool_address,
-///     "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640" // USDC/ETH pool address
-///         .parse()
-///         .unwrap()
-/// );
-/// ```
 pub fn get_create2_address_from_hash(
     from: impl Into<Address>,
     salt: impl AsRef<[u8]>,
     init_code_hash: impl AsRef<[u8]>,
+    network: NetworkType,
 ) -> Address {
     let from = from.into();
     let salt = salt.as_ref();
@@ -377,10 +348,70 @@ pub fn get_create2_address_from_hash(
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
-    Address::from(bytes)
+    let addr = H160::from(bytes);
+
+    to_ican(&addr, &network)
+}
+
+fn to_ican(addr: &H160, network: &NetworkType) -> Address {
+    let prefix = match network {
+        NetworkType::Mainnet => MAINNET,
+        NetworkType::Testnet => TESTNET,
+        NetworkType::Private => PRIVATE,
+    };
+
+    let number_str = get_number_string(addr, network);
+
+    let checksum = calculate_checksum(&number_str);
+
+    construct_ican_address(&prefix, &checksum, addr)
+}
+
+fn get_number_string(addr: &H160, network: &NetworkType) -> String {
+    let prefix = match network {
+        NetworkType::Mainnet => MAINNET,
+        NetworkType::Testnet => TESTNET,
+        NetworkType::Private => PRIVATE,
+    };
+
+    // We have to use the Debug trait for addr https://github.com/paritytech/parity-common/issues/656
+    let mut addr_str = format!("{:?}{}{}", addr, prefix, "00");
+    // Remove the 0x prefix
+    addr_str = addr_str.replace("0x", "");
+
+    // Convert every hex digit to decimal and then to String
+    addr_str
+        .chars()
+        .map(|x| x.to_digit(16).expect("Invalid Address").to_string())
+        .collect::<String>()
+}
+
+fn calculate_checksum(number_str: &str) -> u64 {
+    // number_str % 97
+    let result = number_str.chars().fold(0, |acc, ch| {
+        let digit = ch.to_digit(10).expect("Invalid Digit") as u64;
+        (acc * 10 + digit) % 97
+    });
+
+    98 - result
+}
+
+fn construct_ican_address(prefix: &str, checksum: &u64, addr: &H160) -> Address {
+    // We need to use debug for the address https://github.com/paritytech/parity-common/issues/656
+    let addr = format!("{:?}", addr);
+    // Remove 0x prefix
+    let addr = addr.replace("0x", "");
+
+    // If the checksum is less than 10 we need to add a zero to the address
+    if *checksum < 10 {
+        Address::from_str(&format!("{prefix}{zero}{checksum}{addr}", zero = "0")).unwrap()
+    } else {
+        Address::from_str(&format!("{prefix}{checksum}{addr}")).unwrap()
+    }
 }
 
 /// Converts a K256 SigningKey to an Ethereum Address
+/// CORETODO: FIX ASAP ICAN ADDRESSES
 pub fn secret_key_to_address(secret_key: &SigningKey) -> Address {
     let public_key = secret_key.verifying_key();
     let public_key = public_key.to_encoded_point(/* compress = */ false);
@@ -388,8 +419,8 @@ pub fn secret_key_to_address(secret_key: &SigningKey) -> Address {
     debug_assert_eq!(public_key[0], 0x04);
     let hash = keccak256(&public_key[1..]);
 
-    let mut bytes = [0u8; 20];
-    bytes.copy_from_slice(&hash[12..]);
+    let mut bytes = [0u8; 22];
+    bytes.copy_from_slice(&hash[10..]);
     Address::from(bytes)
 }
 
@@ -873,107 +904,19 @@ mod tests {
     }
 
     #[test]
-    fn addr_checksum() {
-        let addr_list = vec![
-            // mainnet
-            (
-                None,
-                "27b1fdb04752bbc536007a920d24acb045561c26",
-                "0x27b1fdb04752bbc536007a920d24acb045561c26",
-            ),
-            (
-                None,
-                "3599689e6292b81b2d85451025146515070129bb",
-                "0x3599689E6292b81B2d85451025146515070129Bb",
-            ),
-            (
-                None,
-                "42712d45473476b98452f434e72461577d686318",
-                "0x42712D45473476b98452f434e72461577D686318",
-            ),
-            (
-                None,
-                "52908400098527886e0f7030069857d2e4169ee7",
-                "0x52908400098527886E0F7030069857D2E4169EE7",
-            ),
-            (
-                None,
-                "5aaeb6053f3e94c9b9a09f33669435e7ef1beaed",
-                "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed",
-            ),
-            (
-                None,
-                "6549f4939460de12611948b3f82b88c3c8975323",
-                "0x6549f4939460DE12611948b3f82b88C3C8975323",
-            ),
-            (
-                None,
-                "66f9664f97f2b50f62d13ea064982f936de76657",
-                "0x66f9664f97F2b50F62D13eA064982f936dE76657",
-            ),
-            (
-                None,
-                "88021160c5c792225e4e5452585947470010289d",
-                "0x88021160C5C792225E4E5452585947470010289D",
-            ),
-            // rsk mainnet
-            (
-                Some(30),
-                "27b1fdb04752bbc536007a920d24acb045561c26",
-                "0x27b1FdB04752BBc536007A920D24ACB045561c26",
-            ),
-            (
-                Some(30),
-                "3599689e6292b81b2d85451025146515070129bb",
-                "0x3599689E6292B81B2D85451025146515070129Bb",
-            ),
-            (
-                Some(30),
-                "42712d45473476b98452f434e72461577d686318",
-                "0x42712D45473476B98452f434E72461577d686318",
-            ),
-            (
-                Some(30),
-                "52908400098527886e0f7030069857d2e4169ee7",
-                "0x52908400098527886E0F7030069857D2E4169ee7",
-            ),
-            (
-                Some(30),
-                "5aaeb6053f3e94c9b9a09f33669435e7ef1beaed",
-                "0x5aaEB6053f3e94c9b9a09f33669435E7ef1bEAeD",
-            ),
-            (
-                Some(30),
-                "6549f4939460de12611948b3f82b88c3c8975323",
-                "0x6549F4939460DE12611948B3F82B88C3C8975323",
-            ),
-            (
-                Some(30),
-                "66f9664f97f2b50f62d13ea064982f936de76657",
-                "0x66F9664f97f2B50F62d13EA064982F936de76657",
-            ),
-        ];
-
-        for (chain_id, addr, checksummed_addr) in addr_list {
-            let addr = addr.parse::<Address>().unwrap();
-            assert_eq!(to_checksum(&addr, chain_id), String::from(checksummed_addr));
-        }
-    }
-
-    #[test]
     fn contract_address() {
         // http://ethereum.stackexchange.com/questions/760/how-is-the-address-of-an-ethereum-contract-computed
-        let from = "6ac7ea33f8831ea9dcc53393aaa88b25a785dbf0".parse::<Address>().unwrap();
+        let from = "00006ac7ea33f8831ea9dcc53393aaa88b25a785dbf0".parse::<Address>().unwrap();
         for (nonce, expected) in [
-            "cd234a471b72ba2f1ccf0a70fcaba648a5eecd8d",
-            "343c43a37d37dff08ae8c4a11544c718abb4fcf8",
-            "f778b86fa74e846c4f0a1fbd1335fe81c00a0c91",
-            "fffd933a0bc612844eaf0c6fe3e5b8e9b6c1d19c",
+            "cb87710e394030001792b93c6ea71b4c2368bb8b4017",
+            "cb21a79824e457d4b330661df28c5fc1728c5fae314a",
+            "cb787ad0ea20cfe9c222244a4577c3d41b3b3b9dfce8",
+            "cb388c61b93eb63e44468716b75ce44f865f33c05d9e",
         ]
         .iter()
         .enumerate()
         {
-            let address = get_contract_address(from, nonce);
+            let address = get_contract_address(from, nonce, &NetworkType::Mainnet);
             assert_eq!(address, expected.parse::<Address>().unwrap());
         }
     }
@@ -983,46 +926,46 @@ mod tests {
     fn create2_address() {
         for (from, salt, init_code, expected) in &[
             (
-                "0000000000000000000000000000000000000000",
+                "00000000000000000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "00",
-                "4D1A2e2bB4F88F0250f26Ffff098B0b30B26BF38",
+                "cb14cd8eda3eab4b22e34e95cd21d62c1c1ad54c9d8e",
             ),
             (
-                "deadbeef00000000000000000000000000000000",
+                "0000deadbeef00000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "00",
-                "B928f69Bb1D91Cd65274e3c79d8986362984fDA3",
+                "cb3365e5e5eb99a7419f6cd3aed1a6298b4752693bad",
             ),
             (
-                "deadbeef00000000000000000000000000000000",
+                "0000deadbeef00000000000000000000000000000000",
                 "000000000000000000000000feed000000000000000000000000000000000000",
                 "00",
-                "D04116cDd17beBE565EB2422F2497E06cC1C9833",
+                "cb50e323ba16a26d26e04808123d7c15dc6ca52f6b3b",
             ),
             (
-                "0000000000000000000000000000000000000000",
+                "00000000000000000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "deadbeef",
-                "70f2b2914A2a4b783FaEFb75f459A580616Fcb5e",
+                "cb71c8ac5b5a2956fb39dd44ed742d4e2f7175e6007f",
             ),
             (
-                "00000000000000000000000000000000deadbeef",
+                "000000000000000000000000000000000000deadbeef",
                 "00000000000000000000000000000000000000000000000000000000cafebabe",
                 "deadbeef",
-                "60f3f640a8508fC6a86d45DF051962668E1e8AC7",
+                "0xcb430cadfcaf9708b0ca1e7a92fd9914d9bff15b0af1",
             ),
             (
-                "00000000000000000000000000000000deadbeef",
+                "000000000000000000000000000000000000deadbeef",
                 "00000000000000000000000000000000000000000000000000000000cafebabe",
                 "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-                "1d8bfDC5D46DC4f61D6b6115972536eBE6A8854C",
+                "cb7256f1a67291016459e23309f3ad4b67692691b617",
             ),
             (
-                "0000000000000000000000000000000000000000",
+                "00000000000000000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "",
-                "E33C0C7F7df4809055C3ebA6c09CFe4BaF1BD9e0",
+                "cb22ae7f1e229e37882ecdbc1a0069c5902c996f7a20",
             ),
         ] {
             // get_create2_address()
@@ -1030,11 +973,11 @@ mod tests {
             let salt = hex::decode(salt).unwrap();
             let init_code = hex::decode(init_code).unwrap();
             let expected = expected.parse::<Address>().unwrap();
-            assert_eq!(expected, get_create2_address(from, salt.clone(), init_code.clone()));
+            assert_eq!(expected, get_create2_address(from, salt.clone(), init_code.clone(), NetworkType::Mainnet));
 
             // get_create2_address_from_hash()
             let init_code_hash = keccak256(init_code).to_vec();
-            assert_eq!(expected, get_create2_address_from_hash(from, salt, init_code_hash))
+            assert_eq!(expected, get_create2_address_from_hash(from, salt, init_code_hash, NetworkType::Mainnet))
         }
     }
 

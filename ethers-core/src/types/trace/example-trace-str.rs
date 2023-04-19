@@ -1,7 +1,7 @@
 r#"{
     "output": "0x",
     "stateDiff": {
-        "0x01f0eb5c4b0a9d8285b67195f5f10ce22971a102": {
+        "0x000001f0eb5c4b0a9d8285b67195f5f10ce22971a102": {
             "balance": {
                 "*": {
                     "from": "0x7361af5818297800",
@@ -17,7 +17,7 @@ r#"{
             },
             "storage": {}
         },
-        "0xb2930b35844a230f00e51431acae96fe543a0347": {
+        "0x0000b2930b35844a230f00e51431acae96fe543a0347": {
             "balance": {
                 "*": {
                     "from": "0x11b39d46046d14d44e5",
@@ -28,7 +28,7 @@ r#"{
             "nonce": "=",
             "storage": {}
         },
-        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3": {
+        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3": {
             "balance": {
                 "*": {
                     "from": "0x109397d7f6f000",
@@ -43,11 +43,11 @@ r#"{
     "trace": [
         {
             "action": {
-                "from": "0x01f0eb5c4b0a9d8285b67195f5f10ce22971a102",
+                "from": "0x000001f0eb5c4b0a9d8285b67195f5f10ce22971a102",
                 "callType": "call",
                 "gas": "0xa5f8",
                 "input": "0x1a695230000000000000000000000000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
-                "to": "0x0b95993a39a363d99280ac950f5e4536ab5c5566",
+                "to": "0x00000b95993a39a363d99280ac950f5e4536ab5c5566",
                 "value": "0x1550f7dca70000"
             },
             "result": {
@@ -60,11 +60,11 @@ r#"{
         },
         {
             "action": {
-                "from": "0x0b95993a39a363d99280ac950f5e4536ab5c5566",
+                "from": "0x00000b95993a39a363d99280ac950f5e4536ab5c5566",
                 "callType": "call",
                 "gas": "0x8fc",
                 "input": "0x",
-                "to": "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3",
+                "to": "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
                 "value": "0x1550f7dca70000"
             },
             "result": {
@@ -445,7 +445,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3"
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3"
                     ],
                     "store": null,
                     "used": 42391
@@ -460,7 +460,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xffffffffffffffffffffffffffffffffffffffff"
+                        "0xffffffffffffffffffffffffffffffffffffffffffff"
                     ],
                     "store": null,
                     "used": 42388
@@ -475,7 +475,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3"
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3"
                     ],
                     "store": null,
                     "used": 42385
@@ -490,7 +490,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3",
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
                         "0x4"
                     ],
                     "store": null,
@@ -537,7 +537,7 @@ r#"{
                     "mem": null,
                     "push": [
                         "0x24",
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3"
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3"
                     ],
                     "store": null,
                     "used": 42373
@@ -552,7 +552,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3",
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
                         "0x24",
                         "0x4"
                     ],
@@ -652,8 +652,8 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3",
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3"
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3"
                     ],
                     "store": null,
                     "used": 42348
@@ -668,7 +668,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xffffffffffffffffffffffffffffffffffffffff"
+                        "0xffffffffffffffffffffffffffffffffffffffffffff"
                     ],
                     "store": null,
                     "used": 42345
@@ -683,7 +683,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3"
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3"
                     ],
                     "store": null,
                     "used": 42342
@@ -976,7 +976,7 @@ r#"{
                 "ex": {
                     "mem": null,
                     "push": [
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3",
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
                         "0x0",
                         "0x1550f7dca70000",
                         "0x60",
@@ -985,7 +985,7 @@ r#"{
                         "0x0",
                         "0x60",
                         "0x1550f7dca70000",
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3"
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3"
                     ],
                     "store": null,
                     "used": 42287
@@ -1008,7 +1008,7 @@ r#"{
                         "0x0",
                         "0x60",
                         "0x1550f7dca70000",
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3",
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
                         "0x0"
                     ],
                     "store": null,
@@ -1046,7 +1046,7 @@ r#"{
                         "0x0",
                         "0x1550f7dca70000",
                         "0x60",
-                        "0xc227a75b32ed37d3f9d6341b9904d003dad3b1b3"
+                        "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3"
                     ],
                     "store": null,
                     "used": 34881

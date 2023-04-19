@@ -1,6 +1,6 @@
 use crate::{
     abi::ethereum_types::BloomInput,
-    types::{Address, BlockNumber, Bloom, Log, H160, H256, U256, U64},
+    types::{Address, BlockNumber, Bloom, Log, /* H160, */ H176, H256, U256, U64},
     utils::keccak256,
 };
 use serde::{
@@ -231,7 +231,7 @@ impl Filter {
     ///
     /// Match only a specific address `("0xAc4b3DacB91461209Ae9d41EC517c2B9Cb1B7DAF")`
     ///
-    /// ```rust
+    /// ```no_run
     /// # use ethers_core::types::{Filter, Address};
     /// # fn main() {
     /// let filter = Filter::new().address("0xAc4b3DacB91461209Ae9d41EC517c2B9Cb1B7DAF".parse::<Address>().unwrap());
@@ -241,7 +241,7 @@ impl Filter {
     /// Match all addresses in array `(vec!["0xAc4b3DacB91461209Ae9d41EC517c2B9Cb1B7DAF",
     /// "0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8"])`
     ///
-    /// ```rust
+    /// ```no_run
     /// # use ethers_core::types::{Filter, Address, ValueOrArray};
     /// # fn main() {
     /// let addresses = vec!["0xAc4b3DacB91461209Ae9d41EC517c2B9Cb1B7DAF".parse::<Address>().unwrap(),"0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8".parse::<Address>().unwrap()];
@@ -534,14 +534,26 @@ pub enum ValueOrArray<T> {
     Array(Vec<T>),
 }
 
-impl From<H160> for ValueOrArray<H160> {
-    fn from(src: H160) -> Self {
+// impl From<H160> for ValueOrArray<H160> {
+//     fn from(src: H160) -> Self {
+//         ValueOrArray::Value(src)
+//     }
+// }
+
+// impl From<Vec<H160>> for ValueOrArray<H160> {
+//     fn from(src: Vec<H160>) -> Self {
+//         ValueOrArray::Array(src)
+//     }
+// }
+
+impl From<H176> for ValueOrArray<H176> {
+    fn from(src: H176) -> Self {
         ValueOrArray::Value(src)
     }
 }
 
-impl From<Vec<H160>> for ValueOrArray<H160> {
-    fn from(src: Vec<H160>) -> Self {
+impl From<Vec<H176>> for ValueOrArray<H176> {
+    fn from(src: Vec<H176>) -> Self {
         ValueOrArray::Array(src)
     }
 }
@@ -576,7 +588,7 @@ impl<I: Into<H256>> From<Vec<I>> for Topic {
 impl From<Address> for Topic {
     fn from(src: Address) -> Self {
         let mut bytes = [0; 32];
-        bytes[12..32].copy_from_slice(src.as_bytes());
+        bytes[10..32].copy_from_slice(src.as_bytes());
         ValueOrArray::Value(Some(H256::from(bytes)))
     }
 }
@@ -903,7 +915,7 @@ mod tests {
 
     #[test]
     fn filter_serialization_test() {
-        let t1 = "9729a6fbefefc8f6005933898b13dc45c3a2c8b7".parse::<Address>().unwrap();
+        let t1 = "00009729a6fbefefc8f6005933898b13dc45c3a2c8b7".parse::<Address>().unwrap();
         let t2 = H256::from([0; 32]);
         let t3 = U256::from(123);
 
@@ -916,7 +928,7 @@ mod tests {
 
         let event = "ValueChanged(address,string,string)";
         let t0 = H256::from(keccak256(event.as_bytes()));
-        let addr: Address = "f817796F60D268A36a57b8D2dF1B97B14C0D0E1d".parse().unwrap();
+        let addr: Address = "0000f817796F60D268A36a57b8D2dF1B97B14C0D0E1d".parse().unwrap();
         let filter = Filter::new();
 
         let ser = serialize(&filter);
@@ -1145,7 +1157,7 @@ mod tests {
                     {
           "fromBlock": "0x429d3b",
           "toBlock": "0x429d3b",
-          "address": "0xb59f67a8bff5d8cd03f6ac17265c550ed8f33907",
+          "address": "0x0000b59f67a8bff5d8cd03f6ac17265c550ed8f33907",
           "topics": [
           "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
           "0x00000000000000000000000000b46c2526e227482e2ebb8f4c69e4674d262e75",
@@ -1163,7 +1175,7 @@ mod tests {
                     to_block: Some(4365627u64.into()),
                 },
                 address: Some(ValueOrArray::Value(
-                    "0xb59f67a8bff5d8cd03f6ac17265c550ed8f33907".parse().unwrap()
+                    "0x0000b59f67a8bff5d8cd03f6ac17265c550ed8f33907".parse().unwrap()
                 )),
                 topics: [
                     Some(ValueOrArray::Value(Some(

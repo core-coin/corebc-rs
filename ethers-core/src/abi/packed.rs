@@ -12,45 +12,6 @@ pub enum EncodePackedError {
     InvalidBytesLength,
 }
 
-/// Encodes the given tokens into an ABI compliant vector of bytes.
-///
-/// This function uses [non-standard packed mode][ref], where:
-/// - types shorter than 32 bytes are concatenated directly, without padding or sign extension;
-/// - dynamic types are encoded in-place and without the length;
-/// - array elements are padded, but still encoded in-place.
-///
-/// Since this encoding is ambiguous, there is no decoding function.
-///
-/// Note that this function has the same behaviour as its [Solidity counterpart][ref], and
-/// thus structs as well as nested arrays are not supported.
-///
-/// `Uint` and `Int` tokens will be encoded using the least number of bits, so no padding will be
-/// added by default.
-///
-/// [ref]: https://docs.soliditylang.org/en/latest/abi-spec.html#non-standard-packed-mode
-///
-/// # Examples
-///
-/// Calculate the UniswapV2 pair address for two ERC20 tokens:
-///
-/// ```
-/// # use ethers_core::abi::{self, Token};
-/// # use ethers_core::types::{Address, H256};
-/// # use ethers_core::utils;
-/// let factory: Address = "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f".parse()?;
-///
-/// let token_a: Address = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48".parse()?;
-/// let token_b: Address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".parse()?;
-/// let encoded = abi::encode_packed(&[Token::Address(token_a), Token::Address(token_b)])?;
-/// let salt = utils::keccak256(encoded);
-///
-/// let init_code_hash: H256 = "0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f".parse()?;
-///
-/// let pair = utils::get_create2_address_from_hash(factory, salt, init_code_hash);
-/// let weth_usdc = "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc".parse()?;
-/// assert_eq!(pair, weth_usdc);
-/// # Ok::<(), Box<dyn std::error::Error>>(())
-/// ```
 pub fn encode_packed(tokens: &[Token]) -> Result<Vec<u8>, EncodePackedError> {
     // Get vec capacity and find invalid tokens
     let mut max = 0;
@@ -108,7 +69,7 @@ fn encode_token(token: &Token, out: &mut Vec<u8>, in_array: bool) {
         // Padded to 32 bytes if in_array
         Address(addr) => {
             if in_array {
-                out.extend_from_slice(&[0; 12]);
+                out.extend_from_slice(&[0; 10]);
             }
             out.extend_from_slice(&addr.0)
         }
@@ -183,38 +144,39 @@ mod tests {
 
     #[test]
     fn encode_address() {
-        let address = Token::Address([0x11u8; 20].into());
+        let address = Token::Address([0x11u8; 22].into());
         let encoded = encode(&[address]);
-        let expected = hex!("1111111111111111111111111111111111111111");
+        let expected = hex!("11111111111111111111111111111111111111111111");
         assert_eq!(encoded, expected);
     }
 
     #[test]
     fn encode_dynamic_array_of_addresses() {
-        let address1 = Token::Address([0x11u8; 20].into());
-        let address2 = Token::Address([0x22u8; 20].into());
+        let address1 = Token::Address([0x11u8; 22].into());
+        let address2 = Token::Address([0x22u8; 22].into());
         let addresses = Token::Array(vec![address1, address2]);
         let encoded = encode(&[addresses]);
         let expected = hex!(
             "
-			0000000000000000000000001111111111111111111111111111111111111111
-			0000000000000000000000002222222222222222222222222222222222222222
+			0000000000000000000011111111111111111111111111111111111111111111
+			0000000000000000000022222222222222222222222222222222222222222222
 		"
         )
         .to_vec();
+        println!("{:#?}", encoded);
         assert_eq!(encoded, expected);
     }
 
     #[test]
     fn encode_fixed_array_of_addresses() {
-        let address1 = Token::Address([0x11u8; 20].into());
-        let address2 = Token::Address([0x22u8; 20].into());
+        let address1 = Token::Address([0x11u8; 22].into());
+        let address2 = Token::Address([0x22u8; 22].into());
         let addresses = Token::FixedArray(vec![address1, address2]);
         let encoded = encode(&[addresses]);
         let expected = hex!(
             "
-			0000000000000000000000001111111111111111111111111111111111111111
-			0000000000000000000000002222222222222222222222222222222222222222
+			0000000000000000000011111111111111111111111111111111111111111111
+			0000000000000000000022222222222222222222222222222222222222222222
 		"
         )
         .to_vec();
@@ -223,13 +185,13 @@ mod tests {
 
     #[test]
     fn encode_two_addresses() {
-        let address1 = Token::Address([0x11u8; 20].into());
-        let address2 = Token::Address([0x22u8; 20].into());
+        let address1 = Token::Address([0x11u8; 22].into());
+        let address2 = Token::Address([0x22u8; 22].into());
         let encoded = encode(&[address1, address2]);
         let expected = hex!(
             "
-			1111111111111111111111111111111111111111
-			2222222222222222222222222222222222222222
+			11111111111111111111111111111111111111111111
+			22222222222222222222222222222222222222222222
 		"
         )
         .to_vec();

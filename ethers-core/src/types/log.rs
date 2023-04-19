@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 /// A log produced by a transaction.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Log {
-    /// H160. the contract that emitted the log
+    /// H176. the contract that emitted the log
     pub address: Address,
 
     /// topics: Array of 0 to 4 32 Bytes of indexed log arguments.

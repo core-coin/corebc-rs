@@ -2,7 +2,7 @@
 //!
 //! <https://openethereum.github.io/wiki/JSONRPC-trace-module>
 
-use super::{Bytes, Opcode, H160, H256, U256};
+use super::{Bytes, Opcode, H176, H256, U256};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -86,7 +86,7 @@ pub struct AccountDiff {
 
 /// Serde-friendly `StateDiff` shadow.
 #[derive(Debug, PartialEq, Eq, Clone, Deserialize, Serialize)]
-pub struct StateDiff(pub BTreeMap<H160, AccountDiff>);
+pub struct StateDiff(pub BTreeMap<H176, AccountDiff>);
 
 // ------------------ Trace -------------
 /// Trace

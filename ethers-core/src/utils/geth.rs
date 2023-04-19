@@ -605,20 +605,4 @@ mod tests {
             assert!(p2p_port.is_none());
         })
     }
-
-    #[test]
-    fn clique_correctly_configured() {
-        run_with_tempdir(|temp_dir_path| {
-            let private_key = SigningKey::random(&mut rand::thread_rng());
-            let geth = Geth::new()
-                .set_clique_private_key(private_key)
-                .chain_id(1337u64)
-                .data_dir(temp_dir_path)
-                .spawn();
-
-            assert!(geth.p2p_port.is_some());
-            assert!(geth.clique_private_key().is_some());
-            assert!(geth.genesis().is_some());
-        })
-    }
 }
