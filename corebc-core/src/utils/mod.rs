@@ -24,7 +24,7 @@ pub use anvil::{Anvil, AnvilInstance};
 pub mod moonbeam;
 
 mod hash;
-pub use hash::{hash_message, id, keccak256, serialize};
+pub use hash::{hash_message, id, serialize, sha3};
 
 mod units;
 use serde::{Deserialize, Deserializer};
@@ -305,7 +305,7 @@ pub fn get_contract_address(
     stream.append(&sender.into());
     stream.append(&nonce.into());
 
-    let hash = keccak256(&stream.out());
+    let hash = sha3(&stream.out());
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
@@ -324,7 +324,7 @@ pub fn get_create2_address(
     init_code: impl AsRef<[u8]>,
     network: NetworkType,
 ) -> Address {
-    let init_code_hash = keccak256(init_code.as_ref());
+    let init_code_hash = sha3(init_code.as_ref());
     get_create2_address_from_hash(from, salt, init_code_hash, network)
 }
 
@@ -344,7 +344,7 @@ pub fn get_create2_address_from_hash(
     bytes.extend_from_slice(salt);
     bytes.extend_from_slice(init_code_hash);
 
-    let hash = keccak256(bytes);
+    let hash = sha3(bytes);
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
@@ -353,7 +353,7 @@ pub fn get_create2_address_from_hash(
     to_ican(&addr, &network)
 }
 
-fn to_ican(addr: &H160, network: &NetworkType) -> Address {
+pub fn to_ican(addr: &H160, network: &NetworkType) -> Address {
     let prefix = match network {
         NetworkType::Mainnet => MAINNET,
         NetworkType::Testnet => TESTNET,
@@ -411,17 +411,17 @@ fn construct_ican_address(prefix: &str, checksum: &u64, addr: &H160) -> Address 
 }
 
 /// Converts a K256 SigningKey to an Ethereum Address
-pub fn secret_key_to_address(secret_key: &SigningKey, network: NetworkType) -> Address {
+/// CORETODO: FIX ASAP ICAN ADDRESSES
+pub fn secret_key_to_address(secret_key: &SigningKey, network: &NetworkType) -> Address {
     let public_key = secret_key.verifying_key();
     let public_key = public_key.to_encoded_point(/* compress = */ false);
     let public_key = public_key.as_bytes();
     debug_assert_eq!(public_key[0], 0x04);
-    let hash = keccak256(&public_key[1..]);
+    let hash = sha3(&public_key[1..]);
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
     let addr = H160::from(bytes);
-
     to_ican(&addr, &network)
 }
 
@@ -438,7 +438,7 @@ pub fn to_checksum(addr: &Address, chain_id: Option<u8>) -> String {
         Some(chain_id) => format!("{chain_id}0x{addr:x}"),
         None => format!("{addr:x}"),
     };
-    let hash = hex::encode(keccak256(prefixed_addr));
+    let hash = hex::encode(sha3(prefixed_addr));
     let hash = hash.as_bytes();
 
     let addr_hex = hex::encode(addr.as_bytes());
@@ -459,7 +459,7 @@ pub fn to_checksum(addr: &Address, chain_id: Option<u8>) -> String {
 pub fn format_bytes32_string(text: &str) -> Result<[u8; 32], ConversionError> {
     let str_bytes: &[u8] = text.as_bytes();
     if str_bytes.len() > 32 {
-        return Err(ConversionError::TextTooLong)
+        return Err(ConversionError::TextTooLong);
     }
 
     let mut bytes32: [u8; 32] = [0u8; 32];
@@ -505,7 +505,7 @@ where
     D: Deserializer<'de>,
 {
     if bytes.0.len() > 32 {
-        return Err(serde::de::Error::custom("input too long to be a H256"))
+        return Err(serde::de::Error::custom("input too long to be a H256"));
     }
 
     // left pad with zeros to 32 bytes
@@ -611,10 +611,10 @@ fn estimate_priority_fee(rewards: Vec<Vec<U256>>) -> U256 {
     let mut rewards: Vec<U256> =
         rewards.iter().map(|r| r[0]).filter(|r| *r > U256::zero()).collect();
     if rewards.is_empty() {
-        return U256::zero()
+        return U256::zero();
     }
     if rewards.len() == 1 {
-        return rewards[0]
+        return rewards[0];
     }
     // Sort the rewards as we will eventually take the median.
     rewards.sort();
@@ -641,8 +641,8 @@ fn estimate_priority_fee(rewards: Vec<Vec<U256>>) -> U256 {
 
     // If we encountered a big change in fees at a certain position, then consider only
     // the values >= it.
-    let values = if *max_change >= EIP1559_FEE_ESTIMATION_THRESHOLD_MAX_CHANGE.into() &&
-        (max_change_index >= (rewards.len() / 2))
+    let values = if *max_change >= EIP1559_FEE_ESTIMATION_THRESHOLD_MAX_CHANGE.into()
+        && (max_change_index >= (rewards.len() / 2))
     {
         rewards[max_change_index..].to_vec()
     } else {
@@ -909,10 +909,10 @@ mod tests {
         // http://ethereum.stackexchange.com/questions/760/how-is-the-address-of-an-ethereum-contract-computed
         let from = "00006ac7ea33f8831ea9dcc53393aaa88b25a785dbf0".parse::<Address>().unwrap();
         for (nonce, expected) in [
-            "cb87710e394030001792b93c6ea71b4c2368bb8b4017",
-            "cb21a79824e457d4b330661df28c5fc1728c5fae314a",
-            "cb787ad0ea20cfe9c222244a4577c3d41b3b3b9dfce8",
-            "cb388c61b93eb63e44468716b75ce44f865f33c05d9e",
+            "cb7060435dcdcd1fde7fe4238204365e486a1c345e03",
+            "cb45936ded405892dc4f98cc5e04805d03c200c706a5",
+            "cb38a7d7c76ecab54e75a0d6a06faf3b441a304a9c64",
+            "cb64355702d8b1f36617d3554a5fad1187a74934d42d",
         ]
         .iter()
         .enumerate()
@@ -923,50 +923,49 @@ mod tests {
     }
 
     #[test]
-    // Test vectors from https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1014.md#examples
     fn create2_address() {
         for (from, salt, init_code, expected) in &[
             (
                 "00000000000000000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "00",
-                "cb14cd8eda3eab4b22e34e95cd21d62c1c1ad54c9d8e",
+                "cb52a55032de3186cea55fdef3fdb0dbd45b18bba964",
             ),
             (
                 "0000deadbeef00000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "00",
-                "cb3365e5e5eb99a7419f6cd3aed1a6298b4752693bad",
+                "cb6480d15ddb300c9631bb03d106e8638a823701ecac",
             ),
             (
                 "0000deadbeef00000000000000000000000000000000",
                 "000000000000000000000000feed000000000000000000000000000000000000",
                 "00",
-                "cb50e323ba16a26d26e04808123d7c15dc6ca52f6b3b",
+                "cb875362c88b4f021806a12e94623c7a83e8c01473af",
             ),
             (
                 "00000000000000000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "deadbeef",
-                "cb71c8ac5b5a2956fb39dd44ed742d4e2f7175e6007f",
+                "cb40fce72bafe6e89f533630b9a876c1d56bfc0d7707",
             ),
             (
                 "000000000000000000000000000000000000deadbeef",
                 "00000000000000000000000000000000000000000000000000000000cafebabe",
                 "deadbeef",
-                "0xcb430cadfcaf9708b0ca1e7a92fd9914d9bff15b0af1",
+                "cb43d3c6aee116a1f8f82a0a4f2ea2a02059cafe6789",
             ),
             (
                 "000000000000000000000000000000000000deadbeef",
                 "00000000000000000000000000000000000000000000000000000000cafebabe",
                 "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-                "cb7256f1a67291016459e23309f3ad4b67692691b617",
+                "cb516997e86459f44af92ab7e927c54fe47fadcbbd6c",
             ),
             (
                 "00000000000000000000000000000000000000000000",
                 "0000000000000000000000000000000000000000000000000000000000000000",
                 "",
-                "cb22ae7f1e229e37882ecdbc1a0069c5902c996f7a20",
+                "cb3680e5927ec9af1efc619ee6d4198e97c91ab72a96",
             ),
         ] {
             // get_create2_address()
@@ -977,7 +976,7 @@ mod tests {
             assert_eq!(expected, get_create2_address(from, salt.clone(), init_code.clone(), NetworkType::Mainnet));
 
             // get_create2_address_from_hash()
-            let init_code_hash = keccak256(init_code).to_vec();
+            let init_code_hash = sha3(init_code).to_vec();
             assert_eq!(expected, get_create2_address_from_hash(from, salt, init_code_hash, NetworkType::Mainnet))
         }
     }

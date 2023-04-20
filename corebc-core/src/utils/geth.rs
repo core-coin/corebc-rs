@@ -117,7 +117,7 @@ impl GethInstance {
             // geth ids are trunated
             let truncated_id = hex::encode(&id.0[..8]);
             if line.contains("Adding p2p peer") && line.contains(&truncated_id) {
-                return Ok(())
+                return Ok(());
             }
         }
         Err(GethInstanceError::Timeout("Timed out waiting for geth to add a peer".into()))
@@ -376,6 +376,7 @@ impl Geth {
         cmd.arg("--ws.port").arg(port_s);
         cmd.arg("--ws.api").arg(API);
 
+        let network: NetworkType;
         // pass insecure unlock flag if set
         let is_clique = self.is_clique();
         if self.insecure_unlock || is_clique {
@@ -392,6 +393,7 @@ impl Geth {
 
         // use geth init to initialize the datadir if the genesis exists
         if is_clique {
+            network = NetworkType::Testnet;
             if let Some(genesis) = &mut self.genesis {
                 // set up a clique config with an instant sealing period and short (8 block) epoch
                 let clique_config = CliqueConfig { period: Some(0), epoch: Some(8) };
@@ -399,7 +401,7 @@ impl Geth {
 
                 let clique_addr = secret_key_to_address(
                     self.clique_private_key.as_ref().expect("is_clique == true"),
-                    NetworkType::Mainnet,
+                    &network,
                 );
 
                 // set the extraData field
@@ -416,7 +418,7 @@ impl Geth {
 
             let clique_addr = secret_key_to_address(
                 self.clique_private_key.as_ref().expect("is_clique == true"),
-                NetworkType::Mainnet,
+                &network,
             );
 
             self.genesis = Some(Genesis::new(
@@ -535,14 +537,14 @@ impl Geth {
 
             // geth 1.9.23 uses "server started" while 1.9.18 uses "endpoint opened"
             // the unauthenticated api is used for regular non-engine API requests
-            if line.contains("HTTP endpoint opened") ||
-                (line.contains("HTTP server started") && !line.contains("auth=true"))
+            if line.contains("HTTP endpoint opened")
+                || (line.contains("HTTP server started") && !line.contains("auth=true"))
             {
                 http_started = true;
             }
 
             if p2p_started && http_started {
-                break
+                break;
             }
         }
 
