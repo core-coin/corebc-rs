@@ -5,7 +5,7 @@ Crates to modify
 - [ ] corebc-core
   - [x] ICAN Addresses
   - [ ] ED448
-  - [ ] Hashing Function
+  - [x] Hashing Function
 - [ ] ethers-contract
 - [ ] ethers-etherscan
 - [ ] ethers-middleware
