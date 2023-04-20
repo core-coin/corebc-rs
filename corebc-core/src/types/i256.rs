@@ -1,6 +1,6 @@
 //! This module contains an 256-bit signed integer implementation.
 //!
-//! This module was derived for ethers-core via <https://github.com/gnosis/ethcontract-rs/>
+//! This module was derived for corebc-core via <https://github.com/gnosis/ethcontract-rs/>
 
 #![warn(clippy::missing_const_for_fn)]
 

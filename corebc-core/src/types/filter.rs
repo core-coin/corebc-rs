@@ -145,7 +145,7 @@ impl Filter {
     /// Match only a specific block
     ///
     /// ```rust
-    /// # use ethers_core::types::Filter;
+    /// # use corebc_core::types::Filter;
     /// # fn main() {
     /// let filter = Filter::new().select(69u64);
     /// # }
@@ -155,7 +155,7 @@ impl Filter {
     /// Match the latest block only
     ///
     /// ```rust
-    /// # use ethers_core::types::{Filter, BlockNumber};
+    /// # use corebc_core::types::{Filter, BlockNumber};
     /// # fn main() {
     /// let filter = Filter::new().select(BlockNumber::Latest);
     /// # }
@@ -164,7 +164,7 @@ impl Filter {
     /// Match a block by its hash
     ///
     /// ```rust
-    /// # use ethers_core::types::{Filter, H256};
+    /// # use corebc_core::types::{Filter, H256};
     /// # fn main() {
     /// let filter = Filter::new().select(H256::zero());
     /// # }
@@ -174,7 +174,7 @@ impl Filter {
     /// Match a range of blocks
     ///
     /// ```rust
-    /// # use ethers_core::types::{Filter, H256};
+    /// # use corebc_core::types::{Filter, H256};
     /// # fn main() {
     /// let filter = Filter::new().select(0u64..100u64);
     /// # }
@@ -183,7 +183,7 @@ impl Filter {
     /// Match all blocks in range `(1337..BlockNumber::Latest)`
     ///
     /// ```rust
-    /// # use ethers_core::types::{Filter, H256};
+    /// # use corebc_core::types::{Filter, H256};
     /// # fn main() {
     /// let filter = Filter::new().select(1337u64..);
     /// # }
@@ -192,7 +192,7 @@ impl Filter {
     /// Match all blocks in range `(BlockNumber::Earliest..1337)`
     ///
     /// ```rust
-    /// # use ethers_core::types::{Filter, H256};
+    /// # use corebc_core::types::{Filter, H256};
     /// # fn main() {
     /// let filter = Filter::new().select(..1337u64);
     /// # }
@@ -232,7 +232,7 @@ impl Filter {
     /// Match only a specific address `("0xAc4b3DacB91461209Ae9d41EC517c2B9Cb1B7DAF")`
     ///
     /// ```no_run
-    /// # use ethers_core::types::{Filter, Address};
+    /// # use corebc_core::types::{Filter, Address};
     /// # fn main() {
     /// let filter = Filter::new().address("0xAc4b3DacB91461209Ae9d41EC517c2B9Cb1B7DAF".parse::<Address>().unwrap());
     /// # }
@@ -242,7 +242,7 @@ impl Filter {
     /// "0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8"])`
     ///
     /// ```no_run
-    /// # use ethers_core::types::{Filter, Address, ValueOrArray};
+    /// # use corebc_core::types::{Filter, Address, ValueOrArray};
     /// # fn main() {
     /// let addresses = vec!["0xAc4b3DacB91461209Ae9d41EC517c2B9Cb1B7DAF".parse::<Address>().unwrap(),"0x8ad599c3A0ff1De082011EFDDc58f1908eb6e6D8".parse::<Address>().unwrap()];
     /// let filter = Filter::new().address(addresses);

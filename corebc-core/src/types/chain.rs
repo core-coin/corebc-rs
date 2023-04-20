@@ -248,7 +248,7 @@ impl Chain {
     /// # Examples
     ///
     /// ```
-    /// use ethers_core::types::Chain;
+    /// use corebc_core::types::Chain;
     /// use std::time::Duration;
     ///
     /// assert_eq!(
@@ -291,7 +291,7 @@ impl Chain {
     /// # Examples
     ///
     /// ```
-    /// use ethers_core::types::Chain;
+    /// use corebc_core::types::Chain;
     ///
     /// assert!(!Chain::Mainnet.is_legacy());
     /// assert!(Chain::Celo.is_legacy());
@@ -349,7 +349,7 @@ impl Chain {
     /// # Examples
     ///
     /// ```
-    /// use ethers_core::types::Chain;
+    /// use corebc_core::types::Chain;
     ///
     /// assert_eq!(
     ///     Chain::Mainnet.etherscan_urls(),
@@ -496,7 +496,7 @@ impl Chain {
     /// # Examples
     ///
     /// ```
-    /// use ethers_core::types::Chain;
+    /// use corebc_core::types::Chain;
     ///
     /// assert_eq!(Chain::Mainnet.etherscan_api_key_name(), Some("ETHERSCAN_API_KEY"));
     /// assert_eq!(Chain::AnvilHardhat.etherscan_api_key_name(), None);
@@ -570,7 +570,7 @@ impl Chain {
     /// # Examples
     ///
     /// ```
-    /// use ethers_core::types::Chain;
+    /// use corebc_core::types::Chain;
     ///
     /// let chain = Chain::Mainnet;
     /// std::env::set_var(chain.etherscan_api_key_name().unwrap(), "KEY");

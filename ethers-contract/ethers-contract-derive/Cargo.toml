@@ -21,7 +21,7 @@ keywords.workspace = true
 proc-macro = true
 
 [dependencies]
-ethers-core.workspace = true
+corebc-core.workspace = true
 ethers-contract-abigen.workspace = true
 
 proc-macro2.workspace = true

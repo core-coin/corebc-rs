@@ -1,5 +1,5 @@
 [package]
-name = "ethers-core"
+name = "corebc-core"
 authors = ["Georgios Konstantopoulos <me@gakonst.com>"]
 readme = "README.md"
 description = "Ethereum data types, cryptography and utilities"

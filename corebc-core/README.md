@@ -1,4 +1,4 @@
-# core-core TODO
+# corebc-core TODO
 
 Ethereum data types, cryptography and utilities.
 
@@ -25,4 +25,3 @@ crates for convenience.
 
 The crate provides utilities for launching local Ethereum testnets by using
 `ganache-cli` via the `GanacheBuilder` struct.
-

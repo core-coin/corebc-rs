@@ -27,7 +27,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
 [dependencies]
-ethers-core.workspace = true
+corebc-core.workspace = true
 
 ethers-solc = { workspace = true, optional = true }
 

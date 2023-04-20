@@ -23,7 +23,7 @@ impl OtherFields {
     /// Deserializes the value with the given closure
     ///
     /// ```
-    /// # use ethers_core::types::{OtherFields, U64};
+    /// # use corebc_core::types::{OtherFields, U64};
     /// fn d(other: OtherFields) {
     ///  let l1_block_number = other.get_with("l1BlockNumber", |value| serde_json::from_value::<U64>(value)).unwrap().unwrap();
     /// # }
@@ -38,7 +38,7 @@ impl OtherFields {
     /// Returns the deserialized value of the field, if it exists
     ///
     /// ```
-    /// # use ethers_core::types::{OtherFields, U64};
+    /// # use corebc_core::types::{OtherFields, U64};
     /// fn d(other: OtherFields) {
     ///  let l1_block_number: U64 = other.get_deserialized("l1BlockNumber").unwrap().unwrap();
     /// # }
@@ -53,7 +53,7 @@ impl OtherFields {
     /// Removes the deserialized value of the field, if it exists
     ///
     /// ```
-    /// # use ethers_core::types::{OtherFields, U64};
+    /// # use corebc_core::types::{OtherFields, U64};
     /// fn d(mut other: OtherFields) {
     ///  let l1_block_number: U64 = other.remove_deserialized("l1BlockNumber").unwrap().unwrap();
     /// assert!(!other.contains_key("l1BlockNumber"));
@@ -72,7 +72,7 @@ impl OtherFields {
     /// Deserializes the value with the given closure
     ///
     /// ```
-    /// # use ethers_core::types::{OtherFields, U64};
+    /// # use corebc_core::types::{OtherFields, U64};
     /// fn d(mut other: OtherFields) {
     ///  let l1_block_number: U64 = other.remove_with("l1BlockNumber", |value| serde_json::from_value(value)).unwrap().unwrap();
     /// # }
@@ -88,7 +88,7 @@ impl OtherFields {
     /// Removes the deserialized value of the field, if it exists and also returns the key
     ///
     /// ```
-    /// # use ethers_core::types::{OtherFields, U64};
+    /// # use corebc_core::types::{OtherFields, U64};
     /// fn d(mut other: OtherFields) {
     ///  let (key, l1_block_number_result) : (_, serde_json::Result<U64>) = other.remove_entry_deserialized("l1BlockNumber").unwrap();
     /// let l1_block_number = l1_block_number_result.unwrap();
@@ -109,7 +109,7 @@ impl OtherFields {
     /// Deserialized this type into another container type
     ///
     /// ```
-    /// use ethers_core::types::{Address, OtherFields, U64};
+    /// use corebc_core::types::{Address, OtherFields, U64};
     /// use serde::Deserialize;
     /// # fn d(mut other: OtherFields) {
     ///

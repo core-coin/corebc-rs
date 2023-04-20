@@ -36,7 +36,7 @@ impl Bytes {
     /// # Examples
     ///
     /// ```
-    /// use ethers_core::types::Bytes;
+    /// use corebc_core::types::Bytes;
     ///
     /// let b = Bytes::new();
     /// assert_eq!(&b[..], b"");
@@ -54,7 +54,7 @@ impl Bytes {
     /// # Examples
     ///
     /// ```
-    /// use ethers_core::types::Bytes;
+    /// use corebc_core::types::Bytes;
     ///
     /// let b = Bytes::from_static(b"hello");
     /// assert_eq!(&b[..], b"hello");

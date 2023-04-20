@@ -24,7 +24,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
 [dependencies]
-ethers-core.workspace = true
+corebc-core.workspace = true
 
 once_cell.workspace = true
 serde.workspace = true

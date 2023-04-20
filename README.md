@@ -2,7 +2,7 @@
 
 Crates to modify
 
-- [ ] ethers-core
+- [ ] corebc-core
   - [x] ICAN Addresses
   - [ ] ED448
   - [ ] Hashing Function
@@ -13,4 +13,4 @@ Crates to modify
 - [ ] ethers-signers
 - [ ] ethers-solc
 - [ ] ethers
-- [ ] examples 
+- [ ] examples

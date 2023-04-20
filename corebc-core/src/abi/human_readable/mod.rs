@@ -33,7 +33,7 @@ impl AbiParser {
     /// # Example
     ///
     /// ```
-    ///  # use ethers_core::abi::AbiParser;
+    ///  # use corebc_core::abi::AbiParser;
     /// let abi = AbiParser::default().parse_str(r#"[
     ///         function setValue(string)
     ///         function getValue() external view returns (string)
@@ -50,7 +50,7 @@ impl AbiParser {
     ///
     /// # Example
     /// ```
-    /// use ethers_core::abi::AbiParser;
+    /// use corebc_core::abi::AbiParser;
     ///
     /// let abi = AbiParser::default().parse(&[
     ///     "function x() external view returns (uint256)",
@@ -275,7 +275,7 @@ impl AbiParser {
     /// # Example
     ///
     /// ```
-    /// use ethers_core::abi::AbiParser;
+    /// use corebc_core::abi::AbiParser;
     /// let f = AbiParser::default()
     ///     .parse_function("bar(uint256 x, uint256 y, address addr)").unwrap();
     /// ```
@@ -491,7 +491,7 @@ impl Default for AbiParser {
 /// Parses a "human readable abi" string vector
 ///
 /// ```
-/// use ethers_core::abi::parse_abi;
+/// use corebc_core::abi::parse_abi;
 ///
 /// let abi = parse_abi(&[
 ///     "function x() external view returns (uint256)",

@@ -26,8 +26,8 @@ static ETHERS_CRATE_NAMES: Lazy<CrateNames> = Lazy::new(|| {
 
 /// Returns the `core` crate's [`Path`][syn::Path].
 #[inline]
-pub fn ethers_core_crate() -> syn::Path {
-    get_crate_path(EthersCrate::EthersCore)
+pub fn corebc_core_crate() -> syn::Path {
+    get_crate_path(EthersCrate::CorebcCore)
 }
 
 /// Returns the `contract` crate's [`Path`][syn::Path].
@@ -219,7 +219,7 @@ pub enum EthersCrate {
     EthersContract,
     EthersContractAbigen,
     EthersContractDerive,
-    EthersCore,
+    CorebcCore,
     EthersEtherscan,
     EthersMiddleware,
     EthersProviders,
@@ -248,7 +248,7 @@ impl EthersCrate {
             Self::EthersContract => "ethers-contract",
             Self::EthersContractAbigen => "ethers-contract-abigen",
             Self::EthersContractDerive => "ethers-contract-derive",
-            Self::EthersCore => "ethers-core",
+            Self::CorebcCore => "corebc-core",
             Self::EthersEtherscan => "ethers-etherscan",
             Self::EthersMiddleware => "ethers-middleware",
             Self::EthersProviders => "ethers-providers",
@@ -265,7 +265,7 @@ impl EthersCrate {
             Self::EthersContract => "::ethers_contract",
             Self::EthersContractAbigen => "::ethers_contract_abigen",
             Self::EthersContractDerive => "::ethers_contract_derive",
-            Self::EthersCore => "::ethers_core",
+            Self::CorebcCore => "::corebc-core",
             Self::EthersEtherscan => "::ethers_etherscan",
             Self::EthersMiddleware => "::ethers_middleware",
             Self::EthersProviders => "::ethers_providers",
@@ -284,7 +284,7 @@ impl EthersCrate {
 
             Self::EthersAddressbook => "::ethers::addressbook",
             Self::EthersContract => "::ethers::contract",
-            Self::EthersCore => "::ethers::core",
+            Self::CorebcCore => "::corebc::core",
             Self::EthersEtherscan => "::ethers::etherscan",
             Self::EthersMiddleware => "::ethers::middleware",
             Self::EthersProviders => "::ethers::providers",
@@ -555,8 +555,8 @@ mod tests {
     /// Writes a test manifest to `{root}/Cargo.toml`.
     fn write_manifest(s: &ProjectEnvironment, ethers: bool, dependencies: &[EthersCrate]) {
         // use paths to avoid downloading dependencies
-        const ETHERS_CORE: &str = env!("CARGO_MANIFEST_DIR");
-        let ethers_root = Path::new(ETHERS_CORE).parent().unwrap();
+        const COREBC_CORE: &str = env!("CARGO_MANIFEST_DIR");
+        let ethers_root = Path::new(COREBC_CORE).parent().unwrap();
         let mut dependencies_toml =
             String::with_capacity(150 * (ethers as usize + dependencies.len()));
 

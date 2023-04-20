@@ -26,7 +26,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
 [dependencies]
-ethers-core = { workspace = true, features = ["macros"] }
+corebc-core = { workspace = true, features = ["macros"] }
 
 proc-macro2.workspace = true
 quote.workspace = true

@@ -235,7 +235,7 @@ impl SolStruct {
     /// # Example
     ///
     /// ```
-    /// # use ethers_core::abi::SolStruct;
+    /// # use corebc_core::abi::SolStruct;
     /// let s = SolStruct::parse("struct MyStruct { uint x; uint y;}").unwrap();
     /// ```
     pub fn parse(s: &str) -> Result<Self> {
