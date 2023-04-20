@@ -11,6 +11,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use super::NetworkType;
+
 /// How long we will wait for anvil to indicate that it is ready.
 const ANVIL_STARTUP_TIMEOUT_MILLIS: u64 = 10_000;
 
@@ -225,9 +227,18 @@ impl Anvil {
         if let Some(mnemonic) = self.mnemonic {
             cmd.arg("-m").arg(mnemonic);
         }
+        let network: NetworkType;
 
         if let Some(chain_id) = self.chain_id {
             cmd.arg("--chain-id").arg(chain_id.to_string());
+
+            if chain_id == 1 {
+                network = NetworkType::Mainnet;
+            } else {
+                network = NetworkType::Testnet;
+            }
+        } else {
+            network = NetworkType::Testnet;
         }
 
         if let Some(block_time) = self.block_time {
@@ -276,7 +287,7 @@ impl Anvil {
                 let key_hex = hex::decode(key_str).expect("could not parse as hex");
                 let key = K256SecretKey::from_bytes(&GenericArray::clone_from_slice(&key_hex))
                     .expect("did not get private key");
-                addresses.push(secret_key_to_address(&SigningKey::from(&key)));
+                addresses.push(secret_key_to_address(&SigningKey::from(&key), &network));
                 private_keys.push(key);
             }
         }

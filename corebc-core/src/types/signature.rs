@@ -1,9 +1,10 @@
 // Code adapted from: https://github.com/tomusdrw/rust-web3/blob/master/src/api/accounts.rs
 use crate::{
     types::{Address, H256, U256},
-    utils::hash_message,
+    utils::{hash_message, to_ican, NetworkType},
 };
 use elliptic_curve::{consts::U32, sec1::ToEncodedPoint};
+use ethabi::ethereum_types::H160;
 use generic_array::GenericArray;
 use k256::{
     ecdsa::{
@@ -126,8 +127,13 @@ impl Signature {
         let public_key = public_key.to_encoded_point(/* compress = */ false);
         let public_key = public_key.as_bytes();
         debug_assert_eq!(public_key[0], 0x04);
-        let hash = crate::utils::keccak256(&public_key[1..]);
-        Ok(Address::from_slice(&hash[12..]))
+        let hash = crate::utils::sha3(&public_key[1..]);
+
+        let mut bytes = [0u8; 20];
+        bytes.copy_from_slice(&hash[12..]);
+        let addr = H160::from(bytes);
+        // CORETODO: Change the networktype logic
+        Ok(to_ican(&addr, &NetworkType::Mainnet))
     }
 
     /// Retrieves the recovery signature.

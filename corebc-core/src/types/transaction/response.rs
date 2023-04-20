@@ -8,7 +8,7 @@ use crate::{
         transaction::extract_chain_id, Address, Bloom, Bytes, Log, Signature, SignatureError, H256,
         U256, U64,
     },
-    utils::keccak256,
+    utils::sha3,
 };
 use rlp::{Decodable, DecoderError, RlpStream};
 use serde::{Deserialize, Serialize};
@@ -133,7 +133,7 @@ impl Transaction {
     }
 
     pub fn hash(&self) -> H256 {
-        keccak256(self.rlp().as_ref()).into()
+        sha3(self.rlp().as_ref()).into()
     }
 
     pub fn rlp(&self) -> Bytes {
@@ -335,7 +335,7 @@ impl Transaction {
 /// Get a Transaction directly from a rlp encoded byte stream
 impl Decodable for Transaction {
     fn decode(rlp: &rlp::Rlp) -> Result<Self, DecoderError> {
-        let mut txn = Self { hash: H256(keccak256(rlp.as_raw())), ..Default::default() };
+        let mut txn = Self { hash: H256(sha3(rlp.as_raw())), ..Default::default() };
         // we can get the type from the first value
         let mut offset = 0;
 
@@ -855,7 +855,7 @@ mod tests {
     fn recover_from() {
         let tx = Transaction {
             hash: H256::from_str(
-                "415bd4a9c915f7b0790b280ed26270234c7f9f191498f04bcad9e914fea9f8df",
+                "7e4823cfb836f84e8cef3040c69e23558a7434b01b9006759af26a5f9d53977c",
             )
             .unwrap(),
             nonce: 65.into(),
