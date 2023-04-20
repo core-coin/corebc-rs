@@ -266,8 +266,8 @@ impl Anvil {
         let mut addresses = Vec::new();
         let mut is_private_key = false;
         loop {
-            if start + Duration::from_millis(self.timeout.unwrap_or(ANVIL_STARTUP_TIMEOUT_MILLIS)) <=
-                Instant::now()
+            if start + Duration::from_millis(self.timeout.unwrap_or(ANVIL_STARTUP_TIMEOUT_MILLIS))
+                <= Instant::now()
             {
                 panic!("Timed out waiting for anvil to start. Is anvil installed?")
             }
@@ -275,7 +275,7 @@ impl Anvil {
             let mut line = String::new();
             reader.read_line(&mut line).expect("Failed to read line from anvil process");
             if line.contains("Listening on") {
-                break
+                break;
             }
 
             if line.starts_with("Private Keys") {
