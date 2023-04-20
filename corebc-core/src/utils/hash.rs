@@ -1,7 +1,7 @@
 //! Various utilities for manipulating Ethereum related data.
 
 use ethabi::ethereum_types::H256;
-use tiny_keccak::{Hasher, Keccak};
+use tiny_keccak::{Hasher, Sha3};
 
 /// Hash a message according to [EIP-191] (version `0x01`).
 ///
@@ -11,6 +11,7 @@ use tiny_keccak::{Hasher, Keccak};
 /// This message is then hashed using [Keccak-256](keccak256).
 ///
 /// [EIP-191]: https://eips.ethereum.org/EIPS/eip-191
+/// CORETODO: Change the prefix.
 pub fn hash_message<T: AsRef<[u8]>>(message: T) -> H256 {
     const PREFIX: &str = "\x19Ethereum Signed Message:\n";
 
@@ -23,17 +24,17 @@ pub fn hash_message<T: AsRef<[u8]>>(message: T) -> H256 {
     eth_message.extend_from_slice(len_string.as_bytes());
     eth_message.extend_from_slice(message);
 
-    H256(keccak256(&eth_message))
+    H256(sha3(&eth_message))
 }
 
 /// Compute the Keccak-256 hash of input bytes.
 ///
 /// Note that strings are interpreted as UTF-8 bytes,
 // TODO: Add Solidity Keccak256 packing support
-pub fn keccak256<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
+pub fn sha3<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
     let mut output = [0u8; 32];
 
-    let mut hasher = Keccak::v256();
+    let mut hasher = Sha3::v256();
     hasher.update(bytes.as_ref());
     hasher.finalize(&mut output);
 
@@ -46,7 +47,7 @@ pub fn keccak256<T: AsRef<[u8]>>(bytes: T) -> [u8; 32] {
 pub fn id<S: AsRef<str>>(signature: S) -> [u8; 4] {
     let mut output = [0u8; 4];
 
-    let mut hasher = Keccak::v256();
+    let mut hasher = Sha3::v256();
     hasher.update(signature.as_ref().as_bytes());
     hasher.finalize(&mut output);
 
@@ -68,10 +69,10 @@ mod tests {
 
     #[test]
     // from https://emn178.github.io/online-tools/keccak_256.html
-    fn test_keccak256() {
+    fn test_sha3() {
         assert_eq!(
-            hex::encode(keccak256(b"hello")),
-            "1c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36deac8"
+            hex::encode(sha3(b"hello")),
+            "3338be694f50c5f338814986cdf0686453a888b84f424d792af4b9202398f392"
         );
     }
 
@@ -83,7 +84,7 @@ mod tests {
 
         assert_eq!(
             hash,
-            "a1de988600a42c4b4ab089b619297c17d53cffae5d5120d82d8a92d0bb3b78f2".parse().unwrap()
+            "0xa52b31ab9ca0eb0c1e15f1acd9b7a50113625a74b14a8916a63daed37c955799".parse().unwrap()
         );
     }
 
@@ -91,11 +92,11 @@ mod tests {
     fn simple_function_signature() {
         // test vector retrieved from
         // https://web3js.readthedocs.io/en/v1.2.4/web3-eth-abi.html#encodefunctionsignature
-        assert_eq!(id("myMethod(uint256,string)"), [0x24, 0xee, 0x00, 0x97],);
+        assert_eq!(id("myMethod(uint256,string)"), [0x61, 0xe0, 0x2e, 0xb0]);
     }
 
     #[test]
     fn revert_function_signature() {
-        assert_eq!(id("Error(string)"), [0x08, 0xc3, 0x79, 0xa0]);
+        assert_eq!(id("Error(string)"), [0x4e, 0x40, 0x1c, 0xbe]);
     }
 }

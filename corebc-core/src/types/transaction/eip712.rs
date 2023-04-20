@@ -2,7 +2,7 @@ use crate::{
     abi,
     abi::{HumanReadableParser, ParamType, Token},
     types::{serde_helpers::StringifiedNumeric, Address, Bytes, U256},
-    utils::keccak256,
+    utils::sha3,
 };
 use ethabi::encode;
 use serde::{Deserialize, Deserializer, Serialize};
@@ -96,7 +96,7 @@ pub trait Eip712 {
 
         let digest_input = [&[0x19, 0x01], &domain_separator[..], &struct_hash[..]].concat();
 
-        Ok(keccak256(digest_input))
+        Ok(sha3(digest_input))
     }
 }
 
@@ -148,7 +148,7 @@ impl EIP712Domain {
         let mut needs_comma = false;
         if let Some(ref name) = self.name {
             ty += "string name";
-            tokens.push(Token::Uint(U256::from(keccak256(name))));
+            tokens.push(Token::Uint(U256::from(sha3(name))));
             needs_comma = true;
         }
 
@@ -157,7 +157,7 @@ impl EIP712Domain {
                 ty.push(',');
             }
             ty += "string version";
-            tokens.push(Token::Uint(U256::from(keccak256(version))));
+            tokens.push(Token::Uint(U256::from(sha3(version))));
             needs_comma = true;
         }
 
@@ -189,9 +189,9 @@ impl EIP712Domain {
 
         ty.push(')');
 
-        tokens.insert(0, Token::Uint(U256::from(keccak256(ty))));
+        tokens.insert(0, Token::Uint(U256::from(sha3(ty))));
 
-        keccak256(encode(&tokens))
+        sha3(encode(&tokens))
     }
 }
 
@@ -344,7 +344,7 @@ impl Eip712 for TypedData {
             &serde_json::Value::Object(serde_json::Map::from_iter(self.message.clone())),
             &self.types,
         )?;
-        Ok(keccak256(encode(&tokens)))
+        Ok(sha3(encode(&tokens)))
     }
 
     /// Hash a typed message according to EIP-712. The returned message starts with the EIP-712
@@ -358,7 +358,7 @@ impl Eip712 for TypedData {
             // compatibility with <https://github.com/MetaMask/eth-sig-util>
             digest_input.extend(&self.struct_hash()?[..])
         }
-        Ok(keccak256(digest_input))
+        Ok(sha3(digest_input))
     }
 }
 
@@ -421,12 +421,12 @@ pub fn hash_struct(
 ) -> Result<[u8; 32], Eip712Error> {
     let tokens = encode_data(primary_type, data, types)?;
     let encoded = encode(&tokens);
-    Ok(keccak256(encoded))
+    Ok(sha3(encoded))
 }
 
 /// Returns the hashed encoded type of `primary_type`
 pub fn hash_type(primary_type: &str, types: &Types) -> Result<[u8; 32], Eip712Error> {
-    encode_type(primary_type, types).map(keccak256)
+    encode_type(primary_type, types).map(sha3)
 }
 
 ///  Encodes the type of an object by encoding a comma delimited list of its members.
@@ -577,15 +577,15 @@ pub fn make_type_hash(primary_type: String, fields: &[(String, ParamType)]) -> [
 
     let sig = format!("{primary_type}({parameters})");
 
-    keccak256(sig)
+    sha3(sig)
 }
 
 /// Parse token into Eip712 compliant ABI encoding
 pub fn encode_eip712_type(token: Token) -> Token {
     match token {
-        Token::Bytes(t) => Token::Uint(U256::from(keccak256(t))),
+        Token::Bytes(t) => Token::Uint(U256::from(sha3(t))),
         Token::FixedBytes(t) => Token::Uint(U256::from(&t[..])),
-        Token::String(t) => Token::Uint(U256::from(keccak256(t))),
+        Token::String(t) => Token::Uint(U256::from(sha3(t))),
         Token::Bool(t) => {
             // Boolean false and true are encoded as uint256 values 0 and 1 respectively
             Token::Uint(U256::from(t as i32))
@@ -594,16 +594,16 @@ pub fn encode_eip712_type(token: Token) -> Token {
             // Integer values are sign-extended to 256-bit and encoded in big endian order.
             Token::Uint(t)
         }
-        Token::Array(tokens) => Token::Uint(U256::from(keccak256(abi::encode(
+        Token::Array(tokens) => Token::Uint(U256::from(sha3(abi::encode(
             &tokens.into_iter().map(encode_eip712_type).collect::<Vec<Token>>(),
         )))),
-        Token::FixedArray(tokens) => Token::Uint(U256::from(keccak256(abi::encode(
+        Token::FixedArray(tokens) => Token::Uint(U256::from(sha3(abi::encode(
             &tokens.into_iter().map(encode_eip712_type).collect::<Vec<Token>>(),
         )))),
         Token::Tuple(tuple) => {
             let tokens = tuple.into_iter().map(encode_eip712_type).collect::<Vec<Token>>();
             let encoded = encode(&tokens);
-            Token::Uint(U256::from(keccak256(encoded)))
+            Token::Uint(U256::from(sha3(encoded)))
         }
         _ => {
             // Return the ABI encoded token;

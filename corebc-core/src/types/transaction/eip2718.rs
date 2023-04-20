@@ -7,7 +7,7 @@ use crate::{
     types::{
         Address, Bytes, NameOrAddress, Signature, Transaction, TransactionRequest, H256, U256, U64,
     },
-    utils::keccak256,
+    utils::sha3,
 };
 use rlp::Decodable;
 use serde::{Deserialize, Serialize};
@@ -300,7 +300,7 @@ impl TypedTransaction {
     /// Hashes the transaction's data. Does not double-RLP encode
     pub fn sighash(&self) -> H256 {
         let encoded = self.rlp();
-        keccak256(encoded).into()
+        sha3(encoded).into()
     }
 
     /// Max cost of the transaction
@@ -315,7 +315,7 @@ impl TypedTransaction {
 
     /// Hashes the transaction's data with the included signature.
     pub fn hash(&self, signature: &Signature) -> H256 {
-        keccak256(self.rlp_signed(signature).as_ref()).into()
+        sha3(self.rlp_signed(signature).as_ref()).into()
     }
 
     /// Decodes a signed TypedTransaction from a rlp encoded byte stream

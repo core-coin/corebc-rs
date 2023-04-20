@@ -4,7 +4,7 @@ use crate::{
     types::{
         Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64,
     },
-    utils::keccak256,
+    utils::sha3,
 };
 
 use rlp::{Decodable, RlpStream};
@@ -152,8 +152,8 @@ impl TransactionRequest {
     /// Hashes the transaction's data with the provided chain id
     pub fn sighash(&self) -> H256 {
         match self.chain_id {
-            Some(_) => keccak256(self.rlp().as_ref()).into(),
-            None => keccak256(self.rlp_unsigned().as_ref()).into(),
+            Some(_) => sha3(self.rlp().as_ref()).into(),
+            None => sha3(self.rlp_unsigned().as_ref()).into(),
         }
     }
 
@@ -387,7 +387,7 @@ mod tests {
             .value(0)
             .gas(0)
             .gas_price(0);
-        let expected_sighash = "e4bfdde4640da59057026fd60394de7fd0ec35f0a4c0dee270cb4dd9051dc769";
+        let expected_sighash = "ec08902c56d6df8797a282763e4871a2b69dbb210b5390e7babbf1cebe59a23d";
         let got_sighash = hex::encode(tx.sighash().as_bytes());
         assert_eq!(expected_sighash, got_sighash);
     }
@@ -467,11 +467,10 @@ mod tests {
             .chain_id(1);
 
         let expected_rlp = hex::decode("ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").unwrap();
-        println!("{:#?}", tx.sighash());
         assert_eq!(expected_rlp, tx.rlp().to_vec());
 
         let expected_sighash =
-            hex::decode("ff7b766295e72f47735987a6df63b0dcfef93787a0f88817caf1175433d623cf")
+            hex::decode("2e71f6c2963fa9e8ded46264e0be28402944a5f9e78d62e9de18c4df76bb2421")
                 .unwrap();
 
         assert_eq!(expected_sighash, tx.sighash().as_bytes().to_vec());
