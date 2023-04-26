@@ -28,7 +28,7 @@ default = ["abigen", "rustls"]
 
 celo = [
     "corebc-core/celo",
-    "ethers-providers/celo",
+    "corebc-providers/celo",
     "ethers-signers/celo",
     "ethers-contract/celo",
     "ethers-middleware/celo",
@@ -39,24 +39,24 @@ legacy = ["corebc-core/legacy", "ethers-contract/legacy"]
 
 # individual features per sub-crate
 ## providers
-ws = ["ethers-providers/ws"]
-legacy-ws = ["ethers-providers/legacy-ws"]
-ipc = ["ethers-providers/ipc"]
+ws = ["corebc-providers/ws"]
+legacy-ws = ["corebc-providers/legacy-ws"]
+ipc = ["corebc-providers/ipc"]
 rustls = [
     "ethers-middleware/rustls",
-    "ethers-providers/rustls",
+    "corebc-providers/rustls",
     "ethers-etherscan/rustls",
     "ethers-contract/rustls",
     "ethers-solc/rustls",
 ]
 openssl = [
     "ethers-middleware/openssl",
-    "ethers-providers/openssl",
+    "corebc-providers/openssl",
     "ethers-etherscan/openssl",
     "ethers-contract/openssl",
     "ethers-solc/openssl",
 ]
-dev-rpc = ["ethers-providers/dev-rpc"]
+dev-rpc = ["corebc-providers/dev-rpc"]
 ## signers
 ledger = ["ethers-signers/ledger"]
 trezor = ["ethers-signers/trezor"]
@@ -79,7 +79,7 @@ ethers-contract.workspace = true
 corebc-core.workspace = true
 ethers-etherscan = { workspace = true, features = ["ethers-solc"] }
 ethers-middleware.workspace = true
-ethers-providers.workspace = true
+corebc-providers.workspace = true
 ethers-signers.workspace = true
 ethers-solc.workspace = true
 
@@ -87,5 +87,5 @@ ethers-solc.workspace = true
 serde.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 ethers-contract.workspace = true
-ethers-providers = { workspace = true, features = ["rustls"] } # allow https connections
+corebc-providers = { workspace = true, features = ["rustls"] } # allow https connections
 ethers-solc = { workspace = true, features = ["svm-solc"] }
