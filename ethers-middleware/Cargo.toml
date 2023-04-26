@@ -27,7 +27,7 @@ all-features = true
 ethers-contract = { workspace = true, features = ["abigen"] }
 corebc-core.workspace = true
 ethers-etherscan.workspace = true
-ethers-providers.workspace = true
+corebc-providers.workspace = true
 ethers-signers.workspace = true
 
 async-trait.workspace = true
@@ -51,7 +51,7 @@ serde_json.workspace = true
 tokio.workspace = true
 
 [dev-dependencies]
-ethers-providers = { workspace = true, features = ["ws", "rustls"] }
+corebc-providers = { workspace = true, features = ["ws", "rustls"] }
 ethers-solc.workspace = true
 
 hex.workspace = true
@@ -64,6 +64,6 @@ tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
 
 [features]
 default = ["rustls"]
-celo = ["corebc-core/celo", "ethers-providers/celo", "ethers-signers/celo", "ethers-contract/celo"]
+celo = ["corebc-core/celo", "corebc-providers/celo", "ethers-signers/celo", "ethers-contract/celo"]
 openssl = ["reqwest/native-tls"]
 rustls = ["reqwest/rustls-tls"]

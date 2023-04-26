@@ -1353,7 +1353,7 @@ contract Enum {
         keywords = ["ethereum", "web3", "celo", "ethers"]
 
         [dependencies]
-        ethers-providers = { version = "^1.0.0", path = "../ethers-providers", default-features = false }
+        corebc-providers = { version = "^1.0.0", path = "../corebc-providers", default-features = false }
 "#,
         )
         .unwrap();
