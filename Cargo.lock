@@ -697,6 +697,45 @@ dependencies = [
 ]
 
 [[package]]
+name = "corebc-providers"
+version = "2.0.3"
+dependencies = [
+ "async-trait",
+ "auto_impl",
+ "base64 0.21.0",
+ "bytes",
+ "corebc-core",
+ "enr",
+ "futures-channel",
+ "futures-core",
+ "futures-timer",
+ "futures-util",
+ "getrandom",
+ "hashers",
+ "hex",
+ "http",
+ "instant",
+ "once_cell",
+ "pin-project",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tokio-tungstenite",
+ "tracing",
+ "tracing-futures",
+ "tracing-test",
+ "url",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "winapi",
+ "ws_stream_wasm",
+]
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1231,11 +1270,11 @@ name = "ethers"
 version = "2.0.3"
 dependencies = [
  "corebc-core",
+ "corebc-providers",
  "ethers-addressbook",
  "ethers-contract",
  "ethers-etherscan",
  "ethers-middleware",
- "ethers-providers",
  "ethers-signers",
  "ethers-solc",
  "serde",
@@ -1257,9 +1296,9 @@ name = "ethers-contract"
 version = "2.0.3"
 dependencies = [
  "corebc-core",
+ "corebc-providers",
  "ethers-contract-abigen",
  "ethers-contract-derive",
- "ethers-providers",
  "ethers-signers",
  "ethers-solc",
  "futures-util",
@@ -1339,9 +1378,9 @@ dependencies = [
  "async-trait",
  "auto_impl",
  "corebc-core",
+ "corebc-providers",
  "ethers-contract",
  "ethers-etherscan",
- "ethers-providers",
  "ethers-signers",
  "ethers-solc",
  "futures-channel",
@@ -1359,45 +1398,6 @@ dependencies = [
  "tracing",
  "tracing-futures",
  "url",
-]
-
-[[package]]
-name = "ethers-providers"
-version = "2.0.3"
-dependencies = [
- "async-trait",
- "auto_impl",
- "base64 0.21.0",
- "bytes",
- "corebc-core",
- "enr",
- "futures-channel",
- "futures-core",
- "futures-timer",
- "futures-util",
- "getrandom",
- "hashers",
- "hex",
- "http",
- "instant",
- "once_cell",
- "pin-project",
- "reqwest",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror",
- "tokio",
- "tokio-tungstenite",
- "tracing",
- "tracing-futures",
- "tracing-test",
- "url",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "winapi",
- "ws_stream_wasm",
 ]
 
 [[package]]

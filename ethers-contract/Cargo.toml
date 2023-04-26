@@ -24,7 +24,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
 [dependencies]
-ethers-providers.workspace = true
+corebc-providers.workspace = true
 corebc-core.workspace = true
 
 serde.workspace = true
@@ -42,7 +42,7 @@ ethers-contract-derive = { workspace = true, optional = true }
 [dev-dependencies]
 ethers-signers.workspace = true
 ethers-solc.workspace = true
-ethers-providers = { workspace = true, features = ["ws"] }
+corebc-providers = { workspace = true, features = ["ws"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
@@ -53,7 +53,7 @@ default = ["abigen"]
 abigen-offline = ["ethers-contract-abigen", "ethers-contract-derive"]
 abigen = ["abigen-offline", "ethers-contract-abigen/online"]
 
-celo = ["legacy", "corebc-core/celo", "ethers-providers/celo"]
+celo = ["legacy", "corebc-core/celo", "corebc-providers/celo"]
 legacy = []
 
 rustls = ["ethers-contract-abigen/rustls"]
