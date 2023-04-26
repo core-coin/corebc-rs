@@ -268,7 +268,7 @@ mod tests {
           "name": "Seaport",
           "version": "1.1",
           "chainId": "137",
-          "verifyingContract": "0x00000000006c3852cbEf3e08E8dF289169EdE581"
+          "verifyingContract": "0x000000000000006c3852cbEf3e08E8dF289169EdE581"
         }
               );
 

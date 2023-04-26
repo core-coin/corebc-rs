@@ -39,7 +39,7 @@ pub fn ethers_contract_crate() -> syn::Path {
 /// Returns the `providers` crate's [`Path`][syn::Path].
 #[inline]
 pub fn ethers_providers_crate() -> syn::Path {
-    get_crate_path(EthersCrate::EthersProviders)
+    get_crate_path(EthersCrate::CorebcProviders)
 }
 
 /// Returns an [`EthersCrate`]'s [`Path`][syn::Path] in the current project.
@@ -222,7 +222,7 @@ pub enum EthersCrate {
     CorebcCore,
     EthersEtherscan,
     EthersMiddleware,
-    EthersProviders,
+    CorebcProviders,
     EthersSigners,
     EthersSolc,
 }
@@ -251,7 +251,7 @@ impl EthersCrate {
             Self::CorebcCore => "corebc-core",
             Self::EthersEtherscan => "ethers-etherscan",
             Self::EthersMiddleware => "ethers-middleware",
-            Self::EthersProviders => "ethers-providers",
+            Self::CorebcProviders => "corebc-providers",
             Self::EthersSigners => "ethers-signers",
             Self::EthersSolc => "ethers-solc",
         }
@@ -268,7 +268,7 @@ impl EthersCrate {
             Self::CorebcCore => "::corebc-core",
             Self::EthersEtherscan => "::ethers_etherscan",
             Self::EthersMiddleware => "::ethers_middleware",
-            Self::EthersProviders => "::ethers_providers",
+            Self::CorebcProviders => "::corebc_providers",
             Self::EthersSigners => "::ethers_signers",
             Self::EthersSolc => "::ethers_solc",
         }
@@ -287,7 +287,7 @@ impl EthersCrate {
             Self::CorebcCore => "::corebc::core",
             Self::EthersEtherscan => "::ethers::etherscan",
             Self::EthersMiddleware => "::ethers::middleware",
-            Self::EthersProviders => "::ethers::providers",
+            Self::CorebcProviders => "::corebc::providers",
             Self::EthersSigners => "::ethers::signers",
             Self::EthersSolc => "::ethers::solc",
         }
