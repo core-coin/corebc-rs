@@ -422,7 +422,7 @@ pub fn secret_key_to_address(secret_key: &SigningKey, network: &NetworkType) -> 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
     let addr = H160::from(bytes);
-    to_ican(&addr, &network)
+    to_ican(&addr, network)
 }
 
 /// Encodes an Ethereum address to its [EIP-55] checksum.
