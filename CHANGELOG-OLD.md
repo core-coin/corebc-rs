@@ -241,7 +241,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - Correctly RLP Encode transactions as received from the mempool
   ([#415](https://github.com/gakonst/ethers-rs/pull/415))
 
-## ethers-providers
+## corebc-providers
 
 ### Unreleased
 
