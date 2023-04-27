@@ -4,7 +4,7 @@ pub mod types;
 use crate::Signer;
 use app::TrezorEthereum;
 use async_trait::async_trait;
-use ethers_core::types::{
+use corebc_core::types::{
     transaction::{eip2718::TypedTransaction, eip712::Eip712},
     Address, Signature,
 };

@@ -6,12 +6,12 @@ use coins_ledger::{
 use futures_executor::block_on;
 use futures_util::lock::Mutex;
 
-use ethers_core::{
+use corebc_core::{
     types::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},
         Address, NameOrAddress, Signature, Transaction, TransactionRequest, TxHash, H256, U256,
     },
-    utils::keccak256,
+    utils::sha3,
 };
 use std::convert::TryFrom;
 use thiserror::Error;
@@ -101,7 +101,7 @@ impl LedgerEthereum {
             // extract the address from the response
             let offset = 1 + result[0] as usize;
             let address_str = &result[offset + 1..offset + 1 + result[offset] as usize];
-            let mut address = [0; 20];
+            let mut address = [0; 22];
             address.copy_from_slice(&hex::decode(address_str)?);
             Address::from(address)
         };
@@ -293,13 +293,13 @@ impl LedgerEthereum {
 mod tests {
     use super::*;
     use crate::Signer;
-    use ethers_contract_derive::{Eip712, EthAbiType};
-    use ethers_core::types::{
+    use corebc_core::types::{
         transaction::eip712::Eip712, Address, TransactionRequest, I256, U256,
     };
+    use ethers_contract_derive::{Eip712, EthAbiType};
     use std::str::FromStr;
 
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
+    #[derive(Debug, Clone)]
     #[eip712(
         name = "Eip712Test",
         version = "1",
@@ -346,7 +346,7 @@ mod tests {
             .gas_price(400e9 as u64)
             .nonce(5)
             .data(data)
-            .value(ethers_core::utils::parse_ether(100).unwrap())
+            .value(corebc_core::utils::parse_ether(100).unwrap())
             .into();
         let tx = ledger.sign_transaction(&tx_req).await.unwrap();
     }
@@ -379,7 +379,7 @@ mod tests {
             foo: I256::from(10),
             bar: U256::from(20),
             fizz: b"fizz".to_vec(),
-            buzz: keccak256("buzz"),
+            buzz: sha3("buzz"),
             far: String::from("space"),
             out: Address::from([0; 20]),
         };

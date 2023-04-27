@@ -11,7 +11,8 @@ Crates to modify
 - [ ] ethers-contract
 - [ ] ethers-etherscan
 - [ ] ethers-middleware
-- [ ] ethers-signers
+- [x] corebc-signers - Crate compiles, tests are not yet modified
+  - [ ] Fix tests
 - [ ] ethers-solc
 - [ ] ethers
 - [ ] examples

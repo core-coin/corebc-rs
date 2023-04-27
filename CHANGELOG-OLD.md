@@ -290,7 +290,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - Set resolved ENS name during gas estimation
   ([1e5a9e](https://github.com/gakonst/ethers-rs/commit/1e5a9efb3c678eecd43d5c341b4932da35445831))
 
-## ethers-signers
+## corebc-signers
 
 ### Unreleased
 

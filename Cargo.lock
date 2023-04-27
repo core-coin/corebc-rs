@@ -736,6 +736,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "corebc-signers"
+version = "2.0.3"
+dependencies = [
+ "async-trait",
+ "coins-bip32",
+ "coins-bip39",
+ "coins-ledger",
+ "corebc-core",
+ "elliptic-curve",
+ "eth-keystore",
+ "ethers-contract-derive",
+ "futures-executor",
+ "futures-util",
+ "hex",
+ "home",
+ "rand",
+ "rusoto_core",
+ "rusoto_kms",
+ "semver",
+ "serde_json",
+ "sha2 0.10.6",
+ "spki",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "trezor-client",
+ "yubihsm",
+]
+
+[[package]]
 name = "cpufeatures"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1271,11 +1303,11 @@ version = "2.0.3"
 dependencies = [
  "corebc-core",
  "corebc-providers",
+ "corebc-signers",
  "ethers-addressbook",
  "ethers-contract",
  "ethers-etherscan",
  "ethers-middleware",
- "ethers-signers",
  "ethers-solc",
  "serde",
  "tokio",
@@ -1297,9 +1329,9 @@ version = "2.0.3"
 dependencies = [
  "corebc-core",
  "corebc-providers",
+ "corebc-signers",
  "ethers-contract-abigen",
  "ethers-contract-derive",
- "ethers-signers",
  "ethers-solc",
  "futures-util",
  "hex",
@@ -1379,9 +1411,9 @@ dependencies = [
  "auto_impl",
  "corebc-core",
  "corebc-providers",
+ "corebc-signers",
  "ethers-contract",
  "ethers-etherscan",
- "ethers-signers",
  "ethers-solc",
  "futures-channel",
  "futures-locks",
@@ -1398,38 +1430,6 @@ dependencies = [
  "tracing",
  "tracing-futures",
  "url",
-]
-
-[[package]]
-name = "ethers-signers"
-version = "2.0.3"
-dependencies = [
- "async-trait",
- "coins-bip32",
- "coins-bip39",
- "coins-ledger",
- "corebc-core",
- "elliptic-curve",
- "eth-keystore",
- "ethers-contract-derive",
- "futures-executor",
- "futures-util",
- "hex",
- "home",
- "rand",
- "rusoto_core",
- "rusoto_kms",
- "semver",
- "serde_json",
- "sha2 0.10.6",
- "spki",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "trezor-client",
- "yubihsm",
 ]
 
 [[package]]

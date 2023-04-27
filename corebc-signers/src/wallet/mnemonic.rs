@@ -4,7 +4,7 @@ use crate::{Wallet, WalletError};
 
 use coins_bip32::path::DerivationPath;
 use coins_bip39::{Mnemonic, Wordlist};
-use ethers_core::{
+use corebc_core::{
     k256::ecdsa::SigningKey,
     types::PathOrString,
     utils::{secret_key_to_address, to_checksum},
@@ -182,7 +182,7 @@ impl<W: Wordlist> MnemonicBuilder<W> {
             mnemonic.derive_key(&self.derivation_path, self.password.as_deref())?;
         let key: &coins_bip32::prelude::SigningKey = derived_priv_key.as_ref();
         let signer = SigningKey::from_bytes(&key.to_bytes())?;
-        let address = secret_key_to_address(&signer);
+        let address = secret_key_to_address(&signer, &corebc_core::utils::NetworkType::Mainnet);
 
         Ok(Wallet::<SigningKey> { signer, address, chain_id: 1 })
     }

@@ -4,7 +4,7 @@
 use std::fmt;
 use thiserror::Error;
 
-use ethers_core::types::{transaction::eip2718::TypedTransaction, NameOrAddress, U256};
+use corebc_core::types::{transaction::eip2718::TypedTransaction, NameOrAddress, U256};
 use trezor_client::client::AccessListItem as Trezor_AccessListItem;
 
 #[derive(Clone, Debug)]

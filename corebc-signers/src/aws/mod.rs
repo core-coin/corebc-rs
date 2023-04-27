@@ -1,6 +1,6 @@
 //! AWS KMS-based Signer
 
-use ethers_core::{
+use corebc_core::{
     k256::ecdsa::{Error as K256Error, Signature as KSig, VerifyingKey},
     types::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},

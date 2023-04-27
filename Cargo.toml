@@ -38,7 +38,7 @@ members = [
     "ethers-etherscan",
     "ethers-middleware",
     "corebc-providers",
-    "ethers-signers",
+    "corebc-signers",
     "ethers-solc",
 
     # Example crates
@@ -54,7 +54,7 @@ default-members = [
     "ethers-etherscan",
     "ethers-middleware",
     "corebc-providers",
-    "ethers-signers",
+    "corebc-signers",
     "ethers-solc",
 ]
 
@@ -71,7 +71,7 @@ corebc-core = { version = "2.0.3", path = "corebc-core", default-features = fals
 ethers-etherscan = { version = "2.0.3", path = "ethers-etherscan", default-features = false }
 ethers-middleware = { version = "2.0.3", path = "ethers-middleware", default-features = false }
 corebc-providers = { version = "2.0.3", path = "corebc-providers", default-features = false }
-ethers-signers = { version = "2.0.3", path = "ethers-signers", default-features = false }
+corebc-signers = { version = "2.0.3", path = "corebc-signers", default-features = false }
 ethers-solc = { version = "2.0.3", path = "ethers-solc", default-features = false }
 
 ethers-contract-abigen = { version = "2.0.3", path = "ethers-contract/ethers-contract-abigen", default-features = false }

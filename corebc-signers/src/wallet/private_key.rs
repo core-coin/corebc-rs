@@ -4,15 +4,15 @@ use super::Wallet;
 use crate::wallet::mnemonic::MnemonicBuilderError;
 use coins_bip32::Bip32Error;
 use coins_bip39::MnemonicError;
+use corebc_core::{
+    k256::ecdsa::{self, SigningKey},
+    rand::{CryptoRng, Rng},
+    utils::{secret_key_to_address, NetworkType},
+};
 #[cfg(not(target_arch = "wasm32"))]
 use elliptic_curve::rand_core;
 #[cfg(not(target_arch = "wasm32"))]
 use eth_keystore::KeystoreError;
-use ethers_core::{
-    k256::ecdsa::{self, SigningKey},
-    rand::{CryptoRng, Rng},
-    utils::secret_key_to_address,
-};
 #[cfg(not(target_arch = "wasm32"))]
 use std::path::Path;
 use std::str::FromStr;
@@ -59,6 +59,7 @@ impl Wallet<SigningKey> {
         rng: &mut R,
         password: S,
         name: Option<&str>,
+        network: NetworkType,
     ) -> Result<(Self, String), WalletError>
     where
         P: AsRef<Path>,
@@ -67,34 +68,38 @@ impl Wallet<SigningKey> {
     {
         let (secret, uuid) = eth_keystore::new(dir, rng, password, name)?;
         let signer = SigningKey::from_bytes(secret.as_slice().into())?;
-        let address = secret_key_to_address(&signer);
+        let address = secret_key_to_address(&signer, &network);
         Ok((Self { signer, address, chain_id: 1 }, uuid))
     }
 
     /// Decrypts an encrypted JSON from the provided path to construct a Wallet instance
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn decrypt_keystore<P, S>(keypath: P, password: S) -> Result<Self, WalletError>
+    pub fn decrypt_keystore<P, S>(
+        keypath: P,
+        password: S,
+        network: NetworkType,
+    ) -> Result<Self, WalletError>
     where
         P: AsRef<Path>,
         S: AsRef<[u8]>,
     {
         let secret = eth_keystore::decrypt_key(keypath, password)?;
         let signer = SigningKey::from_bytes(secret.as_slice().into())?;
-        let address = secret_key_to_address(&signer);
+        let address = secret_key_to_address(&signer, &network);
         Ok(Self { signer, address, chain_id: 1 })
     }
 
     /// Creates a new random keypair seeded with the provided RNG
-    pub fn new<R: Rng + CryptoRng>(rng: &mut R) -> Self {
+    pub fn new<R: Rng + CryptoRng>(rng: &mut R, network: NetworkType) -> Self {
         let signer = SigningKey::random(rng);
-        let address = secret_key_to_address(&signer);
+        let address = secret_key_to_address(&signer, &network);
         Self { signer, address, chain_id: 1 }
     }
 
     /// Creates a new Wallet instance from a raw scalar value (big endian).
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, WalletError> {
+    pub fn from_bytes(bytes: &[u8], network: NetworkType) -> Result<Self, WalletError> {
         let signer = SigningKey::from_bytes(bytes.into())?;
-        let address = secret_key_to_address(&signer);
+        let address = secret_key_to_address(&signer, &network);
         Ok(Self { signer, address, chain_id: 1 })
     }
 }
@@ -109,18 +114,20 @@ impl PartialEq for Wallet<SigningKey> {
 
 impl From<SigningKey> for Wallet<SigningKey> {
     fn from(signer: SigningKey) -> Self {
-        let address = secret_key_to_address(&signer);
+        let network = NetworkType::Mainnet;
+        let address = secret_key_to_address(&signer, &network);
 
         Self { signer, address, chain_id: 1 }
     }
 }
 
-use ethers_core::k256::SecretKey as K256SecretKey;
+use corebc_core::k256::SecretKey as K256SecretKey;
 
 impl From<K256SecretKey> for Wallet<SigningKey> {
     fn from(key: K256SecretKey) -> Self {
+        let network = NetworkType::Mainnet;
         let signer = key.into();
-        let address = secret_key_to_address(&signer);
+        let address = secret_key_to_address(&signer, &network);
 
         Self { signer, address, chain_id: 1 }
     }
@@ -158,7 +165,7 @@ impl TryFrom<String> for Wallet<SigningKey> {
 mod tests {
     use super::*;
     use crate::Signer;
-    use ethers_core::types::Address;
+    use corebc_core::types::Address;
     use tempfile::tempdir;
 
     #[test]
@@ -172,8 +179,14 @@ mod tests {
         // create and store a random encrypted JSON keystore in this directory
         let dir = tempdir().unwrap();
         let mut rng = rand::thread_rng();
-        let (key, uuid) =
-            Wallet::<SigningKey>::new_keystore(&dir, &mut rng, "randpsswd", None).unwrap();
+        let (key, uuid) = Wallet::<SigningKey>::new_keystore(
+            &dir,
+            &mut rng,
+            "randpsswd",
+            None,
+            NetworkType::Mainnet,
+        )
+        .unwrap();
 
         // sign a message using the above key
         let message = "Some data";
@@ -182,7 +195,9 @@ mod tests {
         // read from the encrypted JSON keystore and decrypt it, while validating that the
         // signatures produced by both the keys should match
         let path = Path::new(dir.path()).join(uuid);
-        let key2 = Wallet::<SigningKey>::decrypt_keystore(path.clone(), "randpsswd").unwrap();
+        let key2 =
+            Wallet::<SigningKey>::decrypt_keystore(path.clone(), "randpsswd", NetworkType::Mainnet)
+                .unwrap();
         let signature2 = key2.sign_message(message).await.unwrap();
         assert_eq!(signature, signature2);
         std::fs::remove_file(&path).unwrap();
@@ -191,8 +206,8 @@ mod tests {
     #[tokio::test]
     async fn signs_msg() {
         let message = "Some data";
-        let hash = ethers_core::utils::hash_message(message);
-        let key = Wallet::<SigningKey>::new(&mut rand::thread_rng());
+        let hash = corebc_core::utils::hash_message(message);
+        let key = Wallet::<SigningKey>::new(&mut rand::thread_rng(), NetworkType::Mainnet);
         let address = key.address;
 
         // sign a message
@@ -215,7 +230,7 @@ mod tests {
     #[cfg(not(feature = "celo"))]
     async fn signs_tx() {
         use crate::TypedTransaction;
-        use ethers_core::types::{TransactionRequest, U64};
+        use corebc_core::types::{TransactionRequest, U64};
         // retrieved test vector from:
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         let tx: TypedTransaction = TransactionRequest {
@@ -242,7 +257,7 @@ mod tests {
     #[cfg(not(feature = "celo"))]
     async fn signs_tx_empty_chain_id() {
         use crate::TypedTransaction;
-        use ethers_core::types::TransactionRequest;
+        use corebc_core::types::TransactionRequest;
         // retrieved test vector from:
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         let tx: TypedTransaction = TransactionRequest {
@@ -275,7 +290,7 @@ mod tests {
     #[cfg(not(feature = "celo"))]
     fn signs_tx_empty_chain_id_sync() {
         use crate::TypedTransaction;
-        use ethers_core::types::TransactionRequest;
+        use corebc_core::types::TransactionRequest;
 
         let chain_id = 1337u64;
         // retrieved test vector from:
@@ -342,7 +357,7 @@ mod tests {
             "0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
 
         let key_as_bytes = wallet.signer.to_bytes();
-        let wallet_from_bytes = Wallet::from_bytes(&key_as_bytes).unwrap();
+        let wallet_from_bytes = Wallet::from_bytes(&key_as_bytes, NetworkType::Mainnet).unwrap();
 
         assert_eq!(wallet.address, wallet_from_bytes.address);
         assert_eq!(wallet.chain_id, wallet_from_bytes.chain_id);

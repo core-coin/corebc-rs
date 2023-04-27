@@ -223,7 +223,7 @@ pub enum EthersCrate {
     EthersEtherscan,
     EthersMiddleware,
     CorebcProviders,
-    EthersSigners,
+    CorebcSigners,
     EthersSolc,
 }
 
@@ -252,7 +252,7 @@ impl EthersCrate {
             Self::EthersEtherscan => "ethers-etherscan",
             Self::EthersMiddleware => "ethers-middleware",
             Self::CorebcProviders => "corebc-providers",
-            Self::EthersSigners => "ethers-signers",
+            Self::CorebcSigners => "corebc-signers",
             Self::EthersSolc => "ethers-solc",
         }
     }
@@ -269,7 +269,7 @@ impl EthersCrate {
             Self::EthersEtherscan => "::ethers_etherscan",
             Self::EthersMiddleware => "::ethers_middleware",
             Self::CorebcProviders => "::corebc_providers",
-            Self::EthersSigners => "::ethers_signers",
+            Self::CorebcSigners => "::corebc_signers",
             Self::EthersSolc => "::ethers_solc",
         }
     }
@@ -288,7 +288,7 @@ impl EthersCrate {
             Self::EthersEtherscan => "::ethers::etherscan",
             Self::EthersMiddleware => "::ethers::middleware",
             Self::CorebcProviders => "::corebc::providers",
-            Self::EthersSigners => "::ethers::signers",
+            Self::CorebcSigners => "::corebc::signers",
             Self::EthersSolc => "::ethers::solc",
         }
     }
