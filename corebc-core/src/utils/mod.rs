@@ -364,7 +364,7 @@ fn to_ican(addr: &H160, network: &NetworkType) -> Address {
 
     let checksum = calculate_checksum(&number_str);
 
-    construct_ican_address(&prefix, &checksum, addr)
+    construct_ican_address(prefix, &checksum, addr)
 }
 
 fn get_number_string(addr: &H160, network: &NetworkType) -> String {
@@ -411,17 +411,18 @@ fn construct_ican_address(prefix: &str, checksum: &u64, addr: &H160) -> Address 
 }
 
 /// Converts a K256 SigningKey to an Ethereum Address
-/// CORETODO: FIX ASAP ICAN ADDRESSES
-pub fn secret_key_to_address(secret_key: &SigningKey) -> Address {
+pub fn secret_key_to_address(secret_key: &SigningKey, network: NetworkType) -> Address {
     let public_key = secret_key.verifying_key();
     let public_key = public_key.to_encoded_point(/* compress = */ false);
     let public_key = public_key.as_bytes();
     debug_assert_eq!(public_key[0], 0x04);
     let hash = keccak256(&public_key[1..]);
 
-    let mut bytes = [0u8; 22];
-    bytes.copy_from_slice(&hash[10..]);
-    Address::from(bytes)
+    let mut bytes = [0u8; 20];
+    bytes.copy_from_slice(&hash[12..]);
+    let addr = H160::from(bytes);
+
+    to_ican(&addr, &network)
 }
 
 /// Encodes an Ethereum address to its [EIP-55] checksum.

@@ -10,6 +10,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use super::NetworkType;
+
 /// Default amount of time we will wait for ganache to indicate that it is ready.
 const GANACHE_STARTUP_TIMEOUT_MILLIS: u64 = 10_000;
 
@@ -206,7 +208,8 @@ impl Ganache {
                 let key_hex = hex::decode(key_str).expect("could not parse as hex");
                 let key = K256SecretKey::from_bytes(&GenericArray::clone_from_slice(&key_hex))
                     .expect("did not get private key");
-                addresses.push(secret_key_to_address(&SigningKey::from(&key)));
+                addresses
+                    .push(secret_key_to_address(&SigningKey::from(&key), NetworkType::Mainnet));
                 private_keys.push(key);
             }
         }

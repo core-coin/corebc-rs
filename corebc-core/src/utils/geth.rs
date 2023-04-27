@@ -1,4 +1,4 @@
-use super::{unused_ports, CliqueConfig, Genesis};
+use super::{unused_ports, CliqueConfig, Genesis, NetworkType};
 use crate::{
     types::{Bytes, H256},
     utils::secret_key_to_address,
@@ -399,6 +399,7 @@ impl Geth {
 
                 let clique_addr = secret_key_to_address(
                     self.clique_private_key.as_ref().expect("is_clique == true"),
+                    NetworkType::Mainnet,
                 );
 
                 // set the extraData field
@@ -413,8 +414,10 @@ impl Geth {
                 cmd.arg("--miner.etherbase").arg(format!("{clique_addr:?}"));
             }
 
-            let clique_addr =
-                secret_key_to_address(self.clique_private_key.as_ref().expect("is_clique == true"));
+            let clique_addr = secret_key_to_address(
+                self.clique_private_key.as_ref().expect("is_clique == true"),
+                NetworkType::Mainnet,
+            );
 
             self.genesis = Some(Genesis::new(
                 self.chain_id.expect("chain id must be set in clique mode"),
