@@ -93,7 +93,7 @@ Please do not manually edit this file.
 
 ### Bug Fixes
 
-- Ethers-contract circular dep on ethers-signers ([#2291](https://github.com/gakonst/ethers-rs/issues/2291))
+- Ethers-contract circular dep on corebc-signers ([#2291](https://github.com/gakonst/ethers-rs/issues/2291))
 - Features ([#2290](https://github.com/gakonst/ethers-rs/issues/2290))
 - Handle all struct field types ([#2289](https://github.com/gakonst/ethers-rs/issues/2289))
 - Re-export CallLogFrame from geth types ([#2283](https://github.com/gakonst/ethers-rs/issues/2283))

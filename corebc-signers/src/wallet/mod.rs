@@ -8,7 +8,7 @@ pub use private_key::WalletError;
 mod yubi;
 
 use crate::{to_eip155_v, Signer};
-use ethers_core::{
+use corebc_core::{
     k256::{
         ecdsa::{signature::hazmat::PrehashSigner, RecoveryId, Signature as RecoverableSignature},
         elliptic_curve::FieldBytes,
@@ -35,7 +35,7 @@ use std::fmt;
 /// prefix the message being hashed with the `Ethereum Signed Message` domain separator.
 ///
 /// ```
-/// use ethers_core::rand::thread_rng;
+/// use corebc_core::rand::thread_rng;
 /// use ethers_signers::{LocalWallet, Signer};
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
@@ -58,8 +58,8 @@ use std::fmt;
 /// # }
 /// ```
 ///
-/// [`Signature`]: ethers_core::types::Signature
-/// [`hash_message`]: fn@ethers_core::utils::hash_message
+/// [`Signature`]: corebc_core::types::Signature
+/// [`hash_message`]: fn@corebc_core::utils::hash_message
 #[derive(Clone)]
 pub struct Wallet<D: PrehashSigner<(RecoverableSignature, RecoveryId)>> {
     /// The Wallet's private Key

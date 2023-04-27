@@ -1,6 +1,5 @@
 [package]
-name = "ethers-signers"
-authors = ["Georgios Konstantopoulos <me@gakonst.com>"]
+name = "corebc-signers"
 readme = "README.md"
 description = "A unified interface for locally signing Ethereum transactions"
 

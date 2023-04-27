@@ -29,7 +29,7 @@ default = ["abigen", "rustls"]
 celo = [
     "corebc-core/celo",
     "corebc-providers/celo",
-    "ethers-signers/celo",
+    "corebc-signers/celo",
     "ethers-contract/celo",
     "ethers-middleware/celo",
     "legacy",
@@ -58,9 +58,9 @@ openssl = [
 ]
 dev-rpc = ["corebc-providers/dev-rpc"]
 ## signers
-ledger = ["ethers-signers/ledger"]
-trezor = ["ethers-signers/trezor"]
-yubi = ["ethers-signers/yubi"]
+ledger = ["corebc-signers/ledger"]
+trezor = ["corebc-signers/trezor"]
+yubi = ["corebc-signers/yubi"]
 ## contracts
 abigen = ["ethers-contract/abigen"]
 ### abigen without reqwest
@@ -80,7 +80,7 @@ corebc-core.workspace = true
 ethers-etherscan = { workspace = true, features = ["ethers-solc"] }
 ethers-middleware.workspace = true
 corebc-providers.workspace = true
-ethers-signers.workspace = true
+corebc-signers.workspace = true
 ethers-solc.workspace = true
 
 [dev-dependencies]

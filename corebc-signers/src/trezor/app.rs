@@ -4,12 +4,12 @@ use trezor_client::client::{AccessListItem as Trezor_AccessListItem, Trezor};
 use futures_executor::block_on;
 use futures_util::lock::Mutex;
 
-use ethers_core::{
+use corebc_core::{
     types::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},
         Address, NameOrAddress, Signature, Transaction, TransactionRequest, TxHash, H256, U256,
     },
-    utils::keccak256,
+    utils::sha3,
 };
 use home;
 use std::{
@@ -18,6 +18,7 @@ use std::{
     io::{Read, Write},
     path,
     path::PathBuf,
+    str::FromStr,
 };
 use thiserror::Error;
 
@@ -62,7 +63,7 @@ impl TrezorEthereum {
             derivation: derivation.clone(),
             chain_id,
             cache_dir,
-            address: Address::from([0_u8; 20]),
+            address: Address::from([0_u8; 22]),
             session_id: vec![],
         };
 
@@ -146,7 +147,7 @@ impl TrezorEthereum {
 
         let address_str = client.ethereum_get_address(Self::convert_path(derivation))?;
 
-        let mut address = [0; 20];
+        let mut address = [0; 22];
         address.copy_from_slice(&hex::decode(&address_str[2..])?);
 
         Ok(Address::from(address))
@@ -187,7 +188,10 @@ impl TrezorEthereum {
             )?,
         };
 
-        Ok(Signature { r: signature.r, s: signature.s, v: signature.v })
+        let signature_r = U256::from_str(&signature.r.to_string()).unwrap();
+        let signature_s = U256::from_str(&signature.s.to_string()).unwrap();
+
+        Ok(Signature { r: signature_r, s: signature_s, v: signature.v })
     }
 
     /// Signs an ethereum personal message
@@ -198,7 +202,10 @@ impl TrezorEthereum {
 
         let signature = client.ethereum_sign_message(message.into(), apath)?;
 
-        Ok(Signature { r: signature.r, s: signature.s, v: signature.v })
+        let signature_r = U256::from_str(&signature.r.to_string()).unwrap();
+        let signature_s = U256::from_str(&signature.s.to_string()).unwrap();
+
+        Ok(Signature { r: signature_r, s: signature_s, v: signature.v })
     }
 
     /// Signs an EIP712 encoded domain separator and message
@@ -233,17 +240,17 @@ impl TrezorEthereum {
 mod tests {
     use super::*;
     use crate::Signer;
-    use ethers_contract_derive::{Eip712, EthAbiType};
-    use ethers_core::types::{
+    use corebc_core::types::{
         transaction::{
             eip2930::{AccessList, AccessListItem},
             eip712::Eip712,
         },
         Address, Eip1559TransactionRequest, TransactionRequest, I256, U256,
     };
+    use ethers_contract_derive::{Eip712, EthAbiType};
     use std::str::FromStr;
 
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
+    #[derive(Debug, Clone)]
     #[eip712(
         name = "Eip712Test",
         version = "1",
@@ -293,7 +300,7 @@ mod tests {
             .gas_price(400e9 as u64)
             .nonce(5)
             .data(data)
-            .value(ethers_core::utils::parse_ether(100).unwrap())
+            .value(corebc_core::utils::parse_ether(100).unwrap())
             .into();
         let tx = trezor.sign_transaction(&tx_req).await.unwrap();
     }
@@ -311,7 +318,7 @@ mod tests {
             .gas_price(400e9 as u64)
             .nonce(5)
             .data(big_data)
-            .value(ethers_core::utils::parse_ether(100).unwrap())
+            .value(corebc_core::utils::parse_ether(100).unwrap())
             .into();
         let tx = trezor.sign_transaction(&tx_req).await.unwrap();
     }
@@ -392,7 +399,7 @@ mod tests {
             .nonce(5)
             .data(data)
             .access_list(lst)
-            .value(ethers_core::utils::parse_ether(100).unwrap())
+            .value(corebc_core::utils::parse_ether(100).unwrap())
             .into();
 
         let tx = trezor.sign_transaction(&tx_req).await.unwrap();

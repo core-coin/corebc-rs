@@ -1,4 +1,4 @@
-# ethers-signers
+# corebc-signers
 
 A unified interface for locally signing Ethereum transactions.
 
@@ -11,11 +11,11 @@ signing middleware.
 
 Supported signers:
 
--   [Private key](./src/wallet)
--   [Ledger](./src/ledger)
--   [Trezor](./src/trezor)
--   [YubiHSM2](./src/wallet/yubi.rs)
--   [AWS KMS](./src/aws)
+- [Private key](./src/wallet)
+- [Ledger](./src/ledger)
+- [Trezor](./src/trezor)
+- [YubiHSM2](./src/wallet/yubi.rs)
+- [AWS KMS](./src/aws)
 
 For more information, please refer to the [book](https://gakonst.com/ethers-rs).
 

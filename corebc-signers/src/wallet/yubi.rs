@@ -1,11 +1,11 @@
 //! Helpers for creating wallets for YubiHSM2
 use super::Wallet;
-use elliptic_curve::sec1::{FromEncodedPoint, ToEncodedPoint};
-use ethers_core::{
+use corebc_core::{
     k256::{PublicKey, Secp256k1},
     types::Address,
-    utils::keccak256,
+    utils::sha3,
 };
+use elliptic_curve::sec1::{FromEncodedPoint, ToEncodedPoint};
 use yubihsm::{
     asymmetric::Algorithm::EcK256, ecdsa::Signer as YubiSigner, object, object::Label, Capability,
     Client, Connector, Credentials, Domain,
@@ -60,7 +60,7 @@ impl From<YubiSigner<Secp256k1>> for Wallet<YubiSigner<Secp256k1>> {
         let public_key = public_key.to_encoded_point(/* compress = */ false);
         let public_key = public_key.as_bytes();
         debug_assert_eq!(public_key[0], 0x04);
-        let hash = keccak256(&public_key[1..]);
+        let hash = sha3(&public_key[1..]);
         let address = Address::from_slice(&hash[12..]);
 
         Self { signer, address, chain_id: 1 }

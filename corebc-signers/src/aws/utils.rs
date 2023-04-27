@@ -4,7 +4,7 @@
 
 use std::convert::TryFrom;
 
-use ethers_core::{
+use corebc_core::{
     k256::{
         ecdsa::{RecoveryId, Signature as RSig, Signature as KSig, VerifyingKey},
         FieldBytes,
