@@ -24,7 +24,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
 [dependencies]
-ethers-core.workspace = true
+corebc-core.workspace = true
 
 # crypto
 coins-bip32 = "0.8.3"
@@ -78,7 +78,7 @@ tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 [features]
 futures = ["futures-util", "futures-executor"]
 
-celo = ["ethers-core/celo"]
+celo = ["corebc-core/celo"]
 
 ledger = ["coins-ledger", "futures", "semver"]
 trezor = ["trezor-client", "futures", "semver", "home"]

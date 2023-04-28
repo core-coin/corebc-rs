@@ -27,7 +27,7 @@ all-features = true
 default = ["abigen", "rustls"]
 
 celo = [
-    "ethers-core/celo",
+    "corebc-core/celo",
     "ethers-providers/celo",
     "ethers-signers/celo",
     "ethers-contract/celo",
@@ -35,7 +35,7 @@ celo = [
     "legacy",
 ]
 
-legacy = ["ethers-core/legacy", "ethers-contract/legacy"]
+legacy = ["corebc-core/legacy", "ethers-contract/legacy"]
 
 # individual features per sub-crate
 ## providers
@@ -76,7 +76,7 @@ eip712 = []
 [dependencies]
 ethers-addressbook.workspace = true
 ethers-contract.workspace = true
-ethers-core.workspace = true
+corebc-core.workspace = true
 ethers-etherscan = { workspace = true, features = ["ethers-solc"] }
 ethers-middleware.workspace = true
 ethers-providers.workspace = true

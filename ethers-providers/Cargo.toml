@@ -24,7 +24,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
 [dependencies]
-ethers-core.workspace = true
+corebc-core.workspace = true
 
 serde.workspace = true
 serde_json = { workspace = true, features = ["raw_value"] }
@@ -79,7 +79,7 @@ tempfile = "3.5.0"
 
 [features]
 default = ["ws", "rustls"]
-celo = ["ethers-core/celo"]
+celo = ["corebc-core/celo"]
 
 ws = ["tokio-tungstenite", "futures-channel"]
 legacy-ws = ["ws"]

@@ -27,7 +27,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
 [dependencies]
-ethers-core.workspace = true
+corebc-core.workspace = true
 
 solang-parser = { version = "=0.2.4", default-features = false }
 
