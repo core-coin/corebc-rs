@@ -1,7 +1,7 @@
 #![allow(clippy::return_self_not_must_use)]
 
 use crate::{log::LogMeta, stream::EventStream, ContractError, EthLogDecode};
-use ethers_core::{
+use corebc_core::{
     abi::{Address, Detokenize, Error as AbiError, RawLog},
     types::{BlockNumber, Filter, Log, Topic, ValueOrArray, H256},
 };
@@ -34,7 +34,7 @@ pub trait EthEvent: Detokenize + Send + Sync {
     fn abi_signature() -> Cow<'static, str>;
 
     /// Decodes an Ethereum `RawLog` into an instance of the type.
-    fn decode_log(log: &RawLog) -> Result<Self, ethers_core::abi::Error>
+    fn decode_log(log: &RawLog) -> Result<Self, corebc_core::abi::Error>
     where
         Self: Sized;
 
@@ -55,7 +55,7 @@ pub trait EthEvent: Detokenize + Send + Sync {
 
 // Convenience implementation
 impl<T: EthEvent> EthLogDecode for T {
-    fn decode_log(log: &RawLog) -> Result<Self, ethers_core::abi::Error>
+    fn decode_log(log: &RawLog) -> Result<Self, corebc_core::abi::Error>
     where
         Self: Sized,
     {
@@ -157,7 +157,7 @@ where
     /// ```ignore
     /// # #[cfg(feature = "abigen")]
     /// # async fn test<M:ethers_providers::Middleware>(contract: ethers_contract::Contract<M>) {
-    /// # use ethers_core::types::*;
+    /// # use corebc_core::types::*;
     /// # use futures_util::stream::StreamExt;
     /// # use ethers_contract::{Contract, EthEvent};
     ///

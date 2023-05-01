@@ -1,5 +1,5 @@
+use corebc_core::abi::Address;
 use ethers_contract_derive::abigen;
-use ethers_core::abi::Address;
 use ethers_providers::Provider;
 use std::{
     future::{Future, IntoFuture},

@@ -1,15 +1,15 @@
 use crate::common::*;
-use ethers_contract::{
-    abigen, ContractFactory, ContractInstance, Eip712, EthAbiType, EthEvent, LogMeta, Multicall,
-    MulticallError, MulticallVersion,
-};
-use ethers_core::{
+use corebc_core::{
     abi::{encode, AbiEncode, Token, Tokenizable},
     types::{
         transaction::eip712::*, Address, BlockId, Bytes, Filter, ValueOrArray, H160, H256, I256,
         U256,
     },
-    utils::{keccak256, Anvil},
+    utils::{sha3, Anvil},
+};
+use ethers_contract::{
+    abigen, ContractFactory, ContractInstance, Eip712, EthAbiType, EthEvent, LogMeta, Multicall,
+    MulticallError, MulticallVersion,
 };
 use ethers_providers::{Http, Middleware, MiddlewareError, Provider, StreamExt, Ws};
 use ethers_signers::{LocalWallet, Signer};
@@ -771,7 +771,7 @@ async fn multicall_aggregate() {
     multicall.clear_calls().add_call(custom_error, true);
     assert_eq!(
         multicall.call::<(Bytes,)>().await.unwrap_err().as_revert().unwrap()[..],
-        keccak256("CustomError()")[..4]
+        sha3("CustomError()")[..4]
     );
 
     // custom error with data revert
@@ -780,7 +780,7 @@ async fn multicall_aggregate() {
     multicall.clear_calls().add_call(custom_error_with_data, true);
     let err = multicall.call::<(Bytes,)>().await.unwrap_err();
     let bytes = err.as_revert().unwrap();
-    assert_eq!(bytes[..4], keccak256("CustomErrorWithData(string)")[..4]);
+    assert_eq!(bytes[..4], sha3("CustomErrorWithData(string)")[..4]);
     assert_eq!(bytes[4..], encode(&[Token::String("Data".to_string())]));
 }
 
@@ -830,7 +830,7 @@ async fn test_derive_eip712() {
         foo: I256::from(10u64),
         bar: U256::from(20u64),
         fizz: b"fizz".into(),
-        buzz: keccak256("buzz"),
+        buzz: sha3("buzz"),
         far: String::from("space"),
         out: Address::zero(),
     };

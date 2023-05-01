@@ -1,5 +1,5 @@
 use crate::call::{ContractCall, ContractError};
-use ethers_core::{
+use corebc_core::{
     abi::{Detokenize, Function, Token, Tokenizable},
     types::{
         transaction::eip2718::TypedTransaction, Address, BlockNumber, Bytes, NameOrAddress, U256,
@@ -118,7 +118,7 @@ impl MulticallVersion {
 /// Using Multicall (version 1):
 ///
 /// ```no_run
-/// use ethers_core::{
+/// use corebc_core::{
 ///     abi::Abi,
 ///     types::{Address, H256, U256},
 /// };
@@ -510,7 +510,7 @@ impl<M: Middleware> Multicall<M> {
     ///
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// # use ethers_core::{abi::Abi, types::{Address, H256}};
+    /// # use corebc_core::{abi::Abi, types::{Address, H256}};
     /// # use ethers_providers::{Provider, Http};
     /// # use ethers_contract::{Multicall, Contract};
     /// # use std::{sync::Arc, convert::TryFrom};
@@ -573,7 +573,7 @@ impl<M: Middleware> Multicall<M> {
     ///
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// # use ethers_core::types::{U256, Address};
+    /// # use corebc_core::types::{U256, Address};
     /// # use ethers_providers::{Provider, Http};
     /// # use ethers_contract::Multicall;
     /// # use std::convert::TryFrom;
@@ -621,7 +621,7 @@ impl<M: Middleware> Multicall<M> {
     ///
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// # use ethers_core::types::{U256, Address};
+    /// # use corebc_core::types::{U256, Address};
     /// # use ethers_providers::{Provider, Http};
     /// # use ethers_contract::Multicall;
     /// # use std::convert::TryFrom;
@@ -663,7 +663,7 @@ impl<M: Middleware> Multicall<M> {
     ///
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// # use ethers_core::types::{U256, Address};
+    /// # use corebc_core::types::{U256, Address};
     /// # use ethers_providers::{Provider, Http};
     /// # use ethers_contract::Multicall;
     /// # use std::convert::TryFrom;

@@ -1,5 +1,5 @@
 //! Mod of types for ethereum logs
-use ethers_core::{
+use corebc_core::{
     abi::{Error, RawLog},
     types::{Address, Log, TxHash, H256, U256, U64},
 };

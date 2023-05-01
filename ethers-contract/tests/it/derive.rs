@@ -1,9 +1,9 @@
-use ethers_contract::{
-    abigen, EthAbiCodec, EthAbiType, EthCall, EthDisplay, EthError, EthEvent, EthLogDecode,
-};
-use ethers_core::{
+use corebc_core::{
     abi::{AbiDecode, AbiEncode, RawLog, Tokenizable},
     types::{Address, Bytes, H160, H256, I256, U128, U256},
+};
+use ethers_contract::{
+    abigen, EthAbiCodec, EthAbiType, EthCall, EthDisplay, EthError, EthEvent, EthLogDecode,
 };
 
 fn assert_tokenizeable<T: Tokenizable>() {}
@@ -523,7 +523,7 @@ fn can_derive_abi_codec_single_field() {
     assert_eq!(tuple, decoded);
 
     let wrapped =
-        ethers_core::abi::encode(&ethers_core::abi::Tokenize::into_tokens(tuple.clone())).to_vec();
+        corebc_core::abi::encode(&corebc_core::abi::Tokenize::into_tokens(tuple.clone())).to_vec();
     assert_eq!(wrapped, encoded);
     let decoded_wrapped = <(SomeType,)>::decode(&wrapped).unwrap();
 
@@ -556,7 +556,7 @@ fn can_derive_abi_codec_two_field() {
     assert_eq!(tuple, decoded);
 
     let wrapped =
-        ethers_core::abi::encode(&ethers_core::abi::Tokenize::into_tokens(tuple.clone())).to_vec();
+        corebc_core::abi::encode(&corebc_core::abi::Tokenize::into_tokens(tuple.clone())).to_vec();
     assert_eq!(wrapped, encoded);
     let decoded_wrapped = <(SomeType,)>::decode(&wrapped).unwrap();
 
@@ -600,7 +600,7 @@ fn eth_display_works_on_ethers_bytes() {
     #[derive(Clone, Debug, Default, Eq, PartialEq, EthCall, EthDisplay)]
     #[ethcall(name = "logBytes", abi = "logBytes(bytes)")]
     pub struct LogBytesCall {
-        pub p_0: ethers_core::types::Bytes,
+        pub p_0: corebc_core::types::Bytes,
     }
     let call = LogBytesCall { p_0: hex::decode(b"aaaaaa").unwrap().into() };
 

@@ -1,5 +1,5 @@
 use crate::InternalStructs;
-use ethers_core::abi::{
+use corebc_core::abi::{
     struct_def::{FieldType, StructFieldType},
     ParamType, SolStruct,
 };

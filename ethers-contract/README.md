@@ -3,7 +3,7 @@
 Type-safe abstractions for interacting with Ethereum smart contracts.
 
 Interacting with a smart contract requires broadcasting carefully crafted
-[transactions](ethers_core::types::TransactionRequest) where the `data` field
+[transactions](corebc_core::types::TransactionRequest) where the `data` field
 contains the
 [function's selector](https://ethereum.stackexchange.com/questions/72363/what-is-a-function-selector)
 along with the arguments of the called function.

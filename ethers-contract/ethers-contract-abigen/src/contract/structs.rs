@@ -2,7 +2,7 @@
 
 use super::{types, Context};
 use crate::util;
-use ethers_core::{
+use corebc_core::{
     abi::{
         struct_def::{FieldDeclaration, FieldType, StructFieldType, StructType},
         Component, HumanReadableParser, ParamType, RawAbi, SolStruct,

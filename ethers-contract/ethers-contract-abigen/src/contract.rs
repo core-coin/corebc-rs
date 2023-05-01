@@ -8,9 +8,9 @@ mod types;
 
 use super::{util, Abigen};
 use crate::contract::{methods::MethodAlias, structs::InternalStructs};
-use ethers_core::{
+use corebc_core::{
     abi::{Abi, AbiParser, ErrorExt, EventExt, JsonAbi},
-    macros::{ethers_contract_crate, ethers_core_crate, ethers_providers_crate},
+    macros::{corebc_core_crate, ethers_contract_crate, ethers_providers_crate},
     types::Bytes,
 };
 use eyre::{eyre, Context as _, Result};
@@ -147,7 +147,7 @@ impl Context {
         // 7. declare all error types
         let errors_decl = self.errors()?;
 
-        let ethers_core = ethers_core_crate();
+        let corebc_core = corebc_core_crate();
         let ethers_contract = ethers_contract_crate();
         let ethers_providers = ethers_providers_crate();
 
@@ -157,7 +157,7 @@ impl Context {
                 impl<M: #ethers_providers::Middleware> #name<M> {
                     /// Creates a new contract instance with the specified `ethers` client at
                     /// `address`. The contract derefs to a `ethers::Contract` object.
-                    pub fn new<T: Into<#ethers_core::types::Address>>(address: T, client: ::std::sync::Arc<M>) -> Self {
+                    pub fn new<T: Into<#corebc_core::types::Address>>(address: T, client: ::std::sync::Arc<M>) -> Self {
                         Self(#ethers_contract::Contract::new(address.into(), #abi_name.clone(), client))
                     }
 
@@ -337,7 +337,7 @@ impl Context {
     pub(crate) fn struct_declaration(&self) -> TokenStream {
         let name = &self.contract_ident;
 
-        let ethers_core = ethers_core_crate();
+        let corebc_core = corebc_core_crate();
         let ethers_contract = ethers_contract_crate();
 
         let abi = {
@@ -346,12 +346,12 @@ impl Context {
             let (doc_str, parse) = if self.human_readable {
                 // Human readable: use abi::parse_abi_str
                 let doc_str = "The parsed human-readable ABI of the contract.";
-                let parse = quote!(#ethers_core::abi::parse_abi_str(__ABI));
+                let parse = quote!(#corebc_core::abi::parse_abi_str(__ABI));
                 (doc_str, parse)
             } else {
                 // JSON ABI: use serde_json::from_str
                 let doc_str = "The parsed JSON ABI of the contract.";
-                let parse = quote!(#ethers_core::utils::__serde_json::from_str(__ABI));
+                let parse = quote!(#corebc_core::utils::__serde_json::from_str(__ABI));
                 (doc_str, parse)
             };
 
@@ -361,7 +361,7 @@ impl Context {
 
                 // This never fails as we are parsing the ABI in this macro
                 #[doc = #doc_str]
-                pub static #abi_name: #ethers_contract::Lazy<#ethers_core::abi::Abi> =
+                pub static #abi_name: #ethers_contract::Lazy<#corebc_core::abi::Abi> =
                     #ethers_contract::Lazy::new(|| #parse.expect("ABI is always valid"));
             }
         };
@@ -374,7 +374,7 @@ impl Context {
                 const __BYTECODE: &[u8] = &[ #( #bytecode ),* ];
 
                 #[doc = "The bytecode of the contract."]
-                pub static #bytecode_name: #ethers_core::types::Bytes = #ethers_core::types::Bytes::from_static(__BYTECODE);
+                pub static #bytecode_name: #corebc_core::types::Bytes = #corebc_core::types::Bytes::from_static(__BYTECODE);
             }
         });
 
@@ -386,7 +386,7 @@ impl Context {
                 const __DEPLOYED_BYTECODE: &[u8] = &[ #( #bytecode ),* ];
 
                 #[doc = "The deployed bytecode of the contract."]
-                pub static #bytecode_name: #ethers_core::types::Bytes = #ethers_core::types::Bytes::from_static(__DEPLOYED_BYTECODE);
+                pub static #bytecode_name: #corebc_core::types::Bytes = #corebc_core::types::Bytes::from_static(__DEPLOYED_BYTECODE);
             }
         });
 

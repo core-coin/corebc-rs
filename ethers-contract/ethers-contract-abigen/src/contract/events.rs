@@ -2,9 +2,9 @@
 
 use super::{structs::expand_event_struct, types, Context};
 use crate::util;
-use ethers_core::{
+use corebc_core::{
     abi::{Event, EventExt},
-    macros::{ethers_contract_crate, ethers_core_crate},
+    macros::{corebc_core_crate, ethers_contract_crate},
 };
 use eyre::Result;
 use inflector::Inflector;
@@ -69,7 +69,7 @@ impl Context {
             self.abi.events.values().flatten().flat_map(|err| &err.inputs).map(|param| &param.kind);
         util::derive_builtin_traits(params, &mut derives, false, true);
 
-        let ethers_core = ethers_core_crate();
+        let corebc_core = corebc_core_crate();
         let ethers_contract = ethers_contract_crate();
 
         quote! {
@@ -80,13 +80,13 @@ impl Context {
             }
 
             impl #ethers_contract::EthLogDecode for #enum_name {
-                fn decode_log(log: &#ethers_core::abi::RawLog) -> ::core::result::Result<Self, #ethers_core::abi::Error> {
+                fn decode_log(log: &#corebc_core::abi::RawLog) -> ::core::result::Result<Self, #corebc_core::abi::Error> {
                     #(
                         if let Ok(decoded) = #variants::decode_log(log) {
                             return Ok(#enum_name::#variants(decoded))
                         }
                     )*
-                    Err(#ethers_core::abi::Error::InvalidData)
+                    Err(#corebc_core::abi::Error::InvalidData)
                 }
             }
 
@@ -230,7 +230,7 @@ pub(crate) fn event_struct_alias(event_name: &str) -> Ident {
 mod tests {
     use super::*;
     use crate::Abigen;
-    use ethers_core::abi::{EventParam, ParamType};
+    use corebc_core::abi::{EventParam, ParamType};
 
     fn test_context() -> Context {
         Context::from_abigen(Abigen::new("TestToken", "[]").unwrap()).unwrap()
@@ -309,7 +309,7 @@ mod tests {
         assert_quote!(definition, {
             struct FooFilter {
                 pub a: bool,
-                pub p1: ::ethers_core::types::Address,
+                pub p1: ::corebc_core::types::Address,
             }
         });
     }
@@ -334,7 +334,7 @@ mod tests {
         assert_quote!(definition, {
             struct FooAliasedFilter {
                 pub a: bool,
-                pub p1: ::ethers_core::types::Address,
+                pub p1: ::corebc_core::types::Address,
             }
         });
     }
@@ -356,7 +356,7 @@ mod tests {
         let definition = expand_event_struct(&name, &params, true);
 
         assert_quote!(definition, {
-            struct FooFilter(pub bool, pub ::ethers_core::types::Address);
+            struct FooFilter(pub bool, pub ::corebc_core::types::Address);
         });
     }
 
@@ -378,7 +378,7 @@ mod tests {
         let definition = expand_event_struct(&name, &params, true);
 
         assert_quote!(definition, {
-            struct FooAliasedFilter(pub bool, pub ::ethers_core::types::Address);
+            struct FooAliasedFilter(pub bool, pub ::corebc_core::types::Address);
         });
     }
 }

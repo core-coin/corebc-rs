@@ -1,6 +1,6 @@
 use crate::ContractInstance;
-pub use ethers_core::abi::AbiError;
-use ethers_core::{
+pub use corebc_core::abi::AbiError;
+use corebc_core::{
     abi::{Abi, Detokenize, Error, Event, Function, FunctionExt, RawLog, Token, Tokenize},
     types::{Address, Bytes, Selector, H256},
 };
@@ -290,7 +290,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ethers_core::{abi::parse_abi, types::U256};
+    use corebc_core::{abi::parse_abi, types::U256};
 
     #[test]
     fn can_parse_function_inputs() {

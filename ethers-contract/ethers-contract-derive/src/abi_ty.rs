@@ -1,14 +1,14 @@
 //! Helper functions for deriving `EthAbiType`
 
 use crate::utils;
-use ethers_core::macros::ethers_core_crate;
+use corebc_core::macros::corebc_core_crate;
 use proc_macro2::{Ident, Literal, TokenStream};
 use quote::{quote, quote_spanned};
 use syn::{parse::Error, spanned::Spanned, Data, DeriveInput, Fields, Variant};
 
 /// Generates the tokenize implementation
 pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Error> {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     let name = &input.ident;
 
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
@@ -19,14 +19,14 @@ pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Erro
             Fields::Named(ref fields) => {
                 let tokenize_predicates = fields.named.iter().map(|f| {
                     let ty = &f.ty;
-                    quote_spanned! { f.span() => #ty: #ethers_core::abi::Tokenize }
+                    quote_spanned! { f.span() => #ty: #corebc_core::abi::Tokenize }
                 });
                 let tokenize_predicates = quote! { #(#tokenize_predicates,)* };
 
                 let assignments = fields.named.iter().map(|f| {
                     let name = f.ident.as_ref().expect("Named fields have names");
                     quote_spanned! { f.span() =>
-                        #name: #ethers_core::abi::Tokenizable::from_token(
+                        #name: #corebc_core::abi::Tokenizable::from_token(
                             iter.next().expect("The iter is guaranteed to be something due to the size check")
                         )?
                     }
@@ -44,13 +44,13 @@ pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Erro
             Fields::Unnamed(ref fields) => {
                 let tokenize_predicates = fields.unnamed.iter().map(|f| {
                     let ty = &f.ty;
-                    quote_spanned! { f.span() => #ty: #ethers_core::abi::Tokenize }
+                    quote_spanned! { f.span() => #ty: #corebc_core::abi::Tokenize }
                 });
                 let tokenize_predicates = quote! { #(#tokenize_predicates,)* };
 
                 let assignments = fields.unnamed.iter().map(|f| {
                     quote_spanned! { f.span() =>
-                        #ethers_core::abi::Tokenizable::from_token(
+                        #corebc_core::abi::Tokenizable::from_token(
                             iter.next().expect("The iter is guaranteed to be something due to the size check")
                         )?
                     }
@@ -83,15 +83,15 @@ pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Erro
             // can't encode an empty struct
             // TODO: panic instead?
             quote! {
-                #ethers_core::abi::Token::Tuple(::std::vec![])
+                #corebc_core::abi::Token::Tuple(::std::vec![])
             },
         ),
         _ => {
             let err_format_string = format!("Expected {params_len} tokens, got {{}}: {{:?}}");
             let from_token = quote! {
-                if let #ethers_core::abi::Token::Tuple(tokens) = token {
+                if let #corebc_core::abi::Token::Tuple(tokens) = token {
                     if tokens.len() != #params_len {
-                        return Err(#ethers_core::abi::InvalidOutputType(::std::format!(
+                        return Err(#corebc_core::abi::InvalidOutputType(::std::format!(
                             #err_format_string,
                             tokens.len(),
                             tokens
@@ -102,7 +102,7 @@ pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Erro
 
                     Ok(#init_struct_impl)
                 } else {
-                    Err(#ethers_core::abi::InvalidOutputType(::std::format!(
+                    Err(#corebc_core::abi::InvalidOutputType(::std::format!(
                         "Expected Tuple, got {:?}",
                         token
                     )))
@@ -110,7 +110,7 @@ pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Erro
             };
 
             let into_token = quote! {
-                #ethers_core::abi::Token::Tuple(
+                #corebc_core::abi::Token::Tuple(
                     ::std::vec![
                         #into_token_impl
                     ]
@@ -123,30 +123,30 @@ pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Erro
     let params = utils::derive_param_type_with_abi_type(input, "EthAbiType")?;
 
     Ok(quote! {
-        impl #impl_generics #ethers_core::abi::AbiType for #name #ty_generics #where_clause {
-            fn param_type() -> #ethers_core::abi::ParamType {
+        impl #impl_generics #corebc_core::abi::AbiType for #name #ty_generics #where_clause {
+            fn param_type() -> #corebc_core::abi::ParamType {
                 #params
             }
         }
 
-        impl #impl_generics #ethers_core::abi::AbiArrayType for #name #ty_generics #where_clause {}
+        impl #impl_generics #corebc_core::abi::AbiArrayType for #name #ty_generics #where_clause {}
 
-        impl #impl_generics #ethers_core::abi::Tokenizable for #name #ty_generics
+        impl #impl_generics #corebc_core::abi::Tokenizable for #name #ty_generics
         where
             #generic_predicates
             #tokenize_predicates
         {
-            fn from_token(token: #ethers_core::abi::Token) -> ::core::result::Result<Self, #ethers_core::abi::InvalidOutputType>
+            fn from_token(token: #corebc_core::abi::Token) -> ::core::result::Result<Self, #corebc_core::abi::InvalidOutputType>
             {
                 #from_token_impl
             }
 
-            fn into_token(self) -> #ethers_core::abi::Token {
+            fn into_token(self) -> #corebc_core::abi::Token {
                 #into_token_impl
             }
         }
 
-        impl #impl_generics #ethers_core::abi::TokenizableItem for #name #ty_generics
+        impl #impl_generics #corebc_core::abi::TokenizableItem for #name #ty_generics
         where
             #generic_predicates
             #tokenize_predicates
@@ -155,15 +155,15 @@ pub fn derive_tokenizeable_impl(input: &DeriveInput) -> Result<TokenStream, Erro
 }
 
 fn tokenize_unit_type(name: &Ident) -> TokenStream {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
 
     quote! {
-        impl #ethers_core::abi::Tokenizable for #name {
-            fn from_token(token: #ethers_core::abi::Token) -> ::core::result::Result<Self, #ethers_core::abi::InvalidOutputType>
+        impl #corebc_core::abi::Tokenizable for #name {
+            fn from_token(token: #corebc_core::abi::Token) -> ::core::result::Result<Self, #corebc_core::abi::InvalidOutputType>
             {
-                if let #ethers_core::abi::Token::Tuple(tokens) = token {
+                if let #corebc_core::abi::Token::Tuple(tokens) = token {
                     if !tokens.is_empty() {
-                        Err(#ethers_core::abi::InvalidOutputType(::std::format!(
+                        Err(#corebc_core::abi::InvalidOutputType(::std::format!(
                             "Expected empty tuple, got {:?}",
                             tokens
                         )))
@@ -171,19 +171,19 @@ fn tokenize_unit_type(name: &Ident) -> TokenStream {
                         Ok(#name{})
                     }
                 } else {
-                    Err(#ethers_core::abi::InvalidOutputType(::std::format!(
+                    Err(#corebc_core::abi::InvalidOutputType(::std::format!(
                         "Expected Tuple, got {:?}",
                         token
                     )))
                 }
             }
 
-            fn into_token(self) -> #ethers_core::abi::Token {
-                #ethers_core::abi::Token::Tuple(::std::vec::Vec::new())
+            fn into_token(self) -> #corebc_core::abi::Token {
+                #corebc_core::abi::Token::Tuple(::std::vec::Vec::new())
             }
         }
 
-        impl #ethers_core::abi::TokenizableItem for #name {}
+        impl #corebc_core::abi::TokenizableItem for #name {}
     }
 }
 
@@ -197,7 +197,7 @@ fn tokenize_enum<'a>(
     enum_name: &Ident,
     variants: impl Iterator<Item = &'a Variant> + 'a,
 ) -> Result<TokenStream, Error> {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
 
     let mut into_tokens = TokenStream::new();
     let mut from_tokens = TokenStream::new();
@@ -209,17 +209,17 @@ fn tokenize_enum<'a>(
             0 => {
                 let value = Literal::u8_suffixed(idx as u8);
                 from_tokens.extend(quote! {
-                    if let Ok(#value) = <u8 as #ethers_core::abi::Tokenizable>::from_token(token #clone) {
+                    if let Ok(#value) = <u8 as #corebc_core::abi::Tokenizable>::from_token(token #clone) {
                         return Ok(#enum_name::#var_ident)
                     }
                 });
                 into_tokens.extend(quote! {
-                    #enum_name::#var_ident => <u8 as #ethers_core::abi::Tokenizable>::into_token(#value),
+                    #enum_name::#var_ident => <u8 as #corebc_core::abi::Tokenizable>::into_token(#value),
                 });
             }
             1 => {
                 from_tokens.extend(quote! {
-                    if let Ok(decoded) = #ethers_core::abi::Tokenizable::from_token(token #clone) {
+                    if let Ok(decoded) = #corebc_core::abi::Tokenizable::from_token(token #clone) {
                         return Ok(#enum_name::#var_ident(decoded))
                     }
                 });
@@ -237,20 +237,20 @@ fn tokenize_enum<'a>(
     }
 
     Ok(quote! {
-        impl #ethers_core::abi::Tokenizable for #enum_name {
-            fn from_token(token: #ethers_core::abi::Token) -> ::core::result::Result<Self, #ethers_core::abi::InvalidOutputType>
+        impl #corebc_core::abi::Tokenizable for #enum_name {
+            fn from_token(token: #corebc_core::abi::Token) -> ::core::result::Result<Self, #corebc_core::abi::InvalidOutputType>
             {
                 #from_tokens
-                Err(#ethers_core::abi::InvalidOutputType("Failed to decode all type variants".to_string()))
+                Err(#corebc_core::abi::InvalidOutputType("Failed to decode all type variants".to_string()))
             }
 
-            fn into_token(self) -> #ethers_core::abi::Token {
+            fn into_token(self) -> #corebc_core::abi::Token {
                 match self {
                     #into_tokens
                 }
             }
         }
 
-        impl #ethers_core::abi::TokenizableItem for #enum_name {}
+        impl #corebc_core::abi::TokenizableItem for #enum_name {}
     })
 }

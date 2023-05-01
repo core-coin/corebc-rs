@@ -1,9 +1,9 @@
 //! Types expansion
 
 use crate::{util, InternalStructs};
-use ethers_core::{
+use corebc_core::{
     abi::{struct_def::StructFieldType, Event, EventParam, Param, ParamType},
-    macros::ethers_core_crate,
+    macros::corebc_core_crate,
 };
 use eyre::{bail, Result};
 use inflector::Inflector;
@@ -12,18 +12,18 @@ use quote::{quote, ToTokens};
 
 /// Expands a ParamType Solidity type to its Rust equivalent.
 pub(crate) fn expand(kind: &ParamType) -> Result<TokenStream> {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
 
     match kind {
-        ParamType::Address => Ok(quote! { #ethers_core::types::Address }),
-        ParamType::Bytes => Ok(quote! { #ethers_core::types::Bytes }),
+        ParamType::Address => Ok(quote! { #corebc_core::types::Address }),
+        ParamType::Bytes => Ok(quote! { #corebc_core::types::Bytes }),
         ParamType::Int(n) => match n / 8 {
             1 => Ok(quote! { i8 }),
             2 => Ok(quote! { i16 }),
             3..=4 => Ok(quote! { i32 }),
             5..=8 => Ok(quote! { i64 }),
             9..=16 => Ok(quote! { i128 }),
-            17..=32 => Ok(quote! { #ethers_core::types::I256 }),
+            17..=32 => Ok(quote! { #corebc_core::types::I256 }),
             _ => bail!("unsupported solidity type int{n}"),
         },
         ParamType::Uint(n) => match n / 8 {
@@ -32,7 +32,7 @@ pub(crate) fn expand(kind: &ParamType) -> Result<TokenStream> {
             3..=4 => Ok(quote! { u32 }),
             5..=8 => Ok(quote! { u64 }),
             9..=16 => Ok(quote! { u128 }),
-            17..=32 => Ok(quote! { #ethers_core::types::U256 }),
+            17..=32 => Ok(quote! { #corebc_core::types::U256 }),
             _ => bail!("unsupported solidity type uint{n}"),
         },
         ParamType::Bool => Ok(quote!(bool)),
@@ -43,7 +43,7 @@ pub(crate) fn expand(kind: &ParamType) -> Result<TokenStream> {
             let ty = match **ty {
                 // this prevents type ambiguity with `FixedBytes`
                 // see: https://github.com/gakonst/ethers-rs/issues/1636
-                ParamType::Uint(size) if size / 8 == 1 => quote!(#ethers_core::types::Uint8),
+                ParamType::Uint(size) if size / 8 == 1 => quote!(#corebc_core::types::Uint8),
                 _ => expand(ty)?,
             };
             Ok(array(ty, Some(*n)))
@@ -94,8 +94,8 @@ fn expand_event_input(
         (ParamType::Tuple(_), true) |
         (ParamType::Bytes, true) |
         (ParamType::String, true) => {
-            let ethers_core = ethers_core_crate();
-            Ok(quote!(#ethers_core::types::H256))
+            let corebc_core = corebc_core_crate();
+            Ok(quote!(#corebc_core::types::H256))
         }
 
         (ParamType::Array(_), false) |

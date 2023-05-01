@@ -33,7 +33,7 @@ pub use source::Source;
 
 mod util;
 
-pub use ethers_core::types::Address;
+pub use corebc_core::types::Address;
 
 use contract::{Context, ExpandedContract};
 use eyre::{Context as _, Result};

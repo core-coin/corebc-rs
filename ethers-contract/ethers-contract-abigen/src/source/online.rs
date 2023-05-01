@@ -1,6 +1,6 @@
 use super::Source;
 use crate::util;
-use ethers_core::types::{Address, Chain};
+use corebc_core::types::{Address, Chain};
 use ethers_etherscan::Client;
 use eyre::{Context, Result};
 use std::{fmt, str::FromStr};

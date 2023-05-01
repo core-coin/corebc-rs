@@ -1,9 +1,9 @@
 //! Code used by both `call` and `error`
 
 use crate::{abi_ty, utils};
-use ethers_core::{
+use corebc_core::{
     abi::Param,
-    macros::{ethers_contract_crate, ethers_core_crate},
+    macros::{corebc_core_crate, ethers_contract_crate},
 };
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::quote;
@@ -63,7 +63,7 @@ pub fn derive_decode_impl_from_params(params: &[Param], trait_ident: Ident) -> T
 }
 
 pub fn derive_decode_impl(datatypes_array: TokenStream, trait_ident: Ident) -> TokenStream {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     let ethers_contract = ethers_contract_crate();
     let data_types_init = quote! {let data_types = #datatypes_array;};
 
@@ -73,8 +73,8 @@ pub fn derive_decode_impl(datatypes_array: TokenStream, trait_ident: Ident) -> T
             return Err(#ethers_contract::AbiError::WrongSelector);
         }
         #data_types_init
-        let data_tokens = #ethers_core::abi::decode(&data_types, &bytes[4..])?;
-        Ok(<Self as #ethers_core::abi::Tokenizable>::from_token(#ethers_core::abi::Token::Tuple(data_tokens))?)
+        let data_tokens = #corebc_core::abi::decode(&data_types, &bytes[4..])?;
+        Ok(<Self as #corebc_core::abi::Tokenizable>::from_token(#corebc_core::abi::Token::Tuple(data_tokens))?)
     }
 }
 
@@ -85,22 +85,22 @@ pub fn derive_codec_impls(
     trait_ident: Ident,
 ) -> Result<TokenStream> {
     // the ethers crates to use
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     let ethers_contract = ethers_contract_crate();
     let struct_name = &input.ident;
 
     let codec_impl = quote! {
-        impl #ethers_core::abi::AbiDecode for #struct_name {
-            fn decode(bytes: impl AsRef<[u8]>) -> ::core::result::Result<Self, #ethers_core::abi::AbiError> {
+        impl #corebc_core::abi::AbiDecode for #struct_name {
+            fn decode(bytes: impl AsRef<[u8]>) -> ::core::result::Result<Self, #corebc_core::abi::AbiError> {
                 #decode_impl
             }
         }
 
-        impl #ethers_core::abi::AbiEncode for #struct_name {
+        impl #corebc_core::abi::AbiEncode for #struct_name {
             fn encode(self) -> ::std::vec::Vec<u8> {
-                let tokens =  #ethers_core::abi::Tokenize::into_tokens(self);
+                let tokens =  #corebc_core::abi::Tokenize::into_tokens(self);
                 let selector = <Self as #ethers_contract::#trait_ident>::selector();
-                let encoded = #ethers_core::abi::encode(&tokens);
+                let encoded = #corebc_core::abi::encode(&tokens);
                 selector
                     .iter()
                     .copied()

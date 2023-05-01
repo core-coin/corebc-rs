@@ -1,11 +1,11 @@
 //! Helper functions for deriving `EthEvent`
 
 use crate::{abi_ty, utils};
-use ethers_contract_abigen::Source;
-use ethers_core::{
+use corebc_core::{
     abi::{Event, EventExt, EventParam, HumanReadableParser},
-    macros::{ethers_contract_crate, ethers_core_crate},
+    macros::{corebc_core_crate, ethers_contract_crate},
 };
+use ethers_contract_abigen::Source;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{spanned::Spanned, Data, DeriveInput, Error, Field, Fields, LitStr, Result, Token};
@@ -69,7 +69,7 @@ pub(crate) fn derive_eth_event_impl(input: DeriveInput) -> Result<TokenStream> {
     let anon = attributes.anonymous.map(|(b, _)| b).unwrap_or_default();
     let event_name = &event.name;
 
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     let ethers_contract = ethers_contract_crate();
 
     let ethevent_impl = quote! {
@@ -79,7 +79,7 @@ pub(crate) fn derive_eth_event_impl(input: DeriveInput) -> Result<TokenStream> {
                 #event_name.into()
             }
 
-            fn signature() -> #ethers_core::types::H256 {
+            fn signature() -> #corebc_core::types::H256 {
                 #signature
             }
 
@@ -87,7 +87,7 @@ pub(crate) fn derive_eth_event_impl(input: DeriveInput) -> Result<TokenStream> {
                 #abi.into()
             }
 
-            fn decode_log(log: &#ethers_core::abi::RawLog) -> ::core::result::Result<Self, #ethers_core::abi::Error> where Self: Sized {
+            fn decode_log(log: &#corebc_core::abi::RawLog) -> ::core::result::Result<Self, #corebc_core::abi::Error> where Self: Sized {
                 #decode_log_impl
             }
 
@@ -119,7 +119,7 @@ impl EventField {
 }
 
 fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<TokenStream> {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
 
     let fields: Vec<_> = match input.data {
         Data::Struct(ref data) => match data.fields {
@@ -171,16 +171,16 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
             },
             quote! {
                 if topic_tokens.len() != topics.len() {
-                    return Err(#ethers_core::abi::Error::InvalidData);
+                    return Err(#corebc_core::abi::Error::InvalidData);
                 }
             },
         )
     } else {
         (
             Some(quote! {
-                let event_signature = topics.get(0).ok_or(#ethers_core::abi::Error::InvalidData)?;
+                let event_signature = topics.get(0).ok_or(#corebc_core::abi::Error::InvalidData)?;
                 if event_signature != &Self::signature() {
-                    return Err(#ethers_core::abi::Error::InvalidData);
+                    return Err(#corebc_core::abi::Error::InvalidData);
                 }
             }),
             quote! {
@@ -188,7 +188,7 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
             },
             quote! {
                 if topic_tokens.len() != topics.len() - 1 {
-                    return Err(#ethers_core::abi::Error::InvalidData);
+                    return Err(#corebc_core::abi::Error::InvalidData);
                 }
             },
         )
@@ -198,15 +198,15 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
     if fields.is_empty() {
         return Ok(quote! {
 
-            let #ethers_core::abi::RawLog {topics, data} = log;
+            let #corebc_core::abi::RawLog {topics, data} = log;
 
             #signature_check
 
             if topics.len() != 1usize || !data.is_empty() {
-                return Err(#ethers_core::abi::Error::InvalidData);
+                return Err(#corebc_core::abi::Error::InvalidData);
             }
 
-            #ethers_core::abi::Tokenizable::from_token(#ethers_core::abi::Token::Tuple(::std::vec::Vec::new())).map_err(|_|#ethers_core::abi::Error::InvalidData)
+            #corebc_core::abi::Tokenizable::from_token(#corebc_core::abi::Token::Tuple(::std::vec::Vec::new())).map_err(|_|#corebc_core::abi::Error::InvalidData)
         })
     }
 
@@ -247,9 +247,9 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
         .all(|(idx, f)| f.index == idx)
     {
         quote! {
-            let topic_tokens = #ethers_core::abi::decode(&topic_types, &flat_topics)?;
+            let topic_tokens = #corebc_core::abi::decode(&topic_types, &flat_topics)?;
             #topic_tokens_len_check
-            let data_tokens = #ethers_core::abi::decode(&data_types, data)?;
+            let data_tokens = #corebc_core::abi::decode(&data_types, data)?;
             let tokens:Vec<_> = topic_tokens.into_iter().chain(data_tokens.into_iter()).collect();
         }
     } else {
@@ -262,16 +262,16 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
         });
 
         quote! {
-            let mut topic_tokens = #ethers_core::abi::decode(&topic_types, &flat_topics)?;
+            let mut topic_tokens = #corebc_core::abi::decode(&topic_types, &flat_topics)?;
             #topic_tokens_len_check
-            let mut data_tokens = #ethers_core::abi::decode(&data_types, &data)?;
+            let mut data_tokens = #corebc_core::abi::decode(&data_types, &data)?;
             let mut tokens = Vec::with_capacity(topics.len() + data_tokens.len());
             #( tokens.push(#swap_tokens); )*
         }
     };
     Ok(quote! {
 
-        let #ethers_core::abi::RawLog {data, topics} = log;
+        let #corebc_core::abi::RawLog {data, topics} = log;
 
         #signature_check
 
@@ -282,7 +282,7 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
 
         #tokens_init
 
-        #ethers_core::abi::Tokenizable::from_token(#ethers_core::abi::Token::Tuple(tokens)).map_err(|_|#ethers_core::abi::Error::InvalidData)
+        #corebc_core::abi::Tokenizable::from_token(#corebc_core::abi::Token::Tuple(tokens)).map_err(|_|#corebc_core::abi::Error::InvalidData)
     })
 }
 

@@ -1,9 +1,9 @@
 use crate::utils;
-use ethers_core::{
+use corebc_core::{
     abi::{Address, ParamType},
-    macros::ethers_core_crate,
+    macros::corebc_core_crate,
     types::{transaction::eip712::EIP712Domain, H256},
-    utils::keccak256,
+    utils::sha3,
 };
 use inflector::Inflector;
 use proc_macro2::{Literal, TokenStream};
@@ -27,12 +27,12 @@ pub(crate) fn impl_derive_eip712(input: &DeriveInput) -> Result<TokenStream> {
     // Compute the type hash for the derived struct using the parsed fields from above.
     let type_hash = into_tokens(make_type_hash(primary_type.to_string(), &parsed_fields));
 
-    // Use reference to ethers_core instead of directly using the crate itself.
-    let ethers_core = ethers_core_crate();
+    // Use reference to corebc_core instead of directly using the crate itself.
+    let corebc_core = corebc_core_crate();
 
     let tokens = quote! {
-        impl #ethers_core::types::transaction::eip712::Eip712 for #primary_type {
-            type Error = #ethers_core::types::transaction::eip712::Eip712Error;
+        impl #corebc_core::types::transaction::eip712::Eip712 for #primary_type {
+            type Error = #corebc_core::types::transaction::eip712::Eip712Error;
 
             #[inline]
             fn type_hash() -> ::core::result::Result<[u8; 32], Self::Error> {
@@ -44,34 +44,34 @@ pub(crate) fn impl_derive_eip712(input: &DeriveInput) -> Result<TokenStream> {
                 Ok([#(#domain_separator),*])
             }
 
-            fn domain(&self) -> ::core::result::Result<#ethers_core::types::transaction::eip712::EIP712Domain, Self::Error> {
-                #ethers_core::utils::__serde_json::from_str(#domain_str).map_err(::core::convert::Into::into)
+            fn domain(&self) -> ::core::result::Result<#corebc_core::types::transaction::eip712::EIP712Domain, Self::Error> {
+                #corebc_core::utils::__serde_json::from_str(#domain_str).map_err(::core::convert::Into::into)
             }
 
             fn struct_hash(&self) -> ::core::result::Result<[u8; 32], Self::Error> {
-                let mut items = vec![#ethers_core::abi::Token::Uint(
-                    #ethers_core::types::U256::from(&Self::type_hash()?[..]),
+                let mut items = vec![#corebc_core::abi::Token::Uint(
+                    #corebc_core::types::U256::from(&Self::type_hash()?[..]),
                 )];
 
-                if let #ethers_core::abi::Token::Tuple(tokens) =
-                    #ethers_core::abi::Tokenizable::into_token(::core::clone::Clone::clone(self))
+                if let #corebc_core::abi::Token::Tuple(tokens) =
+                    #corebc_core::abi::Tokenizable::into_token(::core::clone::Clone::clone(self))
                 {
                     items.reserve(tokens.len());
                     for token in tokens {
                         match &token {
-                            #ethers_core::abi::Token::Tuple(t) => {
+                            #corebc_core::abi::Token::Tuple(t) => {
                                 // TODO: check for nested Eip712 Type;
                                 // Challenge is determining the type hash
                                 return Err(Self::Error::NestedEip712StructNotImplemented);
                             },
                             _ => {
-                                items.push(#ethers_core::types::transaction::eip712::encode_eip712_type(token));
+                                items.push(#corebc_core::types::transaction::eip712::encode_eip712_type(token));
                             }
                         }
                     }
                 }
 
-                let struct_hash = #ethers_core::utils::keccak256(#ethers_core::abi::encode(
+                let struct_hash = #corebc_core::utils::sha3(#corebc_core::abi::encode(
                     &items,
                 ));
 
@@ -113,7 +113,7 @@ fn parse_attributes(input: &DeriveInput) -> Result<EIP712Domain> {
         "salt", domain.salt => {
             meta.input.parse::<Token![=]>()?;
             let litstr: LitStr = meta.input.parse()?;
-            let hash = keccak256(litstr.value());
+            let hash = sha3(litstr.value());
             domain.salt = Some(hash);
         }
         // parse string as H256
@@ -185,7 +185,7 @@ fn make_type_hash(primary_type: String, fields: &[(String, ParamType)]) -> [u8; 
     }
     sig.push(')');
 
-    keccak256(sig)
+    sha3(sig)
 }
 
 fn into_tokens(bytes: [u8; 32]) -> impl Iterator<Item = Literal> {

@@ -3,7 +3,7 @@
 use crate::{error::ContractRevert, EthError};
 
 use super::base::{decode_function_data, AbiError};
-use ethers_core::{
+use corebc_core::{
     abi::{AbiDecode, AbiEncode, Detokenize, Function, InvalidOutputType, Tokenizable},
     types::{
         transaction::eip2718::TypedTransaction, Address, BlockId, Bytes, Selector,
@@ -45,7 +45,7 @@ pub trait EthCall: Tokenizable + AbiDecode + AbiEncode + Send + Sync {
 pub enum ContractError<M: Middleware> {
     /// Thrown when the ABI decoding fails
     #[error(transparent)]
-    DecodingError(#[from] ethers_core::abi::Error),
+    DecodingError(#[from] corebc_core::abi::Error),
 
     /// Thrown when the internal BaseContract errors
     #[error(transparent)]
