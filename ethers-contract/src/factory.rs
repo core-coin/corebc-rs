@@ -1,6 +1,6 @@
 use crate::{ContractError, ContractInstance};
 
-use ethers_core::{
+use corebc_core::{
     abi::{Abi, Token, Tokenize},
     types::{
         transaction::eip2718::TypedTransaction, Address, BlockNumber, Bytes, NameOrAddress,
@@ -13,7 +13,7 @@ use ethers_providers::{
 };
 
 #[cfg(not(feature = "legacy"))]
-use ethers_core::types::Eip1559TransactionRequest;
+use corebc_core::types::Eip1559TransactionRequest;
 
 use std::{borrow::Borrow, marker::PhantomData, sync::Arc};
 
@@ -166,7 +166,7 @@ where
     /// Broadcasts the contract deployment transaction and after waiting for it to
     /// be sufficiently confirmed (default: 1), it returns a new instance of the contract type at
     /// the deployed contract's address and the corresponding
-    /// [`TransactionReceipt`](ethers_core::types::TransactionReceipt).
+    /// [`TransactionReceipt`](corebc_core::types::TransactionReceipt).
     pub async fn send_with_receipt(self) -> Result<(C, TransactionReceipt), ContractError<M>> {
         let (contract, receipt) = self.deployer.send_with_receipt().await?;
         Ok((C::from(contract), receipt))

@@ -1,4 +1,4 @@
-use ethers_core::{
+use corebc_core::{
     abi::{self, InvalidOutputType},
     types::Bytes,
 };

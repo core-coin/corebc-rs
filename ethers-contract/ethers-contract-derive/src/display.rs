@@ -1,7 +1,7 @@
 //! Helper functions for deriving `Display`
 
 use crate::utils;
-use ethers_core::{abi::ParamType, macros::ethers_core_crate};
+use corebc_core::{abi::ParamType, macros::corebc_core_crate};
 use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{parse::Error, spanned::Spanned, Data, DeriveInput, Fields, Index};
@@ -29,8 +29,8 @@ pub(crate) fn derive_eth_display_impl(input: DeriveInput) -> Result<TokenStream,
             quote!(#idx)
         });
         if let Ok(param) = utils::find_parameter_type(&field.ty) {
-            let ethers_core = ethers_core_crate();
-            let hex_encode = quote!(#ethers_core::utils::hex::encode);
+            let corebc_core = corebc_core_crate();
+            let hex_encode = quote!(#corebc_core::utils::hex::encode);
             fmt_params_tokens(&param, ident, &mut expressions, &hex_encode);
         } else {
             // could not detect the parameter type and rely on using debug fmt

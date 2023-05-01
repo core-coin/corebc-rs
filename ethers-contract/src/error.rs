@@ -1,4 +1,4 @@
-use ethers_core::{
+use corebc_core::{
     abi::{AbiDecode, AbiEncode, Tokenizable},
     types::Selector,
     utils::id,
@@ -84,7 +84,7 @@ impl EthError for String {
 
 #[cfg(test)]
 mod test {
-    use ethers_core::types::Bytes;
+    use corebc_core::types::Bytes;
 
     use super::EthError;
 

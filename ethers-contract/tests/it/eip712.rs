@@ -1,5 +1,4 @@
-use ethers_contract_derive::{Eip712, EthAbiType};
-use ethers_core::{
+use corebc_core::{
     types::{
         transaction::eip712::{
             EIP712Domain as Domain, Eip712, EIP712_DOMAIN_TYPE_HASH,
@@ -7,8 +6,9 @@ use ethers_core::{
         },
         Address, H160, U256,
     },
-    utils::{keccak256, parse_ether},
+    utils::{parse_ether, sha3},
 };
+use ethers_contract_derive::{Eip712, EthAbiType};
 
 #[test]
 fn derive_eip712() {
@@ -166,13 +166,11 @@ fn uniswap_v2_permit_hash() {
 fn domain_hash_constants() {
     assert_eq!(
         EIP712_DOMAIN_TYPE_HASH,
-        keccak256(
-            "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-        )
+        sha3("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
     );
     assert_eq!(
         EIP712_DOMAIN_TYPE_HASH_WITH_SALT,
-        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)")
+        sha3("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)")
     );
 }
 
@@ -190,6 +188,6 @@ fn raw_ident_fields() {
 
     assert_eq!(
         Message::type_hash().unwrap(),
-        keccak256("Message(string title,string href,string type,uint256 timestamp)")
+        sha3("Message(string title,string href,string type,uint256 timestamp)")
     );
 }

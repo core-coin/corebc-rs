@@ -24,7 +24,7 @@ pub enum Source {
 
     /// An address of a smart contract address verified at a supported blockchain explorer.
     #[cfg(all(feature = "online", not(target_arch = "wasm32")))]
-    Explorer(Explorer, ethers_core::types::Address),
+    Explorer(Explorer, corebc_core::types::Address),
 
     /// The package identifier of an npm package with a path to a Truffle artifact or ABI to be
     /// retrieved from `unpkg.io`.

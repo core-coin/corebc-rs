@@ -83,7 +83,7 @@ pub mod contract {
 }
 
 #[doc(hidden)]
-pub use ethers_core as core;
+pub use corebc_core as core;
 
 #[doc(hidden)]
 pub use ethers_providers as providers;

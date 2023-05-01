@@ -150,7 +150,7 @@ pub fn derive_abi_type(input: TokenStream) -> TokenStream {
 ///
 /// ```ignore
 /// use ethers_contract::{EthAbiCodec, EthAbiType};
-/// use ethers_core::types::*;
+/// use corebc_core::types::*;
 ///
 /// #[derive(Debug, Clone, EthAbiType, EthAbiCodec)]
 /// struct MyStruct {
@@ -178,7 +178,7 @@ pub fn derive_abi_codec(input: TokenStream) -> TokenStream {
 ///
 /// ```ignore
 /// use ethers_contract::{EthDisplay, EthAbiType};
-/// use ethers_core::types::*;
+/// use corebc_core::types::*;
 ///
 /// #[derive(Debug, Clone, EthAbiType, EthDisplay)]
 /// struct MyStruct {
@@ -228,7 +228,7 @@ pub fn derive_eth_display(input: TokenStream) -> TokenStream {
 /// # Example
 /// ```ignore
 /// use ethers_contract::EthCall;
-/// use ethers_core::types::Address;
+/// use corebc_core::types::Address;
 ///
 /// #[derive(Debug, EthAbiType)]
 /// struct Inner {
@@ -292,7 +292,7 @@ pub fn derive_abi_event(input: TokenStream) -> TokenStream {
 /// Call with struct inputs
 ///
 /// ```ignore
-/// use ethers_core::abi::Address;
+/// use corebc_core::abi::Address;
 ///
 /// #[derive(Debug, Clone, PartialEq, EthAbiType)]
 /// struct SomeType {
@@ -369,26 +369,26 @@ pub fn derive_abi_error(input: TokenStream) -> TokenStream {
 /// This crate provides a derive macro `Eip712` that is used to encode a rust struct
 /// into a payload hash, according to <https://eips.ethereum.org/EIPS/eip-712>
 ///
-/// The trait used to derive the macro is found in `ethers_core::transaction::eip712::Eip712`
+/// The trait used to derive the macro is found in `corebc_core::transaction::eip712::Eip712`
 /// Both the derive macro and the trait must be in context when using
 ///
 /// This derive macro requires the `#[eip712]` attributes to be included
 /// for specifying the domain separator used in encoding the hash.
 ///
 /// NOTE: In addition to deriving `Eip712` trait, the `EthAbiType` trait must also be derived.
-/// This allows the struct to be parsed into `ethers_core::abi::Token` for encoding.
+/// This allows the struct to be parsed into `corebc_core::abi::Token` for encoding.
 ///
 /// # Optional Eip712 Parameters
 ///
 /// The only optional parameter is `salt`, which accepts a string
-/// that is hashed using keccak256 and stored as bytes.
+/// that is hashed using sha3 and stored as bytes.
 ///
 /// # Example Usage
 ///
 /// ```ignore
 /// use ethers_contract::EthAbiType;
 /// use ethers_derive_eip712::*;
-/// use ethers_core::types::{transaction::eip712::Eip712, H160};
+/// use corebc_core::types::{transaction::eip712::Eip712, H160};
 ///
 /// #[derive(Debug, Eip712, EthAbiType)]
 /// #[eip712(

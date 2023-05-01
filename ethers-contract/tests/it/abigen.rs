@@ -1,11 +1,11 @@
 //! Test cases to validate the `abigen!` macro
 
-use ethers_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
-use ethers_core::{
+use corebc_core::{
     abi::{AbiDecode, AbiEncode, Address, Tokenizable},
     types::{transaction::eip2718::TypedTransaction, Bytes, Eip1559TransactionRequest, U256},
     utils::Anvil,
 };
+use ethers_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
 use ethers_providers::{MockProvider, Provider};
 use ethers_solc::Solc;
 use std::{fmt::Debug, hash::Hash, sync::Arc};

@@ -1,4 +1,4 @@
-use ethers_core::types::{Chain, H160};
+use corebc_core::types::{Chain, H160};
 
 /// The Multicall3 contract address that is deployed in [`MULTICALL_SUPPORTED_CHAIN_IDS`]:
 /// [`0xcA11bde05977b3631167028862bE2a173976CA11`](https://etherscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11)

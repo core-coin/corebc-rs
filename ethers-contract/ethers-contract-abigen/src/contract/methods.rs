@@ -2,9 +2,9 @@
 
 use super::{structs::expand_struct, types, Context};
 use crate::util;
-use ethers_core::{
+use corebc_core::{
     abi::{Function, FunctionExt, Param, ParamType},
-    macros::{ethers_contract_crate, ethers_core_crate},
+    macros::{corebc_core_crate, ethers_contract_crate},
     types::Selector,
 };
 use eyre::{Context as _, Result};
@@ -53,7 +53,7 @@ impl Context {
         // don't generate deploy if no bytecode
         self.contract_bytecode.as_ref()?;
 
-        let ethers_core = ethers_core_crate();
+        let corebc_core = corebc_core_crate();
         let ethers_contract = ethers_contract_crate();
 
         let abi_name = self.inline_abi_ident();
@@ -90,7 +90,7 @@ impl Context {
             ///    let msg = greeter_contract.greet().call().await.unwrap();
             /// # }
             /// ```
-            pub fn deploy<T: #ethers_core::abi::Tokenize>(
+            pub fn deploy<T: #corebc_core::abi::Tokenize>(
                 client: ::std::sync::Arc<M>,
                 constructor_args: T,
             ) -> ::core::result::Result<#ethers_contract::builders::ContractDeployer<M, Self>, #ethers_contract::ContractError<M>> {
@@ -202,7 +202,7 @@ impl Context {
 
         let enum_name = self.expand_calls_enum_name();
 
-        let ethers_core = ethers_core_crate();
+        let corebc_core = corebc_core_crate();
         let ethers_contract = ethers_contract_crate();
 
         let tokens = quote! {
@@ -214,23 +214,23 @@ impl Context {
                 #( #variant_names(#struct_names), )*
             }
 
-            impl #ethers_core::abi::AbiDecode for #enum_name {
-                fn decode(data: impl AsRef<[u8]>) -> ::core::result::Result<Self, #ethers_core::abi::AbiError> {
+            impl #corebc_core::abi::AbiDecode for #enum_name {
+                fn decode(data: impl AsRef<[u8]>) -> ::core::result::Result<Self, #corebc_core::abi::AbiError> {
                     let data = data.as_ref();
                     #(
-                        if let Ok(decoded) = <#struct_names as #ethers_core::abi::AbiDecode>::decode(data) {
+                        if let Ok(decoded) = <#struct_names as #corebc_core::abi::AbiDecode>::decode(data) {
                             return Ok(Self::#variant_names(decoded))
                         }
                     )*
-                    Err(#ethers_core::abi::Error::InvalidData.into())
+                    Err(#corebc_core::abi::Error::InvalidData.into())
                 }
             }
 
-            impl #ethers_core::abi::AbiEncode for #enum_name {
+            impl #corebc_core::abi::AbiEncode for #enum_name {
                 fn encode(self) -> Vec<u8> {
                     match self {
                         #(
-                            Self::#variant_names(element) => #ethers_core::abi::AbiEncode::encode(element),
+                            Self::#variant_names(element) => #corebc_core::abi::AbiEncode::encode(element),
                         )*
                     }
                 }
@@ -636,7 +636,7 @@ fn expand_call_struct_variant_name(function: &Function, alias: Option<&MethodAli
 
 #[cfg(test)]
 mod tests {
-    use ethers_core::abi::ParamType;
+    use corebc_core::abi::ParamType;
 
     use super::*;
 
@@ -761,7 +761,7 @@ mod tests {
                 },
             ])
             .unwrap(),
-            { , a: bool, b: ::ethers_core::types::Address },
+            { , a: bool, b: ::corebc_core::types::Address },
         );
     }
 
@@ -791,7 +791,7 @@ mod tests {
                 Param { name: "b".to_string(), kind: ParamType::Address, internal_type: None },
             ])
             .unwrap(),
-            { (bool, ::ethers_core::types::Address) },
+            { (bool, ::corebc_core::types::Address) },
         );
     }
 }

@@ -1,4 +1,4 @@
-use ethers_core::{abi::ParamType, macros::ethers_core_crate, types::Selector};
+use corebc_core::{abi::ParamType, macros::corebc_core_crate, types::Selector};
 use proc_macro2::{Ident, Literal, Span, TokenStream};
 use quote::{quote, quote_spanned};
 use syn::{
@@ -40,9 +40,9 @@ pub fn ident(name: &str) -> Ident {
 }
 
 pub fn signature(hash: &[u8]) -> TokenStream {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     let bytes = hash.iter().copied().map(Literal::u8_unsuffixed);
-    quote! {#ethers_core::types::H256([#( #bytes ),*])}
+    quote! {#corebc_core::types::H256([#( #bytes ),*])}
 }
 
 pub fn selector(selector: Selector) -> TokenStream {
@@ -75,57 +75,57 @@ pub fn parse_param_type(s: &str) -> Option<ParamType> {
 // these indexed param types according to
 // <https://solidity.readthedocs.io/en/develop/abi-spec.html#encoding-of-indexed-event-parameters>
 pub fn topic_param_type_quote(kind: &ParamType) -> TokenStream {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     match kind {
         ParamType::String |
         ParamType::Bytes |
         ParamType::Array(_) |
         ParamType::FixedArray(_, _) |
-        ParamType::Tuple(_) => quote! {#ethers_core::abi::ParamType::FixedBytes(32)},
+        ParamType::Tuple(_) => quote! {#corebc_core::abi::ParamType::FixedBytes(32)},
         ty => param_type_quote(ty),
     }
 }
 
 /// Returns the rust type for the given parameter
 pub fn param_type_quote(kind: &ParamType) -> TokenStream {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     match kind {
         ParamType::Address => {
-            quote! {#ethers_core::abi::ParamType::Address}
+            quote! {#corebc_core::abi::ParamType::Address}
         }
         ParamType::Bytes => {
-            quote! {#ethers_core::abi::ParamType::Bytes}
+            quote! {#corebc_core::abi::ParamType::Bytes}
         }
         ParamType::Int(size) => {
             let size = Literal::usize_suffixed(*size);
-            quote! {#ethers_core::abi::ParamType::Int(#size)}
+            quote! {#corebc_core::abi::ParamType::Int(#size)}
         }
         ParamType::Uint(size) => {
             let size = Literal::usize_suffixed(*size);
-            quote! {#ethers_core::abi::ParamType::Uint(#size)}
+            quote! {#corebc_core::abi::ParamType::Uint(#size)}
         }
         ParamType::Bool => {
-            quote! {#ethers_core::abi::ParamType::Bool}
+            quote! {#corebc_core::abi::ParamType::Bool}
         }
         ParamType::String => {
-            quote! {#ethers_core::abi::ParamType::String}
+            quote! {#corebc_core::abi::ParamType::String}
         }
         ParamType::Array(ty) => {
             let ty = param_type_quote(ty);
-            quote! {#ethers_core::abi::ParamType::Array(Box::new(#ty))}
+            quote! {#corebc_core::abi::ParamType::Array(Box::new(#ty))}
         }
         ParamType::FixedBytes(size) => {
             let size = Literal::usize_suffixed(*size);
-            quote! {#ethers_core::abi::ParamType::FixedBytes(#size)}
+            quote! {#corebc_core::abi::ParamType::FixedBytes(#size)}
         }
         ParamType::FixedArray(ty, size) => {
             let ty = param_type_quote(ty);
             let size = Literal::usize_suffixed(*size);
-            quote! {#ethers_core::abi::ParamType::FixedArray(Box::new(#ty), #size)}
+            quote! {#corebc_core::abi::ParamType::FixedArray(Box::new(#ty), #size)}
         }
         ParamType::Tuple(tuple) => {
             let elements = tuple.iter().map(param_type_quote);
-            quote!(#ethers_core::abi::ParamType::Tuple(::std::vec![#( #elements ),*]))
+            quote!(#corebc_core::abi::ParamType::Tuple(::std::vec![#( #elements ),*]))
         }
     }
 }
@@ -244,10 +244,10 @@ pub fn derive_param_type_with_abi_type(
     input: &DeriveInput,
     trait_name: &str,
 ) -> Result<TokenStream, Error> {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     let params = abi_parameters_array(input, trait_name)?;
     Ok(quote! {
-        #ethers_core::abi::ParamType::Tuple(::std::vec!#params)
+        #corebc_core::abi::ParamType::Tuple(::std::vec!#params)
     })
 }
 
@@ -275,7 +275,7 @@ pub fn abi_signature_with_abi_type(
 /// Use `AbiType::param_type` fo each field to construct the signature's parameters as runtime array
 /// `[param1, param2,...]`
 pub fn abi_parameters_array(input: &DeriveInput, trait_name: &str) -> Result<TokenStream, Error> {
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
 
     let fields = match input.data {
         Data::Struct(ref data) => match data.fields {
@@ -304,7 +304,7 @@ pub fn abi_parameters_array(input: &DeriveInput, trait_name: &str) -> Result<Tok
 
     let iter = fields.iter().map(|f| {
         let ty = &f.ty;
-        quote_spanned!(f.span() => <#ty as #ethers_core::abi::AbiType>::param_type())
+        quote_spanned!(f.span() => <#ty as #corebc_core::abi::AbiType>::param_type())
     });
 
     Ok(quote! {
@@ -347,8 +347,8 @@ mod tests {
             u128 => PT::Uint(128),
             ::ethers::types::U256 => PT::Uint(256),
             ethers::types::U256 => PT::Uint(256),
-            ::ethers_core::types::U256 => PT::Uint(256),
-            ethers_core::types::U256 => PT::Uint(256),
+            ::corebc_core::types::U256 => PT::Uint(256),
+            corebc_core::types::U256 => PT::Uint(256),
             U256 => PT::Uint(256),
 
             i8 => PT::Int(8),
@@ -359,8 +359,8 @@ mod tests {
             i128 => PT::Int(128),
             ::ethers::types::I256 => PT::Int(256),
             ethers::types::I256 => PT::Int(256),
-            ::ethers_core::types::I256 => PT::Int(256),
-            ethers_core::types::I256 => PT::Int(256),
+            ::corebc_core::types::I256 => PT::Int(256),
+            corebc_core::types::I256 => PT::Int(256),
             I256 => PT::Int(256),
 
 
@@ -371,9 +371,9 @@ mod tests {
             ::ethers::types::H512 => PT::FixedBytes(64),
             H512 => PT::FixedBytes(64),
 
-            ::std::vec::Vec<::ethers_core::types::U256, ::std::alloc::Global> => arr(PT::Uint(256)),
-            ::std::vec::Vec<::ethers_core::types::U256, Global> => arr(PT::Uint(256)),
-            ::std::vec::Vec<::ethers_core::types::U256> => arr(PT::Uint(256)),
+            ::std::vec::Vec<::corebc_core::types::U256, ::std::alloc::Global> => arr(PT::Uint(256)),
+            ::std::vec::Vec<::corebc_core::types::U256, Global> => arr(PT::Uint(256)),
+            ::std::vec::Vec<::corebc_core::types::U256> => arr(PT::Uint(256)),
             ::std::vec::Vec<ethers::types::U256> => arr(PT::Uint(256)),
             ::std::vec::Vec<U256> => arr(PT::Uint(256)),
             std::vec::Vec<U256> => arr(PT::Uint(256)),
@@ -382,12 +382,12 @@ mod tests {
 
             [u64; 8] => farr(PT::Uint(64), 8),
             [u64; 16] => farr(PT::Uint(64), 16),
-            [::ethers_core::types::U256; 2] => farr(PT::Uint(256), 2),
+            [::corebc_core::types::U256; 2] => farr(PT::Uint(256), 2),
             [String; 4] => farr(PT::String, 4),
             [Address; 2] => farr(PT::Address, 2),
 
             (String, String, Address) => PT::Tuple(vec![PT::String, PT::String, PT::Address]),
-            (::ethers_core::types::U256, u8, ::ethers_core::types::Address)
+            (::corebc_core::types::U256, u8, ::corebc_core::types::Address)
                 => PT::Tuple(vec![PT::Uint(256), PT::Uint(8), PT::Address]),
             (::ethers::types::Bytes, ::ethers::types::H256, (::ethers::types::Address, ::std::string::String))
                 => PT::Tuple(vec![

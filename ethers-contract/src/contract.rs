@@ -4,7 +4,7 @@ use crate::{
     event::{EthEvent, Event},
     EthLogDecode,
 };
-use ethers_core::{
+use corebc_core::{
     abi::{Abi, Detokenize, Error, EventExt, Function, Tokenize},
     types::{Address, Filter, Selector, ValueOrArray},
 };
@@ -12,9 +12,9 @@ use ethers_providers::Middleware;
 use std::{borrow::Borrow, fmt::Debug, marker::PhantomData, sync::Arc};
 
 #[cfg(not(feature = "legacy"))]
-use ethers_core::types::Eip1559TransactionRequest;
+use corebc_core::types::Eip1559TransactionRequest;
 #[cfg(feature = "legacy")]
-use ethers_core::types::TransactionRequest;
+use corebc_core::types::TransactionRequest;
 
 /// `Contract` is a [`ContractInstance`] object with an `Arc` middleware.
 /// This type alias exists to preserve backwards compatibility with
@@ -69,7 +69,7 @@ pub type Contract<M> = ContractInstance<std::sync::Arc<M>, M>;
 /// interact with its methods and retrieve raw logs it has emitted.
 ///
 /// ```no_run
-/// use ethers_core::{
+/// use corebc_core::{
 ///     abi::Abi,
 ///     types::{Address, H256},
 /// };
@@ -118,11 +118,11 @@ pub type Contract<M> = ContractInstance<std::sync::Arc<M>, M>;
 // Ignore because `ethers-contract-derive` macros do not work in doctests in `ethers-contract`.
 /// ```ignore
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-/// use ethers_core::{abi::Abi, types::Address};
+/// use corebc_core::{abi::Abi, types::Address};
 /// use ethers_contract::{Contract, EthEvent};
 /// use ethers_providers::{Provider, Http, Middleware};
 /// use std::{convert::TryFrom, sync::Arc};
-/// use ethers_core::abi::{Detokenize, Token, InvalidOutputType};
+/// use corebc_core::abi::{Detokenize, Token, InvalidOutputType};
 /// # // this is a fake address used just for this example
 /// # let address = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse::<Address>()?;
 /// # let abi: Abi = serde_json::from_str(r#"[]"#)?;

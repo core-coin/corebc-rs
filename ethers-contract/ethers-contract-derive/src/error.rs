@@ -1,9 +1,9 @@
 //! Helper functions for deriving `EthError`
 
 use crate::{calllike::*, utils, utils::ident};
-use ethers_core::{
+use corebc_core::{
     abi::{ErrorExt, HumanReadableParser},
-    macros::{ethers_contract_crate, ethers_core_crate},
+    macros::{corebc_core_crate, ethers_contract_crate},
 };
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -75,13 +75,13 @@ pub fn derive_trait_impls(
     decode_impl: TokenStream,
 ) -> Result<TokenStream, Error> {
     // the ethers crates to use
-    let ethers_core = ethers_core_crate();
+    let corebc_core = corebc_core_crate();
     let ethers_contract = ethers_contract_crate();
     let struct_name = &input.ident;
 
     let selector = selector.unwrap_or_else(|| {
         quote! {
-            #ethers_core::utils::id(Self::abi_signature())
+            #corebc_core::utils::id(Self::abi_signature())
         }
     });
 
@@ -91,7 +91,7 @@ pub fn derive_trait_impls(
                 #function_call_name.into()
             }
 
-            fn selector() -> #ethers_core::types::Selector {
+            fn selector() -> #corebc_core::types::Selector {
                 #selector
             }
 

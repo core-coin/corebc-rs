@@ -1,9 +1,9 @@
 //! Custom errors expansion
 
 use super::{structs::expand_struct, types, util, Context};
-use ethers_core::{
+use corebc_core::{
     abi::{ethabi::AbiError, ErrorExt},
-    macros::{ethers_contract_crate, ethers_core_crate},
+    macros::{corebc_core_crate, ethers_contract_crate},
 };
 use eyre::Result;
 use inflector::Inflector;
@@ -96,7 +96,7 @@ impl Context {
             self.abi.errors.values().flatten().flat_map(|err| &err.inputs).map(|param| &param.kind);
         util::derive_builtin_traits(params, &mut derives, false, true);
 
-        let ethers_core = ethers_core_crate();
+        let corebc_core = corebc_core_crate();
         let ethers_contract = ethers_contract_crate();
 
         quote! {
@@ -109,31 +109,31 @@ impl Context {
                 RevertString(::std::string::String),
             }
 
-            impl #ethers_core::abi::AbiDecode for #enum_name {
-                fn decode(data: impl AsRef<[u8]>) -> ::core::result::Result<Self, #ethers_core::abi::AbiError> {
+            impl #corebc_core::abi::AbiDecode for #enum_name {
+                fn decode(data: impl AsRef<[u8]>) -> ::core::result::Result<Self, #corebc_core::abi::AbiError> {
                     let data = data.as_ref();
                     // NB: This implementation does not include selector information, and ABI encoded types
                     // are incredibly ambiguous, so it's possible to have bad false positives. Instead, we default
                     // to a String to minimize amount of decoding attempts
-                    if let Ok(decoded) = <::std::string::String as #ethers_core::abi::AbiDecode>::decode(data) {
+                    if let Ok(decoded) = <::std::string::String as #corebc_core::abi::AbiDecode>::decode(data) {
                         return Ok(Self::RevertString(decoded))
                     }
                     #(
-                        if let Ok(decoded) = <#variants as #ethers_core::abi::AbiDecode>::decode(data) {
+                        if let Ok(decoded) = <#variants as #corebc_core::abi::AbiDecode>::decode(data) {
                             return Ok(Self::#variants(decoded))
                         }
                     )*
-                    Err(#ethers_core::abi::Error::InvalidData.into())
+                    Err(#corebc_core::abi::Error::InvalidData.into())
                 }
             }
 
-            impl #ethers_core::abi::AbiEncode for #enum_name {
+            impl #corebc_core::abi::AbiEncode for #enum_name {
                 fn encode(self) -> ::std::vec::Vec<u8> {
                     match self {
                         #(
-                            Self::#variants(element) => #ethers_core::abi::AbiEncode::encode(element),
+                            Self::#variants(element) => #corebc_core::abi::AbiEncode::encode(element),
                         )*
-                        Self::RevertString(s) => #ethers_core::abi::AbiEncode::encode(s),
+                        Self::RevertString(s) => #corebc_core::abi::AbiEncode::encode(s),
                     }
                 }
             }

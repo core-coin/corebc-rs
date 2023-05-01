@@ -174,7 +174,7 @@ impl Parse for Method {
         for (i, param) in params.into_iter().enumerate() {
             let s = param.to_string();
             // validate
-            ethers_core::abi::ethabi::param_type::Reader::read(&s)
+            corebc_core::abi::ethabi::param_type::Reader::read(&s)
                 .map_err(|e| Error::new(param.span(), e))?;
             signature.push_str(&s);
             if i < last_i {
