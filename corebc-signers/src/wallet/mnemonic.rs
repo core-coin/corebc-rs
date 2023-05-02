@@ -72,7 +72,7 @@ impl<W: Wordlist> MnemonicBuilder<W> {
     /// # Example
     ///
     /// ```
-    /// use ethers_signers::{MnemonicBuilder, coins_bip39::English};
+    /// use corebc_signers::{MnemonicBuilder, coins_bip39::English};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     ///
     /// let wallet = MnemonicBuilder::<English>::default()
@@ -94,7 +94,7 @@ impl<W: Wordlist> MnemonicBuilder<W> {
     /// # Example
     ///
     /// ```
-    /// use ethers_signers::{MnemonicBuilder, coins_bip39::English};
+    /// use corebc_signers::{MnemonicBuilder, coins_bip39::English};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     ///
     /// let mut rng = rand::thread_rng();
@@ -206,25 +206,25 @@ mod tests {
                 "work man father plunge mystery proud hollow address reunion sauce theory bonus",
                 0u32,
                 Some("TREZOR123"),
-                "0x431a00DA1D54c281AeF638A73121B3D153e0b0F6",
+                "0xCB977fe689790dd67B87D5A8d03E0679D576C961365F",
             ),
             (
                 "inject danger program federal spice bitter term garbage coyote breeze thought funny",
                 1u32,
                 Some("LEDGER321"),
-                "0x231a3D0a05d13FAf93078C779FeeD3752ea1350C",
+                "0xCb73d85301aa233e96acC26cA027aA7B4f2e7e75ea75",
             ),
             (
                 "fire evolve buddy tenant talent favorite ankle stem regret myth dream fresh",
                 2u32,
                 None,
-                "0x1D86AD5eBb2380dAdEAF52f61f4F428C485460E9",
+                "0xcB68096e94b38325C2a4b5BAeeb8FcFe0462f10fE9e1",
             ),
             (
                 "thumb soda tape crunch maple fresh imitate cancel order blind denial giraffe",
                 3u32,
                 None,
-                "0xFB78b25f69A8e941036fEE2A5EeAf349D81D4ccc",
+                "0xcb37987Dca64c960d42F8939722C898CfFd799B52545",
             ),
         ];
         TESTCASES.iter().for_each(|(phrase, index, password, expected_addr)| {

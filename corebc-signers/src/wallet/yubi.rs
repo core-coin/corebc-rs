@@ -2,8 +2,8 @@
 use super::Wallet;
 use corebc_core::{
     k256::{PublicKey, Secp256k1},
-    types::Address,
-    utils::sha3,
+    types::H160,
+    utils::{sha3, to_ican, NetworkType},
 };
 use elliptic_curve::sec1::{FromEncodedPoint, ToEncodedPoint};
 use yubihsm::{
@@ -61,7 +61,11 @@ impl From<YubiSigner<Secp256k1>> for Wallet<YubiSigner<Secp256k1>> {
         let public_key = public_key.as_bytes();
         debug_assert_eq!(public_key[0], 0x04);
         let hash = sha3(&public_key[1..]);
-        let address = Address::from_slice(&hash[12..]);
+
+        let mut bytes = [0u8; 20];
+        bytes.copy_from_slice(&hash[12..]);
+        let address = H160::from(bytes);
+        let address = to_ican(&address, &NetworkType::Mainnet);
 
         Self { signer, address, chain_id: 1 }
     }
