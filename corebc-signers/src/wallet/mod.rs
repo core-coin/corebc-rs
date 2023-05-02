@@ -36,10 +36,11 @@ use std::fmt;
 ///
 /// ```
 /// use corebc_core::rand::thread_rng;
-/// use ethers_signers::{LocalWallet, Signer};
+/// use corebc_core::utils::NetworkType;
+/// use corebc_signers::{LocalWallet, Signer};
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-/// let wallet = LocalWallet::new(&mut thread_rng());
+/// let wallet = LocalWallet::new(&mut thread_rng(), NetworkType::Mainnet);
 ///
 /// // Optionally, the wallet's chain id can be set, in order to use EIP-155
 /// // replay protection with different chains

@@ -9,8 +9,8 @@ use corebc_core::{
         ecdsa::{RecoveryId, Signature as RSig, Signature as KSig, VerifyingKey},
         FieldBytes,
     },
-    types::{Address, Signature as EthSig, U256},
-    utils::keccak256,
+    types::{Address, Signature as EthSig, H160, U256},
+    utils::{sha3, to_ican, NetworkType},
 };
 use rusoto_kms::{GetPublicKeyResponse, SignResponse};
 
@@ -56,13 +56,18 @@ pub(super) fn apply_eip155(sig: &mut EthSig, chain_id: u64) {
 }
 
 /// Convert a verifying key to an ethereum address
-pub(super) fn verifying_key_to_address(key: &VerifyingKey) -> Address {
+pub(super) fn verifying_key_to_address(key: &VerifyingKey, network: NetworkType) -> Address {
     // false for uncompressed
     let uncompressed_pub_key = key.to_encoded_point(false);
     let public_key = uncompressed_pub_key.to_bytes();
     debug_assert_eq!(public_key[0], 0x04);
-    let hash = keccak256(&public_key[1..]);
-    Address::from_slice(&hash[12..])
+    let hash = sha3(&public_key[1..]);
+
+    let mut bytes = [0u8; 20];
+    bytes.copy_from_slice(&hash[12..]);
+    let addr = H160::from(bytes);
+
+    to_ican(&addr, &network)
 }
 
 /// Decode an AWS KMS Pubkey response

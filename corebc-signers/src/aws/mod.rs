@@ -6,7 +6,7 @@ use corebc_core::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},
         Address, Signature as EthSig, H256,
     },
-    utils::hash_message,
+    utils::{hash_message, NetworkType},
 };
 use rusoto_core::RusotoError;
 use rusoto_kms::{
@@ -30,7 +30,7 @@ use utils::{apply_eip155, verifying_key_to_address};
 /// use rusoto_core::Client;
 /// use rusoto_kms::{Kms, KmsClient};
 ///
-/// user ethers_signers::Signer;
+/// user corebc_signers::Signer;
 ///
 /// let client = Client::new_with(
 ///     EnvironmentProvider::default(),
@@ -156,12 +156,13 @@ impl AwsSigner {
         kms: KmsClient,
         key_id: T,
         chain_id: u64,
+        network: NetworkType,
     ) -> Result<AwsSigner, AwsSignerError>
     where
         T: AsRef<str>,
     {
         let pubkey = request_get_pubkey(&kms, &key_id).await.map(utils::decode_pubkey)??;
-        let address = verifying_key_to_address(&pubkey);
+        let address = verifying_key_to_address(&pubkey, network);
 
         debug!(
             "Instantiated AWS signer with pubkey 0x{} and address 0x{}",

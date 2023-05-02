@@ -19,14 +19,14 @@ Supported signers:
 
 For more information, please refer to the [book](https://gakonst.com/ethers-rs).
 
-[`transaction`]: ethers_core::types::Transaction
-[`transactionrequest`]: ethers_core::types::TransactionRequest
+[`transaction`]: corebc_core::types::Transaction
+[`transactionrequest`]: corebc_core::types::TransactionRequest
 
 ## Examples
 
 ```rust,no_run
-# use ethers_signers::{LocalWallet, Signer};
-# use ethers_core::{k256::ecdsa::SigningKey, types::TransactionRequest};
+# use corebc_signers::{LocalWallet, Signer};
+# use corebc_core::{k256::ecdsa::SigningKey, types::TransactionRequest};
 # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 // instantiate the wallet
 let wallet = "dcf2cbdd171a21c480aa7f53d77f31bb102282b3ff099c78e3118b37348c72f7"
@@ -50,10 +50,11 @@ signature.verify("hello world", wallet.address()).unwrap();
 Sign an Ethereum prefixed message ([eip-712](https://eips.ethereum.org/EIPS/eip-712)):
 
 ```rust,no_run
-# use ethers_signers::{Signer, LocalWallet};
+# use corebc_signers::{Signer, LocalWallet};
+# use corebc_core::utils::NetworkType;
 # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 let message = "Some data";
-let wallet = LocalWallet::new(&mut rand::thread_rng());
+let wallet = LocalWallet::new(&mut rand::thread_rng(), NetworkType::Mainnet);
 
 // Sign the message
 let signature = wallet.sign_message(message).await?;

@@ -106,9 +106,9 @@ impl Wallet<SigningKey> {
 
 impl PartialEq for Wallet<SigningKey> {
     fn eq(&self, other: &Self) -> bool {
-        self.signer.to_bytes().eq(&other.signer.to_bytes()) &&
-            self.address == other.address &&
-            self.chain_id == other.chain_id
+        self.signer.to_bytes().eq(&other.signer.to_bytes())
+            && self.address == other.address
+            && self.chain_id == other.chain_id
     }
 }
 
@@ -235,7 +235,9 @@ mod tests {
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         let tx: TypedTransaction = TransactionRequest {
             from: None,
-            to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
+            to: Some(
+                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+            ),
             value: Some(1_000_000_000.into()),
             gas: Some(2_000_000.into()),
             nonce: Some(0.into()),
@@ -262,7 +264,9 @@ mod tests {
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         let tx: TypedTransaction = TransactionRequest {
             from: None,
-            to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
+            to: Some(
+                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+            ),
             value: Some(1_000_000_000.into()),
             gas: Some(2_000_000.into()),
             nonce: Some(0.into()),
@@ -297,7 +301,9 @@ mod tests {
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         let tx: TypedTransaction = TransactionRequest {
             from: None,
-            to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
+            to: Some(
+                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+            ),
             value: Some(1_000_000_000u64.into()),
             gas: Some(2_000_000u64.into()),
             nonce: Some(0u64.into()),
@@ -333,21 +339,24 @@ mod tests {
             "0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
         assert_eq!(
             wallet.address,
-            Address::from_str("7E5F4552091A69125d5DfCb7b8C2659029395Bdf").expect("Decoding failed")
+            Address::from_str("0xcb350502987e630ea7ebb2bf1d84a65a727109385bcf")
+                .expect("Decoding failed")
         );
 
         let wallet: Wallet<SigningKey> =
             "0000000000000000000000000000000000000000000000000000000000000002".parse().unwrap();
         assert_eq!(
             wallet.address,
-            Address::from_str("2B5AD5c4795c026514f8317c7a215E218DcCD6cF").expect("Decoding failed")
+            Address::from_str("0xcb325b97bc7e0a18d4a7a825e150ae59ef4e5c9fba2e")
+                .expect("Decoding failed")
         );
 
         let wallet: Wallet<SigningKey> =
             "0000000000000000000000000000000000000000000000000000000000000003".parse().unwrap();
         assert_eq!(
             wallet.address,
-            Address::from_str("6813Eb9362372EEF6200f3b1dbC3f819671cBA69").expect("Decoding failed")
+            Address::from_str("0xcb82bc920e7a7a4dc01e204cd0e75c379429ae58b9e8")
+                .expect("Decoding failed")
         );
     }
 
