@@ -263,7 +263,7 @@ fn can_derive_indexed_and_anonymous_attribute() {
 fn can_generate_ethevent_from_json() {
     abigen!(
         DsProxyFactory,
-        "./../ethers-middleware/contracts/DSProxyFactory.json",
+        "./../corebc-middleware/contracts/DSProxyFactory.json",
         methods {
             build(address) as build_with_owner;
         }

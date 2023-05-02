@@ -5,9 +5,9 @@ use corebc_core::{
     types::{transaction::eip2718::TypedTransaction, Bytes, Eip1559TransactionRequest, U256},
     utils::Anvil,
 };
+use corebc_providers::{MockProvider, Provider};
+use corebc_solc::Solc;
 use ethers_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
-use ethers_providers::{MockProvider, Provider};
-use ethers_solc::Solc;
 use std::{fmt::Debug, hash::Hash, sync::Arc};
 
 const fn assert_codec<T: AbiDecode + AbiEncode>() {}
@@ -395,7 +395,7 @@ async fn can_handle_underscore_functions() {
     let res4 = contract2.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
 
     // Manual call construction
-    use ethers_providers::Middleware;
+    use corebc_providers::Middleware;
     // TODO: How do we handle underscores for calls here?
     let data = simple_storage::HashPuzzleCall.encode();
     let tx = Eip1559TransactionRequest::new().data(data).to(addr);

@@ -112,7 +112,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - Add Arithmetic Shift Right operation for I256 [#1323](https://github.com/gakonst/ethers-rs/issues/1323)
 - [#1535](https://github.com/gakonst/ethers-rs/pull/1535) Add support to Aurora and Aurora testnet networks.
 - [#1632](https://github.com/gakonst/ethers-rs/pull/1632) Re-export `H32` from `ethabi`.
-- [#1634](https://github.com/gakonst/ethers-rs/pull/1634) Derive missing `Clone`, `Copy` and `Debug` impls in ethers-etherscan.
+- [#1634](https://github.com/gakonst/ethers-rs/pull/1634) Derive missing `Clone`, `Copy` and `Debug` impls in corebc-etherscan.
 - Bytes debug format now displays hex literals [#1658](https://github.com/gakonst/ethers-rs/pull/1658)
 - [#1451](https://github.com/gakonst/ethers-rs/issues/1451) Add Arithmetic Shift Left operation for I256
 - [#1860](https://github.com/gakonst/ethers-rs/pull/1860) Update I256 type documentation calling out the inconsistency
@@ -158,7 +158,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - Implement snowtrace and polygonscan on par with the etherscan integration
   [#666](https://github.com/gakonst/ethers-rs/pull/666).
 
-## ethers-solc
+## corebc-solc
 
 ### Unreleased
 
@@ -168,7 +168,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
   [#1540](https://github.com/gakonst/ethers-rs/pull/1540)
 - `ArtifactOutput::write_extras` now takes the `Artifacts` directly
   [#1491](https://github.com/gakonst/ethers-rs/pull/1491)
-- Make `ethers-solc` optional dependency of `ethers`, needs `ethers-solc` feature to activate
+- Make `corebc-solc` optional dependency of `ethers`, needs `corebc-solc` feature to activate
   [#1463](https://github.com/gakonst/ethers-rs/pull/1463)
 - Add `rawMetadata:String` field to configurable contract output
   [#1365](https://github.com/gakonst/ethers-rs/pull/1365)
@@ -263,7 +263,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
   [1221](https://github.com/gakonst/ethers-rs/pull/1221)
 - Add support for basic and bearer authentication in http and non-wasm websockets.
   [829](https://github.com/gakonst/ethers-rs/pull/829)
-- Export `ethers_providers::IpcError` and `ethers_providers::QuorumError`
+- Export `corebc_providers::IpcError` and `corebc_providers::QuorumError`
   [1012](https://github.com/gakonst/ethers-rs/pull/1012)
 
 ### 0.6.0
@@ -380,7 +380,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - (De)Tokenize structs and events with only a single field as `Token:Tuple`
   ([#417](https://github.com/gakonst/ethers-rs/pull/417))
 
-## ethers-middleware
+## corebc-middleware
 
 ### Unreleased
 

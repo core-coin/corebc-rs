@@ -9,10 +9,10 @@ Crates to modify
 - [x] corebc-providers
   - [ ] anvil tests - Most of the tests require Anvil or Ganache to run, but since they use different addresses it all fails
 - [ ] ethers-contract
-- [ ] ethers-etherscan
-- [ ] ethers-middleware
+- [x] corebc-etherscan
+- [x] corebc-middleware
 - [x] corebc-signers - Crate compiles, tests are not yet modified
-  - [ ] Fix tests
-- [ ] ethers-solc
-- [ ] ethers
+  - [x] Fix tests
+- [x] corebc-solc
+- [x] corebc
 - [ ] examples

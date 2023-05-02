@@ -159,13 +159,13 @@ documentation **and** the `ethers` facade documentation via the re-export. The
 example should be written from the point of view of a user that is using the
 `ethers` crate.
 
-The type level example for `ethers_providers::Provider` provides a good example of a
+The type level example for `corebc_providers::Provider` provides a good example of a
 documentation test:
 
 ````rust
 /// ```no_run
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-/// use ethers_providers::{Middleware, Provider, Http};
+/// use corebc_providers::{Middleware, Provider, Http};
 ///
 /// let provider = Provider::<Http>::try_from(
 ///     "https://eth.llamarpc.com"

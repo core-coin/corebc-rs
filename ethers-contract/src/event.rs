@@ -5,7 +5,7 @@ use corebc_core::{
     abi::{Address, Detokenize, Error as AbiError, RawLog},
     types::{BlockNumber, Filter, Log, Topic, ValueOrArray, H256},
 };
-use ethers_providers::{FilterWatcher, Middleware, PubsubClient, SubscriptionStream};
+use corebc_providers::{FilterWatcher, Middleware, PubsubClient, SubscriptionStream};
 use std::{
     borrow::{Borrow, Cow},
     marker::PhantomData,
@@ -143,7 +143,7 @@ where
 {
     /// Turns this event filter into `Stream` that yields decoded events.
     ///
-    /// This will first install a new logs filter via [`eth_newFilter`](https://docs.alchemy.com/alchemy/apis/ethereum/eth-newfilter) using the configured `filter` object. See also [`FilterWatcher`](ethers_providers::FilterWatcher).
+    /// This will first install a new logs filter via [`eth_newFilter`](https://docs.alchemy.com/alchemy/apis/ethereum/eth-newfilter) using the configured `filter` object. See also [`FilterWatcher`](corebc_providers::FilterWatcher).
     ///
     /// Once the filter is created, this will periodically call [`eth_getFilterChanges`](https://docs.alchemy.com/alchemy/apis/ethereum/eth-getfilterchanges) to get the newest logs and decode them
     ///
@@ -156,7 +156,7 @@ where
     // Ignore because `ethers-contract-derive` macros do not work in doctests in `ethers-contract`.
     /// ```ignore
     /// # #[cfg(feature = "abigen")]
-    /// # async fn test<M:ethers_providers::Middleware>(contract: ethers_contract::Contract<M>) {
+    /// # async fn test<M:corebc_providers::Middleware>(contract: ethers_contract::Contract<M>) {
     /// # use corebc_core::types::*;
     /// # use futures_util::stream::StreamExt;
     /// # use ethers_contract::{Contract, EthEvent};

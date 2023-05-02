@@ -8,7 +8,7 @@ use corebc_core::{
     abi::{Abi, Detokenize, Error, EventExt, Function, Tokenize},
     types::{Address, Filter, Selector, ValueOrArray},
 };
-use ethers_providers::Middleware;
+use corebc_providers::Middleware;
 use std::{borrow::Borrow, fmt::Debug, marker::PhantomData, sync::Arc};
 
 #[cfg(not(feature = "legacy"))]
@@ -74,7 +74,7 @@ pub type Contract<M> = ContractInstance<std::sync::Arc<M>, M>;
 ///     types::{Address, H256},
 /// };
 /// use ethers_contract::Contract;
-/// use ethers_providers::{Provider, Http};
+/// use corebc_providers::{Provider, Http};
 /// use std::{convert::TryFrom, sync::Arc};
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
@@ -120,7 +120,7 @@ pub type Contract<M> = ContractInstance<std::sync::Arc<M>, M>;
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// use corebc_core::{abi::Abi, types::Address};
 /// use ethers_contract::{Contract, EthEvent};
-/// use ethers_providers::{Provider, Http, Middleware};
+/// use corebc_providers::{Provider, Http, Middleware};
 /// use std::{convert::TryFrom, sync::Arc};
 /// use corebc_core::abi::{Detokenize, Token, InvalidOutputType};
 /// # // this is a fake address used just for this example

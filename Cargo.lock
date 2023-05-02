@@ -666,6 +666,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e496a50fda8aacccc86d7529e2c1e0892dbd0f898a6b5645b5561b89c3210efa"
 
 [[package]]
+name = "corebc"
+version = "2.0.3"
+dependencies = [
+ "corebc-addressbook",
+ "corebc-core",
+ "corebc-etherscan",
+ "corebc-middleware",
+ "corebc-providers",
+ "corebc-signers",
+ "corebc-solc",
+ "ethers-contract",
+ "serde",
+ "tokio",
+]
+
+[[package]]
+name = "corebc-addressbook"
+version = "2.0.3"
+dependencies = [
+ "corebc-core",
+ "once_cell",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "corebc-core"
 version = "2.0.3"
 dependencies = [
@@ -694,6 +720,54 @@ dependencies = [
  "thiserror",
  "tiny-keccak",
  "unicode-xid",
+]
+
+[[package]]
+name = "corebc-etherscan"
+version = "2.0.3"
+dependencies = [
+ "corebc-core",
+ "corebc-solc",
+ "getrandom",
+ "reqwest",
+ "semver",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "corebc-middleware"
+version = "2.0.3"
+dependencies = [
+ "async-trait",
+ "auto_impl",
+ "corebc-core",
+ "corebc-etherscan",
+ "corebc-providers",
+ "corebc-signers",
+ "corebc-solc",
+ "ethers-contract",
+ "futures-channel",
+ "futures-locks",
+ "futures-util",
+ "hex",
+ "instant",
+ "once_cell",
+ "rand",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-futures",
+ "url",
 ]
 
 [[package]]
@@ -765,6 +839,47 @@ dependencies = [
  "tracing-subscriber",
  "trezor-client",
  "yubihsm",
+]
+
+[[package]]
+name = "corebc-solc"
+version = "2.0.3"
+dependencies = [
+ "cfg-if",
+ "corebc-core",
+ "criterion",
+ "dunce",
+ "env_logger",
+ "fs_extra",
+ "futures-util",
+ "getrandom",
+ "glob",
+ "hex",
+ "home",
+ "md-5 0.10.5",
+ "num_cpus",
+ "once_cell",
+ "path-slash",
+ "pretty_assertions",
+ "rand",
+ "rayon",
+ "regex",
+ "semver",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "sha2 0.10.6",
+ "solang-parser",
+ "svm-rs",
+ "svm-rs-builds",
+ "tempfile",
+ "thiserror",
+ "tiny-keccak",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "walkdir",
+ "yansi",
 ]
 
 [[package]]
@@ -1298,41 +1413,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "ethers"
-version = "2.0.3"
-dependencies = [
- "corebc-core",
- "corebc-providers",
- "corebc-signers",
- "ethers-addressbook",
- "ethers-contract",
- "ethers-etherscan",
- "ethers-middleware",
- "ethers-solc",
- "serde",
- "tokio",
-]
-
-[[package]]
-name = "ethers-addressbook"
-version = "2.0.3"
-dependencies = [
- "corebc-core",
- "once_cell",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "ethers-contract"
 version = "2.0.3"
 dependencies = [
  "corebc-core",
  "corebc-providers",
  "corebc-signers",
+ "corebc-solc",
  "ethers-contract-abigen",
  "ethers-contract-derive",
- "ethers-solc",
  "futures-util",
  "hex",
  "once_cell",
@@ -1349,9 +1438,9 @@ version = "2.0.3"
 dependencies = [
  "Inflector",
  "corebc-core",
+ "corebc-etherscan",
+ "corebc-solc",
  "dunce",
- "ethers-etherscan",
- "ethers-solc",
  "eyre",
  "getrandom",
  "hex",
@@ -1385,99 +1474,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "ethers-etherscan"
-version = "2.0.3"
-dependencies = [
- "corebc-core",
- "ethers-solc",
- "getrandom",
- "reqwest",
- "semver",
- "serde",
- "serde_json",
- "serial_test",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "ethers-middleware"
-version = "2.0.3"
-dependencies = [
- "async-trait",
- "auto_impl",
- "corebc-core",
- "corebc-providers",
- "corebc-signers",
- "ethers-contract",
- "ethers-etherscan",
- "ethers-solc",
- "futures-channel",
- "futures-locks",
- "futures-util",
- "hex",
- "instant",
- "once_cell",
- "rand",
- "reqwest",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-futures",
- "url",
-]
-
-[[package]]
-name = "ethers-solc"
-version = "2.0.3"
-dependencies = [
- "cfg-if",
- "corebc-core",
- "criterion",
- "dunce",
- "env_logger",
- "fs_extra",
- "futures-util",
- "getrandom",
- "glob",
- "hex",
- "home",
- "md-5 0.10.5",
- "num_cpus",
- "once_cell",
- "path-slash",
- "pretty_assertions",
- "rand",
- "rayon",
- "regex",
- "semver",
- "serde",
- "serde_json",
- "serde_path_to_error",
- "sha2 0.10.6",
- "solang-parser",
- "svm-rs",
- "svm-rs-builds",
- "tempfile",
- "thiserror",
- "tiny-keccak",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "walkdir",
- "yansi",
-]
-
-[[package]]
 name = "examples-anvil"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "tokio",
 ]
@@ -1486,14 +1486,14 @@ dependencies = [
 name = "examples-big-numbers"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
 ]
 
 [[package]]
 name = "examples-contracts"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1504,7 +1504,7 @@ dependencies = [
 name = "examples-events"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1515,7 +1515,7 @@ dependencies = [
 name = "examples-geth"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1528,7 +1528,7 @@ name = "examples-middleware"
 version = "0.0.0"
 dependencies = [
  "async-trait",
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1541,7 +1541,7 @@ name = "examples-providers"
 version = "0.0.0"
 dependencies = [
  "async-trait",
- "ethers",
+ "corebc",
  "eyre",
  "reqwest",
  "serde",
@@ -1555,7 +1555,7 @@ dependencies = [
 name = "examples-queries"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1566,7 +1566,7 @@ dependencies = [
 name = "examples-subscriptions"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1577,7 +1577,7 @@ dependencies = [
 name = "examples-transactions"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1588,7 +1588,7 @@ dependencies = [
 name = "examples-wallets"
 version = "0.0.0"
 dependencies = [
- "ethers",
+ "corebc",
  "eyre",
  "serde",
  "serde_json",
@@ -1600,7 +1600,7 @@ name = "examples-wasm"
 version = "0.0.0"
 dependencies = [
  "console_error_panic_hook",
- "ethers",
+ "corebc",
  "hex",
  "serde",
  "serde-wasm-bindgen",

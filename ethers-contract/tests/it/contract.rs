@@ -7,11 +7,11 @@ use corebc_core::{
     },
     utils::{sha3, Anvil},
 };
+use corebc_providers::{Http, Middleware, MiddlewareError, Provider, StreamExt, Ws};
 use ethers_contract::{
     abigen, ContractFactory, ContractInstance, Eip712, EthAbiType, EthEvent, LogMeta, Multicall,
     MulticallError, MulticallVersion,
 };
-use ethers_providers::{Http, Middleware, MiddlewareError, Provider, StreamExt, Ws};
 use ethers_signers::{LocalWallet, Signer};
 use std::{sync::Arc, time::Duration};
 

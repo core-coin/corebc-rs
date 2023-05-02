@@ -11,7 +11,7 @@ use corebc_core::{
     },
     utils::id,
 };
-use ethers_providers::{
+use corebc_providers::{
     call_raw::{CallBuilder, RawCall},
     JsonRpcError, Middleware, MiddlewareError, PendingTransaction, ProviderError,
 };

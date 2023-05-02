@@ -10,7 +10,7 @@ use super::{util, Abigen};
 use crate::contract::{methods::MethodAlias, structs::InternalStructs};
 use corebc_core::{
     abi::{Abi, AbiParser, ErrorExt, EventExt, JsonAbi},
-    macros::{corebc_core_crate, ethers_contract_crate, ethers_providers_crate},
+    macros::{corebc_core_crate, corebc_providers_crate, ethers_contract_crate},
     types::Bytes,
 };
 use eyre::{eyre, Context as _, Result};
@@ -149,12 +149,12 @@ impl Context {
 
         let corebc_core = corebc_core_crate();
         let ethers_contract = ethers_contract_crate();
-        let ethers_providers = ethers_providers_crate();
+        let corebc_providers = corebc_providers_crate();
 
         let contract = quote! {
                 #struct_decl
 
-                impl<M: #ethers_providers::Middleware> #name<M> {
+                impl<M: #corebc_providers::Middleware> #name<M> {
                     /// Creates a new contract instance with the specified `ethers` client at
                     /// `address`. The contract derefs to a `ethers::Contract` object.
                     pub fn new<T: Into<#corebc_core::types::Address>>(address: T, client: ::std::sync::Arc<M>) -> Self {
@@ -168,7 +168,7 @@ impl Context {
                     #contract_events
                 }
 
-                impl<M: #ethers_providers::Middleware> From<#ethers_contract::Contract<M>> for #name<M> {
+                impl<M: #corebc_providers::Middleware> From<#ethers_contract::Contract<M>> for #name<M> {
                     fn from(contract: #ethers_contract::Contract<M>) -> Self {
                         Self::new(contract.address(), contract.client())
                     }

@@ -85,7 +85,7 @@ where
     // Ignore because `ethers-contract-derive` macros do not work in doctests in `ethers-contract`.
     /// ```ignore
     /// # #[cfg(feature = "abigen")]
-    /// # async fn test<M:ethers_providers::Middleware>(contract: ethers_contract::Contract<M>) {
+    /// # async fn test<M:corebc_providers::Middleware>(contract: ethers_contract::Contract<M>) {
     /// # use corebc_core::types::*;
     /// # use futures_util::stream::StreamExt;
     /// # use futures_util::future::Either;

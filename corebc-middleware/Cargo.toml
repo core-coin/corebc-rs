@@ -1,0 +1,69 @@
+[package]
+name = "corebc-middleware"
+authors = ["Georgios Konstantopoulos <me@gakonst.com>"]
+readme = "README.md"
+description = "Middleware implementations for the ethers-rs crate"
+
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+documentation.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+exclude.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.playground]
+all-features = true
+
+[dependencies]
+ethers-contract = { workspace = true, features = ["abigen"] }
+corebc-core.workspace = true
+corebc-etherscan.workspace = true
+corebc-providers.workspace = true
+corebc-signers.workspace = true
+
+async-trait.workspace = true
+auto_impl.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+futures-util.workspace = true
+futures-locks.workspace = true
+futures-channel.workspace = true
+tracing.workspace = true
+tracing-futures.workspace = true
+instant.workspace = true
+
+# for gas oracles
+reqwest.workspace = true
+url.workspace = true
+
+serde_json.workspace = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio.workspace = true
+
+[dev-dependencies]
+corebc-providers = { workspace = true, features = ["ws", "rustls"] }
+corebc-solc.workspace = true
+
+hex.workspace = true
+rand.workspace = true
+once_cell.workspace = true
+reqwest = { workspace = true, features = ["json", "rustls"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
+
+[features]
+default = ["rustls"]
+celo = ["corebc-core/celo", "corebc-providers/celo", "corebc-signers/celo", "ethers-contract/celo"]
+openssl = ["reqwest/native-tls"]
+rustls = ["reqwest/rustls-tls"]

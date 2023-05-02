@@ -9,6 +9,6 @@ rust-version.workspace = true
 edition.workspace = true
 
 [dev-dependencies]
-ethers.workspace = true
+corebc.workspace = true
 tokio = { workspace = true, features = ["macros"] }
 eyre.workspace = true
