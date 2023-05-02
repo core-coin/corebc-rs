@@ -371,7 +371,7 @@ impl ContractBindings {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ethers_solc::project_util::TempProject;
+    use corebc_solc::project_util::TempProject;
 
     #[test]
     fn can_generate_structs() {

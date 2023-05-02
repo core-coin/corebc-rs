@@ -3,9 +3,9 @@ use corebc_core::{
     types::{Address, Bytes},
     utils::AnvilInstance,
 };
+use corebc_providers::{Http, Middleware, Provider};
+use corebc_solc::Solc;
 use ethers_contract::{Contract, ContractFactory, EthEvent};
-use ethers_providers::{Http, Middleware, Provider};
-use ethers_solc::Solc;
 use std::{convert::TryFrom, sync::Arc, time::Duration};
 
 // Note: The `EthEvent` derive macro implements the necessary conversion between `Tokens` and

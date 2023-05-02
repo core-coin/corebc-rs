@@ -3,7 +3,7 @@ use corebc_core::{
     types::Bytes,
 };
 
-use ethers_providers::{Middleware, ProviderError};
+use corebc_providers::{Middleware, ProviderError};
 
 use crate::{ContractError, EthError};
 

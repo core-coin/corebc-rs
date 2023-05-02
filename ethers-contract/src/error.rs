@@ -3,7 +3,7 @@ use corebc_core::{
     types::Selector,
     utils::id,
 };
-use ethers_providers::JsonRpcError;
+use corebc_providers::JsonRpcError;
 use std::borrow::Cow;
 
 /// A trait for enums unifying [`EthError`] types. This trait is usually used
@@ -27,11 +27,11 @@ pub trait ContractRevert: AbiDecode + AbiEncode + Send + Sync {
     /// Decode the error from EVM revert data including an Error selector
     fn decode_with_selector(data: &[u8]) -> Option<Self> {
         if data.len() < 4 {
-            return None
+            return None;
         }
         let selector = data[..4].try_into().expect("checked by len");
         if !Self::valid_selector(selector) {
-            return None
+            return None;
         }
         <Self as AbiDecode>::decode(&data[4..]).ok()
     }

@@ -1,0 +1,31 @@
+[package]
+name = "corebc-addressbook"
+authors = ["Rohit Narurkar <rohit.narurkar@protonmail.com>"]
+readme = "README.md"
+description = "Common Ethereum name to address mappings"
+
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+documentation.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+exclude.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.playground]
+all-features = true
+
+[dependencies]
+corebc-core.workspace = true
+
+once_cell.workspace = true
+serde.workspace = true
+serde_json.workspace = true

@@ -14,7 +14,7 @@ use toml::Value;
 
 /// The default ethers dependency to generate.
 const DEFAULT_ETHERS_DEP: &str =
-    "ethers = { version = \"2\", default-features = false, features = [\"abigen\"] }";
+    "corebc = { version = \"2\", default-features = false, features = [\"abigen\"] }";
 
 /// Collects Abigen structs for a series of contracts, pending generation of
 /// the contract bindings.
@@ -628,7 +628,7 @@ impl MultiBindingsInner {
                 .join("Cargo.toml");
 
         if !cargo_toml.exists() {
-            return Ok(DEFAULT_ETHERS_DEP.to_string())
+            return Ok(DEFAULT_ETHERS_DEP.to_string());
         }
 
         let data = fs::read_to_string(cargo_toml)?;
@@ -853,7 +853,7 @@ mod tests {
     use super::*;
 
     use crate::{ExcludeContracts, SelectContracts};
-    use ethers_solc::project_util::TempProject;
+    use corebc_solc::project_util::TempProject;
     use std::{env, panic, path::PathBuf};
 
     struct Context {

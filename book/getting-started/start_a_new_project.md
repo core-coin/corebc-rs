@@ -15,7 +15,7 @@ To set up a new project with ethers-rs, you will need to install the Rust progra
 
     ```toml
     [dependencies]
-    ethers = "1.0.0"
+    corebc = "1.0.0"
 
     # Most of ethers-rs features rely upon an async Rust runtime.
     # Since Rust doesn't provide an async runtime itself, you can
@@ -29,15 +29,15 @@ To set up a new project with ethers-rs, you will need to install the Rust progra
 
     ```toml
     [dependencies]
-    ethers = { git = "https://github.com/gakonst/ethers-rs" }
+    corebc = { git = "https://github.com/gakonst/ethers-rs" }
 
     # Use the "branch" attribute to specify a branch other than master
     [dependencies]
-    ethers = { git = "https://github.com/gakonst/ethers-rs", branch = "branch-name" }
+    corebc = { git = "https://github.com/gakonst/ethers-rs", branch = "branch-name" }
 
     # You can specify a tag or commit hash with the "rev" attribute
     [dependencies]
-    ethers = { git = "https://github.com/gakonst/ethers-rs", rev = "1.0.2" }
+    corebc = { git = "https://github.com/gakonst/ethers-rs", rev = "1.0.2" }
     ```
 
     > **Note:** using a Git repository as a dependency is generally not recommended
@@ -55,18 +55,18 @@ The following transport types are currently supported by ethers.rs:
 
     ```toml
     [dependencies]
-    ethers = { version = "1.0.0", features = ["rustls"] }
+    corebc = { version = "1.0.0", features = ["rustls"] }
     ```
 
 - **WebSocket:** The WebSocket transport is used to communicate with Ethereum nodes over the WebSocket protocol, which is a widely-supported standard for establishing a bi-directional communication channel between a client and a server. This can be used for a variety of purposes, including receiving real-time updates from an Ethereum node, or submitting transactions to the Ethereum network. Websockets support is turned on via the feature-flag ws:
 
     ```toml
     [dependencies]
-    ethers = { version = "1.0.0", features = ["ws"] }
+    corebc = { version = "1.0.0", features = ["ws"] }
     ```
 
 - **IPC (Interprocess Communication):** The IPC transport is used to communicate with a local Ethereum node using the IPC protocol, which is a way for processes to communicate with each other on a single computer. This is commonly used in Ethereum development to allow applications to communicate with a local Ethereum node, such as geth or parity. IPC support is turned on via the feature-flag `ipc`:
     ```toml
     [dependencies]
-    ethers = { version = "1.0.0", features = ["ipc"] }
+    corebc = { version = "1.0.0", features = ["ipc"] }
     ```

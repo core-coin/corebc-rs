@@ -7,7 +7,7 @@ use corebc_core::{
         TransactionReceipt, TransactionRequest, U256, U64,
     },
 };
-use ethers_providers::{
+use corebc_providers::{
     call_raw::{CallBuilder, RawCall},
     Middleware,
 };
@@ -320,9 +320,9 @@ where
 /// # Example
 ///
 /// ```no_run
-/// use ethers_solc::Solc;
+/// use corebc_solc::Solc;
 /// use ethers_contract::ContractFactory;
-/// use ethers_providers::{Provider, Http};
+/// use corebc_providers::{Provider, Http};
 /// use std::convert::TryFrom;
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {

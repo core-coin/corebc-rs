@@ -5,7 +5,7 @@ use corebc_core::{
         transaction::eip2718::TypedTransaction, Address, BlockNumber, Bytes, NameOrAddress, U256,
     },
 };
-use ethers_providers::{Middleware, PendingTransaction};
+use corebc_providers::{Middleware, PendingTransaction};
 use std::{convert::TryFrom, fmt, result::Result as StdResult, sync::Arc};
 
 /// The Multicall contract bindings. Auto-generated with `abigen`.
@@ -123,7 +123,7 @@ impl MulticallVersion {
 ///     types::{Address, H256, U256},
 /// };
 /// use ethers_contract::{Contract, Multicall, MulticallVersion};
-/// use ethers_providers::{Middleware, Http, Provider, PendingTransaction};
+/// use corebc_providers::{Middleware, Http, Provider, PendingTransaction};
 /// use std::{convert::TryFrom, sync::Arc};
 ///
 /// # async fn bar() -> Result<(), Box<dyn std::error::Error>> {
@@ -265,7 +265,7 @@ impl<M: Middleware> Multicall<M> {
                     .map_err(ContractError::from_middleware_error)?
                     .as_u64();
                 if !constants::MULTICALL_SUPPORTED_CHAIN_IDS.contains(&chain_id) {
-                    return Err(error::MulticallError::InvalidChainId(chain_id))
+                    return Err(error::MulticallError::InvalidChainId(chain_id));
                 }
                 constants::MULTICALL_ADDRESS
             }
@@ -309,7 +309,7 @@ impl<M: Middleware> Multicall<M> {
             (_, Some(chain_id)) => {
                 let chain_id = chain_id.into();
                 if !constants::MULTICALL_SUPPORTED_CHAIN_IDS.contains(&chain_id) {
-                    return Err(error::MulticallError::InvalidChainId(chain_id))
+                    return Err(error::MulticallError::InvalidChainId(chain_id));
                 }
                 constants::MULTICALL_ADDRESS
             }
@@ -388,7 +388,7 @@ impl<M: Middleware> Multicall<M> {
             TypedTransaction::Eip1559(tx) => (tx.to, tx.data, tx.value),
         };
         if data.is_none() && !call.function.outputs.is_empty() {
-            return self
+            return self;
         }
         if let Some(NameOrAddress::Address(target)) = to {
             let call = Call {
@@ -511,7 +511,7 @@ impl<M: Middleware> Multicall<M> {
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// # use corebc_core::{abi::Abi, types::{Address, H256}};
-    /// # use ethers_providers::{Provider, Http};
+    /// # use corebc_providers::{Provider, Http};
     /// # use ethers_contract::{Multicall, Contract};
     /// # use std::{sync::Arc, convert::TryFrom};
     /// #
@@ -574,7 +574,7 @@ impl<M: Middleware> Multicall<M> {
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// # use corebc_core::types::{U256, Address};
-    /// # use ethers_providers::{Provider, Http};
+    /// # use corebc_providers::{Provider, Http};
     /// # use ethers_contract::Multicall;
     /// # use std::convert::TryFrom;
     /// #
@@ -622,7 +622,7 @@ impl<M: Middleware> Multicall<M> {
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// # use corebc_core::types::{U256, Address};
-    /// # use ethers_providers::{Provider, Http};
+    /// # use corebc_providers::{Provider, Http};
     /// # use ethers_contract::Multicall;
     /// # use std::convert::TryFrom;
     /// #
@@ -664,7 +664,7 @@ impl<M: Middleware> Multicall<M> {
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// # use corebc_core::types::{U256, Address};
-    /// # use ethers_providers::{Provider, Http};
+    /// # use corebc_providers::{Provider, Http};
     /// # use ethers_contract::Multicall;
     /// # use std::convert::TryFrom;
     /// #
@@ -718,7 +718,7 @@ impl<M: Middleware> Multicall<M> {
                 // still do so because of other calls that are in the same multicall
                 // aggregate.
                 if !success && !call.allow_failure {
-                    return Err(error::MulticallError::IllegalRevert)
+                    return Err(error::MulticallError::IllegalRevert);
                 }
 
                 Err(return_data)
@@ -749,7 +749,7 @@ impl<M: Middleware> Multicall<M> {
     ///
     /// ```no_run
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// # use ethers_providers::{Provider, Http};
+    /// # use corebc_providers::{Provider, Http};
     /// # use ethers_contract::Multicall;
     /// # use std::convert::TryFrom;
     /// # let client = Provider::<Http>::try_from("http://localhost:8545")?;

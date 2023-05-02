@@ -41,7 +41,7 @@ ethers-contract-derive = { workspace = true, optional = true }
 
 [dev-dependencies]
 corebc-signers.workspace = true
-ethers-solc.workspace = true
+corebc-solc.workspace = true
 corebc-providers = { workspace = true, features = ["ws"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

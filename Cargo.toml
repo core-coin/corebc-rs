@@ -31,15 +31,15 @@ all-features = true
 
 [workspace]
 members = [
-    "ethers",
-    "ethers-addressbook",
+    "corebc",
+    "corebc-addressbook",
     "ethers-contract",
     "corebc-core",
-    "ethers-etherscan",
-    "ethers-middleware",
+    "corebc-etherscan",
+    "corebc-middleware",
     "corebc-providers",
     "corebc-signers",
-    "ethers-solc",
+    "corebc-solc",
 
     # Example crates
     "examples/*",
@@ -47,15 +47,15 @@ members = [
 
 # Do not include example crates in default members
 default-members = [
-    "ethers",
-    "ethers-addressbook",
+    "corebc",
+    "corebc-addressbook",
     "ethers-contract",
     "corebc-core",
-    "ethers-etherscan",
-    "ethers-middleware",
+    "corebc-etherscan",
+    "corebc-middleware",
     "corebc-providers",
     "corebc-signers",
-    "ethers-solc",
+    "corebc-solc",
 ]
 
 # Explicitly set the resolver to version 2, which is the default for packages with edition >= 2021
@@ -64,15 +64,15 @@ resolver = "2"
 
 [workspace.dependencies]
 # workspace crates
-ethers = { version = "2.0.3", path = "ethers", default-features = false }
-ethers-addressbook = { version = "2.0.3", path = "ethers-addressbook", default-features = false }
+corebc = { version = "2.0.3", path = "corebc", default-features = false }
+corebc-addressbook = { version = "2.0.3", path = "corebc-addressbook", default-features = false }
 ethers-contract = { version = "2.0.3", path = "ethers-contract", default-features = false }
 corebc-core = { version = "2.0.3", path = "corebc-core", default-features = false }
-ethers-etherscan = { version = "2.0.3", path = "ethers-etherscan", default-features = false }
-ethers-middleware = { version = "2.0.3", path = "ethers-middleware", default-features = false }
+corebc-etherscan = { version = "2.0.3", path = "corebc-etherscan", default-features = false }
+corebc-middleware = { version = "2.0.3", path = "corebc-middleware", default-features = false }
 corebc-providers = { version = "2.0.3", path = "corebc-providers", default-features = false }
 corebc-signers = { version = "2.0.3", path = "corebc-signers", default-features = false }
-ethers-solc = { version = "2.0.3", path = "ethers-solc", default-features = false }
+corebc-solc = { version = "2.0.3", path = "corebc-solc", default-features = false }
 
 ethers-contract-abigen = { version = "2.0.3", path = "ethers-contract/ethers-contract-abigen", default-features = false }
 ethers-contract-derive = { version = "2.0.3", path = "ethers-contract/ethers-contract-derive", default-features = false }
