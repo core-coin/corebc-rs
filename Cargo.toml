@@ -33,7 +33,7 @@ all-features = true
 members = [
     "corebc",
     "corebc-addressbook",
-    "ethers-contract",
+    "corebc-contract",
     "corebc-core",
     "corebc-etherscan",
     "corebc-middleware",
@@ -49,7 +49,7 @@ members = [
 default-members = [
     "corebc",
     "corebc-addressbook",
-    "ethers-contract",
+    "corebc-contract",
     "corebc-core",
     "corebc-etherscan",
     "corebc-middleware",
@@ -66,7 +66,7 @@ resolver = "2"
 # workspace crates
 corebc = { version = "2.0.3", path = "corebc", default-features = false }
 corebc-addressbook = { version = "2.0.3", path = "corebc-addressbook", default-features = false }
-ethers-contract = { version = "2.0.3", path = "ethers-contract", default-features = false }
+corebc-contract = { version = "2.0.3", path = "corebc-contract", default-features = false }
 corebc-core = { version = "2.0.3", path = "corebc-core", default-features = false }
 corebc-etherscan = { version = "2.0.3", path = "corebc-etherscan", default-features = false }
 corebc-middleware = { version = "2.0.3", path = "corebc-middleware", default-features = false }
@@ -74,8 +74,8 @@ corebc-providers = { version = "2.0.3", path = "corebc-providers", default-featu
 corebc-signers = { version = "2.0.3", path = "corebc-signers", default-features = false }
 corebc-solc = { version = "2.0.3", path = "corebc-solc", default-features = false }
 
-ethers-contract-abigen = { version = "2.0.3", path = "ethers-contract/ethers-contract-abigen", default-features = false }
-ethers-contract-derive = { version = "2.0.3", path = "ethers-contract/ethers-contract-derive", default-features = false }
+corebc-contract-abigen = { version = "2.0.3", path = "corebc-contract/corebc-contract-abigen", default-features = false }
+corebc-contract-derive = { version = "2.0.3", path = "corebc-contract/corebc-contract-derive", default-features = false }
 
 # async / async utils
 tokio = "1.27"

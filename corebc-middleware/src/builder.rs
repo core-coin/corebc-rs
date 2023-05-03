@@ -16,7 +16,7 @@ use corebc_signers::Signer;
 /// use std::sync::Arc;
 /// use std::convert::TryFrom;
 /// use corebc_signers::{LocalWallet, Signer};
-/// use ethers_middleware::{*, gas_escalator::*, gas_oracle::*};
+/// use corebc_middleware::{*, gas_escalator::*, gas_oracle::*};
 ///
 /// fn builder_example() {
 ///     let key = "fdb33e2105f08abe41a8ee3b758726a31abdd57b7a443f470f23efce853af169";

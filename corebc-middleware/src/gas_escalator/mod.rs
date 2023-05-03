@@ -118,7 +118,7 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 ///
 /// ```no_run
 /// use corebc_providers::{Provider, Http};
-/// use ethers_middleware::{
+/// use corebc_middleware::{
 ///     gas_escalator::{GeometricGasPrice, Frequency, GasEscalatorMiddleware},
 ///     gas_oracle::{GasNow, GasCategory, GasOracleMiddleware},
 /// };

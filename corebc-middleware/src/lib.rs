@@ -50,7 +50,7 @@ pub use builder::MiddlewareBuilder;
 extern crate self as ethers;
 
 #[doc(hidden)]
-pub use ethers_contract as contract;
+pub use corebc_contract as contract;
 
 #[doc(hidden)]
 pub use corebc_core as core;

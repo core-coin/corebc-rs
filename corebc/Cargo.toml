@@ -30,12 +30,12 @@ celo = [
     "corebc-core/celo",
     "corebc-providers/celo",
     "corebc-signers/celo",
-    "ethers-contract/celo",
+    "corebc-contract/celo",
     "corebc-middleware/celo",
     "legacy",
 ]
 
-legacy = ["corebc-core/legacy", "ethers-contract/legacy"]
+legacy = ["corebc-core/legacy", "corebc-contract/legacy"]
 
 # individual features per sub-crate
 ## providers
@@ -46,14 +46,14 @@ rustls = [
     "corebc-middleware/rustls",
     "corebc-providers/rustls",
     "corebc-etherscan/rustls",
-    "ethers-contract/rustls",
+    "corebc-contract/rustls",
     "corebc-solc/rustls",
 ]
 openssl = [
     "corebc-middleware/openssl",
     "corebc-providers/openssl",
     "corebc-etherscan/openssl",
-    "ethers-contract/openssl",
+    "corebc-contract/openssl",
     "corebc-solc/openssl",
 ]
 dev-rpc = ["corebc-providers/dev-rpc"]
@@ -62,9 +62,9 @@ ledger = ["corebc-signers/ledger"]
 trezor = ["corebc-signers/trezor"]
 yubi = ["corebc-signers/yubi"]
 ## contracts
-abigen = ["ethers-contract/abigen"]
+abigen = ["corebc-contract/abigen"]
 ### abigen without reqwest
-abigen-offline = ["ethers-contract/abigen-offline"]
+abigen-offline = ["corebc-contract/abigen-offline"]
 ## solc
 solc-full = ["corebc-solc/full"]
 solc-tests = ["corebc-solc/tests"]
@@ -75,7 +75,7 @@ eip712 = []
 
 [dependencies]
 corebc-addressbook.workspace = true
-ethers-contract.workspace = true
+corebc-contract.workspace = true
 corebc-core.workspace = true
 corebc-etherscan = { workspace = true, features = ["corebc-solc"] }
 corebc-middleware.workspace = true
@@ -86,6 +86,6 @@ corebc-solc.workspace = true
 [dev-dependencies]
 serde.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
-ethers-contract.workspace = true
+corebc-contract.workspace = true
 corebc-providers = { workspace = true, features = ["rustls"] } # allow https connections
 corebc-solc = { workspace = true, features = ["svm-solc"] }

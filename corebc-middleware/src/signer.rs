@@ -18,7 +18,7 @@ use thiserror::Error;
 /// ```no_run
 /// use corebc_providers::{Middleware, Provider, Http};
 /// use corebc_signers::LocalWallet;
-/// use ethers_middleware::SignerMiddleware;
+/// use corebc_middleware::SignerMiddleware;
 /// use corebc_core::types::{Address, TransactionRequest};
 /// use std::convert::TryFrom;
 ///

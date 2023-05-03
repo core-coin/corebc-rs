@@ -32,8 +32,8 @@ pub fn corebc_core_crate() -> syn::Path {
 
 /// Returns the `contract` crate's [`Path`][syn::Path].
 #[inline]
-pub fn ethers_contract_crate() -> syn::Path {
-    get_crate_path(CorebcCrate::EthersContract)
+pub fn corebc_contract_crate() -> syn::Path {
+    get_crate_path(CorebcCrate::CorebcContract)
 }
 
 /// Returns the `providers` crate's [`Path`][syn::Path].
@@ -216,9 +216,9 @@ impl ProjectEnvironment {
 #[strum(serialize_all = "kebab-case")]
 pub enum CorebcCrate {
     CorebcAddressbook,
-    EthersContract,
-    EthersContractAbigen,
-    EthersContractDerive,
+    CorebcContract,
+    CorebcContractAbigen,
+    CorebcContractDerive,
     CorebcCore,
     CorebcEtherscan,
     CorebcMiddleware,
@@ -245,9 +245,9 @@ impl CorebcCrate {
     pub const fn crate_name(self) -> &'static str {
         match self {
             Self::CorebcAddressbook => "corebc-addressbook",
-            Self::EthersContract => "ethers-contract",
-            Self::EthersContractAbigen => "ethers-contract-abigen",
-            Self::EthersContractDerive => "ethers-contract-derive",
+            Self::CorebcContract => "corebc-contract",
+            Self::CorebcContractAbigen => "corebc-contract-abigen",
+            Self::CorebcContractDerive => "corebc-contract-derive",
             Self::CorebcCore => "corebc-core",
             Self::CorebcEtherscan => "corebc-etherscan",
             Self::CorebcMiddleware => "corebc-middleware",
@@ -262,9 +262,9 @@ impl CorebcCrate {
     pub const fn path_name(self) -> &'static str {
         match self {
             Self::CorebcAddressbook => "::corebc_addressbook",
-            Self::EthersContract => "::ethers_contract",
-            Self::EthersContractAbigen => "::ethers_contract_abigen",
-            Self::EthersContractDerive => "::ethers_contract_derive",
+            Self::CorebcContract => "::corebc_contract",
+            Self::CorebcContractAbigen => "::corebc_contract_abigen",
+            Self::CorebcContractDerive => "::corebc_contract_derive",
             Self::CorebcCore => "::corebc-core",
             Self::CorebcEtherscan => "::corebc_etherscan",
             Self::CorebcMiddleware => "::corebc_middleware",
@@ -279,11 +279,11 @@ impl CorebcCrate {
     pub const fn ethers_path_name(self) -> &'static str {
         match self {
             // re-exported in ethers::contract
-            Self::EthersContractAbigen => "::ethers::contract", // partially
-            Self::EthersContractDerive => "::ethers::contract",
+            Self::CorebcContractAbigen => "::corebc::contract", // partially
+            Self::CorebcContractDerive => "::corebc::contract",
 
             Self::CorebcAddressbook => "::corebc::addressbook",
-            Self::EthersContract => "::ethers::contract",
+            Self::CorebcContract => "::corebc::contract",
             Self::CorebcCore => "::corebc::core",
             Self::CorebcEtherscan => "::corebc::etherscan",
             Self::CorebcMiddleware => "::corebc::middleware",
@@ -297,8 +297,8 @@ impl CorebcCrate {
     #[inline]
     pub const fn fs_path(self) -> &'static str {
         match self {
-            Self::EthersContractAbigen => "ethers-contract/ethers-contract-abigen",
-            Self::EthersContractDerive => "ethers-contract/ethers-contract-derive",
+            Self::CorebcContractAbigen => "corebc-contract/corebc-contract-abigen",
+            Self::CorebcContractDerive => "corebc-contract/corebc-contract-derive",
             _ => self.crate_name(),
         }
     }
@@ -410,8 +410,8 @@ mod tests {
 
         let (s, _dir) = test_project();
         // crate_name        -> represents an external crate
-        // "ethers-contract" -> represents an internal crate
-        for name in [s.crate_name.as_ref().unwrap(), "ethers-contract"] {
+        // "corebc-contract" -> represents an internal crate
+        for name in [s.crate_name.as_ref().unwrap(), "corebc-contract"] {
             let s = ProjectEnvironment::new(&s.manifest_dir, name);
             // only ethers
             assert_names(&s, true, &[]);

@@ -670,13 +670,13 @@ name = "corebc"
 version = "2.0.3"
 dependencies = [
  "corebc-addressbook",
+ "corebc-contract",
  "corebc-core",
  "corebc-etherscan",
  "corebc-middleware",
  "corebc-providers",
  "corebc-signers",
  "corebc-solc",
- "ethers-contract",
  "serde",
  "tokio",
 ]
@@ -689,6 +689,67 @@ dependencies = [
  "once_cell",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "corebc-contract"
+version = "2.0.3"
+dependencies = [
+ "corebc-contract-abigen",
+ "corebc-contract-derive",
+ "corebc-core",
+ "corebc-providers",
+ "corebc-signers",
+ "corebc-solc",
+ "futures-util",
+ "hex",
+ "once_cell",
+ "pin-project",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "corebc-contract-abigen"
+version = "2.0.3"
+dependencies = [
+ "Inflector",
+ "corebc-core",
+ "corebc-etherscan",
+ "corebc-solc",
+ "dunce",
+ "eyre",
+ "getrandom",
+ "hex",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "syn 2.0.15",
+ "tempfile",
+ "tokio",
+ "toml",
+ "url",
+ "walkdir",
+]
+
+[[package]]
+name = "corebc-contract-derive"
+version = "2.0.3"
+dependencies = [
+ "Inflector",
+ "corebc-contract-abigen",
+ "corebc-core",
+ "hex",
+ "proc-macro2",
+ "quote",
+ "serde_json",
+ "syn 2.0.15",
 ]
 
 [[package]]
@@ -747,12 +808,12 @@ version = "2.0.3"
 dependencies = [
  "async-trait",
  "auto_impl",
+ "corebc-contract",
  "corebc-core",
  "corebc-etherscan",
  "corebc-providers",
  "corebc-signers",
  "corebc-solc",
- "ethers-contract",
  "futures-channel",
  "futures-locks",
  "futures-util",
@@ -817,10 +878,10 @@ dependencies = [
  "coins-bip32",
  "coins-bip39",
  "coins-ledger",
+ "corebc-contract-derive",
  "corebc-core",
  "elliptic-curve",
  "eth-keystore",
- "ethers-contract-derive",
  "futures-executor",
  "futures-util",
  "hex",
@@ -1410,67 +1471,6 @@ dependencies = [
  "primitive-types 0.12.1 (git+https://github.com/core-coin/core-common)",
  "scale-info",
  "uint 0.9.5 (git+https://github.com/core-coin/core-common)",
-]
-
-[[package]]
-name = "ethers-contract"
-version = "2.0.3"
-dependencies = [
- "corebc-core",
- "corebc-providers",
- "corebc-signers",
- "corebc-solc",
- "ethers-contract-abigen",
- "ethers-contract-derive",
- "futures-util",
- "hex",
- "once_cell",
- "pin-project",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
-]
-
-[[package]]
-name = "ethers-contract-abigen"
-version = "2.0.3"
-dependencies = [
- "Inflector",
- "corebc-core",
- "corebc-etherscan",
- "corebc-solc",
- "dunce",
- "eyre",
- "getrandom",
- "hex",
- "prettyplease",
- "proc-macro2",
- "quote",
- "regex",
- "reqwest",
- "serde",
- "serde_json",
- "syn 2.0.15",
- "tempfile",
- "tokio",
- "toml",
- "url",
- "walkdir",
-]
-
-[[package]]
-name = "ethers-contract-derive"
-version = "2.0.3"
-dependencies = [
- "Inflector",
- "corebc-core",
- "ethers-contract-abigen",
- "hex",
- "proc-macro2",
- "quote",
- "serde_json",
- "syn 2.0.15",
 ]
 
 [[package]]

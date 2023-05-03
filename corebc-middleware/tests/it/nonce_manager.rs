@@ -1,7 +1,7 @@
 use crate::spawn_anvil;
 use corebc_core::types::*;
+use corebc_middleware::MiddlewareBuilder;
 use corebc_providers::Middleware;
-use ethers_middleware::MiddlewareBuilder;
 
 #[tokio::test]
 async fn nonce_manager() {

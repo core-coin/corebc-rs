@@ -1,12 +1,12 @@
 use crate::{get_wallet, spawn_anvil};
+use corebc_contract::abigen;
 use corebc_core::{abi::AbiEncode, types::*};
-use corebc_providers::{Http, Middleware, Provider};
-use corebc_signers::{LocalWallet, Signer};
-use ethers_contract::abigen;
-use ethers_middleware::{
+use corebc_middleware::{
     transformer::{ds_proxy::factory::DsProxyFactory, DsProxy, TransformerMiddleware},
     MiddlewareBuilder, SignerMiddleware,
 };
+use corebc_providers::{Http, Middleware, Provider};
+use corebc_signers::{LocalWallet, Signer};
 use rand::Rng;
 use std::sync::Arc;
 

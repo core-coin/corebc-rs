@@ -1,8 +1,8 @@
 use crate::{get_wallet, spawn_anvil, spawn_anvil_ws};
 use corebc_core::types::*;
+use corebc_middleware::{signer::SignerMiddleware, MiddlewareBuilder};
 use corebc_providers::{JsonRpcClient, Middleware};
 use corebc_signers::{LocalWallet, Signer};
-use ethers_middleware::{signer::SignerMiddleware, MiddlewareBuilder};
 
 #[tokio::test]
 async fn send_eth() {

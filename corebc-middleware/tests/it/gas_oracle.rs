@@ -4,11 +4,11 @@ use corebc_core::{
     utils::{parse_ether, Anvil},
 };
 use corebc_etherscan::Client;
-use corebc_providers::{Http, Middleware, Provider};
-use ethers_middleware::gas_oracle::{
+use corebc_middleware::gas_oracle::{
     BlockNative, Etherchain, Etherscan, GasCategory, GasNow, GasOracle, GasOracleError,
     GasOracleMiddleware, Polygon, ProviderOracle, Result,
 };
+use corebc_providers::{Http, Middleware, Provider};
 
 #[derive(Debug)]
 struct FakeGasOracle {
@@ -76,7 +76,7 @@ async fn blocknative() {
 #[ignore = "ETHGasStation is shutting down: https://twitter.com/ETHGasStation/status/1597341610777317376"]
 #[allow(deprecated)]
 async fn eth_gas_station() {
-    let eth_gas_station_oracle = ethers_middleware::gas_oracle::EthGasStation::default();
+    let eth_gas_station_oracle = corebc_middleware::gas_oracle::EthGasStation::default();
     let gas_price = eth_gas_station_oracle.fetch().await.unwrap();
     assert!(gas_price > U256::zero());
 }

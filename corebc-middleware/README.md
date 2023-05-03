@@ -24,7 +24,7 @@ The following example shows how to build a composed [`Middleware`](corebc_provid
 ```rust
 # use corebc_providers::{Middleware, Provider, Http};
 # use corebc_signers::{LocalWallet, Signer};
-# use ethers_middleware::{gas_oracle::GasNow, MiddlewareBuilder};
+# use corebc_middleware::{gas_oracle::GasNow, MiddlewareBuilder};
 let key = "fdb33e2105f08abe41a8ee3b758726a31abdd57b7a443f470f23efce853af169";
 let signer = key.parse::<LocalWallet>()?;
 let address = signer.address();
@@ -43,7 +43,7 @@ The [wrap_into](crate::MiddlewareBuilder::wrap_into) function can be used to wra
 # use corebc_providers::{Middleware, Provider, Http};
 # use std::convert::TryFrom;
 # use corebc_signers::{LocalWallet, Signer};
-# use ethers_middleware::{*,gas_escalator::*,gas_oracle::*};
+# use corebc_middleware::{*,gas_escalator::*,gas_oracle::*};
 let key = "fdb33e2105f08abe41a8ee3b758726a31abdd57b7a443f470f23efce853af169";
 let signer = key.parse::<LocalWallet>()?;
 let address = signer.address();
@@ -62,7 +62,7 @@ A [`Middleware`](corebc_providers::Middleware) stack can be also constructed man
 ```rust,no_run
 # use corebc_providers::{Provider, Http};
 # use corebc_signers::{LocalWallet, Signer};
-# use ethers_middleware::{
+# use corebc_middleware::{
 #     gas_escalator::{GasEscalatorMiddleware, GeometricGasPrice, Frequency},
 #     gas_oracle::{GasOracleMiddleware, GasCategory, GasNow},
 #     signer::SignerMiddleware,

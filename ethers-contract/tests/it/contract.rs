@@ -8,11 +8,11 @@ use corebc_core::{
     utils::{sha3, Anvil},
 };
 use corebc_providers::{Http, Middleware, MiddlewareError, Provider, StreamExt, Ws};
-use ethers_contract::{
+use corebc_contract::{
     abigen, ContractFactory, ContractInstance, Eip712, EthAbiType, EthEvent, LogMeta, Multicall,
     MulticallError, MulticallVersion,
 };
-use ethers_signers::{LocalWallet, Signer};
+use corebc_signers::{LocalWallet, Signer};
 use std::{sync::Arc, time::Duration};
 
 #[derive(Debug)]
@@ -342,7 +342,7 @@ async fn watch_events() {
 
     // Also set up a subscription for the same thing
     let ws = Provider::<Ws>::connect(anvil.ws_endpoint()).await.unwrap();
-    let contract2 = ethers_contract::Contract::new(contract.address(), abi, ws.into());
+    let contract2 = corebc_contract::Contract::new(contract.address(), abi, ws.into());
     let event2 = contract2.event::<ValueChanged>();
     let mut subscription = event2.subscribe().await.unwrap();
 
@@ -412,7 +412,7 @@ async fn build_event_of_type() {
 
     let anvil = Anvil::new().spawn();
     let client = connect(&anvil, 0);
-    let event = ethers_contract::Contract::event_of_type::<AnswerUpdatedFilter>(client);
+    let event = corebc_contract::Contract::event_of_type::<AnswerUpdatedFilter>(client);
     assert_eq!(event.filter, Filter::new().event(&AnswerUpdatedFilter::abi_signature()));
 }
 
@@ -788,9 +788,9 @@ async fn multicall_aggregate() {
 async fn test_derive_eip712() {
     // Generate Contract ABI Bindings
     mod contract {
-        ethers_contract::abigen!(
+        corebc_contract::abigen!(
             DeriveEip712Test,
-            "./ethers-contract/tests/solidity-contracts/DeriveEip712Test.json",
+            "./corebc-contract/tests/solidity-contracts/DeriveEip712Test.json",
             derives(serde::Deserialize, serde::Serialize)
         );
     }

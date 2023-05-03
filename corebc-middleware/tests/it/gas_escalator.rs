@@ -1,10 +1,10 @@
 use corebc_core::{types::*, utils::Anvil};
-use corebc_providers::{Http, Middleware, Provider};
-use corebc_signers::{LocalWallet, Signer};
-use ethers_middleware::{
+use corebc_middleware::{
     gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
     MiddlewareBuilder,
 };
+use corebc_providers::{Http, Middleware, Provider};
+use corebc_signers::{LocalWallet, Signer};
 
 #[tokio::test]
 #[ignore]

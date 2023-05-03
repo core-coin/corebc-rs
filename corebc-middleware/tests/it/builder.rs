@@ -1,13 +1,13 @@
 use corebc_core::{rand::thread_rng, types::U64};
-use corebc_providers::{Middleware, Provider};
-use corebc_signers::{LocalWallet, Signer};
-use ethers_middleware::{
+use corebc_middleware::{
     builder::MiddlewareBuilder,
     gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
     gas_oracle::{GasNow, GasOracleMiddleware},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
+use corebc_providers::{Middleware, Provider};
+use corebc_signers::{LocalWallet, Signer};
 
 #[tokio::test]
 async fn build_raw_middleware_stack() {

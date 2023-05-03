@@ -79,7 +79,7 @@ impl TrezorEthereum {
 
         // Enforce firmware version is greater than FIRMWARE_MIN_VERSION
         if !req.matches(&version) {
-            return Err(TrezorError::UnsupportedFirmwareVersion(FIRMWARE_MIN_VERSION.to_string()))
+            return Err(TrezorError::UnsupportedFirmwareVersion(FIRMWARE_MIN_VERSION.to_string()));
         }
 
         Ok(())
@@ -240,6 +240,7 @@ impl TrezorEthereum {
 mod tests {
     use super::*;
     use crate::Signer;
+    use corebc_contract_derive::{Eip712, EthAbiType};
     use corebc_core::types::{
         transaction::{
             eip2930::{AccessList, AccessListItem},
@@ -247,7 +248,6 @@ mod tests {
         },
         Address, Eip1559TransactionRequest, TransactionRequest, I256, U256,
     };
-    use ethers_contract_derive::{Eip712, EthAbiType};
     use std::str::FromStr;
 
     #[derive(Debug, Clone)]

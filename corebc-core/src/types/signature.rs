@@ -96,7 +96,7 @@ impl Signature {
         let address = address.into();
         let recovered = self.recover(message)?;
         if recovered != address {
-            return Err(SignatureError::VerificationError(address, recovered))
+            return Err(SignatureError::VerificationError(address, recovered));
         }
 
         Ok(())
@@ -207,7 +207,7 @@ impl<'a> TryFrom<&'a [u8]> for Signature {
     /// and the final byte is the `v` value in 'Electrum' notation.
     fn try_from(bytes: &'a [u8]) -> Result<Self, Self::Error> {
         if bytes.len() != 65 {
-            return Err(SignatureError::InvalidLength(bytes.len()))
+            return Err(SignatureError::InvalidLength(bytes.len()));
         }
 
         let v = bytes[64];
@@ -243,7 +243,7 @@ impl From<&Signature> for [u8; 65] {
         // The u64 to u8 cast is safe because `sig.v` can only ever be 27 or 28
         // here. Regarding EIP-155, the modification to `v` happens during tx
         // creation only _after_ the transaction is signed using
-        // `ethers_signers::to_eip155_v`.
+        // `corebc_signers::to_eip155_v`.
         sig[64] = src.v as u8;
         sig
     }

@@ -7,7 +7,7 @@ use corebc_core::{
 };
 use corebc_providers::{MockProvider, Provider};
 use corebc_solc::Solc;
-use ethers_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
+use corebc_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
 use std::{fmt::Debug, hash::Hash, sync::Arc};
 
 const fn assert_codec<T: AbiDecode + AbiEncode>() {}
@@ -117,7 +117,7 @@ fn can_generate_structs_with_arrays_readable() {
 fn can_generate_internal_structs() {
     abigen!(
         VerifierContract,
-        "ethers-contract/tests/solidity-contracts/verifier_abi.json",
+        "corebc-contract/tests/solidity-contracts/verifier_abi.json",
         derives(serde::Deserialize, serde::Serialize)
     );
     assert_struct::<VerifyingKey>();
@@ -154,11 +154,11 @@ fn can_generate_internal_structs_multiple() {
         use super::*;
         abigen!(
             VerifierContract,
-            "ethers-contract/tests/solidity-contracts/verifier_abi.json",
+            "corebc-contract/tests/solidity-contracts/verifier_abi.json",
             derives(serde::Deserialize, serde::Serialize);
 
             MyOtherVerifierContract,
-            "ethers-contract/tests/solidity-contracts/verifier_abi.json",
+            "corebc-contract/tests/solidity-contracts/verifier_abi.json",
             derives(serde::Deserialize, serde::Serialize);
         );
     }
@@ -193,7 +193,7 @@ fn can_generate_internal_structs_multiple() {
 
 #[test]
 fn can_generate_return_struct() {
-    abigen!(MultiInputOutput, "ethers-contract/tests/solidity-contracts/MultiInputOutput.json");
+    abigen!(MultiInputOutput, "corebc-contract/tests/solidity-contracts/MultiInputOutput.json");
 
     fn verify<T: AbiEncode + AbiDecode + Clone + std::fmt::Debug + std::cmp::PartialEq>(
         binding: T,
@@ -362,7 +362,7 @@ async fn can_handle_underscore_functions() {
         ]"#;
 
         SimpleStorage2,
-        "ethers-contract/tests/solidity-contracts/simplestorage_abi.json",
+        "corebc-contract/tests/solidity-contracts/simplestorage_abi.json",
     );
 
     // launch the network & connect to it
@@ -378,7 +378,7 @@ async fn can_handle_underscore_functions() {
     let path = "./tests/solidity-contracts/SimpleStorage.sol";
     let compiled = Solc::default().compile_source(path).unwrap();
     let compiled = compiled.get(path, contract).unwrap();
-    let factory = ethers_contract::ContractFactory::new(
+    let factory = corebc_contract::ContractFactory::new(
         compiled.abi.unwrap().clone(),
         compiled.bytecode().unwrap().clone(),
         client.clone(),
@@ -477,7 +477,7 @@ fn can_handle_duplicates_with_same_name() {
 
 #[test]
 fn can_abican_generate_console_sol() {
-    abigen!(Console, "ethers-contract/tests/solidity-contracts/console.json",);
+    abigen!(Console, "corebc-contract/tests/solidity-contracts/console.json",);
 }
 
 #[test]
@@ -543,7 +543,7 @@ fn can_handle_case_sensitive_calls() {
 
 #[tokio::test]
 async fn can_deploy_greeter() {
-    abigen!(Greeter, "ethers-contract/tests/solidity-contracts/greeter.json",);
+    abigen!(Greeter, "corebc-contract/tests/solidity-contracts/greeter.json",);
     let anvil = Anvil::new().spawn();
     let from = anvil.addresses()[0];
     let provider = Provider::try_from(anvil.endpoint())
@@ -561,7 +561,7 @@ async fn can_deploy_greeter() {
 
 #[tokio::test]
 async fn can_abiencoderv2_output() {
-    abigen!(AbiEncoderv2Test, "ethers-contract/tests/solidity-contracts/abiencoderv2test_abi.json",);
+    abigen!(AbiEncoderv2Test, "corebc-contract/tests/solidity-contracts/abiencoderv2test_abi.json",);
     let anvil = Anvil::new().spawn();
     let from = anvil.addresses()[0];
     let provider = Provider::try_from(anvil.endpoint())
@@ -574,7 +574,7 @@ async fn can_abiencoderv2_output() {
     let path = "./tests/solidity-contracts/Abiencoderv2Test.sol";
     let compiled = Solc::default().compile_source(path).unwrap();
     let compiled = compiled.get(path, contract).unwrap();
-    let factory = ethers_contract::ContractFactory::new(
+    let factory = corebc_contract::ContractFactory::new(
         compiled.abi.unwrap().clone(),
         compiled.bytecode().unwrap().clone(),
         client.clone(),
@@ -756,19 +756,19 @@ fn can_generate_to_string_overload() {
 
 #[test]
 fn can_generate_large_event() {
-    abigen!(NewSale, "ethers-contract/tests/solidity-contracts/sale.json");
+    abigen!(NewSale, "corebc-contract/tests/solidity-contracts/sale.json");
 }
 
 #[test]
 fn can_generate_large_output_struct() {
-    abigen!(LargeOutputStruct, "ethers-contract/tests/solidity-contracts/LargeStruct.json");
+    abigen!(LargeOutputStruct, "corebc-contract/tests/solidity-contracts/LargeStruct.json");
 
     let _r = GetByIdReturn(Info::default());
 }
 
 #[test]
 fn can_generate_large_structs() {
-    abigen!(LargeStructs, "ethers-contract/tests/solidity-contracts/LargeStructs.json");
+    abigen!(LargeStructs, "corebc-contract/tests/solidity-contracts/LargeStructs.json");
 
     assert_struct::<PoolStorage>();
     assert_struct::<AssetStorage>();
@@ -812,7 +812,7 @@ fn can_generate_event_with_structs() {
         event MyEvent(MyStruct, uint256);
     }
      */
-    abigen!(MyContract, "ethers-contract/tests/solidity-contracts/EventWithStruct.json");
+    abigen!(MyContract, "corebc-contract/tests/solidity-contracts/EventWithStruct.json");
 
     let _filter = MyEventFilter { p0: MyStruct::default(), c: U256::zero() };
     assert_eq!("MyEvent((uint256,uint256),uint256)", MyEventFilter::abi_signature());
@@ -843,7 +843,7 @@ fn convert_uses_correct_abi() {
     let provider = Arc::new(Provider::new(MockProvider::new()));
     let foo = Foo::new(Address::default(), Arc::clone(&provider));
 
-    let contract: &ethers_contract::Contract<_> = &foo;
+    let contract: &corebc_contract::Contract<_> = &foo;
     let bar: Bar<Provider<MockProvider>> = contract.clone().into();
 
     // Ensure that `bar` is using the `Bar` ABI internally (this method lookup will panic if `bar`
@@ -853,7 +853,7 @@ fn convert_uses_correct_abi() {
 
 #[test]
 fn generates_non_zero_bytecode() {
-    abigen!(Greeter, "ethers-contract/tests/solidity-contracts/greeter_with_struct.json");
+    abigen!(Greeter, "corebc-contract/tests/solidity-contracts/greeter_with_struct.json");
     //check that the bytecode is not empty
     assert!(GREETER_BYTECODE.len() > 0);
     assert!(GREETER_DEPLOYED_BYTECODE.len() > 0);

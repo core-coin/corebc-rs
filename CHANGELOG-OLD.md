@@ -24,10 +24,10 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - Graceful handling of WebSocket transport errors [#1889](https://github.com/gakonst/ethers-rs/issues/1889) [#1815](https://github.com/gakonst/ethers-rs/issues/1815)
 - `MiddlewareBuilder` trait to instantiate a `Provider` as `Middleware` layers.
 - An `Event` builder can be instantiated specifying the event filter type, without the need to instantiate a contract.
-- Add 'ethers_core::types::OpCode' and use in 'ethers_core::types::VMOperation' [#1857](https://github.com/gakonst/ethers-rs/issues/1857)
+- Add 'corebc_core::types::OpCode' and use in 'corebc_core::types::VMOperation' [#1857](https://github.com/gakonst/ethers-rs/issues/1857)
 - Remove rust_decimals dependency for ethers-core
-- Add support for numbers greater than 2^96 for `ethers_core::utils::parse_units` [#1822](https://github.com/gakonst/ethers-rs/issues/1822)
-- Add comment about safety of u8 -> u64 cast in `ethers_core::types::Signature`
+- Add support for numbers greater than 2^96 for `corebc_core::utils::parse_units` [#1822](https://github.com/gakonst/ethers-rs/issues/1822)
+- Add comment about safety of u8 -> u64 cast in `corebc_core::types::Signature`
 - Stop defaulting to the `"latest"` block in `eth_estimateGas` params [#1657](https://github.com/gakonst/ethers-rs/pull/1657)
 - Fix geth trace types for debug_traceTransaction rpc
 - Fix RLP decoding of legacy `Transaction`
@@ -89,7 +89,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - Significantly refactor `MultiAbigen` module generation. Now allows for lib
   generation, and does not make unnecessary disk writes.
   [#854](https://github.com/gakonst/ethers-rs/pull/852)
-- Refactor `ethers-contract-abigen` to use `eyre` instead of `anyhow` via
+- Refactor `corebc-contract-abigen` to use `eyre` instead of `anyhow` via
   [#858](https://github.com/gakonst/ethers-rs/pull/858)
 - Add `Deployer.send_with_receipt -> Result<(Contract, Receipt), Error>`
   so that the receipt can be returned to the called when deploying
@@ -123,7 +123,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - [#1941](https://github.com/gakonst/ethers-rs/pull/1941) Add `add_calls` and `call_array` for `Multicall`.
 - Added basic event log filtering example.
 
-## ethers-contract-abigen
+## corebc-contract-abigen
 
 ### Unreleased
 
@@ -225,11 +225,11 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 
 - Allow configuring the optimizer & passing arbitrary arguments to solc
   [#427](https://github.com/gakonst/ethers-rs/pull/427)
-- Decimal support for `ethers_core::utils::parse_units`
+- Decimal support for `corebc_core::utils::parse_units`
   [#463](https://github.com/gakonst/ethers-rs/pull/463)
 - Fixed Wei unit calculation in `Units`
   [#460](https://github.com/gakonst/ethers-rs/pull/460)
-- Add `ethers_core::utils::get_create2_address_from_hash`
+- Add `corebc_core::utils::get_create2_address_from_hash`
   [#444](https://github.com/gakonst/ethers-rs/pull/444)
 - Bumped ethabi to 0.15.0 and fixing breaking changes
   [#469](https://github.com/gakonst/ethers-rs/pull/469),
@@ -310,7 +310,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
   `/dir/uuid`. The issue [#557](https://github.com/gakonst/ethers-rs/issues/557)
   is addressed [#559](https://github.com/gakonst/ethers-rs/pull/559)
 
-## ethers-contract
+## corebc-contract
 
 ### Unreleased
 
@@ -358,7 +358,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
   `abigen-offline` feature [#580](https://github.com/gakonst/ethers-rs/pull/580)
 - Add `.call()` method to `Deployer` for performing dry runs of contract
   deployments. [#554](https://github.com/gakonst/ethers-rs/pull/554)
-- Improve error message from failure in `ethers_contract_abigen::Source::parse`
+- Improve error message from failure in `corebc_contract_abigen::Source::parse`
   [#552](https://github.com/gakonst/ethers-rs/pull/552)
 - use enumerated aliases for overloaded functions
   [#545](https://github.com/gakonst/ethers-rs/pull/545)
