@@ -88,15 +88,15 @@ impl DsProxy {
     ) -> Result<Self, ContractError<M>> {
         let client = client.into();
 
-        // Fetch chain id and the corresponding address of DsProxyFactory contract
+        // Fetch network id and the corresponding address of DsProxyFactory contract
         // preference is given to DsProxyFactory contract's address if provided
-        // otherwise check the address book for the client's chain ID.
+        // otherwise check the address book for the client's network ID.
         let factory: Address = match factory {
             Some(addr) => addr,
             None => {
-                let chain_id =
-                    client.get_chainid().await.map_err(ContractError::from_middleware_error)?;
-                match ADDRESS_BOOK.get(&chain_id) {
+                let network =
+                    client.get_networkid().await.map_err(ContractError::from_middleware_error)?;
+                match ADDRESS_BOOK.get(&network_id) {
                     Some(addr) => *addr,
                     None => panic!(
                         "Must either be a supported Network ID or provide DsProxyFactory contract address"

@@ -1,5 +1,5 @@
 //! Transaction types
-use super::{decode_to, extract_chain_id, rlp_opt, NUM_TX_FIELDS};
+use super::{decode_to, extract_network_id, rlp_opt, NUM_TX_FIELDS};
 use crate::{
     types::{
         Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64,
@@ -55,10 +55,10 @@ pub struct TransactionRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub nonce: Option<U256>,
 
-    /// Chain ID (None for mainnet)
+    /// Network ID (None for mainnet)
     #[serde(skip_serializing)]
-    #[serde(default, rename = "chainId")]
-    pub chain_id: Option<U64>,
+    #[serde(default, rename = "networkId")]
+    pub network_id: Option<U64>,
 
     /////////////////  Celo-specific transaction fields /////////////////
     /// The currency fees are paid in (None for native currency)
@@ -142,29 +142,29 @@ impl TransactionRequest {
         self
     }
 
-    /// Sets the `chain_id` field in the transaction to the provided value
+    /// Sets the `network_id` field in the transaction to the provided value
     #[must_use]
-    pub fn chain_id<T: Into<U64>>(mut self, chain_id: T) -> Self {
-        self.chain_id = Some(chain_id.into());
+    pub fn network_id<T: Into<U64>>(mut self, network_id: T) -> Self {
+        self.network_id = Some(network_id.into());
         self
     }
 
-    /// Hashes the transaction's data with the provided chain id
+    /// Hashes the transaction's data with the provided network id
     pub fn sighash(&self) -> H256 {
-        match self.chain_id {
+        match self.network_id {
             Some(_) => sha3(self.rlp().as_ref()).into(),
             None => sha3(self.rlp_unsigned().as_ref()).into(),
         }
     }
 
-    /// Gets the transaction's RLP encoding, prepared with the chain_id and extra fields for
-    /// signing. Assumes the chainid exists.
+    /// Gets the transaction's RLP encoding, prepared with the network_id and extra fields for
+    /// signing. Assumes the networkid exists.
     pub fn rlp(&self) -> Bytes {
         let mut rlp = RlpStream::new();
-        if let Some(chain_id) = self.chain_id {
+        if let Some(network_id) = self.network_id {
             rlp.begin_list(NUM_TX_FIELDS);
             self.rlp_base(&mut rlp);
-            rlp.append(&chain_id);
+            rlp.append(&network_id);
             rlp.append(&0u8);
             rlp.append(&0u8);
         } else {
@@ -252,12 +252,12 @@ impl TransactionRequest {
         let mut offset = 0;
         let mut txn = Self::decode_unsigned_rlp_base(rlp, &mut offset)?;
 
-        // If the transaction includes more info, like the chainid, as we serialize in `rlp`, this
+        // If the transaction includes more info, like the networkid, as we serialize in `rlp`, this
         // will decode that value.
-        if let Ok(chainid) = rlp.val_at(offset) {
-            // If a signed transaction is passed to this method, the chainid would be set to the v
+        if let Ok(networkid) = rlp.val_at(offset) {
+            // If a signed transaction is passed to this method, the networkid would be set to the v
             // value of the signature.
-            txn.chain_id = Some(chainid);
+            txn.network_id = Some(networkid);
         }
 
         Ok(txn)
@@ -269,8 +269,8 @@ impl TransactionRequest {
         let mut txn = Self::decode_unsigned_rlp_base(rlp, &mut offset)?;
 
         let v = rlp.at(offset)?.as_val()?;
-        // populate chainid from v in case the signature follows EIP155
-        txn.chain_id = extract_chain_id(v);
+        // populate networkid from v in case the signature follows EIP155
+        txn.network_id = extract_network_id(v);
         offset += 1;
         let r = rlp.at(offset)?.as_val()?;
         offset += 1;
@@ -300,7 +300,7 @@ impl From<&Transaction> for TransactionRequest {
             value: Some(tx.value),
             data: Some(Bytes(tx.input.0.clone())),
             nonce: Some(tx.nonce),
-            chain_id: tx.chain_id.map(|x| U64::from(x.as_u64())),
+            network_id: tx.network_id.map(|x| U64::from(x.as_u64())),
 
             #[cfg(feature = "celo")]
             fee_currency: tx.fee_currency,
@@ -366,7 +366,7 @@ mod tests {
             .to("0000b94f5374fce5edbc8e2a8697c15331677e6ebf0b".parse::<Address>().unwrap())
             .value(10)
             .data(vec![0x55, 0x44])
-            .chain_id(1);
+            .network_id(1);
 
         // turn the rlp bytes encoding into a rlp stream and check that the decoding returns the
         // same struct
@@ -403,7 +403,7 @@ mod tests {
     "to":"0x0000f02c1c8e6114b1dbe8937a39260b5b0a374432bb",
     "transactionIndex":"0x41",
     "value":"0xf3dbb76162000",
-    "chain_id": "0x1"
+    "network_id": "0x1"
   }"#,
         )
         .unwrap();
@@ -432,7 +432,7 @@ mod tests {
     // }
 
     #[test]
-    fn decode_unsigned_rlp_no_chainid() {
+    fn decode_unsigned_rlp_no_networkid() {
         // unlike the corresponding transaction
         // 0x02c563d96acaf8c157d08db2228c84836faaf3dd513fc959a54ed4ca6c72573e, this doesn't have a
         // `from` field because the `from` field is only obtained via signature recovery
@@ -464,7 +464,7 @@ mod tests {
             .value(1000000000000000000u64)
             .gas_price(20000000000u64)
             .gas(21000)
-            .chain_id(1);
+            .network_id(1);
 
         let expected_rlp = hex::decode("ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").unwrap();
         assert_eq!(expected_rlp, tx.rlp().to_vec());
@@ -484,7 +484,7 @@ mod tests {
             .value(1000000000000000000u64)
             .gas_price(20000000000u64)
             .gas(21000)
-            .chain_id(1);
+            .network_id(1);
 
         let expected_hex = hex::decode("ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").unwrap();
         let expected_rlp = rlp::Rlp::new(expected_hex.as_slice());
@@ -514,7 +514,7 @@ mod tests {
     //         .unwrap(),
     //     };
     //     assert_eq!(expected_sig, decoded_sig);
-    //     assert_eq!(decoded_tx.chain_id, Some(U64::from(1)));
+    //     assert_eq!(decoded_tx.network_id, Some(U64::from(1)));
     // }
 
     // CORETODO: Implement ED448 then fix this test

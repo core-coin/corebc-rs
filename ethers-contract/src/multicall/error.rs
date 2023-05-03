@@ -14,9 +14,9 @@ pub enum MulticallError<M: Middleware> {
     #[error(transparent)]
     ContractError(#[from] ContractError<M>),
 
-    /// Unsupported chain
-    #[error("Chain ID {0} is currently not supported by Multicall. Provide an address instead.")]
-    InvalidChainId(u64),
+    /// Unsupported network
+    #[error("Network ID {0} is currently not supported by Multicall. Provide an address instead.")]
+    InvalidNetworkId(u64),
 
     /// Contract call reverted when not allowed
     #[error("Illegal revert: Multicall2 call reverted when it wasn't allowed to.")]

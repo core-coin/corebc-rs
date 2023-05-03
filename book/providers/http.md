@@ -53,7 +53,7 @@ async fn main() -> eyre::Result<()> {
 
 ## Basic Usage
 
-Now that you have successfully established an Http connection with the node, you can use any of the methods provided by the `Middleware` trait. In the code snippet below, the provider is used to get the chain id, current block number and the content of the node's mempool.
+Now that you have successfully established an Http connection with the node, you can use any of the methods provided by the `Middleware` trait. In the code snippet below, the provider is used to get the network id, current block number and the content of the node's mempool.
 
 ```rust
 use ethers::providers::{Http, Middleware, Provider};
@@ -63,7 +63,7 @@ async fn main() -> eyre::Result<()> {
     let rpc_url = "https://eth.llamarpc.com";
     let provider = Provider::try_from(rpc_url)?;
 
-    let chain_id = provider.get_chainid().await?;
+    let network_id = provider.get_networkid().await?;
     let block_number = provider.get_block_number().await?;
     let tx_pool_content = provider.txpool_content().await?;
 

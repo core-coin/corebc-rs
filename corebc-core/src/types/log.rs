@@ -54,7 +54,7 @@ pub struct Log {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub log_type: Option<String>,
 
-    /// True when the log was removed, due to a chain reorganization.
+    /// True when the log was removed, due to a network reorganization.
     /// false if it's a valid log.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub removed: Option<bool>,

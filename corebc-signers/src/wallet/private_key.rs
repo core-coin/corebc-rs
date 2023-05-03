@@ -69,7 +69,7 @@ impl Wallet<SigningKey> {
         let (secret, uuid) = eth_keystore::new(dir, rng, password, name)?;
         let signer = SigningKey::from_bytes(secret.as_slice().into())?;
         let address = secret_key_to_address(&signer, &network);
-        Ok((Self { signer, address, chain_id: 1 }, uuid))
+        Ok((Self { signer, address, network_id: 1 }, uuid))
     }
 
     /// Decrypts an encrypted JSON from the provided path to construct a Wallet instance
@@ -86,21 +86,21 @@ impl Wallet<SigningKey> {
         let secret = eth_keystore::decrypt_key(keypath, password)?;
         let signer = SigningKey::from_bytes(secret.as_slice().into())?;
         let address = secret_key_to_address(&signer, &network);
-        Ok(Self { signer, address, chain_id: 1 })
+        Ok(Self { signer, address, network_id: 1 })
     }
 
     /// Creates a new random keypair seeded with the provided RNG
     pub fn new<R: Rng + CryptoRng>(rng: &mut R, network: NetworkType) -> Self {
         let signer = SigningKey::random(rng);
         let address = secret_key_to_address(&signer, &network);
-        Self { signer, address, chain_id: 1 }
+        Self { signer, address, network_id: 1 }
     }
 
     /// Creates a new Wallet instance from a raw scalar value (big endian).
     pub fn from_bytes(bytes: &[u8], network: NetworkType) -> Result<Self, WalletError> {
         let signer = SigningKey::from_bytes(bytes.into())?;
         let address = secret_key_to_address(&signer, &network);
-        Ok(Self { signer, address, chain_id: 1 })
+        Ok(Self { signer, address, network_id: 1 })
     }
 }
 
@@ -108,7 +108,7 @@ impl PartialEq for Wallet<SigningKey> {
     fn eq(&self, other: &Self) -> bool {
         self.signer.to_bytes().eq(&other.signer.to_bytes()) &&
             self.address == other.address &&
-            self.chain_id == other.chain_id
+            self.network_id == other.network_id
     }
 }
 
@@ -117,7 +117,7 @@ impl From<SigningKey> for Wallet<SigningKey> {
         let network = NetworkType::Mainnet;
         let address = secret_key_to_address(&signer, &network);
 
-        Self { signer, address, chain_id: 1 }
+        Self { signer, address, network_id: 1 }
     }
 }
 
@@ -129,7 +129,7 @@ impl From<K256SecretKey> for Wallet<SigningKey> {
         let signer = key.into();
         let address = secret_key_to_address(&signer, &network);
 
-        Self { signer, address, chain_id: 1 }
+        Self { signer, address, network_id: 1 }
     }
 }
 
@@ -243,12 +243,12 @@ mod tests {
             nonce: Some(0.into()),
             gas_price: Some(21_000_000_000u128.into()),
             data: None,
-            chain_id: Some(U64::one()),
+            network_id: Some(U64::one()),
         }
         .into();
         let wallet: Wallet<SigningKey> =
             "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318".parse().unwrap();
-        let wallet = wallet.with_chain_id(tx.chain_id().unwrap().as_u64());
+        let wallet = wallet.with_network_id(tx.network_id().unwrap().as_u64());
 
         let sig = wallet.sign_transaction(&tx).await.unwrap();
         let sighash = tx.sighash();
@@ -257,7 +257,7 @@ mod tests {
 
     #[tokio::test]
     #[cfg(not(feature = "celo"))]
-    async fn signs_tx_empty_chain_id() {
+    async fn signs_tx_empty_network_id() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;
         // retrieved test vector from:
@@ -272,31 +272,31 @@ mod tests {
             nonce: Some(0.into()),
             gas_price: Some(21_000_000_000u128.into()),
             data: None,
-            chain_id: None,
+            network_id: None,
         }
         .into();
         let wallet: Wallet<SigningKey> =
             "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318".parse().unwrap();
-        let wallet = wallet.with_chain_id(1u64);
+        let wallet = wallet.with_network_id(1u64);
 
-        // this should populate the tx chain_id as the signer's chain_id (1) before signing
+        // this should populate the tx network_id as the signer's network_id (1) before signing
         let sig = wallet.sign_transaction(&tx).await.unwrap();
 
-        // since we initialize with None we need to re-set the chain_id for the sighash to be
+        // since we initialize with None we need to re-set the network_id for the sighash to be
         // correct
         let mut tx = tx;
-        tx.set_chain_id(1);
+        tx.set_network_id(1);
         let sighash = tx.sighash();
         sig.verify(sighash, wallet.address).unwrap();
     }
 
     #[test]
     #[cfg(not(feature = "celo"))]
-    fn signs_tx_empty_chain_id_sync() {
+    fn signs_tx_empty_network_id_sync() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;
 
-        let chain_id = 1337u64;
+        let network_id = 1337u64;
         // retrieved test vector from:
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         let tx: TypedTransaction = TransactionRequest {
@@ -309,26 +309,26 @@ mod tests {
             nonce: Some(0u64.into()),
             gas_price: Some(21_000_000_000u128.into()),
             data: None,
-            chain_id: None,
+            network_id: None,
         }
         .into();
         let wallet: Wallet<SigningKey> =
             "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318".parse().unwrap();
-        let wallet = wallet.with_chain_id(chain_id);
+        let wallet = wallet.with_network_id(network_id);
 
-        // this should populate the tx chain_id as the signer's chain_id (1337) before signing and
+        // this should populate the tx network_id as the signer's network_id (1337) before signing and
         // normalize the v
         let sig = wallet.sign_transaction_sync(&tx).unwrap();
 
-        // ensure correct v given the chain - first extract recid
+        // ensure correct v given the network - first extract recid
         let recid = (sig.v - 35) % 2;
         // eip155 check
-        assert_eq!(sig.v, chain_id * 2 + 35 + recid);
+        assert_eq!(sig.v, network_id * 2 + 35 + recid);
 
-        // since we initialize with None we need to re-set the chain_id for the sighash to be
+        // since we initialize with None we need to re-set the network_id for the sighash to be
         // correct
         let mut tx = tx;
-        tx.set_chain_id(chain_id);
+        tx.set_network_id(network_id);
         let sighash = tx.sighash();
         sig.verify(sighash, wallet.address).unwrap();
     }
@@ -369,7 +369,7 @@ mod tests {
         let wallet_from_bytes = Wallet::from_bytes(&key_as_bytes, NetworkType::Mainnet).unwrap();
 
         assert_eq!(wallet.address, wallet_from_bytes.address);
-        assert_eq!(wallet.chain_id, wallet_from_bytes.chain_id);
+        assert_eq!(wallet.network_id, wallet_from_bytes.network_id);
         assert_eq!(wallet.signer, wallet_from_bytes.signer);
     }
 
@@ -382,14 +382,14 @@ mod tests {
         let wallet_0x: Wallet<SigningKey> =
             "0x0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
         assert_eq!(wallet.address, wallet_0x.address);
-        assert_eq!(wallet.chain_id, wallet_0x.chain_id);
+        assert_eq!(wallet.network_id, wallet_0x.network_id);
         assert_eq!(wallet.signer, wallet_0x.signer);
 
         // Check FromStr and `0X`
         let wallet_0x_cap: Wallet<SigningKey> =
             "0X0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
         assert_eq!(wallet.address, wallet_0x_cap.address);
-        assert_eq!(wallet.chain_id, wallet_0x_cap.chain_id);
+        assert_eq!(wallet.network_id, wallet_0x_cap.network_id);
         assert_eq!(wallet.signer, wallet_0x_cap.signer);
 
         // Check TryFrom<&str>
@@ -398,7 +398,7 @@ mod tests {
                 .try_into()
                 .unwrap();
         assert_eq!(wallet.address, wallet_0x_tryfrom_str.address);
-        assert_eq!(wallet.chain_id, wallet_0x_tryfrom_str.chain_id);
+        assert_eq!(wallet.network_id, wallet_0x_tryfrom_str.network_id);
         assert_eq!(wallet.signer, wallet_0x_tryfrom_str.signer);
 
         // Check TryFrom<String>
@@ -408,7 +408,7 @@ mod tests {
                 .try_into()
                 .unwrap();
         assert_eq!(wallet.address, wallet_0x_tryfrom_string.address);
-        assert_eq!(wallet.chain_id, wallet_0x_tryfrom_string.chain_id);
+        assert_eq!(wallet.network_id, wallet_0x_tryfrom_string.network_id);
         assert_eq!(wallet.signer, wallet_0x_tryfrom_string.signer);
 
         // Must fail because of `0z`

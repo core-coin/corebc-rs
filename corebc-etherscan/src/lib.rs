@@ -6,7 +6,7 @@ use crate::errors::{is_blocked_by_cloudflare_response, is_cloudflare_security_ch
 use contract::ContractMetadata;
 use corebc_core::{
     abi::{Abi, Address},
-    types::{Chain, H256},
+    types::{Network, H256},
 };
 use errors::EtherscanError;
 use reqwest::{header, IntoUrl, Url};
@@ -53,9 +53,9 @@ impl Client {
     /// # Example
     ///
     /// ```rust
-    /// use corebc_core::types::Chain;
+    /// use corebc_core::types::Network;
     /// use corebc_etherscan::Client;
-    /// let client = Client::builder().with_api_key("<API KEY>").chain(Chain::Mainnet).unwrap().build().unwrap();
+    /// let client = Client::builder().with_api_key("<API KEY>").network(Network::Mainnet).unwrap().build().unwrap();
     /// ```
     pub fn builder() -> ClientBuilder {
         ClientBuilder::default()
@@ -63,61 +63,61 @@ impl Client {
 
     /// Creates a new instance that caches etherscan requests
     pub fn new_cached(
-        chain: Chain,
+        network: Network,
         api_key: impl Into<String>,
         cache_root: Option<PathBuf>,
         cache_ttl: Duration,
     ) -> Result<Self> {
-        let mut this = Self::new(chain, api_key)?;
+        let mut this = Self::new(network, api_key)?;
         this.cache = cache_root.map(|root| Cache::new(root, cache_ttl));
         Ok(this)
     }
 
-    /// Create a new client with the correct endpoints based on the chain and provided API key
-    pub fn new(chain: Chain, api_key: impl Into<String>) -> Result<Self> {
-        Client::builder().with_api_key(api_key).chain(chain)?.build()
+    /// Create a new client with the correct endpoints based on the network and provided API key
+    pub fn new(network: Network, api_key: impl Into<String>) -> Result<Self> {
+        Client::builder().with_api_key(api_key).network(network)?.build()
     }
 
-    /// Create a new client with the correct endpoints based on the chain and API key
-    /// from the default environment variable defined in [`Chain`].
-    pub fn new_from_env(chain: Chain) -> Result<Self> {
-        let api_key = match chain {
+    /// Create a new client with the correct endpoints based on the network and API key
+    /// from the default environment variable defined in [`Network`].
+    pub fn new_from_env(network: Network) -> Result<Self> {
+        let api_key = match network {
             // Extra aliases
-            Chain::Fantom | Chain::FantomTestnet => std::env::var("FMTSCAN_API_KEY")
+            Network::Fantom | Network::FantomTestnet => std::env::var("FMTSCAN_API_KEY")
                 .or_else(|_| std::env::var("FANTOMSCAN_API_KEY"))
                 .map_err(Into::into),
 
             // Backwards compatibility, ideally these should return an error.
-            Chain::XDai
-            | Chain::Chiado
-            | Chain::Sepolia
-            | Chain::Rsk
-            | Chain::Sokol
-            | Chain::Poa
-            | Chain::Oasis
-            | Chain::Emerald
-            | Chain::EmeraldTestnet
-            | Chain::Evmos
-            | Chain::EvmosTestnet => Ok(String::new()),
-            Chain::AnvilHardhat | Chain::Dev => Err(EtherscanError::LocalNetworksNotSupported),
+            Network::XDai
+            | Network::Chiado
+            | Network::Sepolia
+            | Network::Rsk
+            | Network::Sokol
+            | Network::Poa
+            | Network::Oasis
+            | Network::Emerald
+            | Network::EmeraldTestnet
+            | Network::Evmos
+            | Network::EvmosTestnet => Ok(String::new()),
+            Network::AnvilHardhat | Network::Dev => Err(EtherscanError::LocalNetworksNotSupported),
 
-            _ => chain
+            _ => network
                 .etherscan_api_key_name()
-                .ok_or_else(|| EtherscanError::ChainNotSupported(chain))
+                .ok_or_else(|| EtherscanError::NetworkNotSupported(network))
                 .and_then(|key_name| std::env::var(key_name).map_err(Into::into)),
         }?;
-        Self::new(chain, api_key)
+        Self::new(network, api_key)
     }
 
-    /// Create a new client with the correct endpoints based on the chain and API key
-    /// from the default environment variable defined in [`Chain`].
+    /// Create a new client with the correct endpoints based on the network and API key
+    /// from the default environment variable defined in [`Network`].
     ///
     /// If the environment variable is not set, create a new client without it.
-    pub fn new_from_opt_env(chain: Chain) -> Result<Self> {
-        match Self::new_from_env(chain) {
+    pub fn new_from_opt_env(network: Network) -> Result<Self> {
+        match Self::new_from_env(network) {
             Ok(client) => Ok(client),
             Err(EtherscanError::EnvVarNotFound(_)) => {
-                Self::builder().chain(chain).and_then(|c| c.build())
+                Self::builder().network(network).and_then(|c| c.build())
             }
             Err(e) => Err(e),
         }
@@ -261,22 +261,22 @@ pub struct ClientBuilder {
 // === impl ClientBuilder ===
 
 impl ClientBuilder {
-    /// Configures the etherscan url and api url for the given chain
+    /// Configures the etherscan url and api url for the given network
     ///
     /// # Errors
     ///
-    /// Fails if the chain is not supported by etherscan
-    pub fn chain(self, chain: Chain) -> Result<Self> {
+    /// Fails if the network is not supported by etherscan
+    pub fn network(self, network: Network) -> Result<Self> {
         fn urls(
             api: impl IntoUrl,
             url: impl IntoUrl,
         ) -> (reqwest::Result<Url>, reqwest::Result<Url>) {
             (api.into_url(), url.into_url())
         }
-        let (etherscan_api_url, etherscan_url) = chain
+        let (etherscan_api_url, etherscan_url) = network
             .etherscan_urls()
             .map(|(api, base)| urls(api, base))
-            .ok_or_else(|| EtherscanError::ChainNotSupported(chain))?;
+            .ok_or_else(|| EtherscanError::NetworkNotSupported(network))?;
         self.with_api_url(etherscan_api_url?)?.with_url(etherscan_url?)
     }
 
@@ -464,7 +464,7 @@ fn into_url(url: impl IntoUrl) -> std::result::Result<Url, reqwest::Error> {
 #[cfg(test)]
 mod tests {
     use crate::{Client, EtherscanError, ResponseData};
-    use corebc_core::types::{Address, Chain, H256};
+    use corebc_core::types::{Address, Network, H256};
 
     // <https://github.com/foundry-rs/foundry/issues/4406>
     #[test]
@@ -476,7 +476,7 @@ mod tests {
 
     #[test]
     fn test_api_paths() {
-        let client = Client::new(Chain::Goerli, "").unwrap();
+        let client = Client::new(Network::Goerli, "").unwrap();
         assert_eq!(client.etherscan_api_url.as_str(), "https://api-goerli.etherscan.io/api/");
 
         assert_eq!(client.block_url(100), "https://goerli.etherscan.io/block/100");
@@ -484,7 +484,7 @@ mod tests {
 
     #[test]
     fn stringifies_block_url() {
-        let etherscan = Client::new(Chain::Mainnet, "").unwrap();
+        let etherscan = Client::new(Network::Mainnet, "").unwrap();
         let block: u64 = 1;
         let block_url: String = etherscan.block_url(block);
         assert_eq!(block_url, format!("https://etherscan.io/block/{block}"));
@@ -492,7 +492,7 @@ mod tests {
 
     #[test]
     fn stringifies_address_url() {
-        let etherscan = Client::new(Chain::Mainnet, "").unwrap();
+        let etherscan = Client::new(Network::Mainnet, "").unwrap();
         let addr: Address = Address::zero();
         let address_url: String = etherscan.address_url(addr);
         assert_eq!(address_url, format!("https://etherscan.io/address/{addr:?}"));
@@ -500,7 +500,7 @@ mod tests {
 
     #[test]
     fn stringifies_transaction_url() {
-        let etherscan = Client::new(Chain::Mainnet, "").unwrap();
+        let etherscan = Client::new(Network::Mainnet, "").unwrap();
         let tx_hash = H256::zero();
         let tx_url: String = etherscan.transaction_url(tx_hash);
         assert_eq!(tx_url, format!("https://etherscan.io/tx/{tx_hash:?}"));
@@ -508,7 +508,7 @@ mod tests {
 
     #[test]
     fn stringifies_token_url() {
-        let etherscan = Client::new(Chain::Mainnet, "").unwrap();
+        let etherscan = Client::new(Network::Mainnet, "").unwrap();
         let token_hash = Address::zero();
         let token_url: String = etherscan.token_url(token_hash);
         assert_eq!(token_url, format!("https://etherscan.io/token/{token_hash:?}"));
@@ -516,7 +516,7 @@ mod tests {
 
     #[test]
     fn local_networks_not_supported() {
-        let err = Client::new_from_env(Chain::Dev).unwrap_err();
+        let err = Client::new_from_env(Network::Dev).unwrap_err();
         assert!(matches!(err, EtherscanError::LocalNetworksNotSupported));
     }
 }

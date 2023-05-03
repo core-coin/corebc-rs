@@ -32,7 +32,7 @@ pub struct TrezorEthereum {
     derivation: DerivationType,
     session_id: Vec<u8>,
     cache_dir: PathBuf,
-    pub(crate) chain_id: u64,
+    pub(crate) network_id: u64,
     pub(crate) address: Address,
 }
 
@@ -45,7 +45,7 @@ const SESSION_FILE_NAME: &str = "trezor.session";
 impl TrezorEthereum {
     pub async fn new(
         derivation: DerivationType,
-        chain_id: u64,
+        network_id: u64,
         cache_dir: Option<PathBuf>,
     ) -> Result<Self, TrezorError> {
         let cache_dir = (match cache_dir.or_else(home::home_dir) {
@@ -61,7 +61,7 @@ impl TrezorEthereum {
 
         let mut blank = Self {
             derivation: derivation.clone(),
-            chain_id,
+            network_id,
             cache_dir,
             address: Address::from([0_u8; 22]),
             session_id: vec![],
@@ -161,7 +161,7 @@ impl TrezorEthereum {
 
         let transaction = TrezorTransaction::load(tx)?;
 
-        let chain_id = tx.chain_id().map(|id| id.as_u64()).unwrap_or(self.chain_id);
+        let network_id = tx.network_id().map(|id| id.as_u64()).unwrap_or(self.network_id);
 
         let signature = match tx {
             TypedTransaction::Eip2930(_) | TypedTransaction::Legacy(_) => client.ethereum_sign_tx(
@@ -172,7 +172,7 @@ impl TrezorEthereum {
                 transaction.to,
                 transaction.value,
                 transaction.data,
-                chain_id,
+                network_id,
             )?,
             TypedTransaction::Eip1559(eip1559_tx) => client.ethereum_sign_eip1559_tx(
                 arr_path,
@@ -181,7 +181,7 @@ impl TrezorEthereum {
                 transaction.to,
                 transaction.value,
                 transaction.data,
-                chain_id,
+                network_id,
                 transaction.max_fee_per_gas,
                 transaction.max_priority_fee_per_gas,
                 transaction.access_list,
@@ -254,7 +254,7 @@ mod tests {
     #[eip712(
         name = "Eip712Test",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0x0000000000000000000000000000000000000001",
         salt = "eip712-test-75F0CCte"
     )]

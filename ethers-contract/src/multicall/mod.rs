@@ -97,12 +97,12 @@ impl MulticallVersion {
 
 /// A Multicall is an abstraction for sending batched calls/transactions to the Ethereum blockchain.
 /// It stores an instance of the [`Multicall` smart contract](https://etherscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11#code)
-/// and the user provided list of transactions to be called or executed on chain.
+/// and the user provided list of transactions to be called or executed on network.
 ///
-/// `Multicall` can be instantiated asynchronously from the chain ID of the provided client using
-/// [`new`] or synchronously by providing a chain ID in [`new_with_chain`]. This, by default, uses
+/// `Multicall` can be instantiated asynchronously from the network ID of the provided client using
+/// [`new`] or synchronously by providing a network ID in [`new_with_network`]. This, by default, uses
 /// [`constants::MULTICALL_ADDRESS`], but can be overridden by providing `Some(address)`.
-/// A list of all the supported chains is available [`here`](https://github.com/mds1/multicall#multicall3-contract-addresses).
+/// A list of all the supported networks is available [`here`](https://github.com/mds1/multicall#multicall3-contract-addresses).
 ///
 /// Set the contract's version by using [`version`].
 ///
@@ -145,7 +145,7 @@ impl MulticallVersion {
 /// let first_call = contract.method::<_, String>("getValue", ())?;
 /// let second_call = contract.method::<_, Address>("lastSender", ())?;
 ///
-/// // Since this example connects to a known chain, we need not provide an address for
+/// // Since this example connects to a known network, we need not provide an address for
 /// // the Multicall contract and we set that to `None`. If you wish to provide the address
 /// // for the Multicall contract, you can pass the `Some(multicall_addr)` argument.
 /// // Construction of the `Multicall` instance follows the builder pattern:
@@ -186,7 +186,7 @@ impl MulticallVersion {
 /// ```
 ///
 /// [`new`]: #method.new
-/// [`new_with_chain`]: #method.new_with_chain
+/// [`new_with_network`]: #method.new_with_network
 /// [`version`]: #method.version
 /// [`block`]: #method.block
 /// [`legacy`]: #method.legacy
@@ -249,23 +249,23 @@ impl<M: Middleware> Multicall<M> {
     /// # Panics
     ///
     /// If a `None` address is provided and the client's network is
-    /// [not supported](constants::MULTICALL_SUPPORTED_CHAIN_IDS).
+    /// [not supported](constants::MULTICALL_SUPPORTED_NETWORK_IDS).
     pub async fn new(client: impl Into<Arc<M>>, address: Option<Address>) -> Result<Self, M> {
         let client = client.into();
 
-        // Fetch chain id and the corresponding address of Multicall contract
+        // Fetch network id and the corresponding address of Multicall contract
         // preference is given to Multicall contract's address if provided
-        // otherwise check the supported chain IDs for the client's chain ID
+        // otherwise check the supported network IDs for the client's network ID
         let address: Address = match address {
             Some(addr) => addr,
             None => {
-                let chain_id = client
-                    .get_chainid()
+                let network_id = client
+                    .get_networkid()
                     .await
                     .map_err(ContractError::from_middleware_error)?
                     .as_u64();
-                if !constants::MULTICALL_SUPPORTED_CHAIN_IDS.contains(&chain_id) {
-                    return Err(error::MulticallError::InvalidChainId(chain_id));
+                if !constants::MULTICALL_SUPPORTED_NETWORK_IDS.contains(&network_id) {
+                    return Err(error::MulticallError::InvalidNetworkId(network_id));
                 }
                 constants::MULTICALL_ADDRESS
             }
@@ -283,40 +283,40 @@ impl<M: Middleware> Multicall<M> {
         })
     }
 
-    /// Creates a new Multicall instance synchronously from the provided client and address or chain
+    /// Creates a new Multicall instance synchronously from the provided client and address or network
     /// ID. Uses the [default multicall address](constants::MULTICALL_ADDRESS) if no address is
     /// provided.
     ///
     /// # Errors
     ///
-    /// Returns a [`error::MulticallError`] if the provided chain_id is not in the
-    /// [supported networks](constants::MULTICALL_SUPPORTED_CHAIN_IDS).
+    /// Returns a [`error::MulticallError`] if the provided network_id is not in the
+    /// [supported networks](constants::MULTICALL_SUPPORTED_NETWORK_IDS).
     ///
     /// # Panics
     ///
-    /// If neither an address or chain_id are provided. Since this is not an async function, it will
+    /// If neither an address or network_id are provided. Since this is not an async function, it will
     /// not be able to query `net_version` to check if it is supported by the default multicall
     /// address. Use new(client, None).await instead.
-    pub fn new_with_chain_id(
+    pub fn new_with_network_id(
         client: impl Into<Arc<M>>,
         address: Option<Address>,
-        chain_id: Option<impl Into<u64>>,
+        network_id: Option<impl Into<u64>>,
     ) -> Result<Self, M> {
-        // If no address is provided, check if chain_id is supported and use the default multicall
+        // If no address is provided, check if network_id is supported and use the default multicall
         // address.
-        let address: Address = match (address, chain_id) {
+        let address: Address = match (address, network_id) {
             (Some(addr), _) => addr,
-            (_, Some(chain_id)) => {
-                let chain_id = chain_id.into();
-                if !constants::MULTICALL_SUPPORTED_CHAIN_IDS.contains(&chain_id) {
-                    return Err(error::MulticallError::InvalidChainId(chain_id));
+            (_, Some(network_id)) => {
+                let network_id = network_id.into();
+                if !constants::MULTICALL_SUPPORTED_NETWORK_IDS.contains(&network_id) {
+                    return Err(error::MulticallError::InvalidNetworkId(network_id));
                 }
                 constants::MULTICALL_ADDRESS
             }
             _ => {
-                // Can't fetch chain_id from provider since we're not in an async function so we
+                // Can't fetch network_id from provider since we're not in an async function so we
                 // panic instead.
-                panic!("Must provide at least one of: address or chain ID.")
+                panic!("Must provide at least one of: address or network ID.")
             }
         };
 
@@ -447,7 +447,7 @@ impl<M: Middleware> Multicall<M> {
     /// block difficulty.
     ///
     /// Note: in a post-merge environment, the return value of this call will be the output of the
-    /// randomness beacon provided by the beacon chain.
+    /// randomness beacon provided by the beacon network.
     /// ([Reference](https://eips.ethereum.org/EIPS/eip-4399#abstract))
     pub fn add_get_current_block_difficulty(&mut self) -> &mut Self {
         let call = self.contract.get_current_block_difficulty();
@@ -489,16 +489,16 @@ impl<M: Middleware> Multicall<M> {
     /// Appends a `call` to the list of calls of the Multicall instance for querying the current
     /// block base fee.
     ///
-    /// Note: this call will fail if the chain that it is called on does not implement the
+    /// Note: this call will fail if the network that it is called on does not implement the
     /// [BASEFEE opcode](https://eips.ethereum.org/EIPS/eip-3198).
     pub fn add_get_basefee(&mut self, allow_failure: bool) -> &mut Self {
         let call = self.contract.get_basefee();
         self.add_call(call, allow_failure)
     }
 
-    /// Appends a `call` to the list of calls of the Multicall instance for querying the chain id.
-    pub fn add_get_chain_id(&mut self) -> &mut Self {
-        let call = self.contract.get_chain_id();
+    /// Appends a `call` to the list of calls of the Multicall instance for querying the network id.
+    pub fn add_get_network_id(&mut self) -> &mut Self {
+        let call = self.contract.get_network_id();
         self.add_call(call, false)
     }
 

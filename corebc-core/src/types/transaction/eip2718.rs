@@ -208,20 +208,20 @@ impl TypedTransaction {
         self
     }
 
-    pub fn chain_id(&self) -> Option<U64> {
+    pub fn network_id(&self) -> Option<U64> {
         match self {
-            Legacy(inner) => inner.chain_id,
-            Eip2930(inner) => inner.tx.chain_id,
-            Eip1559(inner) => inner.chain_id,
+            Legacy(inner) => inner.network_id,
+            Eip2930(inner) => inner.tx.network_id,
+            Eip1559(inner) => inner.network_id,
         }
     }
 
-    pub fn set_chain_id<T: Into<U64>>(&mut self, chain_id: T) -> &mut Self {
-        let chain_id = chain_id.into();
+    pub fn set_network_id<T: Into<U64>>(&mut self, network_id: T) -> &mut Self {
+        let network_id = network_id.into();
         match self {
-            Legacy(inner) => inner.chain_id = Some(chain_id),
-            Eip2930(inner) => inner.tx.chain_id = Some(chain_id),
-            Eip1559(inner) => inner.chain_id = Some(chain_id),
+            Legacy(inner) => inner.network_id = Some(network_id),
+            Eip2930(inner) => inner.tx.network_id = Some(network_id),
+            Eip1559(inner) => inner.network_id = Some(network_id),
         };
         self
     }
@@ -467,7 +467,7 @@ impl TypedTransaction {
                 nonce: self.nonce().copied(),
                 value: self.value().copied(),
                 gas: self.gas().copied(),
-                chain_id: self.chain_id(),
+                network_id: self.network_id(),
                 data: self.data().cloned(),
                 access_list: self.access_list().cloned().unwrap_or_default(),
                 ..Default::default()
@@ -494,7 +494,7 @@ impl TypedTransaction {
                 value: self.value().copied(),
                 gas: self.gas().copied(),
                 gas_price: self.gas_price(),
-                chain_id: self.chain_id(),
+                network_id: self.network_id(),
                 data: self.data().cloned(),
                 #[cfg(feature = "celo")]
                 #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
@@ -531,7 +531,7 @@ impl TypedTransaction {
                     value: self.value().copied(),
                     gas: self.gas().copied(),
                     gas_price: self.gas_price(),
-                    chain_id: self.chain_id(),
+                    network_id: self.network_id(),
                     data: self.data().cloned(),
                     #[cfg(feature = "celo")]
                     #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
@@ -592,7 +592,7 @@ impl From<TypedTransaction> for Eip2930TransactionRequest {
 //             "to": "0x96216849c49358B10257cb55b28eA603c874b05E",
 //             "value": "0x5af3107a4000",
 //             "type": "0x2",
-//             "chainId": "0x539",
+//             "networkId": "0x539",
 //             "accessList": [],
 //             "v": "0x1",
 //             "r": "0xc3000cd391f991169ebfd5d3b9e93c89d31a61c998a21b07a11dc6b9d66f8a8e",
@@ -630,7 +630,7 @@ impl From<TypedTransaction> for Eip2930TransactionRequest {
 //                     ]
 //                 }
 //             ],
-//             "chainId": "0x539",
+//             "networkId": "0x539",
 //             "v": "0x1",
 //             "r": "0xc3000cd391f991169ebfd5d3b9e93c89d31a61c998a21b07a11dc6b9d66f8a8e",
 //             "s": "0x22cfe8424b2fbd78b16c9911da1be2349027b0a3c40adf4b6459222323773f74"
@@ -670,7 +670,7 @@ impl From<TypedTransaction> for Eip2930TransactionRequest {
 //     //     let expected_tx = Eip1559TransactionRequest::new()
 //     //
 // .from(Address::from_str("0x00001acadd971da208d25122b645b2ef879868a83e21").unwrap())     //
-// .chain_id(1u64)     //         .nonce(0u64)
+// .network_id(1u64)     //         .nonce(0u64)
 //     //         .max_priority_fee_per_gas(413047990155u64)
 //     //         .max_fee_per_gas(768658734568u64)
 //     //         .gas(184156u64)
@@ -708,7 +708,7 @@ impl From<TypedTransaction> for Eip2930TransactionRequest {
 //             .value(1000000000000000000u64)
 //             .gas_price(20000000000u64)
 //             .gas(21000)
-//             .chain_id(1);
+//             .network_id(1);
 
 //         let expected_hex =
 // hex::decode("
@@ -747,8 +747,8 @@ impl From<TypedTransaction> for Eip2930TransactionRequest {
 //     // 0x608060405234801561001057600080fd5b5061010d806100206000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c8063cfae3217146037578063f8a8fd6d146066575b600080fd5b604080518082019091526003815262676d2160e81b60208201525b604051605d91906085565b60405180910390f35b6040805180820190915260048152636f6f662160e01b60208201526052565b600060208083528351808285015260005b8181101560b0578581018301518582016040015282016096565b8181111560c1576000604083870101525b50601f01601f191692909201604001939250505056fea2646970667358221220f89093a9819ba5d2a3384305511d0945ea94f36a8aa162ab62921b3841fe3afd64736f6c634300080c0033"
 //     // ).unwrap();     assert_eq!(&data, tx.data.as_ref().unwrap());
 
-//     //     let chain_id = U64::from(5u64);
-//     //     assert_eq!(chain_id, tx.chain_id.unwrap());
+//     //     let network_id = U64::from(5u64);
+//     //     assert_eq!(network_id, tx.network_id.unwrap());
 
 //     //     let nonce = Some(43u64.into());
 //     //     assert_eq!(nonce, tx.nonce);

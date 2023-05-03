@@ -143,7 +143,7 @@ async fn main() -> eyre::Result<()> {
 
     let wallet: LocalWallet = anvil.keys()[0].clone().into();
     let wallet2: LocalWallet = anvil.keys()[1].clone().into();
-    let signer = wallet.with_chain_id(anvil.chain_id());
+    let signer = wallet.with_network_id(anvil.network_id());
 
     let gas_raise_perc = 50; // 50%;
     let provider = Provider::<Http>::try_from(anvil.endpoint())?

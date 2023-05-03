@@ -65,9 +65,9 @@ impl Source {
     /// - `http://...`: an HTTP URL to a contract ABI. <br> Note: either the `rustls` or `openssl`
     ///   feature must be enabled to support *HTTPS* URLs.
     ///
-    /// - `<name>:<address>`, `<chain>:<address>` or `<url>/.../<address>`: an address or URL of a
+    /// - `<name>:<address>`, `<network>:<address>` or `<url>/.../<address>`: an address or URL of a
     ///   verified contract on a blockchain explorer. <br> Supported explorers and their respective
-    ///   chain:
+    ///   network:
     ///   - `etherscan`   -> `mainnet`
     ///   - `bscscan`     -> `bsc`
     ///   - `polygonscan` -> `polygon`

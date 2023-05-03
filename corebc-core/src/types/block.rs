@@ -558,7 +558,7 @@ pub enum BlockNumber {
     Earliest,
     /// Pending block (not yet part of the blockchain)
     Pending,
-    /// Block by number from canon chain
+    /// Block by number from canon network
     Number(U64),
 }
 

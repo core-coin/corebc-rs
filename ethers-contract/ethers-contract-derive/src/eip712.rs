@@ -96,11 +96,11 @@ fn parse_attributes(input: &DeriveInput) -> Result<EIP712Domain> {
             let litstr: LitStr = meta.input.parse()?;
             domain.version = Some(litstr.value());
         }
-        "chain_id", domain.chain_id => {
+        "network_id", domain.network_id => {
             meta.input.parse::<Token![=]>()?;
             let litint: LitInt = meta.input.parse()?;
             let n: u64 = litint.base10_parse()?;
-            domain.chain_id = Some(n.into());
+            domain.network_id = Some(n.into());
         }
         "verifying_contract", domain.verifying_contract => {
             meta.input.parse::<Token![=]>()?;

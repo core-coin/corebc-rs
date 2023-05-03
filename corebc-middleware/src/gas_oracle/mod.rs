@@ -83,8 +83,8 @@ pub enum GasOracleError {
     #[error("None of the oracles returned a value")]
     NoValues,
 
-    #[error("Chain is not supported by the oracle")]
-    UnsupportedChain,
+    #[error("Network is not supported by the oracle")]
+    UnsupportedNetwork,
 
     /// Error thrown when the provider failed.
     #[error("Provider error: {0}")]

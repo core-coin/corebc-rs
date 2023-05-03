@@ -184,7 +184,7 @@ impl<W: Wordlist> MnemonicBuilder<W> {
         let signer = SigningKey::from_bytes(&key.to_bytes())?;
         let address = secret_key_to_address(&signer, &corebc_core::utils::NetworkType::Mainnet);
 
-        Ok(Wallet::<SigningKey> { signer, address, chain_id: 1 })
+        Ok(Wallet::<SigningKey> { signer, address, network_id: 1 })
     }
 }
 

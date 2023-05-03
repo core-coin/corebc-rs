@@ -50,8 +50,8 @@ pub(super) fn sig_from_digest_bytes_trial_recovery(
 }
 
 /// Modify the v value of a signature to conform to eip155
-pub(super) fn apply_eip155(sig: &mut EthSig, chain_id: u64) {
-    let v = (chain_id * 2 + 35) + sig.v;
+pub(super) fn apply_eip155(sig: &mut EthSig, network_id: u64) {
+    let v = (network_id * 2 + 35) + sig.v;
     sig.v = v;
 }
 

@@ -7,7 +7,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let provider = Provider::new(Ws::connect("ws://localhost:8545").await?);
     // Instantiate the connection to ledger with Ledger Live derivation path and
     // the wallet's index. Alternatively, you may use Legacy with the wallet's
-    // index or supply the  full HD path string. You may also provide the chain_id
+    // index or supply the  full HD path string. You may also provide the network_id
     // (here: mainnet) for EIP155 support.
     let ledger = Ledger::new(HDPath::LedgerLive(0), 1).await?;
     let client = SignerMiddleware::new(provider, ledger);

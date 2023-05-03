@@ -1,5 +1,5 @@
 use crate::*;
-use corebc_core::types::Chain;
+use corebc_core::types::Network;
 use corebc_etherscan::contract::SourceCodeMetadata;
 use serial_test::serial;
 
@@ -9,7 +9,7 @@ const DAO_ABI: &str = include!("../../../testdata/the_dao_abi.expr");
 #[tokio::test]
 #[serial]
 async fn can_fetch_ftm_contract_abi() {
-    run_with_client(Chain::Fantom, |client| async move {
+    run_with_client(Network::Fantom, |client| async move {
         let _abi = client
             .contract_abi("0x80AA7cb0006d5DDD91cce684229Ac6e398864606".parse().unwrap())
             .await
@@ -21,7 +21,7 @@ async fn can_fetch_ftm_contract_abi() {
 #[tokio::test]
 #[serial]
 async fn can_fetch_contract_abi() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let abi = client
             .contract_abi("0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse().unwrap())
             .await
@@ -34,7 +34,7 @@ async fn can_fetch_contract_abi() {
 #[tokio::test]
 #[serial]
 async fn can_fetch_contract_source_code() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let meta = client
             .contract_source_code("0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse().unwrap())
             .await
@@ -53,7 +53,7 @@ async fn can_fetch_contract_source_code() {
 #[serial]
 async fn can_get_error_on_unverified_contract() {
     init_tracing();
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let addr = "0xb5c31a0e22cae98ac08233e512bd627885aa24e5".parse().unwrap();
         let err = client.contract_source_code(addr).await.unwrap_err();
         assert!(matches!(err, EtherscanError::ContractCodeNotVerified(_)));
@@ -65,7 +65,7 @@ async fn can_get_error_on_unverified_contract() {
 #[tokio::test]
 #[serial]
 async fn can_fetch_contract_source_tree_for_singleton_contract() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let meta = client
             .contract_source_code("0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse().unwrap())
             .await
@@ -84,7 +84,7 @@ async fn can_fetch_contract_source_tree_for_singleton_contract() {
 #[tokio::test]
 #[serial]
 async fn can_fetch_contract_source_tree_for_multi_entry_contract() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let meta = client
             .contract_source_code("0x8d04a8c79cEB0889Bdd12acdF3Fa9D207eD3Ff63".parse().unwrap())
             .await

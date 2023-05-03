@@ -1,6 +1,6 @@
 use corebc_core::types::{
     transaction::{eip2718::TypedTransaction, eip2930::AccessListWithGasUsed},
-    Address, BlockId, Bytes, Chain, Signature, TransactionRequest, U256,
+    Address, BlockId, Bytes, Network, Signature, TransactionRequest, U256,
 };
 use corebc_providers::{maybe, Middleware, MiddlewareError, PendingTransaction};
 use corebc_signers::Signer;
@@ -90,9 +90,9 @@ pub enum SignerMiddlewareError<M: Middleware, S: Signer> {
     /// Thrown if a signature is requested from a different address
     #[error("specified from address is not signer")]
     WrongSigner,
-    /// Thrown if the signer's chain_id is different than the chain_id of the transaction
-    #[error("specified chain_id is different than the signer's chain_id")]
-    DifferentChainID,
+    /// Thrown if the signer's network_id is different than the network_id of the transaction
+    #[error("specified network_id is different than the signer's network_id")]
+    DifferentNetworkID,
 }
 
 impl<M: Middleware, S: Signer> MiddlewareError for SignerMiddlewareError<M, S> {
@@ -118,10 +118,10 @@ where
 {
     /// Creates a new client from the provider and signer.
     /// Sets the address of this middleware to the address of the signer.
-    /// The chain_id of the signer will not be set to the chain id of the provider. If the signer
-    /// passed here is initialized with a different chain id, then the client may throw errors, or
+    /// The network_id of the signer will not be set to the network id of the provider. If the signer
+    /// passed here is initialized with a different network id, then the client may throw errors, or
     /// methods like `sign_transaction` may error.
-    /// To automatically set the signer's chain id, see `new_with_provider_chain`.
+    /// To automatically set the signer's network id, see `new_with_provider_network`.
     ///
     /// [`Middleware`] corebc_providers::Middleware
     /// [`Signer`] corebc_signers::Signer
@@ -131,22 +131,22 @@ where
     }
 
     /// Signs and returns the RLP encoding of the signed transaction.
-    /// If the transaction does not have a chain id set, it sets it to the signer's chain id.
-    /// Returns an error if the transaction's existing chain id does not match the signer's chain
+    /// If the transaction does not have a network id set, it sets it to the signer's network id.
+    /// Returns an error if the transaction's existing network id does not match the signer's network
     /// id.
     async fn sign_transaction(
         &self,
         mut tx: TypedTransaction,
     ) -> Result<Bytes, SignerMiddlewareError<M, S>> {
-        // compare chain_id and use signer's chain_id if the tranasaction's chain_id is None,
+        // compare network_id and use signer's network_id if the tranasaction's network_id is None,
         // return an error if they are not consistent
-        let chain_id = self.signer.chain_id();
-        match tx.chain_id() {
-            Some(id) if id.as_u64() != chain_id => {
-                return Err(SignerMiddlewareError::DifferentChainID)
+        let network_id = self.signer.network_id();
+        match tx.network_id() {
+            Some(id) if id.as_u64() != network_id => {
+                return Err(SignerMiddlewareError::DifferentNetworkID)
             }
             None => {
-                tx.set_chain_id(chain_id);
+                tx.set_network_id(network_id);
             }
             _ => {}
         }
@@ -183,19 +183,19 @@ where
 
     /// Creates a new client from the provider and signer.
     /// Sets the address of this middleware to the address of the signer.
-    /// Sets the chain id of the signer to the chain id of the inner [`Middleware`] passed in,
-    /// using the [`Signer`]'s implementation of with_chain_id.
+    /// Sets the network id of the signer to the network id of the inner [`Middleware`] passed in,
+    /// using the [`Signer`]'s implementation of with_network_id.
     ///
     /// [`Middleware`] corebc_providers::Middleware
     /// [`Signer`] corebc_signers::Signer
-    pub async fn new_with_provider_chain(
+    pub async fn new_with_provider_network(
         inner: M,
         signer: S,
     ) -> Result<Self, SignerMiddlewareError<M, S>> {
         let address = signer.address();
-        let chain_id =
-            inner.get_chainid().await.map_err(|e| SignerMiddlewareError::MiddlewareError(e))?;
-        let signer = signer.with_chain_id(chain_id.as_u64());
+        let network_id =
+            inner.get_networkid().await.map_err(|e| SignerMiddlewareError::MiddlewareError(e))?;
+        let signer = signer.with_network_id(network_id.as_u64());
         Ok(SignerMiddleware { inner, signer, address })
     }
 
@@ -255,17 +255,17 @@ where
         };
         tx.set_from(from);
 
-        // get the signer's chain_id if the transaction does not set it
-        let chain_id = self.signer.chain_id();
-        if tx.chain_id().is_none() {
-            tx.set_chain_id(chain_id);
+        // get the signer's network_id if the transaction does not set it
+        let network_id = self.signer.network_id();
+        if tx.network_id().is_none() {
+            tx.set_network_id(network_id);
         }
 
-        // If a chain_id is matched to a known chain that doesn't support EIP-1559, automatically
+        // If a network_id is matched to a known network that doesn't support EIP-1559, automatically
         // change transaction to be Legacy type.
-        if let Some(chain_id) = tx.chain_id() {
-            let chain = Chain::try_from(chain_id.as_u64());
-            if chain.unwrap_or_default().is_legacy() {
+        if let Some(network_id) = tx.network_id() {
+            let network = Network::try_from(network_id.as_u64());
+            if network.unwrap_or_default().is_legacy() {
                 if let TypedTransaction::Eip1559(inner) = tx {
                     let tx_req: TransactionRequest = inner.clone().into();
                     *tx = TypedTransaction::Legacy(tx_req);
@@ -379,20 +379,20 @@ mod tests {
             nonce: Some(0.into()),
             gas_price: Some(21_000_000_000u128.into()),
             data: None,
-            chain_id: None,
+            network_id: None,
         }
         .into();
-        let chain_id = 1u64;
+        let network_id = 1u64;
 
-        // Signer middlewares now rely on a working provider which it can query the chain id from,
-        // so we make sure Anvil is started with the chain id that the expected tx was signed
+        // Signer middlewares now rely on a working provider which it can query the network id from,
+        // so we make sure Anvil is started with the network id that the expected tx was signed
         // with
-        let anvil = Anvil::new().args(vec!["--chain-id".to_string(), chain_id.to_string()]).spawn();
+        let anvil = Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
         let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
             .parse::<LocalWallet>()
             .unwrap()
-            .with_chain_id(chain_id);
+            .with_network_id(network_id);
         let client = SignerMiddleware::new(provider, key);
 
         let tx = client.sign_transaction(tx).await.unwrap();
@@ -408,11 +408,11 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn signs_tx_none_chainid() {
+    async fn signs_tx_none_networkid() {
         // retrieved test vector from:
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         // the signature is different because we're testing signer middleware handling the None
-        // case for a non-mainnet chain id
+        // case for a non-mainnet network id
         let tx = TransactionRequest {
             from: None,
             to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
@@ -421,20 +421,20 @@ mod tests {
             nonce: Some(U256::zero()),
             gas_price: Some(21_000_000_000u128.into()),
             data: None,
-            chain_id: None,
+            network_id: None,
         }
         .into();
-        let chain_id = 1337u64;
+        let network_id = 1337u64;
 
-        // Signer middlewares now rely on a working provider which it can query the chain id from,
-        // so we make sure Anvil is started with the chain id that the expected tx was signed
+        // Signer middlewares now rely on a working provider which it can query the network id from,
+        // so we make sure Anvil is started with the network id that the expected tx was signed
         // with
-        let anvil = Anvil::new().args(vec!["--chain-id".to_string(), chain_id.to_string()]).spawn();
+        let anvil = Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
         let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
             .parse::<LocalWallet>()
             .unwrap()
-            .with_chain_id(chain_id);
+            .with_network_id(network_id);
         let client = SignerMiddleware::new(provider, key);
 
         let tx = client.sign_transaction(tx).await.unwrap();
@@ -444,47 +444,47 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn anvil_consistent_chainid() {
+    async fn anvil_consistent_networkid() {
         let anvil = Anvil::new().spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
-        let chain_id = provider.get_chainid().await.unwrap();
-        assert_eq!(chain_id, U256::from(31337));
+        let network_id = provider.get_networkid().await.unwrap();
+        assert_eq!(network_id, U256::from(31337));
 
-        // Intentionally do not set the chain id here so we ensure that the signer pulls the
-        // provider's chain id.
+        // Intentionally do not set the network id here so we ensure that the signer pulls the
+        // provider's network id.
         let key = LocalWallet::new(&mut rand::thread_rng());
 
-        // combine the provider and wallet and test that the chain id is the same for both the
+        // combine the provider and wallet and test that the network id is the same for both the
         // signer returned by the middleware and through the middleware itself.
-        let client = SignerMiddleware::new_with_provider_chain(provider, key).await.unwrap();
-        let middleware_chainid = client.get_chainid().await.unwrap();
-        assert_eq!(chain_id, middleware_chainid);
+        let client = SignerMiddleware::new_with_provider_network(provider, key).await.unwrap();
+        let middleware_networkid = client.get_networkid().await.unwrap();
+        assert_eq!(network_id, middleware_networkid);
 
         let signer = client.signer();
-        let signer_chainid = signer.chain_id();
-        assert_eq!(chain_id.as_u64(), signer_chainid);
+        let signer_networkid = signer.network_id();
+        assert_eq!(network_id.as_u64(), signer_networkid);
     }
 
     #[tokio::test]
-    async fn anvil_consistent_chainid_not_default() {
-        let anvil = Anvil::new().args(vec!["--chain-id", "13371337"]).spawn();
+    async fn anvil_consistent_networkid_not_default() {
+        let anvil = Anvil::new().args(vec!["--network-id", "13371337"]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
-        let chain_id = provider.get_chainid().await.unwrap();
-        assert_eq!(chain_id, U256::from(13371337));
+        let network_id = provider.get_networkid().await.unwrap();
+        assert_eq!(network_id, U256::from(13371337));
 
-        // Intentionally do not set the chain id here so we ensure that the signer pulls the
-        // provider's chain id.
+        // Intentionally do not set the network id here so we ensure that the signer pulls the
+        // provider's network id.
         let key = LocalWallet::new(&mut rand::thread_rng());
 
-        // combine the provider and wallet and test that the chain id is the same for both the
+        // combine the provider and wallet and test that the network id is the same for both the
         // signer returned by the middleware and through the middleware itself.
-        let client = SignerMiddleware::new_with_provider_chain(provider, key).await.unwrap();
-        let middleware_chainid = client.get_chainid().await.unwrap();
-        assert_eq!(chain_id, middleware_chainid);
+        let client = SignerMiddleware::new_with_provider_network(provider, key).await.unwrap();
+        let middleware_networkid = client.get_networkid().await.unwrap();
+        assert_eq!(network_id, middleware_networkid);
 
         let signer = client.signer();
-        let signer_chainid = signer.chain_id();
-        assert_eq!(chain_id.as_u64(), signer_chainid);
+        let signer_networkid = signer.network_id();
+        assert_eq!(network_id.as_u64(), signer_networkid);
     }
 
     #[tokio::test]
@@ -492,7 +492,7 @@ mod tests {
         let anvil = Anvil::new().spawn();
         let acc = anvil.addresses()[0];
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
-        let key = LocalWallet::new(&mut rand::thread_rng()).with_chain_id(1u32);
+        let key = LocalWallet::new(&mut rand::thread_rng()).with_network_id(1u32);
         provider
             .send_transaction(
                 TransactionRequest::pay(key.address(), utils::parse_ether(1u64).unwrap()).from(acc),
@@ -503,7 +503,7 @@ mod tests {
             .await
             .unwrap()
             .unwrap();
-        let client = SignerMiddleware::new_with_provider_chain(provider, key).await.unwrap();
+        let client = SignerMiddleware::new_with_provider_network(provider, key).await.unwrap();
 
         let request = TransactionRequest::new();
 
@@ -530,7 +530,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn converts_tx_to_legacy_to_match_chain() {
+    async fn converts_tx_to_legacy_to_match_network() {
         let eip1559 = Eip1559TransactionRequest {
             from: None,
             to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
@@ -540,22 +540,22 @@ mod tests {
             access_list: Default::default(),
             max_priority_fee_per_gas: None,
             data: None,
-            chain_id: None,
+            network_id: None,
             max_fee_per_gas: None,
         };
         let mut tx = TypedTransaction::Eip1559(eip1559);
 
-        let chain_id = 10u64; // optimism does not support EIP-1559
+        let network_id = 10u64; // optimism does not support EIP-1559
 
-        // Signer middlewares now rely on a working provider which it can query the chain id from,
-        // so we make sure Anvil is started with the chain id that the expected tx was signed
+        // Signer middlewares now rely on a working provider which it can query the network id from,
+        // so we make sure Anvil is started with the network id that the expected tx was signed
         // with
-        let anvil = Anvil::new().args(vec!["--chain-id".to_string(), chain_id.to_string()]).spawn();
+        let anvil = Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
         let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
             .parse::<LocalWallet>()
             .unwrap()
-            .with_chain_id(chain_id);
+            .with_network_id(network_id);
         let client = SignerMiddleware::new(provider, key);
         client.fill_transaction(&mut tx, None).await.unwrap();
 
@@ -564,7 +564,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn does_not_convert_to_legacy_for_eip1559_chain() {
+    async fn does_not_convert_to_legacy_for_eip1559_network() {
         let eip1559 = Eip1559TransactionRequest {
             from: None,
             to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
@@ -574,22 +574,22 @@ mod tests {
             access_list: Default::default(),
             max_priority_fee_per_gas: None,
             data: None,
-            chain_id: None,
+            network_id: None,
             max_fee_per_gas: None,
         };
         let mut tx = TypedTransaction::Eip1559(eip1559);
 
-        let chain_id = 1u64; // eth main supports EIP-1559
+        let network_id = 1u64; // eth main supports EIP-1559
 
-        // Signer middlewares now rely on a working provider which it can query the chain id from,
-        // so we make sure Anvil is started with the chain id that the expected tx was signed
+        // Signer middlewares now rely on a working provider which it can query the network id from,
+        // so we make sure Anvil is started with the network id that the expected tx was signed
         // with
-        let anvil = Anvil::new().args(vec!["--chain-id".to_string(), chain_id.to_string()]).spawn();
+        let anvil = Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
         let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
             .parse::<LocalWallet>()
             .unwrap()
-            .with_chain_id(chain_id);
+            .with_network_id(network_id);
         let client = SignerMiddleware::new(provider, key);
         client.fill_transaction(&mut tx, None).await.unwrap();
 

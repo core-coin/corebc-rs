@@ -7,9 +7,9 @@ For more information, please refer to the [book](https://gakonst.com/ethers-rs).
 ## Examples
 
 ```rust
-use corebc_addressbook::{contract, Chain};
+use corebc_addressbook::{contract, Network};
 
 let weth = contract("weth").unwrap();
-let mainnet_address = weth.address(Chain::Mainnet).unwrap();
+let mainnet_address = weth.address(Network::Mainnet).unwrap();
 assert_eq!(mainnet_address, "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".parse().unwrap());
 ```

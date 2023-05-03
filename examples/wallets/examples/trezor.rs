@@ -6,7 +6,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Connect over websockets
     let provider = Provider::new(Ws::connect("ws://localhost:8545").await?);
     // Instantiate the connection to trezor with Trezor Live derivation path and
-    // the wallet's index. You may also provide the chain_id.
+    // the wallet's index. You may also provide the network_id.
     // (here: mainnet) for EIP155 support.
     // EIP1559 support
     // No EIP712 support yet.

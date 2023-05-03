@@ -5,7 +5,7 @@ use serial_test::serial;
 #[tokio::test]
 #[serial]
 async fn get_ether_balance_single_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let balance = client
             .get_ether_balance_single(
                 &"0x58eB28A67731c570Ef827C365c89B5751F9E6b0a".parse().unwrap(),
@@ -20,7 +20,7 @@ async fn get_ether_balance_single_success() {
 #[tokio::test]
 #[serial]
 async fn get_ether_balance_multi_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let balances = client
             .get_ether_balance_multi(
                 &["0x58eB28A67731c570Ef827C365c89B5751F9E6b0a".parse().unwrap()],
@@ -37,7 +37,7 @@ async fn get_ether_balance_multi_success() {
 #[tokio::test]
 #[serial]
 async fn get_transactions_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let txs = client
             .get_transactions(&"0x4F26FfBe5F04ED43630fdC30A87638d53D0b0876".parse().unwrap(), None)
             .await;
@@ -49,7 +49,7 @@ async fn get_transactions_success() {
 #[tokio::test]
 #[serial]
 async fn get_internal_transactions_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let txs = client
             .get_internal_transactions(
                 InternalTxQueryOption::ByAddress(
@@ -66,7 +66,7 @@ async fn get_internal_transactions_success() {
 #[tokio::test]
 #[serial]
 async fn get_internal_transactions_by_tx_hash_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let txs = client
             .get_internal_transactions(
                 InternalTxQueryOption::ByTransactionHash(
@@ -85,7 +85,7 @@ async fn get_internal_transactions_by_tx_hash_success() {
 #[tokio::test]
 #[serial]
 async fn get_erc20_transfer_events_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let txs = client
             .get_erc20_token_transfer_events(
                 TokenQueryOption::ByAddress(
@@ -106,7 +106,7 @@ async fn get_erc20_transfer_events_success() {
 #[tokio::test]
 #[serial]
 async fn get_erc721_transfer_events_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let txs = client
             .get_erc721_token_transfer_events(
                 TokenQueryOption::ByAddressAndContract(
@@ -124,7 +124,7 @@ async fn get_erc721_transfer_events_success() {
 #[tokio::test]
 #[serial]
 async fn get_erc1155_transfer_events_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let txs = client
             .get_erc1155_token_transfer_events(
                 TokenQueryOption::ByAddressAndContract(
@@ -142,7 +142,7 @@ async fn get_erc1155_transfer_events_success() {
 #[tokio::test]
 #[serial]
 async fn get_mined_blocks_success() {
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         client
             .get_mined_blocks(
                 &"0x9dd134d14d1e65f84b706d6f205cd5b1cd03a46b".parse().unwrap(),
@@ -158,7 +158,7 @@ async fn get_mined_blocks_success() {
 #[tokio::test]
 #[serial]
 async fn get_avalanche_transactions() {
-    run_with_client(Chain::Avalanche, |client| async move {
+    run_with_client(Network::Avalanche, |client| async move {
         let txs = client
             .get_transactions(&"0x1549ea9b546ba9ffb306d78a1e1f304760cc4abf".parse().unwrap(), None)
             .await;

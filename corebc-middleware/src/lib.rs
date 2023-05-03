@@ -33,7 +33,7 @@ pub mod policy;
 pub use policy::PolicyMiddleware;
 
 /// The [TimeLag](crate::TimeLag) provides safety against reorgs by querying state N blocks
-/// before the chain tip
+/// before the network tip
 pub mod timelag;
 pub use timelag::TimeLag;
 

@@ -65,7 +65,7 @@ async fn send_transaction_handles_tx_from_field() {
 
     // connect to the network
     let provider =
-        SignerMiddleware::new_with_provider_chain(provider, signer.clone()).await.unwrap();
+        SignerMiddleware::new_with_provider_network(provider, signer.clone()).await.unwrap();
 
     // sending a TransactionRequest with a from field of None should result
     // in a transaction from the signer address

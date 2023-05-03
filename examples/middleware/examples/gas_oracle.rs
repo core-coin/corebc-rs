@@ -1,5 +1,5 @@
 use ethers::{
-    core::types::Chain,
+    core::types::Network,
     etherscan::Client,
     middleware::gas_oracle::{
         BlockNative, Etherscan, GasCategory, GasNow, GasOracle, Polygon, ProviderOracle,
@@ -38,7 +38,7 @@ async fn blocknative() {
 }
 
 async fn etherscan() {
-    let client = Client::new_from_opt_env(Chain::Mainnet).unwrap();
+    let client = Client::new_from_opt_env(Network::Mainnet).unwrap();
     let oracle = Etherscan::new(client).category(GasCategory::Fast);
     match oracle.fetch().await {
         Ok(gas_price) => println!("[Etherscan]: Gas price is {gas_price:?}"),
@@ -55,8 +55,8 @@ async fn gas_now() {
 }
 
 async fn polygon() {
-    let chain = Chain::Polygon;
-    if let Ok(oracle) = Polygon::new(chain) {
+    let network = Network::Polygon;
+    if let Ok(oracle) = Polygon::new(network) {
         match oracle.category(GasCategory::SafeLow).fetch().await {
             Ok(gas_price) => println!("[Polygon]: Gas price is {gas_price:?}"),
             Err(e) => panic!("[Polygon]: Cannot estimate gas: {e:?}"),

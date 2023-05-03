@@ -1,6 +1,6 @@
 use corebc_core::{
     types::{H256, U256},
-    utils::{from_int_or_hex, ChainConfig},
+    utils::{from_int_or_hex, NetworkConfig},
 };
 use enr::{k256::ecdsa::SigningKey, Enr};
 use serde::{Deserialize, Serialize};
@@ -77,8 +77,8 @@ pub struct EthProtocolInfo {
     /// The Keccak hash of the host's genesis block.
     pub genesis: H256,
 
-    /// The chain configuration for the host's fork rules.
-    pub config: ChainConfig,
+    /// The network configuration for the host's fork rules.
+    pub config: NetworkConfig,
 
     /// The hash of the host's best known block.
     pub head: H256,
@@ -285,7 +285,7 @@ mod tests {
                     "difficulty":0,
                     "genesis":"0xb04009ddf4b0763f42778e7d5937e49bebf1e11b2d26c9dac6cefb5f84b6f8ea",
                     "config":{
-                        "chainId":0,
+                        "networkId":0,
                         "eip150Hash":"0x0000000000000000000000000000000000000000000000000000000000000000"
                     },
                     "head":"0xb04009ddf4b0763f42778e7d5937e49bebf1e11b2d26c9dac6cefb5f84b6f8ea"
@@ -317,7 +317,7 @@ mod tests {
                     "difficulty":0,
                     "genesis":"0xb04009ddf4b0763f42778e7d5937e49bebf1e11b2d26c9dac6cefb5f84b6f8ea",
                     "config":{
-                        "chainId":0,
+                        "networkId":0,
                         "eip150Hash":"0x0000000000000000000000000000000000000000000000000000000000000000",
                         "terminalTotalDifficulty":58750000000000000000000,
                         "terminalTotalDifficultyPassed":true,
@@ -351,7 +351,7 @@ mod tests {
                     "difficulty": 17179869184,
                     "genesis": "0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3",
                     "config": {
-                        "chainId": 1,
+                        "networkId": 1,
                         "homesteadBlock": 1150000,
                         "daoForkBlock": 1920000,
                         "daoForkSupport": true,

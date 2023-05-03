@@ -95,5 +95,5 @@ pub enum P1 {
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum P2 {
-    NO_CHAINCODE = 0x00,
+    NO_NETWORKCODE = 0x00,
 }

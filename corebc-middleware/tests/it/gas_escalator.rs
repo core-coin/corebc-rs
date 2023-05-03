@@ -10,12 +10,12 @@ use ethers_middleware::{
 #[ignore]
 async fn gas_escalator() {
     let anvil = Anvil::new().block_time(2u64).spawn();
-    let chain_id = anvil.chain_id();
+    let network_id = anvil.network_id();
     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
 
     // wrap with signer
     let wallet: LocalWallet = anvil.keys().first().unwrap().clone().into();
-    let wallet = wallet.with_chain_id(chain_id);
+    let wallet = wallet.with_network_id(network_id);
     let address = wallet.address();
     let provider = provider.with_signer(wallet);
 
@@ -29,7 +29,7 @@ async fn gas_escalator() {
     let tx = TransactionRequest::pay(Address::zero(), 1u64)
         .gas_price(gas_price)
         .nonce(nonce)
-        .chain_id(chain_id);
+        .network_id(network_id);
 
     eprintln!("sending");
     let pending = provider.send_transaction(tx, None).await.expect("could not send");

@@ -281,7 +281,7 @@ where
     /// Queries the blockchain via an `eth_call` for the provided transaction.
     ///
     /// If executed on a non-state mutating smart contract function (i.e. `view`, `pure`)
-    /// then it will return the raw data from the chain.
+    /// then it will return the raw data from the network.
     ///
     /// If executed on a mutating smart contract function, it will do a "dry run" of the call
     /// and return the return type of the transaction without mutating the state

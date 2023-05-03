@@ -247,13 +247,13 @@ contract Multicall3 {
     }
 
     /// @notice Gets the base fee of the given block
-    /// @notice Can revert if the BASEFEE opcode is not implemented by the given chain
+    /// @notice Can revert if the BASEFEE opcode is not implemented by the given network
     function getBasefee() public view returns (uint256 basefee) {
         basefee = block.basefee;
     }
 
-    /// @notice Returns the chain id
-    function getChainId() public view returns (uint256 chainid) {
-        chainid = block.chainid;
+    /// @notice Returns the network id
+    function getNetworkId() public view returns (uint256 networkid) {
+        networkid = block.networkid;
     }
 }

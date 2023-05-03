@@ -159,7 +159,7 @@ impl<'a, P: JsonRpcClient> Future for PendingTransaction<'a, P> {
                 rewake_with_new_state!(ctx, this, PendingTxState::GettingTx(fut));
             }
             PendingTxState::PausedGettingTx => {
-                // Wait the polling period so that we do not spam the chain when no
+                // Wait the polling period so that we do not spam the network when no
                 // new block has been mined
                 let _ready = futures_util::ready!(this.interval.poll_next_unpin(ctx));
                 let fut = Box::pin(this.provider.get_transaction(*this.tx_hash));
@@ -205,7 +205,7 @@ impl<'a, P: JsonRpcClient> Future for PendingTransaction<'a, P> {
                 rewake_with_new_state!(ctx, this, PendingTxState::GettingReceipt(fut));
             }
             PendingTxState::PausedGettingReceipt => {
-                // Wait the polling period so that we do not spam the chain when no
+                // Wait the polling period so that we do not spam the network when no
                 // new block has been mined
                 let _ready = futures_util::ready!(this.interval.poll_next_unpin(ctx));
                 let fut = Box::pin(this.provider.get_transaction_receipt(*this.tx_hash));
@@ -246,7 +246,7 @@ impl<'a, P: JsonRpcClient> Future for PendingTransaction<'a, P> {
                 }
             }
             PendingTxState::PausedGettingBlockNumber(receipt) => {
-                // Wait the polling period so that we do not spam the chain when no
+                // Wait the polling period so that we do not spam the network when no
                 // new block has been mined
                 let _ready = futures_util::ready!(this.interval.poll_next_unpin(ctx));
 

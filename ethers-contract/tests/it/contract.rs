@@ -801,7 +801,7 @@ async fn test_derive_eip712() {
     #[eip712(
         name = "Eip712Test",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0x0000000000000000000000000000000000000001",
         salt = "eip712-test-75F0CCte"
     )]

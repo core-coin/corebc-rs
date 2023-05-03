@@ -25,7 +25,7 @@ use super::types::*;
 pub struct LedgerEthereum {
     transport: Mutex<Ledger>,
     derivation: DerivationType,
-    pub(crate) chain_id: u64,
+    pub(crate) network_id: u64,
     pub(crate) address: Address,
 }
 
@@ -33,8 +33,8 @@ impl std::fmt::Display for LedgerEthereum {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "LedgerApp. Key at index {} with address {:?} on chain_id {}",
-            self.derivation, self.address, self.chain_id
+            "LedgerApp. Key at index {} with address {:?} on network_id {}",
+            self.derivation, self.address, self.network_id
         )
     }
 }
@@ -53,11 +53,11 @@ impl LedgerEthereum {
     /// # Ok(())
     /// # }
     /// ```
-    pub async fn new(derivation: DerivationType, chain_id: u64) -> Result<Self, LedgerError> {
+    pub async fn new(derivation: DerivationType, network_id: u64) -> Result<Self, LedgerError> {
         let transport = Ledger::init().await?;
         let address = Self::get_address_with_path_transport(&transport, &derivation).await?;
 
-        Ok(Self { transport: Mutex::new(transport), derivation, chain_id, address })
+        Ok(Self { transport: Mutex::new(transport), derivation, network_id, address })
     }
 
     /// Consume self and drop the ledger mutex
@@ -88,7 +88,7 @@ impl LedgerEthereum {
         let command = APDUCommand {
             ins: INS::GET_PUBLIC_KEY as u8,
             p1: P1::NON_CONFIRM as u8,
-            p2: P2::NO_CHAINCODE as u8,
+            p2: P2::NO_NETWORKCODE as u8,
             data,
             response_len: None,
         };
@@ -116,7 +116,7 @@ impl LedgerEthereum {
         let command = APDUCommand {
             ins: INS::GET_APP_CONFIGURATION as u8,
             p1: P1::NON_CONFIRM as u8,
-            p2: P2::NO_CHAINCODE as u8,
+            p2: P2::NO_NETWORKCODE as u8,
             data: APDUData::new(&[]),
             response_len: None,
         };
@@ -134,33 +134,33 @@ impl LedgerEthereum {
 
     /// Signs an Ethereum transaction (requires confirmation on the ledger)
     pub async fn sign_tx(&self, tx: &TypedTransaction) -> Result<Signature, LedgerError> {
-        let mut tx_with_chain = tx.clone();
-        if tx_with_chain.chain_id().is_none() {
-            // in the case we don't have a chain_id, let's use the signer chain id instead
-            tx_with_chain.set_chain_id(self.chain_id);
+        let mut tx_with_network = tx.clone();
+        if tx_with_network.network_id().is_none() {
+            // in the case we don't have a network_id, let's use the signer network id instead
+            tx_with_network.set_network_id(self.network_id);
         }
         let mut payload = Self::path_to_bytes(&self.derivation);
-        payload.extend_from_slice(tx_with_chain.rlp().as_ref());
+        payload.extend_from_slice(tx_with_network.rlp().as_ref());
 
         let mut signature = self.sign_payload(INS::SIGN, &payload).await?;
 
-        // modify `v` value of signature to match EIP-155 for chains with large chain ID
+        // modify `v` value of signature to match EIP-155 for networks with large network ID
         // The logic is derived from Ledger's library
         // https://github.com/LedgerHQ/ledgerjs/blob/e78aac4327e78301b82ba58d63a72476ecb842fc/packages/hw-app-eth/src/Eth.ts#L300
-        let eip155_chain_id = self.chain_id * 2 + 35;
-        if eip155_chain_id + 1 > 255 {
-            let one_byte_chain_id = eip155_chain_id % 256;
-            let ecc_parity = if signature.v > one_byte_chain_id {
-                signature.v - one_byte_chain_id
+        let eip155_network_id = self.network_id * 2 + 35;
+        if eip155_network_id + 1 > 255 {
+            let one_byte_network_id = eip155_network_id % 256;
+            let ecc_parity = if signature.v > one_byte_network_id {
+                signature.v - one_byte_network_id
             } else {
-                one_byte_chain_id - signature.v
+                one_byte_network_id - signature.v
             };
 
             signature.v = match tx {
                 TypedTransaction::Eip2930(_) | TypedTransaction::Eip1559(_) => {
                     (ecc_parity % 2 != 1) as u64
                 }
-                TypedTransaction::Legacy(_) => eip155_chain_id + ecc_parity,
+                TypedTransaction::Legacy(_) => eip155_network_id + ecc_parity,
             };
         }
 
@@ -220,7 +220,7 @@ impl LedgerEthereum {
         let mut command = APDUCommand {
             ins: command as u8,
             p1: P1_FIRST,
-            p2: P2::NO_CHAINCODE as u8,
+            p2: P2::NO_NETWORKCODE as u8,
             data: APDUData::new(&[]),
             response_len: None,
         };
@@ -303,7 +303,7 @@ mod tests {
     #[eip712(
         name = "Eip712Test",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0x0000000000000000000000000000000000000001",
         salt = "eip712-test-75F0CCte"
     )]

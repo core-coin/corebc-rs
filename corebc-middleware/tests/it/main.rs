@@ -45,5 +45,5 @@ pub async fn spawn_anvil_ws() -> (Provider<Ws>, AnvilInstance) {
 
 /// Gets `idx` wallet from the given anvil instance.
 pub fn get_wallet(anvil: &AnvilInstance, idx: usize) -> LocalWallet {
-    LocalWallet::from(anvil.keys()[idx].clone()).with_chain_id(anvil.chain_id())
+    LocalWallet::from(anvil.keys()[idx].clone()).with_network_id(anvil.network_id())
 }

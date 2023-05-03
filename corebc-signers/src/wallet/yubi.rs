@@ -67,7 +67,7 @@ impl From<YubiSigner<Secp256k1>> for Wallet<YubiSigner<Secp256k1>> {
         let address = H160::from(bytes);
         let address = to_ican(&address, &NetworkType::Mainnet);
 
-        Self { signer, address, chain_id: 1 }
+        Self { signer, address, network_id: 1 }
     }
 }
 

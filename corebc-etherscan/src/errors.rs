@@ -1,10 +1,10 @@
-use corebc_core::types::{Address, Chain};
+use corebc_core::types::{Address, Network};
 use std::env::VarError;
 
 #[derive(Debug, thiserror::Error)]
 pub enum EtherscanError {
-    #[error("Chain {0} not supported")]
-    ChainNotSupported(Chain),
+    #[error("Network {0} not supported")]
+    NetworkNotSupported(Network),
     #[error("Contract execution call failed: {0}")]
     ExecutionFailed(String),
     #[error("Balance failed")]

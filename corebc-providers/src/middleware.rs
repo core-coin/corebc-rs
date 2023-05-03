@@ -125,7 +125,7 @@ pub trait Middleware: Sync + Send + Debug {
     /// 2. resolve any ENS names in the tx `to` field
     /// 3. Estimate gas usage
     /// 4. Poll and set legacy or 1559 gas prices
-    /// 5. Set the chain_id with the provider's, if not already set
+    /// 5. Set the network_id with the provider's, if not already set
     ///
     /// It does NOT set the nonce by default.
     ///
@@ -362,10 +362,10 @@ pub trait Middleware: Sync + Send + Debug {
         self.inner().syncing().await.map_err(MiddlewareError::from_err)
     }
 
-    /// Returns the currently configured chain id, a value used in replay-protected
+    /// Returns the currently configured network id, a value used in replay-protected
     /// transaction signing as introduced by EIP-155.
-    async fn get_chainid(&self) -> Result<U256, Self::Error> {
-        self.inner().get_chainid().await.map_err(MiddlewareError::from_err)
+    async fn get_networkid(&self) -> Result<U256, Self::Error> {
+        self.inner().get_networkid().await.map_err(MiddlewareError::from_err)
     }
 
     /// Returns the network version.

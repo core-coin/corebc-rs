@@ -2,7 +2,7 @@
 #![deny(unsafe_code, rustdoc::broken_intra_doc_links)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-pub use corebc_core::types::{Address, Chain};
+pub use corebc_core::types::{Address, Network};
 
 use once_cell::sync::Lazy;
 use serde::Deserialize;
@@ -13,17 +13,17 @@ const CONTRACTS_JSON: &str = include_str!("./contracts/contracts.json");
 static ADDRESSBOOK: Lazy<HashMap<String, Contract>> =
     Lazy::new(|| serde_json::from_str(CONTRACTS_JSON).unwrap());
 
-/// Wrapper around a hash map that maps a [Chain] to the contract's deployed address on that chain.
+/// Wrapper around a hash map that maps a [Network] to the contract's deployed address on that network.
 #[derive(Clone, Debug, Deserialize)]
 pub struct Contract {
-    addresses: HashMap<Chain, Address>,
+    addresses: HashMap<Network, Address>,
 }
 
 impl Contract {
-    /// Returns the address of the contract on the specified chain. If the contract's address is
+    /// Returns the address of the contract on the specified network. If the contract's address is
     /// not found in the addressbook, the getter returns None.
-    pub fn address(&self, chain: Chain) -> Option<Address> {
-        self.addresses.get(&chain).cloned()
+    pub fn address(&self, network: Network) -> Option<Address> {
+        self.addresses.get(&network).cloned()
     }
 }
 
@@ -46,7 +46,7 @@ mod tests {
 
     #[test]
     fn test_addrs() {
-        assert!(contract("dai").unwrap().address(Chain::Mainnet).is_some());
-        assert!(contract("dai").unwrap().address(Chain::MoonbeamDev).is_none());
+        assert!(contract("dai").unwrap().address(Network::Mainnet).is_some());
+        assert!(contract("dai").unwrap().address(Network::Devub).is_none());
     }
 }

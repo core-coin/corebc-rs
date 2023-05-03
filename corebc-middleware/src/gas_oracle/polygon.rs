@@ -1,6 +1,6 @@
 use super::{from_gwei_f64, GasCategory, GasOracle, GasOracleError, Result};
 use async_trait::async_trait;
-use corebc_core::types::{Chain, U256};
+use corebc_core::types::{Network, U256};
 use reqwest::Client;
 use serde::Deserialize;
 use url::Url;
@@ -51,7 +51,7 @@ impl Response {
 
 impl Default for Polygon {
     fn default() -> Self {
-        Self::new(Chain::Polygon).unwrap()
+        Self::new(Network::Polygon).unwrap()
     }
 }
 
@@ -76,16 +76,16 @@ impl GasOracle for Polygon {
 }
 
 impl Polygon {
-    pub fn new(chain: Chain) -> Result<Self> {
-        Self::with_client(Client::new(), chain)
+    pub fn new(network: Network) -> Result<Self> {
+        Self::with_client(Client::new(), network)
     }
 
-    pub fn with_client(client: Client, chain: Chain) -> Result<Self> {
-        // TODO: Sniff chain from chain id.
-        let url = match chain {
-            Chain::Polygon => MAINNET_URL,
-            Chain::PolygonMumbai => MUMBAI_URL,
-            _ => return Err(GasOracleError::UnsupportedChain),
+    pub fn with_client(client: Client, network: Network) -> Result<Self> {
+        // TODO: Sniff network from network id.
+        let url = match network {
+            Network::Polygon => MAINNET_URL,
+            Network::PolygonMumbai => MUMBAI_URL,
+            _ => return Err(GasOracleError::UnsupportedNetwork),
         };
         Ok(Self { client, url: Url::parse(url).unwrap(), gas_category: GasCategory::Standard })
     }

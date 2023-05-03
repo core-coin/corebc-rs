@@ -24,7 +24,7 @@ use corebc_core::{
     abi::{self, Detokenize, ParamType},
     types::{
         transaction::{eip2718::TypedTransaction, eip2930::AccessListWithGasUsed},
-        Address, Block, BlockId, BlockNumber, BlockTrace, Bytes, Chain, EIP1186ProofResponse,
+        Address, Block, BlockId, BlockNumber, BlockTrace, Bytes, Network, EIP1186ProofResponse,
         FeeHistory, Filter, FilterBlockOption, GethDebugTracingCallOptions,
         GethDebugTracingOptions, GethTrace, Log, NameOrAddress, Selector, Signature, Trace,
         TraceFilter, TraceType, Transaction, TransactionReceipt, TransactionRequest, TxHash,
@@ -474,8 +474,8 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
         self.request("eth_getBalance", [from, block]).await
     }
 
-    async fn get_chainid(&self) -> Result<U256, ProviderError> {
-        self.request("eth_chainId", ()).await
+    async fn get_networkid(&self) -> Result<U256, ProviderError> {
+        self.request("eth_networkId", ()).await
     }
 
     async fn syncing(&self) -> Result<SyncingStatus, Self::Error> {
@@ -1349,9 +1349,9 @@ mod sealed {
 ///
 /// # Example
 ///
-/// Automatically configure poll interval via `eth_getChainId`
+/// Automatically configure poll interval via `eth_getNetworkId`
 ///
-/// Note that this will send an RPC to retrieve the chain id.
+/// Note that this will send an RPC to retrieve the network id.
 ///
 /// ```no_run
 ///  # use corebc_providers::{Http, Provider, ProviderExt};
@@ -1364,9 +1364,9 @@ mod sealed {
 ///
 /// ```no_run
 /// use std::convert::TryFrom;
-/// use corebc_core::types::Chain;
+/// use corebc_core::types::Network;
 /// use corebc_providers::{Http, Provider, ProviderExt};
-/// let http_provider = Provider::<Http>::try_from("https://eth.llamarpc.com").unwrap().set_chain(Chain::Mainnet);
+/// let http_provider = Provider::<Http>::try_from("https://eth.llamarpc.com").unwrap().set_network(Network::Mainnet);
 /// ```
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
@@ -1387,22 +1387,22 @@ pub trait ProviderExt: sealed::Sealed {
     where
         Self: Sized;
 
-    /// Customize `Provider` settings for chain.
+    /// Customize `Provider` settings for network.
     ///
-    /// E.g. [`Chain::average_blocktime_hint()`] returns the average block time which can be used to
+    /// E.g. [`Network::average_blocktime_hint()`] returns the average block time which can be used to
     /// tune the polling interval.
     ///
     /// Returns the customized `Provider`
-    fn for_chain(mut self, chain: impl Into<Chain>) -> Self
+    fn for_network(mut self, network: impl Into<Network>) -> Self
     where
         Self: Sized,
     {
-        self.set_chain(chain);
+        self.set_network(network);
         self
     }
 
-    /// Customized `Provider` settings for chain
-    fn set_chain(&mut self, chain: impl Into<Chain>) -> &mut Self;
+    /// Customized `Provider` settings for network
+    fn set_network(&mut self, network: impl Into<Network>) -> &mut Self;
 }
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
@@ -1417,18 +1417,18 @@ impl ProviderExt for Provider<HttpProvider> {
         let mut provider = Provider::try_from(url)?;
         if is_local_endpoint(url) {
             provider.set_interval(DEFAULT_LOCAL_POLL_INTERVAL);
-        } else if let Some(chain) =
-            provider.get_chainid().await.ok().and_then(|id| Chain::try_from(id).ok())
+        } else if let Some(network) =
+            provider.get_networkid().await.ok().and_then(|id| Network::try_from(id).ok())
         {
-            provider.set_chain(chain);
+            provider.set_network(network);
         }
 
         Ok(provider)
     }
 
-    fn set_chain(&mut self, chain: impl Into<Chain>) -> &mut Self {
-        let chain = chain.into();
-        if let Some(blocktime) = chain.average_blocktime_hint() {
+    fn set_network(&mut self, network: impl Into<Network>) -> &mut Self {
+        let network = network.into();
+        if let Some(blocktime) = network.average_blocktime_hint() {
             // use half of the block time
             self.set_interval(blocktime / 2);
         }
@@ -1768,11 +1768,11 @@ mod tests {
     ///
     /// These will all use the same genesis config.
     fn spawn_geth_and_create_provider(
-        chain_id: u64,
+        network_id: u64,
         datadir: Option<PathBuf>,
         genesis: Option<Genesis>,
     ) -> (GethInstance, Provider<HttpProvider>) {
-        let geth = Geth::new().chain_id(chain_id).disable_discovery();
+        let geth = Geth::new().network_id(network_id).disable_discovery();
 
         let geth = match genesis {
             Some(genesis) => geth.genesis(genesis),

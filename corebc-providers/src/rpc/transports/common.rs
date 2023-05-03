@@ -317,10 +317,10 @@ mod tests {
 
     #[test]
     fn ser_request() {
-        let request: Request<()> = Request::new(0, "eth_chainId", ());
+        let request: Request<()> = Request::new(0, "eth_networkId", ());
         assert_eq!(
             &serde_json::to_string(&request).unwrap(),
-            r#"{"id":0,"jsonrpc":"2.0","method":"eth_chainId"}"#
+            r#"{"id":0,"jsonrpc":"2.0","method":"eth_networkId"}"#
         );
 
         let request: Request<()> = Request::new(300, "method_name", ());

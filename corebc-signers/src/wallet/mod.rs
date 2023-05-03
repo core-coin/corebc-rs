@@ -42,9 +42,9 @@ use std::fmt;
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// let wallet = LocalWallet::new(&mut thread_rng(), NetworkType::Mainnet);
 ///
-/// // Optionally, the wallet's chain id can be set, in order to use EIP-155
-/// // replay protection with different chains
-/// let wallet = wallet.with_chain_id(1337u64);
+/// // Optionally, the wallet's network id can be set, in order to use EIP-155
+/// // replay protection with different networks
+/// let wallet = wallet.with_network_id(1337u64);
 ///
 /// // The wallet can be used to sign messages
 /// let message = b"hello";
@@ -67,14 +67,14 @@ pub struct Wallet<D: PrehashSigner<(RecoverableSignature, RecoveryId)>> {
     pub(crate) signer: D,
     /// The wallet's address
     pub(crate) address: Address,
-    /// The wallet's chain id (for EIP-155)
-    pub(crate) chain_id: u64,
+    /// The wallet's network id (for EIP-155)
+    pub(crate) network_id: u64,
 }
 
 impl<D: PrehashSigner<(RecoverableSignature, RecoveryId)>> Wallet<D> {
     /// Construct a new wallet with an external Signer
-    pub fn new_with_signer(signer: D, address: Address, chain_id: u64) -> Self {
-        Wallet { signer, address, chain_id }
+    pub fn new_with_signer(signer: D, address: Address, network_id: u64) -> Self {
+        Wallet { signer, address, network_id }
     }
 }
 
@@ -94,12 +94,12 @@ impl<D: Sync + Send + PrehashSigner<(RecoverableSignature, RecoveryId)>> Signer 
     }
 
     async fn sign_transaction(&self, tx: &TypedTransaction) -> Result<Signature, Self::Error> {
-        let mut tx_with_chain = tx.clone();
-        if tx_with_chain.chain_id().is_none() {
-            // in the case we don't have a chain_id, let's use the signer chain id instead
-            tx_with_chain.set_chain_id(self.chain_id);
+        let mut tx_with_network = tx.clone();
+        if tx_with_network.network_id().is_none() {
+            // in the case we don't have a network_id, let's use the signer network id instead
+            tx_with_network.set_network_id(self.network_id);
         }
-        self.sign_transaction_sync(&tx_with_chain)
+        self.sign_transaction_sync(&tx_with_network)
     }
 
     async fn sign_typed_data<T: Eip712 + Send + Sync>(
@@ -116,33 +116,33 @@ impl<D: Sync + Send + PrehashSigner<(RecoverableSignature, RecoveryId)>> Signer 
         self.address
     }
 
-    /// Gets the wallet's chain id
-    fn chain_id(&self) -> u64 {
-        self.chain_id
+    /// Gets the wallet's network id
+    fn network_id(&self) -> u64 {
+        self.network_id
     }
 
-    /// Sets the wallet's chain_id, used in conjunction with EIP-155 signing
-    fn with_chain_id<T: Into<u64>>(mut self, chain_id: T) -> Self {
-        self.chain_id = chain_id.into();
+    /// Sets the wallet's network_id, used in conjunction with EIP-155 signing
+    fn with_network_id<T: Into<u64>>(mut self, network_id: T) -> Self {
+        self.network_id = network_id.into();
         self
     }
 }
 
 impl<D: PrehashSigner<(RecoverableSignature, RecoveryId)>> Wallet<D> {
     /// Synchronously signs the provided transaction, normalizing the signature `v` value with
-    /// EIP-155 using the transaction's `chain_id`, or the signer's `chain_id` if the transaction
+    /// EIP-155 using the transaction's `network_id`, or the signer's `network_id` if the transaction
     /// does not specify one.
     pub fn sign_transaction_sync(&self, tx: &TypedTransaction) -> Result<Signature, WalletError> {
-        // rlp (for sighash) must have the same chain id as v in the signature
-        let chain_id = tx.chain_id().map(|id| id.as_u64()).unwrap_or(self.chain_id);
+        // rlp (for sighash) must have the same network id as v in the signature
+        let network_id = tx.network_id().map(|id| id.as_u64()).unwrap_or(self.network_id);
         let mut tx = tx.clone();
-        tx.set_chain_id(chain_id);
+        tx.set_network_id(network_id);
 
         let sighash = tx.sighash();
         let mut sig = self.sign_hash(sighash)?;
 
         // sign_hash sets `v` to recid + 27, so we need to subtract 27 before normalizing
-        sig.v = to_eip155_v(sig.v as u8 - 27, chain_id);
+        sig.v = to_eip155_v(sig.v as u8 - 27, network_id);
         Ok(sig)
     }
 
@@ -171,7 +171,7 @@ impl<D: PrehashSigner<(RecoverableSignature, RecoveryId)>> fmt::Debug for Wallet
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Wallet")
             .field("address", &self.address)
-            .field("chain_Id", &self.chain_id)
+            .field("network_Id", &self.network_id)
             .finish()
     }
 }

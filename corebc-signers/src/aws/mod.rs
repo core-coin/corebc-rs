@@ -38,15 +38,15 @@ use utils::{apply_eip155, verifying_key_to_address};
 /// );
 /// let kms_client = KmsClient::new_with_client(client, Region::UsWest1);
 /// let key_id = "...";
-/// let chain_id = 1;
+/// let network_id = 1;
 ///
-/// let signer = AwsSigner::new(kms_client, key_id, chain_id).await?;
+/// let signer = AwsSigner::new(kms_client, key_id, network_id).await?;
 /// let sig = signer.sign_message(H256::zero()).await?;
 /// ```
 #[derive(Clone)]
 pub struct AwsSigner {
     kms: KmsClient,
-    chain_id: u64,
+    network_id: u64,
     key_id: String,
     pubkey: VerifyingKey,
     address: Address,
@@ -56,7 +56,7 @@ impl std::fmt::Debug for AwsSigner {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("AwsSigner")
             .field("key_id", &self.key_id)
-            .field("chain_id", &self.chain_id)
+            .field("network_id", &self.network_id)
             .field("pubkey", &hex::encode(self.pubkey.to_sec1_bytes()))
             .field("address", &self.address)
             .finish()
@@ -67,8 +67,8 @@ impl std::fmt::Display for AwsSigner {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "AwsSigner {{ address: {}, chain_id: {}, key_id: {} }}",
-            self.address, self.chain_id, self.key_id
+            "AwsSigner {{ address: {}, network_id: {}, key_id: {} }}",
+            self.address, self.network_id, self.key_id
         )
     }
 }
@@ -151,11 +151,11 @@ impl AwsSigner {
     ///
     /// This function retrieves the public key from AWS and calculates the
     /// Etheruem address. It is therefore `async`.
-    #[instrument(err, skip(kms, key_id, chain_id), fields(key_id = %key_id.as_ref()))]
+    #[instrument(err, skip(kms, key_id, network_id), fields(key_id = %key_id.as_ref()))]
     pub async fn new<T>(
         kms: KmsClient,
         key_id: T,
-        chain_id: u64,
+        network_id: u64,
         network: NetworkType,
     ) -> Result<AwsSigner, AwsSignerError>
     where
@@ -170,7 +170,7 @@ impl AwsSigner {
             hex::encode(address)
         );
 
-        Ok(Self { kms, chain_id, key_id: key_id.as_ref().to_owned(), pubkey, address })
+        Ok(Self { kms, network_id, key_id: key_id.as_ref().to_owned(), pubkey, address })
     }
 
     /// Fetch the pubkey associated with a key id
@@ -204,17 +204,17 @@ impl AwsSigner {
     }
 
     /// Sign a digest with this signer's key and add the eip155 `v` value
-    /// corresponding to the input chain_id
+    /// corresponding to the input network_id
     #[instrument(err, skip(digest), fields(digest = %hex::encode(digest)))]
     async fn sign_digest_with_eip155(
         &self,
         digest: H256,
-        chain_id: u64,
+        network_id: u64,
     ) -> Result<EthSig, AwsSignerError> {
         let sig = self.sign_digest(digest.into()).await?;
         let mut sig =
             utils::sig_from_digest_bytes_trial_recovery(&sig, digest.into(), &self.pubkey);
-        apply_eip155(&mut sig, chain_id);
+        apply_eip155(&mut sig, network_id);
         Ok(sig)
     }
 }
@@ -233,17 +233,17 @@ impl super::Signer for AwsSigner {
         trace!("{:?}", message_hash);
         trace!("{:?}", message);
 
-        self.sign_digest_with_eip155(message_hash, self.chain_id).await
+        self.sign_digest_with_eip155(message_hash, self.network_id).await
     }
 
     #[instrument(err)]
     async fn sign_transaction(&self, tx: &TypedTransaction) -> Result<EthSig, Self::Error> {
-        let mut tx_with_chain = tx.clone();
-        let chain_id = tx_with_chain.chain_id().map(|id| id.as_u64()).unwrap_or(self.chain_id);
-        tx_with_chain.set_chain_id(chain_id);
+        let mut tx_with_network = tx.clone();
+        let network_id = tx_with_network.network_id().map(|id| id.as_u64()).unwrap_or(self.network_id);
+        tx_with_network.set_network_id(network_id);
 
-        let sighash = tx_with_chain.sighash();
-        self.sign_digest_with_eip155(sighash, chain_id).await
+        let sighash = tx_with_network.sighash();
+        self.sign_digest_with_eip155(sighash, network_id).await
     }
 
     async fn sign_typed_data<T: Eip712 + Send + Sync>(
@@ -263,14 +263,14 @@ impl super::Signer for AwsSigner {
         self.address
     }
 
-    /// Returns the signer's chain id
-    fn chain_id(&self) -> u64 {
-        self.chain_id
+    /// Returns the signer's network id
+    fn network_id(&self) -> u64 {
+        self.network_id
     }
 
-    /// Sets the signer's chain id
-    fn with_chain_id<T: Into<u64>>(mut self, chain_id: T) -> Self {
-        self.chain_id = chain_id.into();
+    /// Sets the signer's network id
+    fn with_network_id<T: Into<u64>>(mut self, network_id: T) -> Self {
+        self.network_id = network_id.into();
         self
     }
 }
@@ -304,13 +304,13 @@ mod tests {
 
     #[tokio::test]
     async fn it_signs_messages() {
-        let chain_id = 1;
+        let network_id = 1;
         let key_id = match std::env::var("AWS_KEY_ID") {
             Ok(id) => id,
             _ => return,
         };
         let client = env_client();
-        let signer = AwsSigner::new(client, key_id, chain_id).await.unwrap();
+        let signer = AwsSigner::new(client, key_id, network_id).await.unwrap();
 
         let message = vec![0, 1, 2, 3];
 

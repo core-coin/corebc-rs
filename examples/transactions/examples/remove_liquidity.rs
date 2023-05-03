@@ -38,12 +38,12 @@ async fn example() -> Result<()> {
         let provider = Provider::<Http>::try_from(
             "https://rinkeby.infura.io/v3/a111fcada47746d990e0e2b7df50d00a",
         )?;
-        let chain_id = provider.get_chainid().await?;
+        let network_id = provider.get_networkid().await?;
 
         // this wallet's private key
         let wallet = "725fd1619b2653b7ff1806bf29ae11d0568606d83777afd5b1f2e649bd5132a9"
             .parse::<LocalWallet>()?
-            .with_chain_id(chain_id.as_u64());
+            .with_network_id(network_id.as_u64());
 
         SignerMiddleware::new(provider, wallet)
     });

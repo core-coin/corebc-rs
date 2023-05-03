@@ -1,5 +1,5 @@
 use crate::*;
-use corebc_core::types::Chain;
+use corebc_core::types::Network;
 use corebc_etherscan::verify::VerifyContract;
 use corebc_solc::{Project, ProjectPathsConfig};
 use serial_test::serial;
@@ -28,7 +28,7 @@ async fn can_flatten_and_verify_contract() {
             .optimization(true)
             .runs(200);
 
-    run_with_client(Chain::Mainnet, |client| async move {
+    run_with_client(Network::Mainnet, |client| async move {
         let resp = client
             .submit_contract_verification(&contract)
             .await

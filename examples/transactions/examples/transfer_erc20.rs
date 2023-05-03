@@ -43,7 +43,7 @@ async fn main() -> Result<()> {
     let provider =
         Provider::<Http>::try_from(anvil.endpoint())?.interval(Duration::from_millis(10u64));
     let signer =
-        Arc::new(SignerMiddleware::new(provider, from_wallet.with_chain_id(anvil.chain_id())));
+        Arc::new(SignerMiddleware::new(provider, from_wallet.with_network_id(anvil.network_id())));
     let contract = ERC20Contract::new(token_address, signer);
 
     // 3. Fetch the decimals used by the contract so we can compute the decimal amount to send.
@@ -79,7 +79,7 @@ async fn deploy_token_contract(
 
     let provider =
         Provider::<Http>::try_from(anvil.endpoint())?.interval(Duration::from_millis(10u64));
-    let client = SignerMiddleware::new(provider, deployer_wallet.with_chain_id(anvil.chain_id()));
+    let client = SignerMiddleware::new(provider, deployer_wallet.with_network_id(anvil.network_id()));
     let client = Arc::new(client);
     let factory = ContractFactory::new(abi, bytecode, client.clone());
     let contract = factory.deploy(())?.send().await?;

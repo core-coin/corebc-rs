@@ -16,7 +16,7 @@ fn derive_eip712() {
     #[eip712(
         name = "Radicle",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0x0000000000000000000000000000000000000001",
         raw_salt = "0x3000000000000000000000000000000000000000000000000000000000000000"
     )]
@@ -49,21 +49,21 @@ fn struct_hash() {
     #[eip712(
         name = "Radicle",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0x0000000000000000000000000000000000000001",
         salt = "1234567890"
     )]
     pub struct EIP712Domain {
         name: String,
         version: String,
-        chain_id: U256,
+        network_id: U256,
         verifying_contract: Address,
     }
 
     let domain = Domain {
         name: Some("Radicle".to_string()),
         version: Some("1".to_string()),
-        chain_id: Some(U256::from(1)),
+        network_id: Some(U256::from(1)),
         verifying_contract: Some(Address::zero()),
         salt: None,
     };
@@ -71,7 +71,7 @@ fn struct_hash() {
     let domain_test = EIP712Domain {
         name: "Radicle".to_string(),
         version: "1".to_string(),
-        chain_id: U256::from(1),
+        network_id: U256::from(1),
         verifying_contract: H160::from(&[0; 20]),
     };
 
@@ -86,7 +86,7 @@ fn derive_eip712_nested() {
     #[eip712(
         name = "MyDomain",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0x0000000000000000000000000000000000000001"
     )]
     pub struct MyStruct {
@@ -101,7 +101,7 @@ fn derive_eip712_nested() {
     #[eip712(
         name = "MyDomain",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0x0000000000000000000000000000000000000001"
     )]
     pub struct MyNestedStruct {
@@ -135,7 +135,7 @@ fn uniswap_v2_permit_hash() {
     #[eip712(
         name = "Uniswap V2",
         version = "1",
-        chain_id = 1,
+        network_id = 1,
         verifying_contract = "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
     )]
     struct Permit {
@@ -166,11 +166,11 @@ fn uniswap_v2_permit_hash() {
 fn domain_hash_constants() {
     assert_eq!(
         EIP712_DOMAIN_TYPE_HASH,
-        sha3("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
+        sha3("EIP712Domain(string name,string version,uint256 networkId,address verifyingContract)")
     );
     assert_eq!(
         EIP712_DOMAIN_TYPE_HASH_WITH_SALT,
-        sha3("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)")
+        sha3("EIP712Domain(string name,string version,uint256 networkId,address verifyingContract,bytes32 salt)")
     );
 }
 
@@ -178,7 +178,7 @@ fn domain_hash_constants() {
 #[test]
 fn raw_ident_fields() {
     #[derive(Debug, Clone, Eip712, EthAbiType)]
-    #[eip712(name = "replica", version = "1", chain_id = 6666)]
+    #[eip712(name = "replica", version = "1", network_id = 6666)]
     pub struct Message {
         pub title: String,
         pub href: String,

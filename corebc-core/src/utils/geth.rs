@@ -148,7 +148,7 @@ impl Default for GethMode {
 /// Configuration options that can be set in dev mode.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct DevOptions {
-    /// The interval at which the dev chain will mine new blocks.
+    /// The interval at which the dev network will mine new blocks.
     pub block_time: Option<u64>,
 }
 
@@ -197,7 +197,7 @@ pub struct Geth {
     authrpc_port: Option<u16>,
     ipc_path: Option<PathBuf>,
     data_dir: Option<PathBuf>,
-    chain_id: Option<u64>,
+    network_id: Option<u64>,
     insecure_unlock: bool,
     genesis: Option<Genesis>,
     mode: GethMode,
@@ -284,9 +284,9 @@ impl Geth {
         self
     }
 
-    /// Sets the chain id for the geth instance.
-    pub fn chain_id<T: Into<u64>>(mut self, chain_id: T) -> Self {
-        self.chain_id = Some(chain_id.into());
+    /// Sets the network id for the geth instance.
+    pub fn network_id<T: Into<u64>>(mut self, network_id: T) -> Self {
+        self.network_id = Some(network_id.into());
         self
     }
 
@@ -422,7 +422,7 @@ impl Geth {
             );
 
             self.genesis = Some(Genesis::new(
-                self.chain_id.expect("chain id must be set in clique mode"),
+                self.network_id.expect("network id must be set in clique mode"),
                 clique_addr,
             ));
 
@@ -500,8 +500,8 @@ impl Geth {
             }
         };
 
-        if let Some(chain_id) = self.chain_id {
-            cmd.arg("--networkid").arg(chain_id.to_string());
+        if let Some(network_id) = self.network_id {
+            cmd.arg("--networkid").arg(network_id.to_string());
         }
 
         // debug verbosity is needed to check when peers are added

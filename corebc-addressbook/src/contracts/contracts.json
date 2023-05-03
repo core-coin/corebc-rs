@@ -1,8 +1,7 @@
 {
 	"dai": {
 		"addresses": {
-			"mainnet": "0x00006b175474e89094c44da98b954eedeac495271d0f",
-			"goerli": "0x000011fE4B6AE13d2a6055C8D9cF65c55bac32B5d844"
+			"mainnet": "0x00006`b175474e89094c44da98b954eedeac495271d0f",
 		}
 	},
 	"usdc": {
@@ -13,42 +12,25 @@
 	"weth": {
 		"addresses": {
 			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"rinkeby": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"ropsten": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"goerli": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"kovan": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"optimism": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"optimism_kovan": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
 		}
 	},
 	"uniswapV3SwapRouter": {
 		"addresses": {
 			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"rinkeby": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"ropsten": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"goerli": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"kovan": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"optimism": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
 		}
 	},
 	"uniswapV3SwapRouter02": {
 		"addresses": {
 			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"rinkeby": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"ropsten": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"goerli": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"kovan": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"optimism": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
 		}
 	},
 	"uniswapV3Factory": {
 		"addresses": {
 			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"rinkeby": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"ropsten": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"goerli": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"kovan": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"optimism": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
 		}
 	}
 }

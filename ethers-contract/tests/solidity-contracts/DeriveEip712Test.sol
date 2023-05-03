@@ -4,11 +4,11 @@ pragma experimental ABIEncoderV2;
 
 // note that this file is not synced with DeriveEip712Test.json
 contract DeriveEip712Test {
-    uint256 constant chainId = 1;
+    uint256 constant networkId = 1;
     bytes32 constant salt = keccak256("eip712-test-75F0CCte");
     bytes32 constant EIP712_DOMAIN_TYPEHASH =
         keccak256(
-            "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)"
+            "EIP712Domain(string name,string version,uint256 networkId,address verifyingContract,bytes32 salt)"
         );
 
     bytes32 constant FOOBAR_DOMAIN_TYPEHASH =
@@ -34,7 +34,7 @@ contract DeriveEip712Test {
                     EIP712_DOMAIN_TYPEHASH,
                     keccak256("Eip712Test"),
                     keccak256("1"),
-                    chainId,
+                    networkId,
                     address(0x0000000000000000000000000000000000000001),
                     salt
                 )

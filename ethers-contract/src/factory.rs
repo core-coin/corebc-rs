@@ -133,9 +133,9 @@ where
         self
     }
 
-    /// Sets the `chain_id` field in the deploy transaction to the provided value
-    pub fn chain_id<T: Into<U64>>(mut self, chain_id: T) -> Self {
-        self.deployer.tx.set_chain_id(chain_id.into());
+    /// Sets the `network_id` field in the deploy transaction to the provided value
+    pub fn network_id<T: Into<U64>>(mut self, network_id: T) -> Self {
+        self.deployer.tx.set_network_id(network_id.into());
         self
     }
 

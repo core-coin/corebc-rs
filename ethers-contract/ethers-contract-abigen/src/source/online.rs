@@ -1,6 +1,6 @@
 use super::Source;
 use crate::util;
-use corebc_core::types::{Address, Chain};
+use corebc_core::types::{Address, Network};
 use corebc_etherscan::Client;
 use eyre::{Context, Result};
 use std::{fmt, str::FromStr};
@@ -41,33 +41,33 @@ impl fmt::Display for Explorer {
 }
 
 impl Explorer {
-    /// Returns the chain's Explorer, if it is known.
-    pub fn from_chain(chain: Chain) -> Result<Self> {
-        match chain {
-            Chain::Mainnet => Ok(Self::Etherscan),
-            Chain::BinanceSmartChain => Ok(Self::Bscscan),
-            Chain::Polygon => Ok(Self::Polygonscan),
-            Chain::Avalanche => Ok(Self::Snowtrace),
-            _ => Err(eyre::eyre!("Provided chain has no known blockchain explorer")),
+    /// Returns the network's Explorer, if it is known.
+    pub fn from_network(network: Network) -> Result<Self> {
+        match network {
+            Network::Mainnet => Ok(Self::Etherscan),
+            Network::BinanceSmartChain => Ok(Self::Bscscan),
+            Network::Polygon => Ok(Self::Polygonscan),
+            Network::Avalanche => Ok(Self::Snowtrace),
+            _ => Err(eyre::eyre!("Provided network has no known blockchain explorer")),
         }
     }
 
-    /// Returns the Explorer's chain. If it has multiple, the main one is returned.
-    pub const fn chain(&self) -> Chain {
+    /// Returns the Explorer's network. If it has multiple, the main one is returned.
+    pub const fn network(&self) -> Network {
         match self {
-            Self::Etherscan => Chain::Mainnet,
-            Self::Bscscan => Chain::BinanceSmartChain,
-            Self::Polygonscan => Chain::Polygon,
-            Self::Snowtrace => Chain::Avalanche,
+            Self::Etherscan => Network::Mainnet,
+            Self::Bscscan => Network::BinanceSmartChain,
+            Self::Polygonscan => Network::Polygon,
+            Self::Snowtrace => Network::Avalanche,
         }
     }
 
     /// Creates an `corebc-etherscan` client using this Explorer's settings.
     pub fn client(self, api_key: Option<String>) -> Result<Client> {
-        let chain = self.chain();
+        let network = self.network();
         let client = match api_key {
-            Some(api_key) => Client::new(chain, api_key),
-            None => Client::new_from_opt_env(chain),
+            Some(api_key) => Client::new(network, api_key),
+            None => Client::new_from_opt_env(network),
         }?;
         Ok(client)
     }
@@ -104,7 +104,7 @@ impl Source {
                     .and_then(|host| Self::from_explorer(host, &url).ok())
                     .unwrap_or(Self::Http(url))),
 
-                // custom scheme: <explorer or chain>:<address>
+                // custom scheme: <explorer or network>:<address>
                 // fallback: local fs path
                 scheme => Self::from_explorer(scheme, &url)
                     .or_else(|_| Self::local(source))
@@ -116,12 +116,12 @@ impl Source {
         }
     }
 
-    /// Parse `s` as an explorer ("etherscan"), explorer domain ("etherscan.io") or a chain that has
+    /// Parse `s` as an explorer ("etherscan"), explorer domain ("etherscan.io") or a network that has
     /// an explorer ("mainnet").
     ///
     /// The URL can be either `<explorer>:<address>` or `<explorer_url>/.../<address>`
     fn from_explorer(s: &str, url: &Url) -> Result<Self> {
-        let explorer: Explorer = s.parse().or_else(|_| Explorer::from_chain(s.parse()?))?;
+        let explorer: Explorer = s.parse().or_else(|_| Explorer::from_network(s.parse()?))?;
         let address = last_segment_address(url).ok_or_else(|| eyre::eyre!("Invalid URL: {url}"))?;
         Ok(Self::Explorer(explorer, address))
     }
@@ -132,8 +132,8 @@ impl Source {
     }
 
     /// Creates an Etherscan source from an address string.
-    pub fn explorer(chain: Chain, address: Address) -> Result<Self> {
-        let explorer = Explorer::from_chain(chain)?;
+    pub fn explorer(network: Network, address: Address) -> Result<Self> {
+        let explorer = Explorer::from_network(network)?;
         Ok(Self::Explorer(explorer, address))
     }
 
@@ -181,17 +181,17 @@ mod tests {
         );
 
         let explorers = &[
-            ("mainnet:", "etherscan:", "https://etherscan.io/address/", Chain::Mainnet),
-            ("bsc:", "bscscan:", "https://bscscan.com/address/", Chain::BinanceSmartChain),
-            ("polygon:", "polygonscan:", "https://polygonscan.com/address/", Chain::Polygon),
-            ("avalanche:", "snowtrace:", "https://snowtrace.io/address/", Chain::Avalanche),
+            ("mainnet:", "etherscan:", "https://etherscan.io/address/", Network::Mainnet),
+            ("bsc:", "bscscan:", "https://bscscan.com/address/", Network::BinanceSmartChain),
+            ("polygon:", "polygonscan:", "https://polygonscan.com/address/", Network::Polygon),
+            ("avalanche:", "snowtrace:", "https://snowtrace.io/address/", Network::Avalanche),
         ];
 
         let address: Address = "0x0102030405060708091011121314151617181920".parse().unwrap();
-        for &(chain_s, scan_s, url_s, chain) in explorers {
-            let expected = Source::explorer(chain, address).unwrap();
+        for &(network_s, scan_s, url_s, network) in explorers {
+            let expected = Source::explorer(network, address).unwrap();
 
-            let tests2 = [chain_s, scan_s, url_s].map(|s| s.to_string() + &format!("{address:?}"));
+            let tests2 = [network_s, scan_s, url_s].map(|s| s.to_string() + &format!("{address:?}"));
             let tests2 = tests2.map(Source::parse).into_iter().chain(Some(Ok(expected.clone())));
             let tests2 = tests2.collect::<Result<Vec<_>>>().unwrap();
 

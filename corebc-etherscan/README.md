@@ -7,12 +7,12 @@ For more information, please refer to the [book](https://gakonst.com/ethers-rs).
 ## Examples
 
 ```rust,no_run
-# use corebc_core::types::Chain;
+# use corebc_core::types::Network;
 # use corebc_etherscan::Client;
 # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-let client = Client::new(Chain::Mainnet, "<your_api_key>")?;
+let client = Client::new(Network::Mainnet, "<your_api_key>")?;
 // Or using environment variables
-let client = Client::new_from_env(Chain::Mainnet)?;
+let client = Client::new_from_env(Network::Mainnet)?;
 
 let address = "0x0000BB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse()?;
 let metadata = client.contract_source_code(address).await?;

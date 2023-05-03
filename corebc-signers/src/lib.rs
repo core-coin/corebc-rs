@@ -47,8 +47,8 @@ use corebc_core::types::{
 use std::error::Error;
 
 /// Applies [EIP155](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md)
-pub fn to_eip155_v<T: Into<u8>>(recovery_id: T, chain_id: u64) -> u64 {
-    (recovery_id.into() as u64) + 35 + chain_id * 2
+pub fn to_eip155_v<T: Into<u8>>(recovery_id: T, network_id: u64) -> u64 {
+    (recovery_id.into() as u64) + 35 + network_id * 2
 }
 
 /// Trait for signing transactions and messages
@@ -77,10 +77,10 @@ pub trait Signer: std::fmt::Debug + Send + Sync {
     /// Returns the signer's Ethereum Address
     fn address(&self) -> Address;
 
-    /// Returns the signer's chain id
-    fn chain_id(&self) -> u64;
+    /// Returns the signer's network id
+    fn network_id(&self) -> u64;
 
-    /// Sets the signer's chain id
+    /// Sets the signer's network id
     #[must_use]
-    fn with_chain_id<T: Into<u64>>(self, chain_id: T) -> Self;
+    fn with_network_id<T: Into<u64>>(self, network_id: T) -> Self;
 }

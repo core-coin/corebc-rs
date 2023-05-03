@@ -144,8 +144,8 @@ pub enum Opcode {
     //PREVRANDAO,  // 0x44 // Same as DIFFICULTY
     /// Opcode 0x45 - Get the block’s gas limit
     GASLIMIT,
-    /// Opcode 0x46 - Get the chain ID
-    CHAINID,
+    /// Opcode 0x46 - Get the network ID
+    NETWORKID,
     /// Opcode 0x47 - Get balance of currently executing account
     SELFBALANCE,
     /// Opcode 0x48 - Get the base fee
@@ -364,7 +364,7 @@ pub enum Opcode {
     SELFDESTRUCT = 0xff,
 }
 
-// See comment in ./chain.rs
+// See comment in ./network.rs
 #[allow(clippy::derivable_impls)]
 impl Default for Opcode {
     fn default() -> Self {
@@ -456,7 +456,7 @@ mod tests {
         /* 0x43 */ Some("NUMBER"),
         /* 0x44 */ Some("DIFFICULTY"),
         /* 0x45 */ Some("GASLIMIT"),
-        /* 0x46 */ Some("CHAINID"),
+        /* 0x46 */ Some("NETWORKID"),
         /* 0x47 */ Some("SELFBALANCE"),
         /* 0x48 */ Some("BASEFEE"),
         /* 0x49 */ None,
