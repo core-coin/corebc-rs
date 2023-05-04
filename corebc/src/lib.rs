@@ -8,7 +8,7 @@
 //! when you want to quickly bootstrap a new project.
 //!
 //! ```rust
-//! use ethers::prelude::*;
+//! use corebc::prelude::*;
 //! ```
 //!
 //! Examples on how you can use the types imported by the prelude can be found in the
