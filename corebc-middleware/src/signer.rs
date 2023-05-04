@@ -301,7 +301,7 @@ where
                 .inner
                 .send_transaction(tx, block)
                 .await
-                .map_err(SignerMiddlewareError::MiddlewareError);
+                .map_err(SignerMiddlewareError::MiddlewareError)
         }
 
         // if we have a nonce manager set, we should try handling the result in
@@ -361,7 +361,7 @@ mod tests {
     use super::*;
     use corebc_core::{
         types::{Eip1559TransactionRequest, TransactionRequest},
-        utils::{self, keccak256, Anvil},
+        utils::{self, sha3, Anvil},
     };
     use corebc_providers::Provider;
     use corebc_signers::LocalWallet;
@@ -398,7 +398,7 @@ mod tests {
         let tx = client.sign_transaction(tx).await.unwrap();
 
         assert_eq!(
-            keccak256(&tx)[..],
+            sha3(&tx)[..],
             hex::decode("de8db924885b0803d2edc335f745b2b8750c8848744905684c20b987443a9593")
                 .unwrap()
         );

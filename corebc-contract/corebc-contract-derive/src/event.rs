@@ -132,7 +132,7 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
                             event.name,
                             event.abi_signature()
                         ),
-                    ));
+                    ))
                 }
                 fields.named.iter().collect()
             }
@@ -145,7 +145,7 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
                             event.name,
                             event.abi_signature()
                         ),
-                    ));
+                    ))
                 }
                 fields.unnamed.iter().collect()
             }
@@ -207,7 +207,7 @@ fn derive_decode_from_log_impl(input: &DeriveInput, event: &Event) -> Result<Tok
             }
 
             #corebc_core::abi::Tokenizable::from_token(#corebc_core::abi::Token::Tuple(::std::vec::Vec::new())).map_err(|_|#corebc_core::abi::Error::InvalidData)
-        });
+        })
     }
 
     let mut event_fields = Vec::with_capacity(fields.len());

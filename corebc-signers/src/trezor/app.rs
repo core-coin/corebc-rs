@@ -79,7 +79,7 @@ impl TrezorEthereum {
 
         // Enforce firmware version is greater than FIRMWARE_MIN_VERSION
         if !req.matches(&version) {
-            return Err(TrezorError::UnsupportedFirmwareVersion(FIRMWARE_MIN_VERSION.to_string()));
+            return Err(TrezorError::UnsupportedFirmwareVersion(FIRMWARE_MIN_VERSION.to_string()))
         }
 
         Ok(())

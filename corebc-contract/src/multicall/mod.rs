@@ -95,13 +95,13 @@
 //     }
 // }
 
-// /// A Multicall is an abstraction for sending batched calls/transactions to the Ethereum blockchain.
-// /// It stores an instance of the [`Multicall` smart contract](https://etherscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11#code)
+// /// A Multicall is an abstraction for sending batched calls/transactions to the Ethereum
+// blockchain. /// It stores an instance of the [`Multicall` smart contract](https://etherscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11#code)
 // /// and the user provided list of transactions to be called or executed on chain.
 // ///
 // /// `Multicall` can be instantiated asynchronously from the chain ID of the provided client using
-// /// [`new`] or synchronously by providing a chain ID in [`new_with_chain`]. This, by default, uses
-// /// [`constants::MULTICALL_ADDRESS`], but can be overridden by providing `Some(address)`.
+// /// [`new`] or synchronously by providing a chain ID in [`new_with_chain`]. This, by default,
+// uses /// [`constants::MULTICALL_ADDRESS`], but can be overridden by providing `Some(address)`.
 // /// A list of all the supported chains is available [`here`](https://github.com/mds1/multicall#multicall3-contract-addresses).
 // ///
 // /// Set the contract's version by using [`version`].
@@ -110,8 +110,8 @@
 // ///
 // /// Transactions default to `EIP1559`. This can be changed by using [`legacy`].
 // ///
-// /// Build on the `Multicall` instance by adding calls using [`add_call`] and call or broadcast them
-// /// all at once by using [`call`] and [`send`] respectively.
+// /// Build on the `Multicall` instance by adding calls using [`add_call`] and call or broadcast
+// them /// all at once by using [`call`] and [`send`] respectively.
 // ///
 // /// # Example
 // ///
@@ -131,8 +131,18 @@
 // /// let address = "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse::<Address>()?;
 // ///
 // /// // (ugly way to write the ABI inline, you can otherwise read it from a file)
-// /// let abi: Abi = serde_json::from_str(r#"[{"inputs":[{"internalType":"string","name":"value","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"author","type":"address"},{"indexed":true,"internalType":"address","name":"oldAuthor","type":"address"},{"indexed":false,"internalType":"string","name":"oldValue","type":"string"},{"indexed":false,"internalType":"string","name":"newValue","type":"string"}],"name":"ValueChanged","type":"event"},{"inputs":[],"name":"getValue","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"lastSender","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"value","type":"string"}],"name":"setValue","outputs":[],"stateMutability":"nonpayable","type":"function"}]"#)?;
-// ///
+// /// let abi: Abi =
+// serde_json::from_str(r#"[{"inputs":[{"internalType":"string","name":"value","type":"string"}],"
+// stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,
+// "internalType":"address","name":"author","type":"address"},{"indexed":true,"internalType":"
+// address","name":"oldAuthor","type":"address"},{"indexed":false,"internalType":"string","name":"
+// oldValue","type":"string"},{"indexed":false,"internalType":"string","name":"newValue","type":"
+// string"}],"name":"ValueChanged","type":"event"},{"inputs":[],"name":"getValue","outputs":[{"
+// internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"
+// inputs":[],"name":"lastSender","outputs":[{"internalType":"address","name":"","type":"address"}],
+// "stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"value","
+// type":"string"}],"name":"setValue","outputs":[],"stateMutability":"nonpayable","type":"function"
+// }]"#)?; ///
 // /// // connect to the network
 // /// let client = Provider::<Http>::try_from("http://localhost:8545")?;
 // ///
@@ -283,9 +293,9 @@
 //         })
 //     }
 
-//     /// Creates a new Multicall instance synchronously from the provided client and address or chain
-//     /// ID. Uses the [default multicall address](constants::MULTICALL_ADDRESS) if no address is
-//     /// provided.
+//     /// Creates a new Multicall instance synchronously from the provided client and address or
+// chain     /// ID. Uses the [default multicall address](constants::MULTICALL_ADDRESS) if no
+// address is     /// provided.
 //     ///
 //     /// # Errors
 //     ///
@@ -294,16 +304,16 @@
 //     ///
 //     /// # Panics
 //     ///
-//     /// If neither an address or chain_id are provided. Since this is not an async function, it will
-//     /// not be able to query `net_version` to check if it is supported by the default multicall
-//     /// address. Use new(client, None).await instead.
+//     /// If neither an address or chain_id are provided. Since this is not an async function, it
+// will     /// not be able to query `net_version` to check if it is supported by the default
+// multicall     /// address. Use new(client, None).await instead.
 //     pub fn new_with_chain_id(
 //         client: impl Into<Arc<M>>,
 //         address: Option<Address>,
 //         chain_id: Option<impl Into<u64>>,
 //     ) -> Result<Self, M> {
-//         // If no address is provided, check if chain_id is supported and use the default multicall
-//         // address.
+//         // If no address is provided, check if chain_id is supported and use the default
+// multicall         // address.
 //         let address: Address = match (address, chain_id) {
 //             (Some(addr), _) => addr,
 //             (_, Some(chain_id)) => {
@@ -339,14 +349,14 @@
 //     /// containing an aggregate method to batch calls. Each call returns only the return data and
 //     /// none are allowed to fail.
 //     ///
-//     /// - Multicall2 (v2): The same as Multicall, but provides additional methods that allow either
-//     /// all or no calls within the batch to fail. Included for backward compatibility. Use v3 to
-//     /// allow failure on a per-call basis.
+//     /// - Multicall2 (v2): The same as Multicall, but provides additional methods that allow
+// either     /// all or no calls within the batch to fail. Included for backward compatibility. Use
+// v3 to     /// allow failure on a per-call basis.
 //     ///
-//     /// - Multicall3 (v3): This is the recommended version for allowing failing calls. It's cheaper
-//     /// to use (so you can fit more calls into a single request), and it adds an aggregate3 method
-//     /// so you can specify whether calls are allowed to fail on a per-call basis.
-//     ///
+//     /// - Multicall3 (v3): This is the recommended version for allowing failing calls. It's
+// cheaper     /// to use (so you can fit more calls into a single request), and it adds an
+// aggregate3 method     /// so you can specify whether calls are allowed to fail on a per-call
+// basis.     ///
 //     /// Note: all these versions are available in the same contract address
 //     /// ([`constants::MULTICALL_ADDRESS`]) so changing version just changes the methods used,
 //     /// not the contract address.
@@ -373,8 +383,8 @@
 //     /// - `1`: `allow_failure` is ignored.
 //     /// - `>=2`: `allow_failure` specifies whether or not this call is allowed to revert in the
 //     ///   multicall.
-//     /// - `3`: Transaction values are used when broadcasting transactions with [`send`], otherwise
-//     ///   they are always ignored.
+//     /// - `3`: Transaction values are used when broadcasting transactions with [`send`],
+// otherwise     ///   they are always ignored.
 //     ///
 //     /// [`send`]: #method.send
 //     pub fn add_call<D: Detokenize>(
@@ -419,8 +429,8 @@
 //         self
 //     }
 
-//     /// Appends a `call` to the list of calls of the Multicall instance for querying the block hash
-//     /// of a given block number.
+//     /// Appends a `call` to the list of calls of the Multicall instance for querying the block
+// hash     /// of a given block number.
 //     ///
 //     /// Note: this call will return 0 if `block_number` is not one of the most recent 256 blocks.
 //     /// ([Reference](https://docs.soliditylang.org/en/latest/units-and-global-variables.html?highlight=blockhash#block-and-transaction-properties))
@@ -446,8 +456,8 @@
 //     /// Appends a `call` to the list of calls of the Multicall instance for querying the current
 //     /// block difficulty.
 //     ///
-//     /// Note: in a post-merge environment, the return value of this call will be the output of the
-//     /// randomness beacon provided by the beacon chain.
+//     /// Note: in a post-merge environment, the return value of this call will be the output of
+// the     /// randomness beacon provided by the beacon chain.
 //     /// ([Reference](https://eips.ethereum.org/EIPS/eip-4399#abstract))
 //     pub fn add_get_current_block_difficulty(&mut self) -> &mut Self {
 //         let call = self.contract.get_current_block_difficulty();
@@ -496,8 +506,8 @@
 //         self.add_call(call, allow_failure)
 //     }
 
-//     /// Appends a `call` to the list of calls of the Multicall instance for querying the chain id.
-//     pub fn add_get_chain_id(&mut self) -> &mut Self {
+//     /// Appends a `call` to the list of calls of the Multicall instance for querying the chain
+// id.     pub fn add_get_chain_id(&mut self) -> &mut Self {
 //         let call = self.contract.get_chain_id();
 //         self.add_call(call, false)
 //     }
@@ -564,8 +574,8 @@
 //     /// Returns a [`error::MulticallError`] if there are any errors in the RPC call or while
 //     /// detokenizing the tokens back to the expected return type.
 //     ///
-//     /// Returns an error if any call failed, even if `allow_failure` was set, or if the return data
-//     /// was empty.
+//     /// Returns an error if any call failed, even if `allow_failure` was set, or if the return
+// data     /// was empty.
 //     ///
 //     /// # Examples
 //     ///
@@ -604,16 +614,16 @@
 //         T::from_token(Token::Tuple(tokens)).map_err(Into::into)
 //     }
 
-//     /// Queries the Ethereum blockchain using `eth_call`, but via the Multicall contract, assuming
-//     /// that every call returns same type.
+//     /// Queries the Ethereum blockchain using `eth_call`, but via the Multicall contract,
+// assuming     /// that every call returns same type.
 //     ///
 //     /// # Errors
 //     ///
 //     /// Returns a [`error::MulticallError`] if there are any errors in the RPC call or while
 //     /// detokenizing the tokens back to the expected return type.
 //     ///
-//     /// Returns an error if any call failed, even if `allow_failure` was set, or if the return data
-//     /// was empty.
+//     /// Returns an error if any call failed, even if `allow_failure` was set, or if the return
+// data     /// was empty.
 //     ///
 //     /// # Examples
 //     ///
@@ -679,8 +689,8 @@
 //     pub async fn call_raw(&self) -> Result<Vec<StdResult<Token, Bytes>>, M> {
 //         // Different call result types based on version
 //         match self.version {
-//             // Wrap the return data with `success: true` since version 1 reverts if any call failed
-//             MulticallVersion::Multicall => {
+//             // Wrap the return data with `success: true` since version 1 reverts if any call
+// failed             MulticallVersion::Multicall => {
 //                 let call = self.as_aggregate();
 //                 let (_, bytes) = ContractCall::call(&call).await?;
 //                 self.parse_call_result(
@@ -709,12 +719,12 @@
 //         return_data: impl Iterator<Item = MulticallResult>,
 //     ) -> Result<Vec<StdResult<Token, Bytes>>, M> {
 //         let mut results = Vec::with_capacity(self.calls.len());
-//         for (call, MulticallResult { success, return_data }) in self.calls.iter().zip(return_data) {
-//             let result = if !success || return_data.is_empty() {
-//                 // v2: In the function call to `tryAggregate`, the `allow_failure` check
-//                 // is done on a per-transaction basis, and we set this transaction-wide
-//                 // check to true when *any* call is allowed to fail. If this is true
-//                 // then a call that is not allowed to revert (`call.allow_failure`) may
+//         for (call, MulticallResult { success, return_data }) in
+// self.calls.iter().zip(return_data) {             let result = if !success ||
+// return_data.is_empty() {                 // v2: In the function call to `tryAggregate`, the
+// `allow_failure` check                 // is done on a per-transaction basis, and we set this
+// transaction-wide                 // check to true when *any* call is allowed to fail. If this is
+// true                 // then a call that is not allowed to revert (`call.allow_failure`) may
 //                 // still do so because of other calls that are in the same multicall
 //                 // aggregate.
 //                 if !success && !call.allow_failure {

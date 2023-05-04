@@ -366,6 +366,7 @@ mod tests {
 
             ::ethers::types::H160 => PT::FixedBytes(20),
             H160 => PT::FixedBytes(20),
+            ::ethers::types::H176 => PT::FixedBytes(22),
             ::ethers::types::H256 => PT::FixedBytes(32),
             H256 => PT::FixedBytes(32),
             ::ethers::types::H512 => PT::FixedBytes(64),

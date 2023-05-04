@@ -3,7 +3,7 @@ use corebc_contract::{
 };
 use corebc_core::{
     abi::{AbiDecode, AbiEncode, RawLog, Tokenizable},
-    types::{Address, Bytes, H160, H256, I256, U128, U256},
+    types::{Address, Bytes, H176, H256, I256, U128, U256},
 };
 
 fn assert_tokenizeable<T: Tokenizable>() {}
@@ -183,7 +183,7 @@ fn can_detect_various_event_abi_types() {
         b: bool,
         v: Vec<Address>,
         bs: Vec<bool>,
-        h160: H160,
+        h176: H176,
         u128: U128,
         int8: i8,
         int16: i16,

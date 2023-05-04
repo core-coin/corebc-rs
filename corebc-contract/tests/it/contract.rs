@@ -6,7 +6,7 @@ use corebc_contract::{
 use corebc_core::{
     abi::{encode, AbiEncode, Token, Tokenizable},
     types::{
-        transaction::eip712::*, Address, BlockId, Bytes, Filter, ValueOrArray, H160, H256, I256,
+        transaction::eip712::*, Address, BlockId, Bytes, Filter, ValueOrArray, H176, H256, I256,
         U256,
     },
     utils::{sha3, Anvil},
@@ -72,13 +72,13 @@ fn _it_compiles() {
 
     // Works (B == M, M: Clone)
     let c: ContractInstance<&Provider<Http>, Provider<Http>> =
-        ContractInstance::new(H160::default(), abi.clone(), &client);
+        ContractInstance::new(H176::default(), abi.clone(), &client);
 
     let _ = c.method::<(), ()>("notARealMethod", ());
 
     // Works (B == &M, M: Clone)
     let c: ContractInstance<Provider<Http>, Provider<Http>> =
-        ContractInstance::new(H160::default(), abi.clone(), client.clone());
+        ContractInstance::new(H176::default(), abi.clone(), client.clone());
 
     let _ = c.method::<(), ()>("notARealMethod", ());
 
@@ -86,13 +86,13 @@ fn _it_compiles() {
 
     // Works (B == &M, M: !Clone)
     let c: ContractInstance<&NonClone<Provider<Http>>, NonClone<Provider<Http>>> =
-        ContractInstance::new(H160::default(), abi, &non_clone_mware);
+        ContractInstance::new(H176::default(), abi, &non_clone_mware);
 
     let _ = c.method::<(), ()>("notARealMethod", ());
 
     // // Fails (B == M, M: !Clone)
     // let c: ContractInternal<NonClone<Provider<Http>>, NonClone<Provider<Http>>> =
-    //     ContractInternal::new(H160::default(), abi, non_clone_mware);
+    //     ContractInternal::new(H176::default(), abi, non_clone_mware);
 
     // let _ = c.method::<(), ()>("notARealMethod", ());
 }

@@ -5,7 +5,7 @@ use corebc_core::{
             EIP712Domain as Domain, Eip712, EIP712_DOMAIN_TYPE_HASH,
             EIP712_DOMAIN_TYPE_HASH_WITH_SALT,
         },
-        Address, H160, U256,
+        Address, H176, U256,
     },
     utils::{parse_ether, sha3},
 };
@@ -21,18 +21,18 @@ fn derive_eip712() {
         raw_salt = "0x3000000000000000000000000000000000000000000000000000000000000000"
     )]
     pub struct Puzzle {
-        pub organization: H160,
-        pub contributor: H160,
+        pub organization: H176,
+        pub contributor: H176,
         pub commit: String,
         pub project: String,
     }
 
     let puzzle = Puzzle {
-        organization: "0000000000000000000000000000000000000000"
-            .parse::<H160>()
+        organization: "00000000000000000000000000000000000000000000"
+            .parse::<H176>()
             .expect("failed to parse address"),
-        contributor: "0000000000000000000000000000000000000000"
-            .parse::<H160>()
+        contributor: "00000000000000000000000000000000000000000000"
+            .parse::<H176>()
             .expect("failed to parse address"),
         commit: "5693b7019eb3e4487a81273c6f5e1832d77acb53".to_string(),
         project: "radicle-reward".to_string(),
@@ -50,7 +50,7 @@ fn struct_hash() {
         name = "Radicle",
         version = "1",
         chain_id = 1,
-        verifying_contract = "0x0000000000000000000000000000000000000001",
+        verifying_contract = "0x00000000000000000000000000000000000000000001",
         salt = "1234567890"
     )]
     pub struct EIP712Domain {
@@ -72,7 +72,7 @@ fn struct_hash() {
         name: "Radicle".to_string(),
         version: "1".to_string(),
         chain_id: U256::from(1),
-        verifying_contract: H160::from(&[0; 20]),
+        verifying_contract: H176::from(&[0; 22]),
     };
 
     assert_eq!(EIP712_DOMAIN_TYPE_HASH, EIP712Domain::type_hash().unwrap());
@@ -87,7 +87,7 @@ fn derive_eip712_nested() {
         name = "MyDomain",
         version = "1",
         chain_id = 1,
-        verifying_contract = "0x0000000000000000000000000000000000000001"
+        verifying_contract = "0x00000000000000000000000000000000000000000001"
     )]
     pub struct MyStruct {
         foo: String,
@@ -102,7 +102,7 @@ fn derive_eip712_nested() {
         name = "MyDomain",
         version = "1",
         chain_id = 1,
-        verifying_contract = "0x0000000000000000000000000000000000000001"
+        verifying_contract = "0x00000000000000000000000000000000000000000001"
     )]
     pub struct MyNestedStruct {
         foo: String,
