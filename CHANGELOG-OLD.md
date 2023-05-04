@@ -71,13 +71,13 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
   [#831](https://github.com/gakonst/ethers-rs/pull/831)
 - Returns error on invalid type conversion instead of panicking
   [#691](https://github.com/gakonst/ethers-rs/pull/691/files)
-- Change types mapping for solidity `bytes` to rust `ethers::core::Bytes` and
+- Change types mapping for solidity `bytes` to rust `corebc::core::Bytes` and
   solidity `uint8[]` to rust `Vec<u8>`.
   [#613](https://github.com/gakonst/ethers-rs/pull/613)
 - Fix `format_units` to return a `String` of representing a decimal point float
   such that the decimal places don't get truncated.
   [#597](https://github.com/gakonst/ethers-rs/pull/597)
-- Implement hex display format for `ethers::core::Bytes`
+- Implement hex display format for `core::Bytes`
   [#624](https://github.com/gakonst/ethers-rs/pull/624).
 - Fix `fee_history` to first try with `block_count` encoded as a hex `QUANTITY`.
   [#668](https://github.com/gakonst/ethers-rs/pull/668)

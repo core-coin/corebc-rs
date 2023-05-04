@@ -156,7 +156,7 @@ impl Context {
 
                 impl<M: #corebc_providers::Middleware> #name<M> {
                     /// Creates a new contract instance with the specified `ethers` client at
-                    /// `address`. The contract derefs to a `ethers::Contract` object.
+                    /// `address`. The contract derefs to a `corebc::Contract` object.
                     pub fn new<T: Into<#corebc_core::types::Address>>(address: T, client: ::std::sync::Arc<M>) -> Self {
                         Self(#corebc_contract::Contract::new(address.into(), #abi_name.clone(), client))
                     }

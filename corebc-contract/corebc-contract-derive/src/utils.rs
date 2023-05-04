@@ -77,11 +77,11 @@ pub fn parse_param_type(s: &str) -> Option<ParamType> {
 pub fn topic_param_type_quote(kind: &ParamType) -> TokenStream {
     let corebc_core = corebc_core_crate();
     match kind {
-        ParamType::String |
-        ParamType::Bytes |
-        ParamType::Array(_) |
-        ParamType::FixedArray(_, _) |
-        ParamType::Tuple(_) => quote! {#corebc_core::abi::ParamType::FixedBytes(32)},
+        ParamType::String
+        | ParamType::Bytes
+        | ParamType::Array(_)
+        | ParamType::FixedArray(_, _)
+        | ParamType::Tuple(_) => quote! {#corebc_core::abi::ParamType::FixedBytes(32)},
         ty => param_type_quote(ty),
     }
 }
@@ -144,7 +144,7 @@ pub fn find_parameter_type(ty: &Type) -> Result<ParamType, Error> {
                         return match (ty, len) {
                             (ParamType::Uint(8), 32) => Ok(ParamType::FixedBytes(32)),
                             (ty, len) => Ok(ParamType::FixedArray(Box::new(ty), len)),
-                        }
+                        };
                     }
                 }
             }
@@ -159,7 +159,8 @@ pub fn find_parameter_type(ty: &Type) -> Result<ParamType, Error> {
                     debug_assert!(matches!(args.args.len(), 1 | 2));
                     let ty = args.args.iter().next().unwrap();
                     if let GenericArgument::Type(ref ty) = ty {
-                        return find_parameter_type(ty).map(|kind| ParamType::Array(Box::new(kind)))
+                        return find_parameter_type(ty)
+                            .map(|kind| ParamType::Array(Box::new(kind)));
                     }
                 }
             }
@@ -345,8 +346,8 @@ mod tests {
             u64 => PT::Uint(64),
             usize => PT::Uint(64),
             u128 => PT::Uint(128),
-            ::ethers::types::U256 => PT::Uint(256),
-            ethers::types::U256 => PT::Uint(256),
+            ::corebc::types::U256 => PT::Uint(256),
+            corebc::types::U256 => PT::Uint(256),
             ::corebc_core::types::U256 => PT::Uint(256),
             corebc_core::types::U256 => PT::Uint(256),
             U256 => PT::Uint(256),
@@ -357,25 +358,25 @@ mod tests {
             i64 => PT::Int(64),
             isize => PT::Int(64),
             i128 => PT::Int(128),
-            ::ethers::types::I256 => PT::Int(256),
-            ethers::types::I256 => PT::Int(256),
+            ::corebc::types::I256 => PT::Int(256),
+            corebc::types::I256 => PT::Int(256),
             ::corebc_core::types::I256 => PT::Int(256),
             corebc_core::types::I256 => PT::Int(256),
             I256 => PT::Int(256),
 
 
-            ::ethers::types::H160 => PT::FixedBytes(20),
+            ::corebc::types::H160 => PT::FixedBytes(20),
             H160 => PT::FixedBytes(20),
-            ::ethers::types::H176 => PT::FixedBytes(22),
-            ::ethers::types::H256 => PT::FixedBytes(32),
+            ::corebc::types::H176 => PT::FixedBytes(22),
+            ::corebc::types::H256 => PT::FixedBytes(32),
             H256 => PT::FixedBytes(32),
-            ::ethers::types::H512 => PT::FixedBytes(64),
+            ::corebc::types::H512 => PT::FixedBytes(64),
             H512 => PT::FixedBytes(64),
 
             ::std::vec::Vec<::corebc_core::types::U256, ::std::alloc::Global> => arr(PT::Uint(256)),
             ::std::vec::Vec<::corebc_core::types::U256, Global> => arr(PT::Uint(256)),
             ::std::vec::Vec<::corebc_core::types::U256> => arr(PT::Uint(256)),
-            ::std::vec::Vec<ethers::types::U256> => arr(PT::Uint(256)),
+            ::std::vec::Vec<corebc::types::U256> => arr(PT::Uint(256)),
             ::std::vec::Vec<U256> => arr(PT::Uint(256)),
             std::vec::Vec<U256> => arr(PT::Uint(256)),
             vec::Vec<U256> => arr(PT::Uint(256)),
@@ -390,7 +391,7 @@ mod tests {
             (String, String, Address) => PT::Tuple(vec![PT::String, PT::String, PT::Address]),
             (::corebc_core::types::U256, u8, ::corebc_core::types::Address)
                 => PT::Tuple(vec![PT::Uint(256), PT::Uint(8), PT::Address]),
-            (::ethers::types::Bytes, ::ethers::types::H256, (::ethers::types::Address, ::std::string::String))
+            (::corebc::types::Bytes, ::corebc::types::H256, (::corebc::types::Address, ::std::string::String))
                 => PT::Tuple(vec![
                     PT::Bytes,
                     PT::FixedBytes(32),

@@ -628,7 +628,7 @@ impl MultiBindingsInner {
                 .join("Cargo.toml");
 
         if !cargo_toml.exists() {
-            return Ok(DEFAULT_ETHERS_DEP.to_string())
+            return Ok(DEFAULT_ETHERS_DEP.to_string());
         }
 
         let data = fs::read_to_string(cargo_toml)?;
@@ -835,8 +835,14 @@ fn check_file_in_dir(dir: &Path, file_name: &str, expected_contents: &[u8]) -> R
     eyre::ensure!(file_path.is_file(), "Not a file: {}", file_path.display());
 
     let contents = fs::read(&file_path).expect("Unable to read file");
-    eyre::ensure!(contents == expected_contents, format!("The contents of `{}` do not match the expected output of the newest `ethers::Abigen` version.\
-This indicates that the existing bindings are outdated and need to be generated again.", file_path.display()));
+    eyre::ensure!(
+        contents == expected_contents,
+        format!(
+            "The contents of `{}` do not match the expected output of the newest `Abigen` version.\
+This indicates that the existing bindings are outdated and need to be generated again.",
+            file_path.display()
+        )
+    );
     Ok(())
 }
 

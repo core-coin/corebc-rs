@@ -1651,7 +1651,7 @@ Please do not manually edit this file.
 - Remove failing workflow
 - Load rinkeby privkey from envvar instead of secrets
 - Load rinkeby privkey from secrets
-- Add Decimal support to ethers::utils::parse_units ([#463](https://github.com/gakonst/ethers-rs/issues/463))
+- Add Decimal support to corebc::utils::parse_units ([#463](https://github.com/gakonst/ethers-rs/issues/463))
 - Change wei from 1 to 0 ([#460](https://github.com/gakonst/ethers-rs/issues/460))
 - Add getProof to provider ([#459](https://github.com/gakonst/ethers-rs/issues/459))
 - Add cache
