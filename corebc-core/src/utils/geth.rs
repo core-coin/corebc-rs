@@ -376,6 +376,7 @@ impl Geth {
         cmd.arg("--ws.port").arg(port_s);
         cmd.arg("--ws.api").arg(API);
 
+        let network: NetworkType;
         // pass insecure unlock flag if set
         let is_clique = self.is_clique();
         if self.insecure_unlock || is_clique {
@@ -392,6 +393,7 @@ impl Geth {
 
         // use geth init to initialize the datadir if the genesis exists
         if is_clique {
+            network = NetworkType::Testnet;
             if let Some(genesis) = &mut self.genesis {
                 // set up a clique config with an instant sealing period and short (8 block) epoch
                 let clique_config = CliqueConfig { period: Some(0), epoch: Some(8) };
@@ -399,7 +401,7 @@ impl Geth {
 
                 let clique_addr = secret_key_to_address(
                     self.clique_private_key.as_ref().expect("is_clique == true"),
-                    NetworkType::Mainnet,
+                    &network,
                 );
 
                 // set the extraData field
@@ -416,7 +418,7 @@ impl Geth {
 
             let clique_addr = secret_key_to_address(
                 self.clique_private_key.as_ref().expect("is_clique == true"),
-                NetworkType::Mainnet,
+                &network,
             );
 
             self.genesis = Some(Genesis::new(
