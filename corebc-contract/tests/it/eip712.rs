@@ -17,7 +17,7 @@ fn derive_eip712() {
         name = "Radicle",
         version = "1",
         chain_id = 1,
-        verifying_contract = "0x0000000000000000000000000000000000000001",
+        verifying_contract = "0x00000000000000000000000000000000000000000001",
         raw_salt = "0x3000000000000000000000000000000000000000000000000000000000000000"
     )]
     pub struct Puzzle {
@@ -113,11 +113,11 @@ fn derive_eip712_nested() {
     let my_struct = MyStruct {
         foo: "foo".to_string(),
         bar: U256::from(1),
-        addr: Address::from(&[0; 20]),
+        addr: Address::from(&[0; 22]),
         /* nested: MyNestedStruct {
          *     foo: "foo".to_string(),
          *     bar: U256::from(1),
-         *     addr: Address::from(&[0; 20]),
+         *     addr: Address::from(&[0; 22]),
          * }, */
     };
 
@@ -136,7 +136,7 @@ fn uniswap_v2_permit_hash() {
         name = "Uniswap V2",
         version = "1",
         chain_id = 1,
-        verifying_contract = "0xB4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
+        verifying_contract = "0x0000B4e16d0168e52d35CaCD2c6185b44281Ec28C9Dc"
     )]
     struct Permit {
         owner: Address,
@@ -147,8 +147,8 @@ fn uniswap_v2_permit_hash() {
     }
 
     let permit = Permit {
-        owner: "0x617072Cb2a1897192A9d301AC53fC541d35c4d9D".parse().unwrap(),
-        spender: "0x2819c144D5946404C0516B6f817a960dB37D4929".parse().unwrap(),
+        owner: "0x0000617072Cb2a1897192A9d301AC53fC541d35c4d9D".parse().unwrap(),
+        spender: "0x00002819c144D5946404C0516B6f817a960dB37D4929".parse().unwrap(),
         value: parse_ether(10).unwrap(),
         nonce: U256::from(1),
         deadline: U256::from(3133728498_u32),
@@ -158,7 +158,7 @@ fn uniswap_v2_permit_hash() {
 
     assert_eq!(
         hex::encode(permit_hash),
-        "7b90248477de48c0b971e0af8951a55974733455191480e1e117c86cc2a6cd03"
+        "cd9ef4697fb288831ac7d3b1972dea1cfa472694b88d6d2c2b047e7871c9675c"
     );
 }
 

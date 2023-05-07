@@ -3,11 +3,12 @@
 use corebc_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
 use corebc_core::{
     abi::{AbiDecode, AbiEncode, Address, Tokenizable},
-    types::{transaction::eip2718::TypedTransaction, Bytes, Eip1559TransactionRequest, U256},
+    types::{
+        transaction::eip2718::TypedTransaction, Bytes, Eip1559TransactionRequest, Selector, U256,
+    },
     utils::Anvil,
 };
 use corebc_providers::{MockProvider, Provider};
-use corebc_solc::Solc;
 use std::{fmt::Debug, hash::Hash, sync::Arc};
 
 const fn assert_codec<T: AbiDecode + AbiEncode>() {}
@@ -74,7 +75,7 @@ fn can_generate_structs_readable() {
         derives(serde::Deserialize, serde::Serialize)
     );
     let addr = Addresses {
-        addr: vec!["eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap()],
+        addr: vec!["eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap()],
         s: "hello".to_string(),
     };
     let token = addr.clone().into_token();
@@ -301,7 +302,8 @@ fn can_handle_overloaded_functions() {
 
     let call = GetValueWithOtherValueCall { other_value: 420u64.into() };
 
-    let encoded_call = contract.encode_with_selector([15, 244, 201, 22], call.other_value).unwrap();
+    let encoded_call =
+        contract.encode_with_selector([114, 122, 100, 189], call.other_value).unwrap();
     assert_eq!(encoded_call, call.clone().encode());
     let decoded_call = GetValueWithOtherValueCall::decode(encoded_call.as_ref()).unwrap();
     assert_eq!(call, decoded_call);
@@ -315,7 +317,7 @@ fn can_handle_overloaded_functions() {
         GetValueWithOtherValueAndAddrCall { other_value: 420u64.into(), addr: Address::random() };
 
     let encoded_call =
-        contract.encode_with_selector([14, 97, 29, 56], (call.other_value, call.addr)).unwrap();
+        contract.encode_with_selector([40, 88, 55, 154], (call.other_value, call.addr)).unwrap();
     let decoded_call = GetValueWithOtherValueAndAddrCall::decode(encoded_call.as_ref()).unwrap();
     assert_eq!(call, decoded_call);
 
@@ -353,61 +355,63 @@ fn can_handle_even_more_overloaded_functions() {
     let _contract_call = ConsoleLogCalls::Log2(call);
 }
 
-#[tokio::test]
-async fn can_handle_underscore_functions() {
-    abigen!(
-        SimpleStorage,
-        r#"[
-            _hashPuzzle() (uint256)
-        ]"#;
+// CORETODO: Needs Anvil and solc
+// #[tokio::test]
+// async fn can_handle_underscore_functions() {
+//     abigen!(
+//         SimpleStorage,
+//         r#"[
+//             _hashPuzzle() (uint256)
+//         ]"#;
 
-        SimpleStorage2,
-        "corebc-contract/tests/solidity-contracts/simplestorage_abi.json",
-    );
+//         SimpleStorage2,
+//         "corebc-contract/tests/solidity-contracts/simplestorage_abi.json",
+//     );
 
-    // launch the network & connect to it
-    let anvil = Anvil::new().spawn();
-    let from = anvil.addresses()[0];
-    let provider = Provider::try_from(anvil.endpoint())
-        .unwrap()
-        .with_sender(from)
-        .interval(std::time::Duration::from_millis(10));
-    let client = Arc::new(provider);
+//     // launch the network & connect to it
+//     let anvil = Anvil::new().spawn();
+//     let from = anvil.addresses()[0];
+//     let provider = Provider::try_from(anvil.endpoint())
+//         .unwrap()
+//         .with_sender(from)
+//         .interval(std::time::Duration::from_millis(10));
+//     let client = Arc::new(provider);
 
-    let contract = "SimpleStorage";
-    let path = "./tests/solidity-contracts/SimpleStorage.sol";
-    let compiled = Solc::default().compile_source(path).unwrap();
-    let compiled = compiled.get(path, contract).unwrap();
-    let factory = corebc_contract::ContractFactory::new(
-        compiled.abi.unwrap().clone(),
-        compiled.bytecode().unwrap().clone(),
-        client.clone(),
-    );
-    let addr = factory.deploy("hi".to_string()).unwrap().legacy().send().await.unwrap().address();
+//     let contract = "SimpleStorage";
+//     let path = "./tests/solidity-contracts/SimpleStorage.sol";
+//     let compiled = Solc::default().compile_source(path).unwrap();
+//     let compiled = compiled.get(path, contract).unwrap();
+//     let factory = corebc_contract::ContractFactory::new(
+//         compiled.abi.unwrap().clone(),
+//         compiled.bytecode().unwrap().clone(),
+//         client.clone(),
+//     );
+//     let addr =
+// factory.deploy("hi".to_string()).unwrap().legacy().send().await.unwrap().address();
 
-    // connect to the contract
-    let contract = SimpleStorage::new(addr, client.clone());
-    let contract2 = SimpleStorage2::new(addr, client.clone());
+//     // connect to the contract
+//     let contract = SimpleStorage::new(addr, client.clone());
+//     let contract2 = SimpleStorage2::new(addr, client.clone());
 
-    let res = contract.hash_puzzle().call().await.unwrap();
-    let res2 = contract2.hash_puzzle().call().await.unwrap();
-    let res3 = contract.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
-    let res4 = contract2.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
+//     let res = contract.hash_puzzle().call().await.unwrap();
+//     let res2 = contract2.hash_puzzle().call().await.unwrap();
+//     let res3 = contract.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
+//     let res4 = contract2.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
 
-    // Manual call construction
-    use corebc_providers::Middleware;
-    // TODO: How do we handle underscores for calls here?
-    let data = simple_storage::HashPuzzleCall.encode();
-    let tx = Eip1559TransactionRequest::new().data(data).to(addr);
-    let tx = TypedTransaction::Eip1559(tx);
-    let res5 = client.call(&tx, None).await.unwrap();
-    let res5 = U256::from(res5.as_ref());
-    assert_eq!(res, 100.into());
-    assert_eq!(res, res2);
-    assert_eq!(res, res3);
-    assert_eq!(res, res4);
-    assert_eq!(res, res5);
-}
+//     // Manual call construction
+//     use corebc_providers::Middleware;
+//     // TODO: How do we handle underscores for calls here?
+//     let data = simple_storage::HashPuzzleCall.encode();
+//     let tx = Eip1559TransactionRequest::new().data(data).to(addr);
+//     let tx = TypedTransaction::Eip1559(tx);
+//     let res5 = client.call(&tx, None).await.unwrap();
+//     let res5 = U256::from(res5.as_ref());
+//     assert_eq!(res, 100.into());
+//     assert_eq!(res, res2);
+//     assert_eq!(res, res3);
+//     assert_eq!(res, res4);
+//     assert_eq!(res, res5);
+// }
 
 #[test]
 fn can_handle_unique_underscore_functions() {
@@ -541,52 +545,55 @@ fn can_handle_case_sensitive_calls() {
     let _ = contract.INDEX();
 }
 
-#[tokio::test]
-async fn can_deploy_greeter() {
-    abigen!(Greeter, "corebc-contract/tests/solidity-contracts/greeter.json",);
-    let anvil = Anvil::new().spawn();
-    let from = anvil.addresses()[0];
-    let provider = Provider::try_from(anvil.endpoint())
-        .unwrap()
-        .with_sender(from)
-        .interval(std::time::Duration::from_millis(10));
-    let client = Arc::new(provider);
+// CORETODO: Needs anvil
+// #[tokio::test]
+// async fn can_deploy_greeter() {
+//     abigen!(Greeter, "corebc-contract/tests/solidity-contracts/greeter.json",);
+//     let anvil = Anvil::new().spawn();
+//     let from = anvil.addresses()[0];
+//     let provider = Provider::try_from(anvil.endpoint())
+//         .unwrap()
+//         .with_sender(from)
+//         .interval(std::time::Duration::from_millis(10));
+//     let client = Arc::new(provider);
 
-    let greeter_contract =
-        Greeter::deploy(client, "Hello World!".to_string()).unwrap().legacy().send().await.unwrap();
+//     let greeter_contract =
+//         Greeter::deploy(client, "Hello
+// World!".to_string()).unwrap().legacy().send().await.unwrap();
 
-    let greeting = greeter_contract.greet().call().await.unwrap();
-    assert_eq!("Hello World!", greeting);
-}
+//     let greeting = greeter_contract.greet().call().await.unwrap();
+//     assert_eq!("Hello World!", greeting);
+// }
 
-#[tokio::test]
-async fn can_abiencoderv2_output() {
-    abigen!(AbiEncoderv2Test, "corebc-contract/tests/solidity-contracts/abiencoderv2test_abi.json",);
-    let anvil = Anvil::new().spawn();
-    let from = anvil.addresses()[0];
-    let provider = Provider::try_from(anvil.endpoint())
-        .unwrap()
-        .with_sender(from)
-        .interval(std::time::Duration::from_millis(10));
-    let client = Arc::new(provider);
+// CORETODO: Needs solc and anvil
+// #[tokio::test]
+// async fn can_abiencoderv2_output() {
+//     abigen!(AbiEncoderv2Test,
+// "corebc-contract/tests/solidity-contracts/abiencoderv2test_abi.json",);     let anvil =
+// Anvil::new().spawn();     let from = anvil.addresses()[0];
+//     let provider = Provider::try_from(anvil.endpoint())
+//         .unwrap()
+//         .with_sender(from)
+//         .interval(std::time::Duration::from_millis(10));
+//     let client = Arc::new(provider);
 
-    let contract = "AbiencoderV2Test";
-    let path = "./tests/solidity-contracts/Abiencoderv2Test.sol";
-    let compiled = Solc::default().compile_source(path).unwrap();
-    let compiled = compiled.get(path, contract).unwrap();
-    let factory = corebc_contract::ContractFactory::new(
-        compiled.abi.unwrap().clone(),
-        compiled.bytecode().unwrap().clone(),
-        client.clone(),
-    );
-    let addr = factory.deploy(()).unwrap().legacy().send().await.unwrap().address();
+//     let contract = "AbiencoderV2Test";
+//     let path = "./tests/solidity-contracts/Abiencoderv2Test.sol";
+//     let compiled = Solc::default().compile_source(path).unwrap();
+//     let compiled = compiled.get(path, contract).unwrap();
+//     let factory = corebc_contract::ContractFactory::new(
+//         compiled.abi.unwrap().clone(),
+//         compiled.bytecode().unwrap().clone(),
+//         client.clone(),
+//     );
+//     let addr = factory.deploy(()).unwrap().legacy().send().await.unwrap().address();
 
-    let contract = AbiEncoderv2Test::new(addr, client.clone());
-    let person = Person { name: "Alice".to_string(), age: 20u64.into() };
+//     let contract = AbiEncoderv2Test::new(addr, client.clone());
+//     let person = Person { name: "Alice".to_string(), age: 20u64.into() };
 
-    let res = contract.default_person().call().await.unwrap();
-    assert_eq!(res, person);
-}
+//     let res = contract.default_person().call().await.unwrap();
+//     assert_eq!(res, person);
+// }
 
 // NOTE: this is commented out because this would result in compiler errors if key not set or
 // etherscan API not working #[test]
@@ -631,30 +638,31 @@ fn can_handle_overloaded_events() {
     let _ev2 = ActionPaused2Filter { action: "action".to_string(), pause_state: false };
 }
 
-#[tokio::test]
-#[cfg(not(feature = "celo"))]
-async fn can_send_struct_param() {
-    abigen!(StructContract, "./tests/solidity-contracts/StructContract.json");
+// CORETODO: Needs anvil
+// #[tokio::test]
+// #[cfg(not(feature = "celo"))]
+// async fn can_send_struct_param() {
+//     abigen!(StructContract, "./tests/solidity-contracts/StructContract.json");
 
-    // launch the network & connect to it
-    let anvil = Anvil::new().spawn();
-    let from = anvil.addresses()[0];
-    let provider = Provider::try_from(anvil.endpoint())
-        .unwrap()
-        .with_sender(from)
-        .interval(std::time::Duration::from_millis(10));
-    let client = Arc::new(provider);
+//     // launch the network & connect to it
+//     let anvil = Anvil::new().spawn();
+//     let from = anvil.addresses()[0];
+//     let provider = Provider::try_from(anvil.endpoint())
+//         .unwrap()
+//         .with_sender(from)
+//         .interval(std::time::Duration::from_millis(10));
+//     let client = Arc::new(provider);
 
-    let contract = StructContract::deploy(client, ()).unwrap().legacy().send().await.unwrap();
+//     let contract = StructContract::deploy(client, ()).unwrap().legacy().send().await.unwrap();
 
-    let point = Point { x: 1337u64.into(), y: 0u64.into() };
-    let tx = contract.submit_point(point).legacy();
-    let tx = tx.send().await.unwrap().await.unwrap().unwrap();
-    assert_eq!(tx.logs.len(), 1);
+//     let point = Point { x: 1337u64.into(), y: 0u64.into() };
+//     let tx = contract.submit_point(point).legacy();
+//     let tx = tx.send().await.unwrap().await.unwrap().unwrap();
+//     assert_eq!(tx.logs.len(), 1);
 
-    let logs: Vec<NewPointFilter> = contract.event().from_block(0u64).query().await.unwrap();
-    assert_eq!(logs.len(), 1);
-}
+//     let logs: Vec<NewPointFilter> = contract.event().from_block(0u64).query().await.unwrap();
+//     assert_eq!(logs.len(), 1);
+// }
 
 #[test]
 fn can_generate_seaport_1_0() {
@@ -664,7 +672,7 @@ fn can_generate_seaport_1_0() {
         FulfillAdvancedOrderCall::abi_signature(),
         "fulfillAdvancedOrder(((address,address,(uint8,address,uint256,uint256,uint256)[],(uint8,address,uint256,uint256,uint256,address)[],uint8,uint256,uint256,bytes32,uint256,bytes32,uint256),uint120,uint120,bytes,bytes),(uint256,uint8,uint256,uint256,bytes32[])[],bytes32,address)"
     );
-    assert_eq!(hex::encode(FulfillAdvancedOrderCall::selector()), "e7acab24");
+    assert_eq!(hex::encode(FulfillAdvancedOrderCall::selector()), "3bb10f30");
 
     assert_codec::<SeaportErrors>();
     let err = SeaportErrors::BadContractSignature(BadContractSignature::default());

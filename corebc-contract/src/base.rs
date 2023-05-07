@@ -298,12 +298,12 @@ mod tests {
             "function approve(address _spender, uint256 value) external view returns (bool, bool)"
         ]).unwrap());
 
-        let spender = "7a250d5630b4cf539739df2c5dacb4c659f2488d".parse::<Address>().unwrap();
+        let spender = "00007a250d5630b4cf539739df2c5dacb4c659f2488d".parse::<Address>().unwrap();
         let amount = U256::MAX;
 
         let encoded = abi.encode("approve", (spender, amount)).unwrap();
 
-        assert_eq!(hex::encode(&encoded), "095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+        assert_eq!(hex::encode(&encoded), "a613914d0000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
         let (spender2, amount2): (Address, U256) = abi.decode("approve", encoded).unwrap();
         assert_eq!(spender, spender2);
@@ -320,7 +320,7 @@ mod tests {
         );
 
         let topics = vec![
-            "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+            "afa504e0962ad93dec232a2c88581b4028671c11f4571f9edec54fb75bd7293d",
             "000000000000000000000000e4e60fdf9bf188fa57b7a5022230363d5bd56d08",
             "0000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488d",
         ]
@@ -335,7 +335,13 @@ mod tests {
         let (owner, spender, value): (Address, Address, U256) =
             abi.decode_event("Approval", topics, data).unwrap();
         assert_eq!(value, U256::MAX);
-        assert_eq!(owner, "e4e60fdf9bf188fa57b7a5022230363d5bd56d08".parse::<Address>().unwrap());
-        assert_eq!(spender, "7a250d5630b4cf539739df2c5dacb4c659f2488d".parse::<Address>().unwrap());
+        assert_eq!(
+            owner,
+            "0000e4e60fdf9bf188fa57b7a5022230363d5bd56d08".parse::<Address>().unwrap()
+        );
+        assert_eq!(
+            spender,
+            "00007a250d5630b4cf539739df2c5dacb4c659f2488d".parse::<Address>().unwrap()
+        );
     }
 }

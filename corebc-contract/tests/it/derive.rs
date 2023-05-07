@@ -38,8 +38,8 @@ struct ValueChangedVecWrapper {
 #[test]
 fn can_detokenize_struct() {
     let value = ValueChanged {
-        old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
-        new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
+        old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
+        new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
         old_value: "50".to_string(),
         new_value: "100".to_string(),
     };
@@ -68,8 +68,8 @@ fn can_derive_abi_type_empty_struct() {
 fn can_detokenize_nested_structs() {
     let value = ValueChangedWrapper {
         inner: ValueChanged {
-            old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
-            new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
+            old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
+            new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
             old_value: "50".to_string(),
             new_value: "100".to_string(),
         },
@@ -83,8 +83,8 @@ fn can_detokenize_nested_structs() {
 #[test]
 fn can_detokenize_tuple_struct() {
     let value = ValueChangedTuple(
-        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
+        "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
         "50".to_string(),
         "100".to_string(),
     );
@@ -97,8 +97,8 @@ fn can_detokenize_tuple_struct() {
 fn can_detokenize_nested_tuple_struct() {
     let value = ValueChangedTupleWrapper(
         ValueChangedTuple(
-            "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
+            "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
             "50".to_string(),
             "100".to_string(),
         ),
@@ -118,8 +118,8 @@ fn can_detokenize_single_field() {
 
     let value = ValueChangedVecWrapper {
         inner: vec![ValueChanged {
-            old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
-            new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
+            old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
+            new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
             old_value: "50".to_string(),
             new_value: "100".to_string(),
         }],
@@ -140,8 +140,8 @@ fn can_derive_eth_event() {
     }
 
     let value = ValueChangedEvent {
-        old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
-        new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
+        old_author: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee".parse().unwrap(),
+        new_author: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
         old_value: "50".to_string(),
         new_value: "100".to_string(),
     };
@@ -197,8 +197,11 @@ fn can_detect_various_event_abi_types() {
         uint128: u128,
     }
 
+    // ValueChangedEvent(address,string,bytes32,int256,uint256,bool,address[],bool[],bytes20,
+    // uint128,int8,int16,int32,int64,int128,uint8,uint16,uint32,uint64,uint128)"
+
     assert_eq!(
-        "ValueChangedEvent(address,string,bytes32,int256,uint256,bool,address[],bool[],bytes20,uint128,int8,int16,int32,int64,int128,uint8,uint16,uint32,uint64,uint128)",
+        "ValueChangedEvent(address,string,bytes32,int256,uint256,bool,address[],bool[],bytes22,uint128,int8,int16,int32,int64,int128,uint8,uint16,uint32,uint64,uint128)",
         ValueChangedEvent::abi_signature()
     );
 }
@@ -273,8 +276,8 @@ fn can_generate_ethevent_from_json() {
 
     assert_eq!(
         H256([
-            37, 155, 48, 202, 57, 136, 92, 109, 128, 26, 11, 93, 188, 152, 134, 64, 243, 194, 94,
-            47, 55, 83, 31, 225, 56, 197, 197, 175, 137, 85, 212, 27,
+            177, 214, 183, 34, 203, 30, 110, 108, 94, 36, 120, 129, 226, 243, 89, 70, 131, 231,
+            122, 89, 239, 7, 98, 143, 80, 130, 201, 13, 226, 162, 39, 18
         ]),
         CreatedFilter::signature()
     );
@@ -292,7 +295,7 @@ fn can_decode_event_with_no_topics() {
     }
     // https://etherscan.io/tx/0xb7ba825294f757f8b8b6303b2aef542bcaebc9cc0217ddfaf822200a00594ed9#eventlog index 141
     let log = RawLog {
-        topics: vec!["298637f684da70674f26509b10f07ec2fbc77a335ab1e7d6215a4b2484d8bb52"
+        topics: vec!["eb109234f702dda77256e422902187fb9dc97a4e1e2c769aaf63a7735e6b0ad8"
             .parse()
             .unwrap()],
         data: vec![
@@ -320,7 +323,7 @@ fn can_decode_event_single_param() {
 
     let log = RawLog {
         topics: vec![
-            "bd9bb67345a2fcc8ef3b0857e7e2901f5a0dcfc7fe5e3c10dc984f02842fb7ba".parse().unwrap(),
+            "9b9034ab90af2ce5858bccef5f3caeb90b88819d7ed66a40697022ba341cf61e".parse().unwrap(),
             "000000000000000000000000000000000000000000000000000000000000007b".parse().unwrap(),
         ],
         data: vec![],
@@ -337,7 +340,7 @@ fn can_decode_event_tuple_single_param() {
 
     let log = RawLog {
         topics: vec![
-            "bd9bb67345a2fcc8ef3b0857e7e2901f5a0dcfc7fe5e3c10dc984f02842fb7ba".parse().unwrap(),
+            "9b9034ab90af2ce5858bccef5f3caeb90b88819d7ed66a40697022ba341cf61e".parse().unwrap(),
             "000000000000000000000000000000000000000000000000000000000000007b".parse().unwrap(),
         ],
         data: vec![],
@@ -353,7 +356,7 @@ fn can_decode_event_with_no_params() {
     pub struct NoParam {}
 
     let log = RawLog {
-        topics: vec!["59a6f900daaeb7581ff830f3a97097fa6372db29b0b50c6d1818ede9d1daaa0c"
+        topics: vec!["a7ab190e02023567ea1bfe733be8372e19e1978d9be2b62a9f466ce572199987"
             .parse()
             .unwrap()],
         data: vec![],
@@ -376,7 +379,7 @@ fn eth_display_works() {
         v: Vec<u8>,
     }
     let item = MyStruct {
-        addr: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
+        addr: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".parse().unwrap(),
         old_value: "50".to_string(),
         new_value: "100".to_string(),
         h: H256::random(),
@@ -387,7 +390,7 @@ fn eth_display_works() {
     };
 
     let val = format!(
-        "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, 50, 100, 0x{}, {}, 0x{}, {:?}, 0x{}",
+        "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, 50, 100, 0x{}, {}, 0x{}, {:?}, 0x{}",
         hex::encode(item.h),
         item.i,
         hex::encode(item.arr_u8),
@@ -667,7 +670,7 @@ fn derives_abi_name() {
 
     assert_eq!(
         Erc20TransferEvent::signature(),
-        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef".parse().unwrap()
+        "0xc17a9d92b89f27cb79cc390f23a1a5d302fefab8c7911075ede952ac2b5607a1".parse().unwrap()
     );
 }
 
