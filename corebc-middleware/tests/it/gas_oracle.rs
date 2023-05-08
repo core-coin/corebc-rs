@@ -27,30 +27,31 @@ impl GasOracle for FakeGasOracle {
     }
 }
 
-#[tokio::test]
-async fn provider_using_gas_oracle() {
-    let anvil = Anvil::new().spawn();
+// CORETODO: Needs Anvil
+// #[tokio::test]
+// async fn provider_using_gas_oracle() {
+//     let anvil = Anvil::new().spawn();
 
-    let from = anvil.addresses()[0];
+//     let from = anvil.addresses()[0];
 
-    // connect to the network
-    let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
+//     // connect to the network
+//     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
 
-    // assign a gas oracle to use
-    let expected_gas_price = U256::from(1234567890_u64);
-    let gas_oracle = FakeGasOracle { gas_price: expected_gas_price };
-    let gas_price = gas_oracle.fetch().await.unwrap();
-    assert_eq!(gas_price, expected_gas_price);
+//     // assign a gas oracle to use
+//     let expected_gas_price = U256::from(1234567890_u64);
+//     let gas_oracle = FakeGasOracle { gas_price: expected_gas_price };
+//     let gas_price = gas_oracle.fetch().await.unwrap();
+//     assert_eq!(gas_price, expected_gas_price);
 
-    let provider = GasOracleMiddleware::new(provider, gas_oracle);
+//     let provider = GasOracleMiddleware::new(provider, gas_oracle);
 
-    // broadcast a transaction
-    let tx = TransactionRequest::new().from(from).to(Address::zero()).value(10000);
-    let tx_hash = provider.send_transaction(tx, None).await.unwrap();
+//     // broadcast a transaction
+//     let tx = TransactionRequest::new().from(from).to(Address::zero()).value(10000);
+//     let tx_hash = provider.send_transaction(tx, None).await.unwrap();
 
-    let tx = provider.get_transaction(*tx_hash).await.unwrap().unwrap();
-    assert_eq!(tx.gas_price, Some(expected_gas_price));
-}
+//     let tx = provider.get_transaction(*tx_hash).await.unwrap().unwrap();
+//     assert_eq!(tx.gas_price, Some(expected_gas_price));
+// }
 
 #[tokio::test]
 async fn provider_oracle() {

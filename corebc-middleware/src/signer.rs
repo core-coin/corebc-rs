@@ -373,7 +373,9 @@ mod tests {
         // https://web3js.readthedocs.io/en/v1.2.0/web3-eth-accounts.html#eth-accounts-signtransaction
         let tx = TransactionRequest {
             from: None,
-            to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
+            to: Some(
+                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+            ),
             value: Some(1_000_000_000.into()),
             gas: Some(2_000_000.into()),
             nonce: Some(0.into()),
@@ -399,11 +401,11 @@ mod tests {
 
         assert_eq!(
             sha3(&tx)[..],
-            hex::decode("de8db924885b0803d2edc335f745b2b8750c8848744905684c20b987443a9593")
+            hex::decode("9db3116c3e853e72084d754ad14ee3e3829ce69aaf1db95b1d073e5cb214dd4f")
                 .unwrap()
         );
 
-        let expected_rlp = Bytes::from(hex::decode("f869808504e3b29200831e848094f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008025a0c9cf86333bcb065d140032ecaab5d9281bde80f21b9687b3e94161de42d51895a0727a108a0b8d101465414033c3f705a9c7b826e596766046ee1183dbc8aeaa68").unwrap());
+        let expected_rlp = Bytes::from(hex::decode("f86b808504e3b29200831e8480960000f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008025a0f9fa41caed9b9b79fb6c34e54d43a9da5725d92c1d53f5b0a9078eddb63118aea01da56f076c9fe3f40488b7a3627829760f86a1fc931396bea1e7284d6d61315c").unwrap());
         assert_eq!(tx, expected_rlp);
     }
 
@@ -415,7 +417,9 @@ mod tests {
         // case for a non-mainnet chain id
         let tx = TransactionRequest {
             from: None,
-            to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
+            to: Some(
+                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+            ),
             value: Some(1_000_000_000.into()),
             gas: Some(2_000_000.into()),
             nonce: Some(U256::zero()),
@@ -439,7 +443,7 @@ mod tests {
 
         let tx = client.sign_transaction(tx).await.unwrap();
 
-        let expected_rlp = Bytes::from(hex::decode("f86b808504e3b29200831e848094f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca0080820a95a08290324bae25ca0490077e0d1f4098730333088f6a500793fa420243f35c6b23a06aca42876cd28fdf614a4641e64222fee586391bb3f4061ed5dfefac006be850").unwrap());
+        let expected_rlp = Bytes::from(hex::decode("f86d808504e3b29200831e8480960000f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca0080820a95a08e5140d537e01ce53ffe46f8b573bf44af35ff1a873dcc0fca2109c77270a84ba0376029800db10847a100ab4cb91d8c838aa889931498dba2b05b41cf034fa736").unwrap());
         assert_eq!(tx, expected_rlp);
     }
 
@@ -452,7 +456,7 @@ mod tests {
 
         // Intentionally do not set the chain id here so we ensure that the signer pulls the
         // provider's chain id.
-        let key = LocalWallet::new(&mut rand::thread_rng());
+        let key = LocalWallet::new(&mut rand::thread_rng(), utils::NetworkType::Mainnet);
 
         // combine the provider and wallet and test that the chain id is the same for both the
         // signer returned by the middleware and through the middleware itself.
@@ -474,7 +478,7 @@ mod tests {
 
         // Intentionally do not set the chain id here so we ensure that the signer pulls the
         // provider's chain id.
-        let key = LocalWallet::new(&mut rand::thread_rng());
+        let key = LocalWallet::new(&mut rand::thread_rng(), utils::NetworkType::Mainnet);
 
         // combine the provider and wallet and test that the chain id is the same for both the
         // signer returned by the middleware and through the middleware itself.
@@ -487,53 +491,57 @@ mod tests {
         assert_eq!(chain_id.as_u64(), signer_chainid);
     }
 
-    #[tokio::test]
-    async fn handles_tx_from_field() {
-        let anvil = Anvil::new().spawn();
-        let acc = anvil.addresses()[0];
-        let provider = Provider::try_from(anvil.endpoint()).unwrap();
-        let key = LocalWallet::new(&mut rand::thread_rng()).with_chain_id(1u32);
-        provider
-            .send_transaction(
-                TransactionRequest::pay(key.address(), utils::parse_ether(1u64).unwrap()).from(acc),
-                None,
-            )
-            .await
-            .unwrap()
-            .await
-            .unwrap()
-            .unwrap();
-        let client = SignerMiddleware::new_with_provider_chain(provider, key).await.unwrap();
+    // CORETODO: Requires anvil to run
+    // #[tokio::test]
+    // async fn handles_tx_from_field() {
+    //     let anvil = Anvil::new().spawn();
+    //     let acc = anvil.addresses()[0];
+    //     let provider = Provider::try_from(anvil.endpoint()).unwrap();
+    //     let key = LocalWallet::new(&mut rand::thread_rng(), utils::NetworkType::Mainnet)
+    //         .with_chain_id(1u32);
+    //     provider
+    //         .send_transaction(
+    //             TransactionRequest::pay(key.address(),
+    // utils::parse_ether(1u64).unwrap()).from(acc),             None,
+    //         )
+    //         .await
+    //         .unwrap()
+    //         .await
+    //         .unwrap()
+    //         .unwrap();
+    //     let client = SignerMiddleware::new_with_provider_chain(provider, key).await.unwrap();
 
-        let request = TransactionRequest::new();
+    //     let request = TransactionRequest::new();
 
-        // signing a TransactionRequest with a from field of None should yield
-        // a signed transaction from the signer address
-        let request_from_none = request.clone();
-        let hash = *client.send_transaction(request_from_none, None).await.unwrap();
-        let tx = client.get_transaction(hash).await.unwrap().unwrap();
-        assert_eq!(tx.from, client.address());
+    //     // signing a TransactionRequest with a from field of None should yield
+    //     // a signed transaction from the signer address
+    //     let request_from_none = request.clone();
+    //     let hash = *client.send_transaction(request_from_none, None).await.unwrap();
+    //     let tx = client.get_transaction(hash).await.unwrap().unwrap();
+    //     assert_eq!(tx.from, client.address());
 
-        // signing a TransactionRequest with the signer as the from address
-        // should yield a signed transaction from the signer
-        let request_from_signer = request.clone().from(client.address());
-        let hash = *client.send_transaction(request_from_signer, None).await.unwrap();
-        let tx = client.get_transaction(hash).await.unwrap().unwrap();
-        assert_eq!(tx.from, client.address());
+    //     // signing a TransactionRequest with the signer as the from address
+    //     // should yield a signed transaction from the signer
+    //     let request_from_signer = request.clone().from(client.address());
+    //     let hash = *client.send_transaction(request_from_signer, None).await.unwrap();
+    //     let tx = client.get_transaction(hash).await.unwrap().unwrap();
+    //     assert_eq!(tx.from, client.address());
 
-        // signing a TransactionRequest with a from address that is not the
-        // signer should result in the default anvil account being used
-        let request_from_other = request.from(acc);
-        let hash = *client.send_transaction(request_from_other, None).await.unwrap();
-        let tx = client.get_transaction(hash).await.unwrap().unwrap();
-        assert_eq!(tx.from, acc);
-    }
+    //     // signing a TransactionRequest with a from address that is not the
+    //     // signer should result in the default anvil account being used
+    //     let request_from_other = request.from(acc);
+    //     let hash = *client.send_transaction(request_from_other, None).await.unwrap();
+    //     let tx = client.get_transaction(hash).await.unwrap().unwrap();
+    //     assert_eq!(tx.from, acc);
+    // }
 
     #[tokio::test]
     async fn converts_tx_to_legacy_to_match_chain() {
         let eip1559 = Eip1559TransactionRequest {
             from: None,
-            to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
+            to: Some(
+                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+            ),
             value: Some(1_000_000_000.into()),
             gas: Some(2_000_000.into()),
             nonce: Some(U256::zero()),
@@ -563,37 +571,42 @@ mod tests {
         assert_eq!(tx, TypedTransaction::Legacy(tx.as_legacy_ref().unwrap().clone()));
     }
 
-    #[tokio::test]
-    async fn does_not_convert_to_legacy_for_eip1559_chain() {
-        let eip1559 = Eip1559TransactionRequest {
-            from: None,
-            to: Some("F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into()),
-            value: Some(1_000_000_000.into()),
-            gas: Some(2_000_000.into()),
-            nonce: Some(U256::zero()),
-            access_list: Default::default(),
-            max_priority_fee_per_gas: None,
-            data: None,
-            chain_id: None,
-            max_fee_per_gas: None,
-        };
-        let mut tx = TypedTransaction::Eip1559(eip1559);
+    // CORETODO: Needs anvil
+    // #[tokio::test]
+    // async fn does_not_convert_to_legacy_for_eip1559_chain() {
+    //     let eip1559 = Eip1559TransactionRequest {
+    //         from: None,
+    //         to: Some(
+    //             
+    // "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+    //         ),
+    //         value: Some(1_000_000_000.into()),
+    //         gas: Some(2_000_000.into()),
+    //         nonce: Some(U256::zero()),
+    //         access_list: Default::default(),
+    //         max_priority_fee_per_gas: None,
+    //         data: None,
+    //         chain_id: None,
+    //         max_fee_per_gas: None,
+    //     };
+    //     let mut tx = TypedTransaction::Eip1559(eip1559);
 
-        let chain_id = 1u64; // eth main supports EIP-1559
+    //     let chain_id = 1u64; // eth main supports EIP-1559
 
-        // Signer middlewares now rely on a working provider which it can query the chain id from,
-        // so we make sure Anvil is started with the chain id that the expected tx was signed
-        // with
-        let anvil = Anvil::new().args(vec!["--chain-id".to_string(), chain_id.to_string()]).spawn();
-        let provider = Provider::try_from(anvil.endpoint()).unwrap();
-        let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
-            .parse::<LocalWallet>()
-            .unwrap()
-            .with_chain_id(chain_id);
-        let client = SignerMiddleware::new(provider, key);
-        client.fill_transaction(&mut tx, None).await.unwrap();
+    //     // Signer middlewares now rely on a working provider which it can query the chain id
+    // from,     // so we make sure Anvil is started with the chain id that the expected tx was
+    // signed     // with
+    //     let anvil = Anvil::new().args(vec!["--chain-id".to_string(),
+    // chain_id.to_string()]).spawn();     let provider =
+    // Provider::try_from(anvil.endpoint()).unwrap();     let key =
+    // "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
+    //         .parse::<LocalWallet>()
+    //         .unwrap()
+    //         .with_chain_id(chain_id);
+    //     let client = SignerMiddleware::new(provider, key);
+    //     client.fill_transaction(&mut tx, None).await.unwrap();
 
-        assert!(tx.as_legacy_ref().is_none());
-        assert_eq!(tx, TypedTransaction::Eip1559(tx.as_eip1559_ref().unwrap().clone()));
-    }
+    //     assert!(tx.as_legacy_ref().is_none());
+    //     assert_eq!(tx, TypedTransaction::Eip1559(tx.as_eip1559_ref().unwrap().clone()));
+    // }
 }

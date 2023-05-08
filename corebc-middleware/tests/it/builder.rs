@@ -1,4 +1,4 @@
-use corebc_core::{rand::thread_rng, types::U64};
+use corebc_core::{rand::thread_rng, types::U64, utils::NetworkType};
 use corebc_middleware::{
     builder::MiddlewareBuilder,
     gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
@@ -13,7 +13,7 @@ use corebc_signers::{LocalWallet, Signer};
 async fn build_raw_middleware_stack() {
     let (provider, mock) = Provider::mocked();
 
-    let signer = LocalWallet::new(&mut thread_rng());
+    let signer = LocalWallet::new(&mut thread_rng(), NetworkType::Mainnet);
     let address = signer.address();
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
 
@@ -40,7 +40,7 @@ async fn build_raw_middleware_stack() {
 async fn build_declarative_middleware_stack() {
     let (provider, mock) = Provider::mocked();
 
-    let signer = LocalWallet::new(&mut thread_rng());
+    let signer = LocalWallet::new(&mut thread_rng(), NetworkType::Mainnet);
     let address = signer.address();
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
     let gas_oracle = GasNow::new();
