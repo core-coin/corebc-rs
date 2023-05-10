@@ -703,7 +703,7 @@ mod tests {
 
     // CORETODO: London After Istanbul
     // #[test]
-    // fn rlp_london_goerli() {
+    // fn rlp_london_devin() {
     //     let tx = Transaction {
     //         hash: H256::from_str(
     //             "5e2fc091e15119c97722e9b63d5d32b043d077d834f377b91f80d32872c78109",
@@ -754,7 +754,7 @@ mod tests {
     // <https://goerli.etherscan.io/tx/0x5e2fc091e15119c97722e9b63d5d32b043d077d834f377b91f80d32872c78109>
     // CORETODO: London After Istanbul
     // #[test]
-    // fn decode_rlp_london_goerli() {
+    // fn decode_rlp_london_devin() {
     //     let tx = Transaction {
     //         hash: H256::from_str(
     //             "5e2fc091e15119c97722e9b63d5d32b043d077d834f377b91f80d32872c78109",

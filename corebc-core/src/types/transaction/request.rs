@@ -411,7 +411,7 @@ mod tests {
 
     // CORETODO: This tests a signed transaction. First implement ED448, then fix the test.
     // #[test]
-    // fn decode_known_rlp_goerli() {
+    // fn decode_known_rlp_devin() {
     //     let tx = TransactionRequest::new()
     //         .nonce(70272)
     //         .from("0000fab2b4b677a4e104759d378ea25504862150256e".parse::<Address>().unwrap())
