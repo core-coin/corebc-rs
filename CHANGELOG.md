@@ -40,7 +40,7 @@ Please do not manually edit this file.
 
 - Add Base Goerli chain ([#2338](https://github.com/gakonst/ethers-rs/issues/2338))
 - Very permissive etherscan gwei deser ([#2327](https://github.com/gakonst/ethers-rs/issues/2327))
-- Syn 2.0, merge eip712 crate into ethers-contract-derive ([#2279](https://github.com/gakonst/ethers-rs/issues/2279))
+- Syn 2.0, merge eip712 crate into corebc-contract-derive ([#2279](https://github.com/gakonst/ethers-rs/issues/2279))
 - Add Settings sanitize ([#2329](https://github.com/gakonst/ethers-rs/issues/2329))
 - `Transaction::decode()` sets the hash ([#2303](https://github.com/gakonst/ethers-rs/issues/2303))
 
@@ -93,7 +93,7 @@ Please do not manually edit this file.
 
 ### Bug Fixes
 
-- Ethers-contract circular dep on corebc-signers ([#2291](https://github.com/gakonst/ethers-rs/issues/2291))
+- corebc-contract circular dep on corebc-signers ([#2291](https://github.com/gakonst/ethers-rs/issues/2291))
 - Features ([#2290](https://github.com/gakonst/ethers-rs/issues/2290))
 - Handle all struct field types ([#2289](https://github.com/gakonst/ethers-rs/issues/2289))
 - Re-export CallLogFrame from geth types ([#2283](https://github.com/gakonst/ethers-rs/issues/2283))
@@ -1452,7 +1452,7 @@ Please do not manually edit this file.
 - Seal extension traits ([#1553](https://github.com/gakonst/ethers-rs/issues/1553))
 - Fmt ([#1539](https://github.com/gakonst/ethers-rs/issues/1539))
 - Add support to Aurora network ([#1535](https://github.com/gakonst/ethers-rs/issues/1535))
-- Update broken test and use it module for ethers-contract ([#1502](https://github.com/gakonst/ethers-rs/issues/1502))
+- Update broken test and use it module for corebc-contract ([#1502](https://github.com/gakonst/ethers-rs/issues/1502))
 - Fmt
 - Fmt
 - Add basic solc model checker options ([#1258](https://github.com/gakonst/ethers-rs/issues/1258))
@@ -1596,7 +1596,7 @@ Please do not manually edit this file.
 - Allow providing --allow-args ([#553](https://github.com/gakonst/ethers-rs/issues/553))
 - Multiple Solc Version detection ([#551](https://github.com/gakonst/ethers-rs/issues/551))
 - Add solc svm find support ([#547](https://github.com/gakonst/ethers-rs/issues/547))
-- Use corebc-solc::Solc instead of ethers_core::utils::Solc ([#546](https://github.com/gakonst/ethers-rs/issues/546))
+- Use corebc-solc::Solc instead of corebc_core::utils::Solc ([#546](https://github.com/gakonst/ethers-rs/issues/546))
 - Enumerate overloaded functions if they are nameless ([#545](https://github.com/gakonst/ethers-rs/issues/545))
 - Only compile changed files ([#544](https://github.com/gakonst/ethers-rs/issues/544))
 - Improved solc management ([#539](https://github.com/gakonst/ethers-rs/issues/539))
@@ -1651,7 +1651,7 @@ Please do not manually edit this file.
 - Remove failing workflow
 - Load rinkeby privkey from envvar instead of secrets
 - Load rinkeby privkey from secrets
-- Add Decimal support to ethers::utils::parse_units ([#463](https://github.com/gakonst/ethers-rs/issues/463))
+- Add Decimal support to corebc::utils::parse_units ([#463](https://github.com/gakonst/ethers-rs/issues/463))
 - Change wei from 1 to 0 ([#460](https://github.com/gakonst/ethers-rs/issues/460))
 - Add getProof to provider ([#459](https://github.com/gakonst/ethers-rs/issues/459))
 - Add cache

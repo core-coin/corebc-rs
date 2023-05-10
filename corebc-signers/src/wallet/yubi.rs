@@ -67,6 +67,11 @@ impl From<YubiSigner<Secp256k1>> for Wallet<YubiSigner<Secp256k1>> {
         let address = H160::from(bytes);
         let address = to_ican(&address, &NetworkType::Mainnet);
 
+        let mut bytes = [0u8; 20];
+        bytes.copy_from_slice(&hash[12..]);
+        let address = H160::from(bytes);
+        let address = to_ican(&address, &NetworkType::Mainnet);
+
         Self { signer, address, network_id: 1 }
     }
 }
@@ -77,7 +82,7 @@ mod tests {
 
     use super::*;
     use crate::Signer;
-    use std::str::FromStr;
+    use corebc_core::types::Address;
 
     #[tokio::test]
     async fn from_key() {
@@ -99,7 +104,7 @@ mod tests {
         assert_eq!(sig.recover(msg).unwrap(), wallet.address());
         assert_eq!(
             wallet.address(),
-            Address::from_str("2DE2C386082Cff9b28D62E60983856CE1139eC49").unwrap()
+            Address::from_str("00002DE2C386082Cff9b28D62E60983856CE1139eC49").unwrap()
         );
     }
 

@@ -55,7 +55,7 @@ impl Client {
     /// ```rust
     /// use corebc_core::types::Network;
     /// use corebc_etherscan::Client;
-    /// let client = Client::builder().with_api_key("<API KEY>").network(Network::Mainnet).unwrap().build().unwrap();
+    /// let client = Client::builder().with_api_key("<API KEY>").chain(Network::Mainnet).unwrap().build().unwrap();
     /// ```
     pub fn builder() -> ClientBuilder {
         ClientBuilder::default()

@@ -7,7 +7,7 @@ The `Http` provider establishes an HTTP connection with a node, allowing you to 
 Lets take a quick look at few ways to create a new `Http` provider. One of the easiest ways to initialize a new `Provider<Http>` is by using the [`TryFrom`](https://doc.rust-lang.org/stable/std/convert/trait.TryFrom.html) trait's `try_from` method.
 
 ```rust
-use ethers::providers::{Http, Middleware, Provider};
+use corebc::providers::{Http, Middleware, Provider};
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
@@ -22,7 +22,7 @@ async fn main() -> eyre::Result<()> {
 The `Http` provider also supplies a way to initialize a new authorized connection.
 
 ```rust
-use ethers::providers::{Authorization, Http};
+use providers::{Authorization, Http};
 use url::Url;
 
 #[tokio::main]
@@ -38,7 +38,7 @@ async fn main() -> eyre::Result<()> {
 Additionally, you can initialize a new provider with your own custom `reqwest::Client`.
 
 ```rust
-use ethers::providers::Http;
+use providers::Http;
 use url::Url;
 
 #[tokio::main]
@@ -56,7 +56,7 @@ async fn main() -> eyre::Result<()> {
 Now that you have successfully established an Http connection with the node, you can use any of the methods provided by the `Middleware` trait. In the code snippet below, the provider is used to get the network id, current block number and the content of the node's mempool.
 
 ```rust
-use ethers::providers::{Http, Middleware, Provider};
+use providers::{Http, Middleware, Provider};
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
@@ -74,7 +74,7 @@ async fn main() -> eyre::Result<()> {
 You can also use the provider to interact with smart contracts. The snippet below uses the provider to establish a new instance of a UniswapV2Pool and uses the `get_reserves()` method from the smart contract to fetch the current state of the pool's reserves.
 
 ```rust
-use ethers::{
+use {
     prelude::abigen,
     providers::{Http, Provider},
     types::Address,
@@ -108,7 +108,7 @@ This example is a little more complicated, so let's walk through what is going o
 It is very common to wrap a provider in an `Arc` to share the provider across threads. Let's look at another example where the provider is used asynchronously across two tokio threads. In the next example, a new provider is initialized and used to asynchronously fetch the number of Ommer blocks from the most recent block, as well as the previous block.
 
 ```rust
-use ethers::providers::{Http, Middleware, Provider};
+use providers::{Http, Middleware, Provider};
 use std::sync::Arc;
 
 #[tokio::main]

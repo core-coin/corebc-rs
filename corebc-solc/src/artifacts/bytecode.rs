@@ -368,7 +368,7 @@ impl AsRef<[u8]> for BytecodeObject {
     }
 }
 
-/// This will serialize the bytecode data without a `0x` prefix, which the `ethers::types::Bytes`
+/// This will serialize the bytecode data without a `0x` prefix, which the `corebc::types::Bytes`
 /// adds by default.
 ///
 /// This ensures that we serialize bytecode data in the same way as solc does, See also <https://github.com/gakonst/ethers-rs/issues/1422>

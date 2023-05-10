@@ -8,7 +8,7 @@
 //! when you want to quickly bootstrap a new project.
 //!
 //! ```rust
-//! use ethers::prelude::*;
+//! use corebc::prelude::*;
 //! ```
 //!
 //! Examples on how you can use the types imported by the prelude can be found in the
@@ -87,22 +87,22 @@
 #[doc(inline)]
 pub use corebc_addressbook as addressbook;
 #[doc(inline)]
+pub use corebc_contract as contract;
+#[doc(inline)]
+pub use corebc_core as core;
+#[doc(inline)]
 pub use corebc_etherscan as etherscan;
+#[doc(inline)]
+pub use corebc_middleware as middleware;
 #[doc(inline)]
 pub use corebc_providers as providers;
 #[doc(inline)]
+pub use corebc_signers as signers;
+#[doc(inline)]
 pub use corebc_solc as solc;
-#[doc(inline)]
-pub use ethers_contract as contract;
-#[doc(inline)]
-pub use ethers_core as core;
-#[doc(inline)]
-pub use ethers_middleware as middleware;
-#[doc(inline)]
-pub use ethers_signers as signers;
 
 #[doc(inline)]
-pub use ethers_core::{abi, types, utils};
+pub use corebc_core::{abi, types, utils};
 
 /// Easy imports of frequently used type definitions and traits.
 #[doc(hidden)]

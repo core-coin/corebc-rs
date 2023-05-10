@@ -2,8 +2,8 @@
 #[macro_use]
 extern crate criterion;
 
-use criterion::Criterion;
 use corebc_solc::{CompilerInput, Solc};
+use criterion::Criterion;
 use std::path::Path;
 
 fn compile_many_benchmark(c: &mut Criterion) {

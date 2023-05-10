@@ -1,4 +1,4 @@
-# ethers-providers
+# corebc-providers
 
 Clients for interacting with Ethereum nodes.
 

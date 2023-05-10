@@ -1,11 +1,11 @@
 #[cfg(not(feature = "celo"))]
 mod eth_tests {
     use corebc_core::types::{BlockId, H256};
-    use corebc_providers::{Middleware, DEVIN};
+    use corebc_providers::{Middleware, GOERLI};
 
     #[tokio::test]
     async fn non_existing_data_works() {
-        let provider = DEVIN.provider();
+        let provider = GOERLI.provider();
 
         assert!(provider.get_transaction(H256::zero()).await.unwrap().is_none());
         assert!(provider.get_transaction_receipt(H256::zero()).await.unwrap().is_none());
@@ -15,7 +15,7 @@ mod eth_tests {
 
     #[tokio::test]
     async fn client_version() {
-        let provider = DEVIN.provider();
+        let provider = GOERLI.provider();
 
         // e.g., Geth/v1.10.6-omnibus-1af33248/linux-amd64/go1.16.6
         assert!(provider
@@ -29,7 +29,7 @@ mod eth_tests {
     #[tokio::test]
     #[cfg(any(feature = "openssl", feature = "rustls"))]
     async fn ssl_websocket() {
-        let provider = DEVIN.ws().await;
+        let provider = GOERLI.ws().await;
         assert_ne!(provider.get_block_number().await.unwrap(), 0.into());
     }
 

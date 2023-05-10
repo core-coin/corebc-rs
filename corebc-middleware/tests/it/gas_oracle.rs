@@ -4,11 +4,11 @@ use corebc_core::{
     utils::{parse_ether, Anvil},
 };
 use corebc_etherscan::Client;
-use corebc_providers::{Http, Middleware, Provider};
-use ethers_middleware::gas_oracle::{
+use corebc_middleware::gas_oracle::{
     BlockNative, Etherchain, Etherscan, GasCategory, GasNow, GasOracle, GasOracleError,
     GasOracleMiddleware, Polygon, ProviderOracle, Result,
 };
+use corebc_providers::{Http, Middleware, Provider};
 
 #[derive(Debug)]
 struct FakeGasOracle {
@@ -27,30 +27,31 @@ impl GasOracle for FakeGasOracle {
     }
 }
 
-#[tokio::test]
-async fn provider_using_gas_oracle() {
-    let anvil = Anvil::new().spawn();
+// CORETODO: Needs Anvil
+// #[tokio::test]
+// async fn provider_using_gas_oracle() {
+//     let anvil = Anvil::new().spawn();
 
-    let from = anvil.addresses()[0];
+//     let from = anvil.addresses()[0];
 
-    // connect to the network
-    let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
+//     // connect to the network
+//     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
 
-    // assign a gas oracle to use
-    let expected_gas_price = U256::from(1234567890_u64);
-    let gas_oracle = FakeGasOracle { gas_price: expected_gas_price };
-    let gas_price = gas_oracle.fetch().await.unwrap();
-    assert_eq!(gas_price, expected_gas_price);
+//     // assign a gas oracle to use
+//     let expected_gas_price = U256::from(1234567890_u64);
+//     let gas_oracle = FakeGasOracle { gas_price: expected_gas_price };
+//     let gas_price = gas_oracle.fetch().await.unwrap();
+//     assert_eq!(gas_price, expected_gas_price);
 
-    let provider = GasOracleMiddleware::new(provider, gas_oracle);
+//     let provider = GasOracleMiddleware::new(provider, gas_oracle);
 
-    // broadcast a transaction
-    let tx = TransactionRequest::new().from(from).to(Address::zero()).value(10000);
-    let tx_hash = provider.send_transaction(tx, None).await.unwrap();
+//     // broadcast a transaction
+//     let tx = TransactionRequest::new().from(from).to(Address::zero()).value(10000);
+//     let tx_hash = provider.send_transaction(tx, None).await.unwrap();
 
-    let tx = provider.get_transaction(*tx_hash).await.unwrap().unwrap();
-    assert_eq!(tx.gas_price, Some(expected_gas_price));
-}
+//     let tx = provider.get_transaction(*tx_hash).await.unwrap().unwrap();
+//     assert_eq!(tx.gas_price, Some(expected_gas_price));
+// }
 
 #[tokio::test]
 async fn provider_oracle() {
@@ -76,7 +77,7 @@ async fn blocknative() {
 #[ignore = "ETHGasStation is shutting down: https://twitter.com/ETHGasStation/status/1597341610777317376"]
 #[allow(deprecated)]
 async fn eth_gas_station() {
-    let eth_gas_station_oracle = ethers_middleware::gas_oracle::EthGasStation::default();
+    let eth_gas_station_oracle = corebc_middleware::gas_oracle::EthGasStation::default();
     let gas_price = eth_gas_station_oracle.fetch().await.unwrap();
     assert!(gas_price > U256::zero());
 }

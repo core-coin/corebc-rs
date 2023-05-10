@@ -240,6 +240,7 @@ impl TrezorEthereum {
 mod tests {
     use super::*;
     use crate::Signer;
+    use corebc_contract_derive::{Eip712, EthAbiType};
     use corebc_core::types::{
         transaction::{
             eip2930::{AccessList, AccessListItem},

@@ -1,11 +1,11 @@
 pub mod ds_proxy;
-pub use ds_proxy::DsProxy;
+// pub use ds_proxy::DsProxy;
 
 mod middleware;
 pub use middleware::TransformerMiddleware;
 
+use corebc_contract::AbiError;
 use corebc_core::{abi::ParseError, types::transaction::eip2718::TypedTransaction};
-use ethers_contract::AbiError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

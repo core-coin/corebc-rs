@@ -99,7 +99,7 @@ pub enum GasOracleError {
 ///
 /// ```no_run
 /// use corebc_core::types::U256;
-/// use ethers_middleware::gas_oracle::{GasCategory, GasNow, GasOracle};
+/// use corebc_middleware::gas_oracle::{GasCategory, GasNow, GasOracle};
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// let oracle = GasNow::default().category(GasCategory::SafeLow);
@@ -119,7 +119,7 @@ pub trait GasOracle: Send + Sync + Debug {
     ///
     /// ```no_run
     /// use corebc_core::types::U256;
-    /// use ethers_middleware::gas_oracle::{GasCategory, GasNow, GasOracle};
+    /// use corebc_middleware::gas_oracle::{GasCategory, GasNow, GasOracle};
     ///
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// let oracle = GasNow::default().category(GasCategory::SafeLow);
@@ -137,7 +137,7 @@ pub trait GasOracle: Send + Sync + Debug {
     ///
     /// ```no_run
     /// use corebc_core::types::U256;
-    /// use ethers_middleware::gas_oracle::{GasCategory, GasNow, GasOracle};
+    /// use corebc_middleware::gas_oracle::{GasCategory, GasNow, GasOracle};
     ///
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// let oracle = GasNow::default().category(GasCategory::SafeLow);

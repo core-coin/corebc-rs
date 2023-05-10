@@ -152,7 +152,7 @@ pub struct ConfigurableArtifacts {
     /// _always_ be done using a public constructor or update syntax:
     ///
     /// ```rust
-    ///
+    /// 
     /// use corebc_solc::{ExtraOutputFiles, ConfigurableArtifacts};
     /// let config = ConfigurableArtifacts {
     ///     additional_files: ExtraOutputFiles { metadata: true, ..Default::default() },
@@ -395,7 +395,7 @@ pub struct ExtraOutputValues {
     /// _always_ be done using a public constructor or update syntax:
     ///
     /// ```rust
-    ///
+    /// 
     /// use corebc_solc::ExtraOutputValues;
     /// let config = ExtraOutputValues {
     ///     ir: true,
@@ -516,7 +516,7 @@ pub struct ExtraOutputFiles {
     /// _always_ be done using a public constructor or update syntax:
     ///
     /// ```rust
-    ///
+    /// 
     /// use corebc_solc::ExtraOutputFiles;
     /// let config = ExtraOutputFiles {
     ///     metadata: true,

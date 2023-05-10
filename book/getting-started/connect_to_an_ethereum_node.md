@@ -20,7 +20,7 @@ Code below shows a basic setup to connect a provider to a node:
 // of common dependencies at once. This can be useful if you are working
 // with multiple parts of the library and want to avoid having
 // to import each dependency individually.
-use ethers::prelude::*;
+use corebc::prelude::*;
 
 const RPC_URL: &str = "https://eth.llamarpc.com";
 

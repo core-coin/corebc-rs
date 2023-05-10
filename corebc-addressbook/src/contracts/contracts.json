@@ -1,7 +1,7 @@
 {
 	"dai": {
 		"addresses": {
-			"mainnet": "0x00006`b175474e89094c44da98b954eedeac495271d0f",
+			"mainnet": "0x00006`b175474e89094c44da98b954eedeac495271d0f"
 		}
 	},
 	"usdc": {

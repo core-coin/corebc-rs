@@ -279,14 +279,14 @@ mod tests {
     #[test]
     fn can_parse_raw_abi() {
         const VERIFIER_ABI: &str =
-            include_str!("../../../ethers-contract/tests/solidity-contracts/verifier_abi.json");
+            include_str!("../../../corebc-contract/tests/solidity-contracts/verifier_abi.json");
         let _ = serde_json::from_str::<RawAbi>(VERIFIER_ABI).unwrap();
     }
 
     #[test]
     fn can_parse_hardhat_raw_abi() {
         const VERIFIER_ABI: &str = include_str!(
-            "../../../ethers-contract/tests/solidity-contracts/verifier_abi_hardhat.json"
+            "../../../corebc-contract/tests/solidity-contracts/verifier_abi_hardhat.json"
         );
         let _ = serde_json::from_str::<RawAbi>(VERIFIER_ABI).unwrap();
     }
@@ -326,7 +326,7 @@ mod tests {
         assert_has_bytecode(&s);
 
         let hh_artifact = include_str!(
-            "../../../ethers-contract/tests/solidity-contracts/verifier_abi_hardhat.json"
+            "../../../corebc-contract/tests/solidity-contracts/verifier_abi_hardhat.json"
         );
         match serde_json::from_str::<JsonAbi>(hh_artifact).unwrap() {
             JsonAbi::Object(abi) => {
@@ -341,7 +341,7 @@ mod tests {
     #[test]
     fn can_parse_greeter_bytecode() {
         let artifact =
-            include_str!("../../../ethers-contract/tests/solidity-contracts/greeter.json");
+            include_str!("../../../corebc-contract/tests/solidity-contracts/greeter.json");
         assert_has_bytecode(artifact);
     }
 
