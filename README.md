@@ -5,9 +5,7 @@ Crates to modify
 - [ ] corebc-core
   - [x] ICAN Addresses
   - [ ] ED448
-  - [x] Sha3
-- [x] corebc-providers
-  - [ ] anvil tests - Most of the tests require Anvil or Ganache to run, but since they use different addresses it all fails
+  - [x] Hashing Function
 - [ ] ethers-contract
 - [x] corebc-etherscan
 - [x] corebc-middleware
