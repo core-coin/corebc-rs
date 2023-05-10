@@ -33,7 +33,7 @@ pub use middleware::CeloMiddleware;
 pub use middleware::Middleware;
 
 #[allow(deprecated)]
-pub use test_provider::{GOERLI, MAINNET, ROPSTEN, SEPOLIA};
+pub use test_provider::{DEVIN, MAINNET};
 
 #[allow(missing_docs)]
 /// Pre-instantiated Infura HTTP clients which rotate through multiple API keys
@@ -47,15 +47,8 @@ pub mod test_provider {
     // List of infura keys to rotate through so we don't get rate limited
     const INFURA_KEYS: &[&str] = &["15e8aaed6f894d63a0f6a0206c006cdd"];
 
-    pub static MAINNET: Lazy<TestProvider> =
-        Lazy::new(|| TestProvider::new(INFURA_KEYS, "mainnet"));
-    pub static GOERLI: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "goerli"));
-    pub static SEPOLIA: Lazy<TestProvider> =
-        Lazy::new(|| TestProvider::new(INFURA_KEYS, "sepolia"));
-
-    #[deprecated = "Ropsten testnet has been deprecated in favor of Goerli or Sepolia."]
-    pub static ROPSTEN: Lazy<TestProvider> =
-        Lazy::new(|| TestProvider::new(INFURA_KEYS, "ropsten"));
+    pub static MAINNET: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "mainnet"));
+    pub static DEVIN: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "devin"));
 
     #[derive(Debug)]
     pub struct TestProvider {

@@ -45,7 +45,7 @@ impl AnvilInstance {
 
     /// Returns the network of the anvil instance
     pub fn network_id(&self) -> u64 {
-        self.network_id.unwrap_or_else(|| Network::AnvilHardhat.into())
+        self.network_id.unwrap_or_else(|| Network::Devin.into())
     }
 
     /// Returns the HTTP endpoint of this instance

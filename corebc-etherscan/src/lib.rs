@@ -82,25 +82,6 @@ impl Client {
     /// from the default environment variable defined in [`Network`].
     pub fn new_from_env(network: Network) -> Result<Self> {
         let api_key = match network {
-            // Extra aliases
-            Network::Fantom | Network::FantomTestnet => std::env::var("FMTSCAN_API_KEY")
-                .or_else(|_| std::env::var("FANTOMSCAN_API_KEY"))
-                .map_err(Into::into),
-
-            // Backwards compatibility, ideally these should return an error.
-            Network::XDai
-            | Network::Chiado
-            | Network::Sepolia
-            | Network::Rsk
-            | Network::Sokol
-            | Network::Poa
-            | Network::Oasis
-            | Network::Emerald
-            | Network::EmeraldTestnet
-            | Network::Evmos
-            | Network::EvmosTestnet => Ok(String::new()),
-            Network::AnvilHardhat | Network::Dev => Err(EtherscanError::LocalNetworksNotSupported),
-
             _ => network
                 .etherscan_api_key_name()
                 .ok_or_else(|| EtherscanError::NetworkNotSupported(network))
@@ -476,7 +457,7 @@ mod tests {
 
     #[test]
     fn test_api_paths() {
-        let client = Client::new(Network::Goerli, "").unwrap();
+        let client = Client::new(Network::Devin, "").unwrap();
         assert_eq!(client.etherscan_api_url.as_str(), "https://api-goerli.etherscan.io/api/");
 
         assert_eq!(client.block_url(100), "https://goerli.etherscan.io/block/100");
@@ -516,7 +497,7 @@ mod tests {
 
     #[test]
     fn local_networks_not_supported() {
-        let err = Client::new_from_env(Network::Dev).unwrap_err();
+        let err = Client::new_from_env(Network::Devin).unwrap_err();
         assert!(matches!(err, EtherscanError::LocalNetworksNotSupported));
     }
 }

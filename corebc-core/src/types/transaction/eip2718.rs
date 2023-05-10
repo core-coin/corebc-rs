@@ -20,7 +20,7 @@ use thiserror::Error;
 /// 2. EIP2930 (state access lists) [`Eip2930TransactionRequest`]
 /// 3. EIP1559 [`Eip1559TransactionRequest`]
 ///
-/// To support Kovan and other non-London-compatbile networks, please enable
+/// To support non-London-compatbile networks, please enable
 /// the `legacy` crate feature. This will disable the `type` flag in the
 /// serialized transaction, and cause contract calls and other common actions
 /// to default to using the legacy transaction type.

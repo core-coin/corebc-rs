@@ -35,7 +35,7 @@ async fn main() -> eyre::Result<()> {
     let key = ethers::core::utils::moonbeam::dev_keys()[0].clone();
 
     // 2. instantiate our wallet with network id
-    let wallet: LocalWallet = LocalWallet::from(key).with_network_id(Network::MoonbeamDev);
+    let wallet: LocalWallet = LocalWallet::from(key).with_network_id(Network::Devin);
 
     // 3. connect to the network
     let provider =

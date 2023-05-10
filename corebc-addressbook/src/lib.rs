@@ -47,6 +47,6 @@ mod tests {
     #[test]
     fn test_addrs() {
         assert!(contract("dai").unwrap().address(Network::Mainnet).is_some());
-        assert!(contract("dai").unwrap().address(Network::Devub).is_none());
+        assert!(contract("dai").unwrap().address(Network::Devin).is_none());
     }
 }

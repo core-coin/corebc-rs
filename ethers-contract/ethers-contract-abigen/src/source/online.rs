@@ -45,9 +45,6 @@ impl Explorer {
     pub fn from_network(network: Network) -> Result<Self> {
         match network {
             Network::Mainnet => Ok(Self::Etherscan),
-            Network::BinanceSmartChain => Ok(Self::Bscscan),
-            Network::Polygon => Ok(Self::Polygonscan),
-            Network::Avalanche => Ok(Self::Snowtrace),
             _ => Err(eyre::eyre!("Provided network has no known blockchain explorer")),
         }
     }
@@ -56,9 +53,9 @@ impl Explorer {
     pub const fn network(&self) -> Network {
         match self {
             Self::Etherscan => Network::Mainnet,
-            Self::Bscscan => Network::BinanceSmartChain,
-            Self::Polygonscan => Network::Polygon,
-            Self::Snowtrace => Network::Avalanche,
+            Self::Bscscan => Network::Devin,
+            Self::Polygonscan => Network::Devin,
+            Self::Snowtrace => Network::Devin,
         }
     }
 
@@ -182,9 +179,6 @@ mod tests {
 
         let explorers = &[
             ("mainnet:", "etherscan:", "https://etherscan.io/address/", Network::Mainnet),
-            ("bsc:", "bscscan:", "https://bscscan.com/address/", Network::BinanceSmartChain),
-            ("polygon:", "polygonscan:", "https://polygonscan.com/address/", Network::Polygon),
-            ("avalanche:", "snowtrace:", "https://snowtrace.io/address/", Network::Avalanche),
         ];
 
         let address: Address = "0x0102030405060708091011121314151617181920".parse().unwrap();

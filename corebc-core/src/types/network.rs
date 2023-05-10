@@ -164,9 +164,8 @@ impl Network {
     ///
     /// assert_eq!(
     ///     Network::Mainnet.average_blocktime_hint(),
-    ///     Some(Duration::from_millis(12_000)),
+    ///     Some(Duration::from_millis(7_000)),
     /// );
-    /// assert_eq!(Network::Optimism.average_blocktime_hint(), None);
     /// ```
     pub const fn average_blocktime_hint(&self) -> Option<Duration> {
         use Network::*;
@@ -186,7 +185,7 @@ impl Network {
     /// use corebc_core::types::Network;
     ///
     /// assert!(!Network::Mainnet.is_legacy());
-    /// assert!(Network::Celo.is_legacy());
+    /// assert!(!Network::Devin.is_legacy());
     /// ```
     pub const fn is_legacy(&self) -> bool {
         use Network::*;
@@ -211,10 +210,9 @@ impl Network {
     ///     Some(("https://api.etherscan.io/api", "https://etherscan.io"))
     /// );
     /// assert_eq!(
-    ///     Network::Avalanche.etherscan_urls(),
-    ///     Some(("https://api.snowtrace.io/api", "https://snowtrace.io"))
+    ///     Network::Devin.etherscan_urls(),
+    ///     Some(("https://api-rinkeby.etherscan.io/api", "https://rinkeby.etherscan.io"))
     /// );
-    /// assert_eq!(Network::AnvilHardhat.etherscan_urls(), None);
     /// ```
     pub const fn etherscan_urls(&self) -> Option<(&'static str, &'static str)> {
         use Network::*;
@@ -235,7 +233,6 @@ impl Network {
     /// use corebc_core::types::Network;
     ///
     /// assert_eq!(Network::Mainnet.etherscan_api_key_name(), Some("ETHERSCAN_API_KEY"));
-    /// assert_eq!(Network::AnvilHardhat.etherscan_api_key_name(), None);
     /// ```
     pub const fn etherscan_api_key_name(&self) -> Option<&'static str> {
         use Network::*;

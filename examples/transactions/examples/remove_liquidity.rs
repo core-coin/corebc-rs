@@ -29,7 +29,7 @@ abigen!(
 fn main() {}
 
 // Remove liquidity from uniswap V2.
-// This example will remove 500 liquidity of 2 test tokens, TA and TB on goerli testnet.
+// This example will remove 500 liquidity of 2 test tokens, TA and TB on devin testnet.
 // This example uses pair contract and uniswap swap contract to remove liquidity.
 #[allow(dead_code)]
 async fn example() -> Result<()> {

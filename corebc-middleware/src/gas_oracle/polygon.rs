@@ -51,7 +51,7 @@ impl Response {
 
 impl Default for Polygon {
     fn default() -> Self {
-        Self::new(Network::Polygon).unwrap()
+        Self::new(Network::Devin).unwrap()
     }
 }
 
@@ -83,8 +83,7 @@ impl Polygon {
     pub fn with_client(client: Client, network: Network) -> Result<Self> {
         // TODO: Sniff network from network id.
         let url = match network {
-            Network::Polygon => MAINNET_URL,
-            Network::PolygonMumbai => MUMBAI_URL,
+            Network::Devin => MAINNET_URL,
             _ => return Err(GasOracleError::UnsupportedNetwork),
         };
         Ok(Self { client, url: Url::parse(url).unwrap(), gas_category: GasCategory::Standard })

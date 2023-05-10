@@ -16,14 +16,14 @@ wasm_bindgen_test_configure!(run_in_browser);
 async fn http_connect_and_deploy() {
     console_log!("connecting http...");
     let provider = Provider::<Http>::try_from("http://localhost:8545").unwrap();
-    deploy(provider, utils::key(0).with_network_id(Network::AnvilHardhat)).await;
+    deploy(provider, utils::key(0).with_network_id(Network::Devin)).await;
 }
 
 #[wasm_bindgen_test]
 async fn ws_connect_and_deploy() {
     console_log!("connecting ws...");
     let provider = Provider::new(Ws::connect("ws://localhost:8545").await.unwrap());
-    deploy(provider, utils::key(1).with_network_id(Network::AnvilHardhat)).await;
+    deploy(provider, utils::key(1).with_network_id(Network::Devin)).await;
 }
 
 async fn deploy<T: JsonRpcClient>(provider: Provider<T>, wallet: LocalWallet) {

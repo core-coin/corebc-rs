@@ -9,7 +9,7 @@ const DAO_ABI: &str = include!("../../../testdata/the_dao_abi.expr");
 #[tokio::test]
 #[serial]
 async fn can_fetch_ftm_contract_abi() {
-    run_with_client(Network::Fantom, |client| async move {
+    run_with_client(Network::Devin, |client| async move {
         let _abi = client
             .contract_abi("0x80AA7cb0006d5DDD91cce684229Ac6e398864606".parse().unwrap())
             .await
