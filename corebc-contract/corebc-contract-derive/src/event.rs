@@ -6,7 +6,6 @@ use corebc_core::{
     abi::{Event, EventExt, EventParam, HumanReadableParser},
     macros::{corebc_contract_crate, corebc_core_crate},
 };
-use ethers_contract_abigen::Source;
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{spanned::Spanned, Data, DeriveInput, Error, Field, Fields, LitStr, Result, Token};
