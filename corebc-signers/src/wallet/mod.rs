@@ -130,8 +130,8 @@ impl<D: Sync + Send + PrehashSigner<(RecoverableSignature, RecoveryId)>> Signer 
 
 impl<D: PrehashSigner<(RecoverableSignature, RecoveryId)>> Wallet<D> {
     /// Synchronously signs the provided transaction, normalizing the signature `v` value with
-    /// EIP-155 using the transaction's `network_id`, or the signer's `network_id` if the transaction
-    /// does not specify one.
+    /// EIP-155 using the transaction's `network_id`, or the signer's `network_id` if the
+    /// transaction does not specify one.
     pub fn sign_transaction_sync(&self, tx: &TypedTransaction) -> Result<Signature, WalletError> {
         // rlp (for sighash) must have the same network id as v in the signature
         let network_id = tx.network_id().map(|id| id.as_u64()).unwrap_or(self.network_id);

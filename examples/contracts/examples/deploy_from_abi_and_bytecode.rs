@@ -28,7 +28,8 @@ async fn main() -> Result<()> {
         Provider::<Http>::try_from(anvil.endpoint())?.interval(Duration::from_millis(10u64));
 
     // 4. instantiate the client with the wallet
-    let client = Arc::new(SignerMiddleware::new(provider, wallet.with_network_id(anvil.network_id())));
+    let client =
+        Arc::new(SignerMiddleware::new(provider, wallet.with_network_id(anvil.network_id())));
 
     // 5. deploy contract
     let greeter_contract =

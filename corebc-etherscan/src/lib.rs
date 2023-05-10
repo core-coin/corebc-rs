@@ -199,9 +199,9 @@ impl Client {
             ResponseData::Error { result, message, status } => {
                 if let Some(ref result) = result {
                     if result.starts_with("Max rate limit reached") {
-                        return Err(EtherscanError::RateLimitExceeded);
+                        return Err(EtherscanError::RateLimitExceeded)
                     } else if result.to_lowercase() == "invalid api key" {
-                        return Err(EtherscanError::InvalidApiKey);
+                        return Err(EtherscanError::InvalidApiKey)
                     }
                 }
                 Err(EtherscanError::ErrorResponse { status, message, result })
@@ -388,10 +388,10 @@ impl Cache {
                 .checked_sub(Duration::from_secs(inner.expiry))
                 .is_some()
             {
-                return None;
+                return None
             }
 
-            return Some(inner.data);
+            return Some(inner.data)
         }
         None
     }

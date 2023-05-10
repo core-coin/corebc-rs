@@ -47,7 +47,8 @@ pub mod test_provider {
     // List of infura keys to rotate through so we don't get rate limited
     const INFURA_KEYS: &[&str] = &["15e8aaed6f894d63a0f6a0206c006cdd"];
 
-    pub static MAINNET: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "mainnet"));
+    pub static MAINNET: Lazy<TestProvider> =
+        Lazy::new(|| TestProvider::new(INFURA_KEYS, "mainnet"));
     pub static DEVIN: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "devin"));
 
     #[derive(Debug)]

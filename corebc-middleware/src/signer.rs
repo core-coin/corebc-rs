@@ -118,9 +118,9 @@ where
 {
     /// Creates a new client from the provider and signer.
     /// Sets the address of this middleware to the address of the signer.
-    /// The network_id of the signer will not be set to the network id of the provider. If the signer
-    /// passed here is initialized with a different network id, then the client may throw errors, or
-    /// methods like `sign_transaction` may error.
+    /// The network_id of the signer will not be set to the network id of the provider. If the
+    /// signer passed here is initialized with a different network id, then the client may throw
+    /// errors, or methods like `sign_transaction` may error.
     /// To automatically set the signer's network id, see `new_with_provider_network`.
     ///
     /// [`Middleware`] corebc_providers::Middleware
@@ -132,8 +132,8 @@ where
 
     /// Signs and returns the RLP encoding of the signed transaction.
     /// If the transaction does not have a network id set, it sets it to the signer's network id.
-    /// Returns an error if the transaction's existing network id does not match the signer's network
-    /// id.
+    /// Returns an error if the transaction's existing network id does not match the signer's
+    /// network id.
     async fn sign_transaction(
         &self,
         mut tx: TypedTransaction,
@@ -261,8 +261,8 @@ where
             tx.set_network_id(network_id);
         }
 
-        // If a network_id is matched to a known network that doesn't support EIP-1559, automatically
-        // change transaction to be Legacy type.
+        // If a network_id is matched to a known network that doesn't support EIP-1559,
+        // automatically change transaction to be Legacy type.
         if let Some(network_id) = tx.network_id() {
             let network = Network::try_from(network_id.as_u64());
             if network.unwrap_or_default().is_legacy() {
@@ -301,7 +301,7 @@ where
                 .inner
                 .send_transaction(tx, block)
                 .await
-                .map_err(SignerMiddlewareError::MiddlewareError);
+                .map_err(SignerMiddlewareError::MiddlewareError)
         }
 
         // if we have a nonce manager set, we should try handling the result in
@@ -389,7 +389,8 @@ mod tests {
         // Signer middlewares now rely on a working provider which it can query the network id from,
         // so we make sure Anvil is started with the network id that the expected tx was signed
         // with
-        let anvil = Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
+        let anvil =
+            Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
         let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
             .parse::<LocalWallet>()
@@ -433,7 +434,8 @@ mod tests {
         // Signer middlewares now rely on a working provider which it can query the network id from,
         // so we make sure Anvil is started with the network id that the expected tx was signed
         // with
-        let anvil = Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
+        let anvil =
+            Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
         let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
             .parse::<LocalWallet>()
@@ -558,7 +560,8 @@ mod tests {
         // Signer middlewares now rely on a working provider which it can query the network id from,
         // so we make sure Anvil is started with the network id that the expected tx was signed
         // with
-        let anvil = Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
+        let anvil =
+            Anvil::new().args(vec!["--network-id".to_string(), network_id.to_string()]).spawn();
         let provider = Provider::try_from(anvil.endpoint()).unwrap();
         let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
             .parse::<LocalWallet>()

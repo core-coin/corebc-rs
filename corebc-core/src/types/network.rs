@@ -302,10 +302,7 @@ mod tests {
         use Network::*;
 
         // kebab-case
-        const ALIASES: &[(Network, &[&str])] = &[
-            (Mainnet, &["ethlive"]),
-            (Devin, &["xablive"]),
-        ];
+        const ALIASES: &[(Network, &[&str])] = &[(Mainnet, &["ethlive"]), (Devin, &["xablive"])];
 
         for &(network, aliases) in ALIASES {
             for &alias in aliases {

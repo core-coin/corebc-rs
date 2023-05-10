@@ -74,7 +74,7 @@ impl Genesis {
         let clique_config = CliqueConfig { period: Some(0), epoch: Some(8) };
 
         let config = NetworkConfig {
-            network_id: network_id,
+            network_id,
             eip155_block: Some(0),
             eip150_block: Some(0),
             eip158_block: Some(0),
@@ -270,7 +270,7 @@ pub struct CliqueConfig {
 
 #[cfg(test)]
 mod tests {
-    use super::{NetworkConfig, Genesis, GenesisAccount, H256};
+    use super::{Genesis, GenesisAccount, NetworkConfig, H256};
     use crate::{
         types::{Address, Bytes, H176, U256},
         utils::EthashConfig,

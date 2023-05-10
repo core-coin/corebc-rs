@@ -99,10 +99,10 @@
 // blockchain. /// It stores an instance of the [`Multicall` smart contract](https://etherscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11#code)
 // /// and the user provided list of transactions to be called or executed on network.
 // ///
-// /// `Multicall` can be instantiated asynchronously from the network ID of the provided client using
-// /// [`new`] or synchronously by providing a network ID in [`new_with_network`]. This, by default,
-// uses /// [`constants::MULTICALL_ADDRESS`], but can be overridden by providing `Some(address)`.
-// /// A list of all the supported networks is available [`here`](https://github.com/mds1/multicall#multicall3-contract-addresses).
+// /// `Multicall` can be instantiated asynchronously from the network ID of the provided client
+// using /// [`new`] or synchronously by providing a network ID in [`new_with_network`]. This, by
+// default, uses /// [`constants::MULTICALL_ADDRESS`], but can be overridden by providing
+// `Some(address)`. /// A list of all the supported networks is available [`here`](https://github.com/mds1/multicall#multicall3-contract-addresses).
 // ///
 // /// Set the contract's version by using [`version`].
 // ///
@@ -324,8 +324,8 @@
 //                 constants::MULTICALL_ADDRESS
 //             }
 //             _ => {
-//                 // Can't fetch network_id from provider since we're not in an async function so we
-//                 // panic instead.
+//                 // Can't fetch network_id from provider since we're not in an async function so
+// we                 // panic instead.
 //                 panic!("Must provide at least one of: address or network ID.")
 //             }
 //         };

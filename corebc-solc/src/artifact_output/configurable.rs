@@ -584,8 +584,8 @@ impl ExtraOutputFiles {
                     EvmOutputSelection::ByteCode(BytecodeOutputSelection::SourceMap) => {
                         config.source_map = true;
                     }
-                    EvmOutputSelection::DeployedByteCode(DeployedBytecodeOutputSelection::All)
-                    | EvmOutputSelection::DeployedByteCode(
+                    EvmOutputSelection::DeployedByteCode(DeployedBytecodeOutputSelection::All) |
+                    EvmOutputSelection::DeployedByteCode(
                         DeployedBytecodeOutputSelection::Object,
                     ) => {
                         config.deployed_bytecode = true;

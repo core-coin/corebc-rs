@@ -36,9 +36,10 @@ where
     init_tracing();
     let (client, duration) = match Client::new_from_env(network) {
         Ok(c) => (c, rate_limit(network, true)),
-        Err(_) => {
-            (Client::builder().network(network).unwrap().build().unwrap(), rate_limit(network, false))
-        }
+        Err(_) => (
+            Client::builder().network(network).unwrap().build().unwrap(),
+            rate_limit(network, false),
+        ),
     };
     run_at_least_duration(duration, f(client)).await
 }

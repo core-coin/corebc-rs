@@ -79,7 +79,8 @@ async fn deploy_token_contract(
 
     let provider =
         Provider::<Http>::try_from(anvil.endpoint())?.interval(Duration::from_millis(10u64));
-    let client = SignerMiddleware::new(provider, deployer_wallet.with_network_id(anvil.network_id()));
+    let client =
+        SignerMiddleware::new(provider, deployer_wallet.with_network_id(anvil.network_id()));
     let client = Arc::new(client);
     let factory = ContractFactory::new(abi, bytecode, client.clone());
     let contract = factory.deploy(())?.send().await?;

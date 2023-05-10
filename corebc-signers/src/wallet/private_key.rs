@@ -316,8 +316,8 @@ mod tests {
             "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318".parse().unwrap();
         let wallet = wallet.with_network_id(network_id);
 
-        // this should populate the tx network_id as the signer's network_id (1337) before signing and
-        // normalize the v
+        // this should populate the tx network_id as the signer's network_id (1337) before signing
+        // and normalize the v
         let sig = wallet.sign_transaction_sync(&tx).unwrap();
 
         // ensure correct v given the network - first extract recid

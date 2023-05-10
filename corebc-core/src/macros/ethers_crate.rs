@@ -130,12 +130,12 @@ impl ProjectEnvironment {
     /// [ref]: https://doc.rust-lang.org/cargo/reference/environment-variables.html#environment-variables-cargo-sets-for-crates
     #[inline]
     pub fn is_crate_root(&self) -> bool {
-        env::var_os("CARGO_TARGET_TMPDIR").is_none()
-            && self.manifest_dir.components().all(|c| {
+        env::var_os("CARGO_TARGET_TMPDIR").is_none() &&
+            self.manifest_dir.components().all(|c| {
                 let s = c.as_os_str();
                 s != "examples" && s != "benches"
-            })
-            && !self.is_crate_name_in_dirs()
+            }) &&
+            !self.is_crate_name_in_dirs()
     }
 
     /// Returns whether `crate_name` is the name of a file or directory in the first level of
@@ -328,7 +328,7 @@ impl CorebcCrate {
 fn file_stem_eq<T: AsRef<Path>, U: AsRef<str>>(path: T, s: U) -> bool {
     if let Some(stem) = path.as_ref().file_stem() {
         if let Some(stem) = stem.to_str() {
-            return stem == s.as_ref();
+            return stem == s.as_ref()
         }
     }
     false

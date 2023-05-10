@@ -24,11 +24,11 @@ use corebc_core::{
     abi::{self, Detokenize, ParamType},
     types::{
         transaction::{eip2718::TypedTransaction, eip2930::AccessListWithGasUsed},
-        Address, Block, BlockId, BlockNumber, BlockTrace, Bytes, Network, EIP1186ProofResponse,
-        FeeHistory, Filter, FilterBlockOption, GethDebugTracingCallOptions,
-        GethDebugTracingOptions, GethTrace, Log, NameOrAddress, Selector, Signature, Trace,
-        TraceFilter, TraceType, Transaction, TransactionReceipt, TransactionRequest, TxHash,
-        TxpoolContent, TxpoolInspect, TxpoolStatus, H256, U256, U64,
+        Address, Block, BlockId, BlockNumber, BlockTrace, Bytes, EIP1186ProofResponse, FeeHistory,
+        Filter, FilterBlockOption, GethDebugTracingCallOptions, GethDebugTracingOptions, GethTrace,
+        Log, NameOrAddress, Network, Selector, Signature, Trace, TraceFilter, TraceType,
+        Transaction, TransactionReceipt, TransactionRequest, TxHash, TxpoolContent, TxpoolInspect,
+        TxpoolStatus, H256, U256, U64,
     },
     utils,
 };
@@ -1389,8 +1389,8 @@ pub trait ProviderExt: sealed::Sealed {
 
     /// Customize `Provider` settings for network.
     ///
-    /// E.g. [`Network::average_blocktime_hint()`] returns the average block time which can be used to
-    /// tune the polling interval.
+    /// E.g. [`Network::average_blocktime_hint()`] returns the average block time which can be used
+    /// to tune the polling interval.
     ///
     /// Returns the customized `Provider`
     fn for_network(mut self, network: impl Into<Network>) -> Self

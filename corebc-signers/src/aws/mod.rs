@@ -239,7 +239,8 @@ impl super::Signer for AwsSigner {
     #[instrument(err)]
     async fn sign_transaction(&self, tx: &TypedTransaction) -> Result<EthSig, Self::Error> {
         let mut tx_with_network = tx.clone();
-        let network_id = tx_with_network.network_id().map(|id| id.as_u64()).unwrap_or(self.network_id);
+        let network_id =
+            tx_with_network.network_id().map(|id| id.as_u64()).unwrap_or(self.network_id);
         tx_with_network.set_network_id(network_id);
 
         let sighash = tx_with_network.sighash();

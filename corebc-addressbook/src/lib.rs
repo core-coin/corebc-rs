@@ -13,7 +13,8 @@ const CONTRACTS_JSON: &str = include_str!("./contracts/contracts.json");
 static ADDRESSBOOK: Lazy<HashMap<String, Contract>> =
     Lazy::new(|| serde_json::from_str(CONTRACTS_JSON).unwrap());
 
-/// Wrapper around a hash map that maps a [Network] to the contract's deployed address on that network.
+/// Wrapper around a hash map that maps a [Network] to the contract's deployed address on that
+/// network.
 #[derive(Clone, Debug, Deserialize)]
 pub struct Contract {
     addresses: HashMap<Network, Address>,
