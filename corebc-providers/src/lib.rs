@@ -49,7 +49,7 @@ pub mod test_provider {
 
     pub static MAINNET: Lazy<TestProvider> =
         Lazy::new(|| TestProvider::new(INFURA_KEYS, "mainnet"));
-    pub static DEVIN: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "devin"));
+    pub static DEVIN: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "goerli"));
 
     #[derive(Debug)]
     pub struct TestProvider {

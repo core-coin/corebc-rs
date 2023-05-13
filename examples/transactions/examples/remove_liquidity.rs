@@ -36,7 +36,7 @@ async fn example() -> Result<()> {
     let provider = Arc::new({
         // connect to the network
         let provider = Provider::<Http>::try_from(
-            "https://rinkeby.infura.io/v3/a111fcada47746d990e0e2b7df50d00a",
+            "https://goerli.infura.io/v3/a111fcada47746d990e0e2b7df50d00a",
         )?;
         let network_id = provider.get_networkid().await?;
 

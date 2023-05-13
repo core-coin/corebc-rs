@@ -1,17 +1,12 @@
-use corebc_core::{
-    rand::thread_rng,
-    types::TransactionRequest,
-    utils::{Anvil, NetworkType},
-};
+use corebc_core::{rand::thread_rng, utils::NetworkType};
 use corebc_middleware::{
     gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
     gas_oracle::{GasCategory, GasNow, GasOracleMiddleware},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
-use corebc_providers::{Http, Middleware, Provider};
+use corebc_providers::{Middleware, Provider};
 use corebc_signers::{LocalWallet, Signer};
-use std::convert::TryFrom;
 
 #[tokio::test]
 async fn mock_with_middleware() {

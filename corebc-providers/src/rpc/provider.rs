@@ -475,7 +475,7 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
     }
 
     async fn get_networkid(&self) -> Result<U256, ProviderError> {
-        self.request("eth_networkId", ()).await
+        self.request("eth_chainId", ()).await
     }
 
     async fn syncing(&self) -> Result<SyncingStatus, Self::Error> {
@@ -1366,7 +1366,7 @@ mod sealed {
 /// use std::convert::TryFrom;
 /// use corebc_core::types::Network;
 /// use corebc_providers::{Http, Provider, ProviderExt};
-/// let http_provider = Provider::<Http>::try_from("https://eth.llamarpc.com").unwrap().set_chain(Network::Mainnet);
+/// let http_provider = Provider::<Http>::try_from("https://eth.llamarpc.com").unwrap().set_network(Network::Mainnet);
 /// ```
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]

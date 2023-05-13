@@ -5,8 +5,8 @@ use corebc_core::{
 };
 use corebc_etherscan::Client;
 use corebc_middleware::gas_oracle::{
-    BlockNative, Etherchain, Etherscan, GasCategory, GasNow, GasOracle, GasOracleError,
-    GasOracleMiddleware, Polygon, ProviderOracle, Result,
+    BlockNative, Etherchain, Etherscan, GasCategory, GasNow, GasOracle, GasOracleError, Polygon,
+    ProviderOracle, Result,
 };
 use corebc_providers::{Http, Middleware, Provider};
 

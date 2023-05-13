@@ -55,7 +55,7 @@ impl Client {
     /// ```rust
     /// use corebc_core::types::Network;
     /// use corebc_etherscan::Client;
-    /// let client = Client::builder().with_api_key("<API KEY>").chain(Network::Mainnet).unwrap().build().unwrap();
+    /// let client = Client::builder().with_api_key("<API KEY>").network(Network::Mainnet).unwrap().build().unwrap();
     /// ```
     pub fn builder() -> ClientBuilder {
         ClientBuilder::default()
@@ -81,12 +81,10 @@ impl Client {
     /// Create a new client with the correct endpoints based on the network and API key
     /// from the default environment variable defined in [`Network`].
     pub fn new_from_env(network: Network) -> Result<Self> {
-        let api_key = match network {
-            _ => network
+        let api_key = network
                 .etherscan_api_key_name()
                 .ok_or_else(|| EtherscanError::NetworkNotSupported(network))
-                .and_then(|key_name| std::env::var(key_name).map_err(Into::into)),
-        }?;
+                .and_then(|key_name| std::env::var(key_name).map_err(Into::into))?;
         Self::new(network, api_key)
     }
 
@@ -493,11 +491,5 @@ mod tests {
         let token_hash = Address::zero();
         let token_url: String = etherscan.token_url(token_hash);
         assert_eq!(token_url, format!("https://etherscan.io/token/{token_hash:?}"));
-    }
-
-    #[test]
-    fn local_networks_not_supported() {
-        let err = Client::new_from_env(Network::Devin).unwrap_err();
-        assert!(matches!(err, EtherscanError::LocalNetworksNotSupported));
     }
 }

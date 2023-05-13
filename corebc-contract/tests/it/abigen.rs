@@ -3,10 +3,7 @@
 use corebc_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
 use corebc_core::{
     abi::{AbiDecode, AbiEncode, Address, Tokenizable},
-    types::{
-        transaction::eip2718::TypedTransaction, Bytes, Eip1559TransactionRequest, Selector, U256,
-    },
-    utils::Anvil,
+    types::{Bytes, U256},
 };
 use corebc_providers::{MockProvider, Provider};
 use std::{fmt::Debug, hash::Hash, sync::Arc};

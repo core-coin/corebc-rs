@@ -6,7 +6,6 @@ use serde::Deserialize;
 use url::Url;
 
 const MAINNET_URL: &str = "https://gasstation-mainnet.matic.network/v2";
-const MUMBAI_URL: &str = "https://gasstation-mumbai.matic.today/v2";
 
 /// The [Polygon](https://docs.polygon.technology/docs/develop/tools/polygon-gas-station/) gas station API
 /// Queries over HTTP and implements the `GasOracle` trait.

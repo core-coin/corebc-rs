@@ -297,7 +297,6 @@ mod tests {
     use corebc_core::types::{
         transaction::eip712::Eip712, Address, TransactionRequest, I256, U256,
     };
-    use ethers_contract_derive::{Eip712, EthAbiType};
     use std::str::FromStr;
 
     #[derive(Debug, Clone)]

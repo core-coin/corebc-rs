@@ -5,9 +5,6 @@ use corebc_core::{
     abi::{AbiDecode, AbiEncode, RawLog, Tokenizable},
     types::{Address, Bytes, H176, H256, I256, U128, U256},
 };
-use ethers_contract::{
-    abigen, EthAbiCodec, EthAbiType, EthCall, EthDisplay, EthError, EthEvent, EthLogDecode,
-};
 
 fn assert_tokenizeable<T: Tokenizable>() {}
 fn assert_ethcall<T: EthCall>() {}

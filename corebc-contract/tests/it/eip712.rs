@@ -9,7 +9,6 @@ use corebc_core::{
     },
     utils::{parse_ether, sha3},
 };
-use ethers_contract_derive::{Eip712, EthAbiType};
 
 #[test]
 fn derive_eip712() {
@@ -159,7 +158,7 @@ fn uniswap_v2_permit_hash() {
 
     assert_eq!(
         hex::encode(permit_hash),
-        "cd9ef4697fb288831ac7d3b1972dea1cfa472694b88d6d2c2b047e7871c9675c"
+        "b9275172f7e4d27aa835c9325fd58ac609ed6d2802054c2778279d21c134809a"
     );
 }
 
@@ -167,7 +166,9 @@ fn uniswap_v2_permit_hash() {
 fn domain_hash_constants() {
     assert_eq!(
         EIP712_DOMAIN_TYPE_HASH,
-        sha3("EIP712Domain(string name,string version,uint256 networkId,address verifyingContract)")
+        sha3(
+            "EIP712Domain(string name,string version,uint256 networkId,address verifyingContract)"
+        )
     );
     assert_eq!(
         EIP712_DOMAIN_TYPE_HASH_WITH_SALT,

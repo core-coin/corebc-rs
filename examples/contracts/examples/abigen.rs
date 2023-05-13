@@ -64,7 +64,7 @@ async fn rust_inline_generation() -> Result<()> {
     );
 
     const RPC_URL: &str = "https://eth.llamarpc.com";
-    const WETH_ADDRESS: &str = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+    const WETH_ADDRESS: &str = "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
 
     let provider = Provider::<Http>::try_from(RPC_URL)?;
     let client = Arc::new(provider);

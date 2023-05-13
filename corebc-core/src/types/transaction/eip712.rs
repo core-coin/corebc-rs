@@ -19,8 +19,8 @@ pub type Types = BTreeMap<String, Vec<Eip712DomainType>>;
 /// `sha3("EIP712Domain(string name,string version,uint256 networkId,address
 /// verifyingContract)")`
 pub const EIP712_DOMAIN_TYPE_HASH: [u8; 32] = [
-    221, 212, 199, 103, 71, 88, 229, 212, 194, 61, 65, 197, 92, 71, 247, 231, 33, 99, 10, 181, 35,
-    31, 97, 243, 252, 65, 70, 169, 154, 72, 128, 254,
+    173, 152, 130, 199, 155, 92, 66, 128, 155, 120, 160, 131, 57, 68, 58, 214, 51, 166, 212, 202,
+    3, 214, 35, 133, 205, 152, 92, 134, 0, 148, 169, 250,
 ];
 
 /// Pre-computed value of the following expression:
@@ -28,8 +28,8 @@ pub const EIP712_DOMAIN_TYPE_HASH: [u8; 32] = [
 /// `sha3("EIP712Domain(string name,string version,uint256 networkId,address
 /// verifyingContract,bytes32 salt)")`
 pub const EIP712_DOMAIN_TYPE_HASH_WITH_SALT: [u8; 32] = [
-    203, 254, 180, 213, 72, 62, 132, 171, 170, 167, 119, 174, 104, 109, 239, 180, 63, 131, 250,
-    145, 191, 152, 18, 119, 31, 53, 74, 78, 49, 120, 123, 59,
+    55, 43, 197, 127, 183, 123, 53, 155, 202, 118, 174, 162, 75, 68, 251, 117, 97, 40, 173, 101,
+    21, 177, 9, 50, 129, 57, 165, 121, 182, 153, 218, 199,
 ];
 
 /// An EIP-712 error.

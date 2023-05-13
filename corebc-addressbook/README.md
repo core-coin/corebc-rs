@@ -11,5 +11,5 @@ use corebc_addressbook::{contract, Network};
 
 let weth = contract("weth").unwrap();
 let mainnet_address = weth.address(Network::Mainnet).unwrap();
-assert_eq!(mainnet_address, "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".parse().unwrap());
+assert_eq!(mainnet_address, "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48".parse().unwrap());
 ```

@@ -211,7 +211,7 @@ impl Network {
     /// );
     /// assert_eq!(
     ///     Network::Devin.etherscan_urls(),
-    ///     Some(("https://api-rinkeby.etherscan.io/api", "https://rinkeby.etherscan.io"))
+    ///     Some(("https://api-goerli.etherscan.io/api", "https://goerli.etherscan.io"))
     /// );
     /// ```
     pub const fn etherscan_urls(&self) -> Option<(&'static str, &'static str)> {
@@ -219,7 +219,7 @@ impl Network {
 
         let urls = match self {
             Mainnet => ("https://api.etherscan.io/api", "https://etherscan.io"),
-            Devin => ("https://api-rinkeby.etherscan.io/api", "https://rinkeby.etherscan.io"),
+            Devin => ("https://api-goerli.etherscan.io/api", "https://goerli.etherscan.io"),
         };
 
         Some(urls)
@@ -298,11 +298,12 @@ mod tests {
     }
 
     #[test]
+    // CORETODO: Needs anvil
     fn aliases() {
         use Network::*;
 
         // kebab-case
-        const ALIASES: &[(Network, &[&str])] = &[(Mainnet, &["ethlive"]), (Devin, &["xablive"])];
+        const ALIASES: &[(Network, &[&str])] = &[(Mainnet, &["xcblive"]), (Devin, &["xablive"])];
 
         for &(network, aliases) in ALIASES {
             for &alias in aliases {

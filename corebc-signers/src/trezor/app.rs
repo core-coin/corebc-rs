@@ -248,7 +248,6 @@ mod tests {
         },
         Address, Eip1559TransactionRequest, TransactionRequest, I256, U256,
     };
-    use ethers_contract_derive::{Eip712, EthAbiType};
     use std::str::FromStr;
 
     #[derive(Debug, Clone)]

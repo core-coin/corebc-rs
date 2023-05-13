@@ -313,7 +313,7 @@ impl Client {
     ///
     /// ```no_run
     /// # async fn foo(client: corebc_etherscan::Client) -> Result<(), Box<dyn std::error::Error>> {
-    /// let address = "0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse()?;
+    /// let address = "0x0000BB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse()?;
     /// let abi = client.contract_abi(address).await?;
     /// # Ok(()) }
     /// ```
@@ -356,7 +356,7 @@ impl Client {
     ///
     /// ```no_run
     /// # async fn foo(client: corebc_etherscan::Client) -> Result<(), Box<dyn std::error::Error>> {
-    /// let address = "0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse()?;
+    /// let address = "0x0000BB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse()?;
     /// let metadata = client.contract_source_code(address).await?;
     /// assert_eq!(metadata.items[0].contract_name, "DAO");
     /// # Ok(()) }
