@@ -216,7 +216,7 @@ impl Network {
     /// ```
     pub const fn etherscan_urls(&self) -> Option<(&'static str, &'static str)> {
         use Network::*;
-
+        //CORETODO change to core coin blockchain explorers
         let urls = match self {
             Mainnet => ("https://api.etherscan.io/api", "https://etherscan.io"),
             Devin => ("https://api-goerli.etherscan.io/api", "https://goerli.etherscan.io"),

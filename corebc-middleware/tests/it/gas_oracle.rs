@@ -5,7 +5,7 @@ use corebc_core::{
 };
 use corebc_etherscan::Client;
 use corebc_middleware::gas_oracle::{
-    BlockNative, Etherchain, Etherscan, GasCategory, GasNow, GasOracle, GasOracleError, Polygon,
+    BlockNative, Etherchain, Etherscan, GasCategory, GasNow, GasOracle, GasOracleError,
     ProviderOracle, Result,
 };
 use corebc_providers::{Http, Middleware, Provider};
@@ -114,12 +114,5 @@ async fn etherscan() {
 async fn gas_now() {
     let gas_now_oracle = GasNow::default();
     let gas_price = gas_now_oracle.fetch().await.unwrap();
-    assert!(gas_price > U256::zero());
-}
-
-#[tokio::test]
-async fn polygon() {
-    let polygon_oracle = Polygon::default();
-    let gas_price = polygon_oracle.fetch().await.unwrap();
     assert!(gas_price > U256::zero());
 }

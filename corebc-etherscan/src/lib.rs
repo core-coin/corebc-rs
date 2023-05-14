@@ -82,9 +82,9 @@ impl Client {
     /// from the default environment variable defined in [`Network`].
     pub fn new_from_env(network: Network) -> Result<Self> {
         let api_key = network
-                .etherscan_api_key_name()
-                .ok_or_else(|| EtherscanError::NetworkNotSupported(network))
-                .and_then(|key_name| std::env::var(key_name).map_err(Into::into))?;
+            .etherscan_api_key_name()
+            .ok_or_else(|| EtherscanError::NetworkNotSupported(network))
+            .and_then(|key_name| std::env::var(key_name).map_err(Into::into))?;
         Self::new(network, api_key)
     }
 

@@ -20,9 +20,6 @@ pub use median::Median;
 pub mod cache;
 pub use cache::Cache;
 
-pub mod polygon;
-pub use polygon::Polygon;
-
 pub mod gas_now;
 pub use gas_now::GasNow;
 

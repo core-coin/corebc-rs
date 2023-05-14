@@ -8,6 +8,7 @@ use url::Url;
 
 /// An [etherscan](https://etherscan.io)-like blockchain explorer.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+//CORETODO remove unused variants
 pub enum Explorer {
     /// <https://etherscan.io>
     #[default]
@@ -177,6 +178,7 @@ mod tests {
             Source::npm("@openzeppelin/contracts@2.5.0/build/contracts/IERC20.json")
         );
 
+        // CORETODO add devin blockchain explorer
         let explorers =
             &[("mainnet:", "etherscan:", "https://etherscan.io/address/", Network::Mainnet)];
 

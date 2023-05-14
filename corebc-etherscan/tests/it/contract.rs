@@ -39,7 +39,7 @@ const DAO_ABI: &str = include!("../../../testdata/the_dao_abi.expr");
 // async fn can_fetch_contract_source_code() {
 //     run_with_client(Network::Mainnet, |client| async move {
 //         let meta = client
-//             
+//
 // .contract_source_code("0x0000BB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse().unwrap())
 //             .await
 //             .unwrap();
@@ -73,7 +73,7 @@ const DAO_ABI: &str = include!("../../../testdata/the_dao_abi.expr");
 // async fn can_fetch_contract_source_tree_for_singleton_contract() {
 //     run_with_client(Network::Mainnet, |client| async move {
 //         let meta = client
-//             
+//
 // .contract_source_code("0x0000BB9bc244D798123fDe783fCc1C72d3Bb8C189413".parse().unwrap())
 //             .await
 //             .unwrap();
@@ -94,7 +94,7 @@ const DAO_ABI: &str = include!("../../../testdata/the_dao_abi.expr");
 // async fn can_fetch_contract_source_tree_for_multi_entry_contract() {
 //     run_with_client(Network::Mainnet, |client| async move {
 //         let meta = client
-//             
+//
 // .contract_source_code("0x00008d04a8c79cEB0889Bdd12acdF3Fa9D207eD3Ff63".parse().unwrap())
 //             .await
 //             .unwrap();
