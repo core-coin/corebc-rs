@@ -44,7 +44,7 @@ impl AnvilInstance {
     }
 
     /// Returns the network of the anvil instance
-    // Should be a local node instead of Devin
+    //  CORETODO: Should be a local node instead of Devin
     pub fn network_id(&self) -> u64 {
         self.network_id.unwrap_or_else(|| Network::Devin.into())
     }
