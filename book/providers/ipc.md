@@ -9,7 +9,7 @@ Using the IPC transport allows the ethers library to send JSON-RPC requests to t
 Below is an example of how to initialize a new Ipc provider.
 
 ```rust
-use ethers::providers::Provider;
+use corebc::providers::Provider;
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {

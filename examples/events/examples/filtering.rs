@@ -1,15 +1,15 @@
 use ethers::{
-    core::types::{Address, Filter, H160, H256, U256},
+    core::types::{Address, Filter, H176, H256, U256},
     providers::{Http, Middleware, Provider},
 };
 use eyre::Result;
 use std::sync::Arc;
 
 const HTTP_URL: &str = "https://rpc.flashbots.net";
-const V3FACTORY_ADDRESS: &str = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
-const DAI_ADDRESS: &str = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
-const USDC_ADDRESS: &str = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-const USDT_ADDRESS: &str = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+const V3FACTORY_ADDRESS: &str = "0x00001F98431c8aD98523631AE4a59f267346ea31F984";
+const DAI_ADDRESS: &str = "0x00006B175474E89094C44Da98b954EedeAC495271d0F";
+const USDC_ADDRESS: &str = "0x0000A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+const USDT_ADDRESS: &str = "0x0000dAC17F958D2ee523a2206206994597C13D831ec7";
 
 /// This example demonstrates filtering and parsing event logs by fetching all Uniswap V3 pools
 /// where both tokens are in the set [USDC, USDT, DAI].
@@ -20,9 +20,9 @@ async fn main() -> Result<()> {
     let provider = Provider::<Http>::try_from(HTTP_URL)?;
     let client = Arc::new(provider);
     let token_topics = vec![
-        H256::from(USDC_ADDRESS.parse::<H160>()?),
-        H256::from(USDT_ADDRESS.parse::<H160>()?),
-        H256::from(DAI_ADDRESS.parse::<H160>()?),
+        H256::from(USDC_ADDRESS.parse::<H176>()?),
+        H256::from(USDT_ADDRESS.parse::<H176>()?),
+        H256::from(DAI_ADDRESS.parse::<H176>()?),
     ];
     let filter = Filter::new()
         .address(V3FACTORY_ADDRESS.parse::<Address>()?)

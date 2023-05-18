@@ -16,20 +16,20 @@ pub type Types = BTreeMap<String, Vec<Eip712DomainType>>;
 
 /// Pre-computed value of the following expression:
 ///
-/// `keccak256("EIP712Domain(string name,string version,uint256 chainId,address
+/// `sha3("EIP712Domain(string name,string version,uint256 networkId,address
 /// verifyingContract)")`
 pub const EIP712_DOMAIN_TYPE_HASH: [u8; 32] = [
-    139, 115, 195, 198, 155, 184, 254, 61, 81, 46, 204, 76, 247, 89, 204, 121, 35, 159, 123, 23,
-    155, 15, 250, 202, 169, 167, 93, 82, 43, 57, 64, 15,
+    173, 152, 130, 199, 155, 92, 66, 128, 155, 120, 160, 131, 57, 68, 58, 214, 51, 166, 212, 202,
+    3, 214, 35, 133, 205, 152, 92, 134, 0, 148, 169, 250,
 ];
 
 /// Pre-computed value of the following expression:
 ///
-/// `keccak256("EIP712Domain(string name,string version,uint256 chainId,address
+/// `sha3("EIP712Domain(string name,string version,uint256 networkId,address
 /// verifyingContract,bytes32 salt)")`
 pub const EIP712_DOMAIN_TYPE_HASH_WITH_SALT: [u8; 32] = [
-    216, 124, 214, 239, 121, 212, 226, 185, 94, 21, 206, 138, 191, 115, 45, 181, 30, 199, 113, 241,
-    202, 46, 220, 207, 34, 164, 108, 114, 154, 197, 100, 114,
+    55, 43, 197, 127, 183, 123, 53, 155, 202, 118, 174, 162, 75, 68, 251, 117, 97, 40, 173, 101,
+    21, 177, 9, 50, 129, 57, 165, 121, 182, 153, 218, 199,
 ];
 
 /// An EIP-712 error.
@@ -72,7 +72,7 @@ pub trait Eip712 {
     /// Returns the current domain. The domain depends on the contract and unique domain
     /// for which the user is targeting. In the derive macro, these attributes
     /// are passed in as arguments to the macro. When manually deriving, the user
-    /// will need to know the name of the domain, version of the contract, chain ID of
+    /// will need to know the name of the domain, version of the contract, network ID of
     /// where the contract lives and the address of the verifying contract.
     fn domain(&self) -> Result<EIP712Domain, Self::Error>;
 
@@ -117,14 +117,14 @@ pub struct EIP712Domain {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub version: Option<String>,
 
-    /// The EIP-155 chain id. The user-agent should refuse signing if it does not match the
-    /// currently active chain.
+    /// The EIP-155 network id. The user-agent should refuse signing if it does not match the
+    /// currently active network.
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
         deserialize_with = "crate::types::serde_helpers::deserialize_stringified_numeric_opt"
     )]
-    pub chain_id: Option<U256>,
+    pub network_id: Option<U256>,
 
     /// The address of the contract that will verify the signature.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -140,7 +140,7 @@ impl EIP712Domain {
     // Compute the domain separator;
     // See: https://github.com/gakonst/ethers-rs/blob/master/examples/permit_hash.rs#L41
     pub fn separator(&self) -> [u8; 32] {
-        // full name is `EIP712Domain(string name,string version,uint256 chainId,address
+        // full name is `EIP712Domain(string name,string version,uint256 networkId,address
         // verifyingContract,bytes32 salt)`
         let mut ty = "EIP712Domain(".to_string();
 
@@ -161,12 +161,12 @@ impl EIP712Domain {
             needs_comma = true;
         }
 
-        if let Some(chain_id) = self.chain_id {
+        if let Some(network_id) = self.network_id {
             if needs_comma {
                 ty.push(',');
             }
-            ty += "uint256 chainId";
-            tokens.push(Token::Uint(chain_id));
+            ty += "uint256 networkId";
+            tokens.push(Token::Uint(network_id));
             needs_comma = true;
         }
 
@@ -633,7 +633,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //                 "type": "string"
 //               },
 //               {
-//                 "name": "chainId",
+//                 "name": "networkId",
 //                 "type": "uint256"
 //               },
 //               {
@@ -650,7 +650,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //           "domain": {
 //             "name": "example.metamask.io",
 //             "version": "1",
-//             "chainId": 1,
+//             "networkId": 1,
 //             "verifyingContract": "0x0000000000000000000000000000000000000000"
 //           },
 //           "message": {}
@@ -712,7 +712,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //                 "type": "string"
 //               },
 //               {
-//                 "name": "chainId",
+//                 "name": "networkId",
 //                 "type": "uint256"
 //               },
 //               {
@@ -731,7 +731,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //           "domain": {
 //             "name": "example.metamask.io",
 //             "version": "1",
-//             "chainId": "1",
+//             "networkId": "1",
 //             "verifyingContract": "0x0000000000000000000000000000000000000000"
 //           },
 //           "message": {
@@ -849,7 +849,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //                 "type": "string"
 //               },
 //               {
-//                 "name": "chainId",
+//                 "name": "networkId",
 //                 "type": "uint256"
 //               },
 //               {
@@ -928,7 +928,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //           "domain": {
 //             "name": "Seaport",
 //             "version": "1.1",
-//             "chainId": "1",
+//             "networkId": "1",
 //             "verifyingContract": "0x00000000006c3852cbEf3e08E8dF289169EdE581"
 //           },
 //           "message": {

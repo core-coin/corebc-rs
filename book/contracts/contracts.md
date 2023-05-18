@@ -2,7 +2,7 @@
 
 In ethers-rs, contracts are a way to interact with smart contracts on the Ethereum blockchain through rust bindings, which serve as a robust rust API to these objects.
 
-The ethers-contracts module includes the following features:
+The corebc-contracts module includes the following features:
 
 - [Abigen](): A module for generating Rust code from Solidity contracts.
 - [Compile](): A module for compiling Solidity contracts into bytecode and ABI files.
@@ -14,7 +14,7 @@ The ethers-contracts module includes the following features:
 - [Events with Meta](): A module for listening to smart contract events with metadata.
 - [Methods](): A module for calling smart contract methods.
 
-The ethers-contracts module provides a convenient way to work with Ethereum smart contracts in Rust. With this module, you can easily create instances of smart contracts, deploy them to the network, and interact with their methods and events.
+The corebc-contracts module provides a convenient way to work with Ethereum smart contracts in Rust. With this module, you can easily create instances of smart contracts, deploy them to the network, and interact with their methods and events.
 
 The Abigen module allows you to generate Rust code from Solidity contracts, which can save you a lot of time and effort when writing Rust code for Ethereum smart contracts.
 
@@ -26,4 +26,4 @@ The Events and Events with Meta modules allow you to listen to smart contract ev
 
 Finally, the Methods module provides a simple way to call smart contract methods from Rust code, allowing you to interact with smart contracts in a programmatic way.
 
-Overall, the ethers-contracts module provides a comprehensive set of tools for working with Ethereum smart contracts in Rust, making it an essential tool for Rust developers building decentralized applications on the Ethereum network.
+Overall, the corebc-contracts module provides a comprehensive set of tools for working with Ethereum smart contracts in Rust, making it an essential tool for Rust developers building decentralized applications on the Ethereum network.

@@ -61,8 +61,8 @@ pub use txpool::*;
 mod trace;
 pub use trace::*;
 
-mod chain;
-pub use chain::*;
+mod network;
+pub use network::*;
 
 mod proof;
 

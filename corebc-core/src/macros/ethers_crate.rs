@@ -7,44 +7,44 @@ use std::{
 };
 use strum::{EnumCount, EnumIter, EnumString, EnumVariantNames, IntoEnumIterator};
 
-/// `ethers_crate => name`
-type CrateNames = HashMap<EthersCrate, &'static str>;
+/// `corebc_crate => name`
+type CrateNames = HashMap<CorebcCrate, &'static str>;
 
 const DIRS: [&str; 3] = ["benches", "examples", "tests"];
 
-/// Maps an [`EthersCrate`] to its path string.
+/// Maps an [`CorebcCrate`] to its path string.
 ///
 /// See [`ProjectEnvironment`] for more information.
 ///
 /// Note: this static variable cannot hold [`syn::Path`] because it is not [`Sync`], so the names
 /// must be parsed at every call.
-static ETHERS_CRATE_NAMES: Lazy<CrateNames> = Lazy::new(|| {
+static COREBC_CRATE_NAMES: Lazy<CrateNames> = Lazy::new(|| {
     ProjectEnvironment::new_from_env()
-        .and_then(|x| x.determine_ethers_crates())
-        .unwrap_or_else(|| EthersCrate::ethers_path_names().collect())
+        .and_then(|x| x.determine_corebc_crates())
+        .unwrap_or_else(|| CorebcCrate::corebc_path_names().collect())
 });
 
 /// Returns the `core` crate's [`Path`][syn::Path].
 #[inline]
 pub fn corebc_core_crate() -> syn::Path {
-    get_crate_path(EthersCrate::CorebcCore)
+    get_crate_path(CorebcCrate::CorebcCore)
 }
 
 /// Returns the `contract` crate's [`Path`][syn::Path].
 #[inline]
-pub fn ethers_contract_crate() -> syn::Path {
-    get_crate_path(EthersCrate::EthersContract)
+pub fn corebc_contract_crate() -> syn::Path {
+    get_crate_path(CorebcCrate::CorebcContract)
 }
 
 /// Returns the `providers` crate's [`Path`][syn::Path].
 #[inline]
-pub fn ethers_providers_crate() -> syn::Path {
-    get_crate_path(EthersCrate::EthersProviders)
+pub fn corebc_providers_crate() -> syn::Path {
+    get_crate_path(CorebcCrate::CorebcProviders)
 }
 
-/// Returns an [`EthersCrate`]'s [`Path`][syn::Path] in the current project.
+/// Returns an [`CorebcCrate`]'s [`Path`][syn::Path] in the current project.
 #[inline(always)]
-pub fn get_crate_path(krate: EthersCrate) -> syn::Path {
+pub fn get_crate_path(krate: CorebcCrate) -> syn::Path {
     krate.get_path()
 }
 
@@ -74,11 +74,11 @@ impl ProjectEnvironment {
     /// project.
     ///
     /// The names will be:
-    /// - `ethers::*` if `ethers` is a dependency for all crates;
+    /// - `corebc::*` if `corebc` is a dependency for all crates;
     /// - for each `crate`:
-    ///   - `ethers_<crate>` if it is a dependency, otherwise `ethers::<crate>`.
+    ///   - `corebc_<crate>` if it is a dependency, otherwise `corebc::<crate>`.
     #[inline]
-    pub fn determine_ethers_crates(&self) -> Option<CrateNames> {
+    pub fn determine_corebc_crates(&self) -> Option<CrateNames> {
         let lock_file = self.manifest_dir.join("Cargo.lock");
         let lock_file_existed = lock_file.exists();
 
@@ -97,19 +97,19 @@ impl ProjectEnvironment {
         let metadata = MetadataCommand::new().current_dir(&self.manifest_dir).exec().ok()?;
         let pkg = metadata.root_package()?;
 
-        // return ethers_* if the root package is an internal ethers crate since `ethers` is not
+        // return corebc_* if the root package is an internal corebc crate since `corebc` is not
         // available
-        if pkg.name.parse::<EthersCrate>().is_ok() || pkg.name == "ethers" {
-            return Some(EthersCrate::path_names().collect())
+        if pkg.name.parse::<CorebcCrate>().is_ok() || pkg.name == "corebc" {
+            return Some(CorebcCrate::path_names().collect())
         }
 
-        let mut names: CrateNames = EthersCrate::ethers_path_names().collect();
+        let mut names: CrateNames = CorebcCrate::corebc_path_names().collect();
         for dep in pkg.dependencies.iter() {
             let name = dep.name.as_str();
-            if name.starts_with("ethers") {
-                if name == "ethers" {
+            if name.starts_with("corebc") {
+                if name == "corebc" {
                     return None
-                } else if let Ok(dep) = name.parse::<EthersCrate>() {
+                } else if let Ok(dep) = name.parse::<CorebcCrate>() {
                     names.insert(dep, dep.path_name());
                 }
             }
@@ -198,7 +198,7 @@ impl ProjectEnvironment {
     }
 }
 
-/// An `ethers-rs` internal crate.
+/// An `corebc-rs` internal crate.
 #[derive(
     Clone,
     Copy,
@@ -214,46 +214,46 @@ impl ProjectEnvironment {
     EnumVariantNames,
 )]
 #[strum(serialize_all = "kebab-case")]
-pub enum EthersCrate {
-    EthersAddressbook,
-    EthersContract,
-    EthersContractAbigen,
-    EthersContractDerive,
+pub enum CorebcCrate {
+    CorebcAddressbook,
+    CorebcContract,
+    CorebcContractAbigen,
+    CorebcContractDerive,
     CorebcCore,
-    EthersEtherscan,
-    EthersMiddleware,
-    EthersProviders,
-    EthersSigners,
-    EthersSolc,
+    CorebcEtherscan,
+    CorebcMiddleware,
+    CorebcProviders,
+    CorebcSigners,
+    CorebcSolc,
 }
 
-impl AsRef<str> for EthersCrate {
+impl AsRef<str> for CorebcCrate {
     fn as_ref(&self) -> &str {
         self.crate_name()
     }
 }
 
-impl fmt::Display for EthersCrate {
+impl fmt::Display for CorebcCrate {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.pad(self.as_ref())
     }
 }
 
-impl EthersCrate {
+impl CorebcCrate {
     /// "`<self as kebab-case>`"
     #[inline]
     pub const fn crate_name(self) -> &'static str {
         match self {
-            Self::EthersAddressbook => "ethers-addressbook",
-            Self::EthersContract => "ethers-contract",
-            Self::EthersContractAbigen => "ethers-contract-abigen",
-            Self::EthersContractDerive => "ethers-contract-derive",
+            Self::CorebcAddressbook => "corebc-addressbook",
+            Self::CorebcContract => "corebc-contract",
+            Self::CorebcContractAbigen => "corebc-contract-abigen",
+            Self::CorebcContractDerive => "corebc-contract-derive",
             Self::CorebcCore => "corebc-core",
-            Self::EthersEtherscan => "ethers-etherscan",
-            Self::EthersMiddleware => "ethers-middleware",
-            Self::EthersProviders => "ethers-providers",
-            Self::EthersSigners => "ethers-signers",
-            Self::EthersSolc => "ethers-solc",
+            Self::CorebcEtherscan => "corebc-etherscan",
+            Self::CorebcMiddleware => "corebc-middleware",
+            Self::CorebcProviders => "corebc-providers",
+            Self::CorebcSigners => "corebc-signers",
+            Self::CorebcSolc => "corebc-solc",
         }
     }
 
@@ -261,64 +261,64 @@ impl EthersCrate {
     #[inline]
     pub const fn path_name(self) -> &'static str {
         match self {
-            Self::EthersAddressbook => "::ethers_addressbook",
-            Self::EthersContract => "::ethers_contract",
-            Self::EthersContractAbigen => "::ethers_contract_abigen",
-            Self::EthersContractDerive => "::ethers_contract_derive",
-            Self::CorebcCore => "::corebc-core",
-            Self::EthersEtherscan => "::ethers_etherscan",
-            Self::EthersMiddleware => "::ethers_middleware",
-            Self::EthersProviders => "::ethers_providers",
-            Self::EthersSigners => "::ethers_signers",
-            Self::EthersSolc => "::ethers_solc",
+            Self::CorebcAddressbook => "::corebc_addressbook",
+            Self::CorebcContract => "::corebc_contract",
+            Self::CorebcContractAbigen => "::corebc_contract_abigen",
+            Self::CorebcContractDerive => "::corebc_contract_derive",
+            Self::CorebcCore => "::corebc_core",
+            Self::CorebcEtherscan => "::corebc_etherscan",
+            Self::CorebcMiddleware => "::corebc_middleware",
+            Self::CorebcProviders => "::corebc_providers",
+            Self::CorebcSigners => "::corebc_signers",
+            Self::CorebcSolc => "::corebc_solc",
         }
     }
 
-    /// "::ethers::`<self in ethers>`"
+    /// "::corebc::`<self in corebc>`"
     #[inline]
-    pub const fn ethers_path_name(self) -> &'static str {
+    pub const fn corebc_path_name(self) -> &'static str {
         match self {
-            // re-exported in ethers::contract
-            Self::EthersContractAbigen => "::ethers::contract", // partially
-            Self::EthersContractDerive => "::ethers::contract",
+            // re-exported in corebc::contract
+            Self::CorebcContractAbigen => "::corebc::contract", // partially
+            Self::CorebcContractDerive => "::corebc::contract",
 
-            Self::EthersAddressbook => "::ethers::addressbook",
-            Self::EthersContract => "::ethers::contract",
+            Self::CorebcAddressbook => "::corebc::addressbook",
+            Self::CorebcContract => "::corebc::contract",
             Self::CorebcCore => "::corebc::core",
-            Self::EthersEtherscan => "::ethers::etherscan",
-            Self::EthersMiddleware => "::ethers::middleware",
-            Self::EthersProviders => "::ethers::providers",
-            Self::EthersSigners => "::ethers::signers",
-            Self::EthersSolc => "::ethers::solc",
+            Self::CorebcEtherscan => "::corebc::etherscan",
+            Self::CorebcMiddleware => "::corebc::middleware",
+            Self::CorebcProviders => "::corebc::providers",
+            Self::CorebcSigners => "::corebc::signers",
+            Self::CorebcSolc => "::corebc::solc",
         }
     }
 
-    /// The path on the file system, from an `ethers-rs` root directory.
+    /// The path on the file system, from an `corebc-rs` root directory.
     #[inline]
     pub const fn fs_path(self) -> &'static str {
         match self {
-            Self::EthersContractAbigen => "ethers-contract/ethers-contract-abigen",
-            Self::EthersContractDerive => "ethers-contract/ethers-contract-derive",
+            Self::CorebcContractAbigen => "corebc-contract/corebc-contract-abigen",
+            Self::CorebcContractDerive => "corebc-contract/corebc-contract-derive",
             _ => self.crate_name(),
         }
     }
 
-    /// `<ethers_*>`
+    /// `<corebc_*>`
     #[inline]
     pub fn path_names() -> impl Iterator<Item = (Self, &'static str)> {
         Self::iter().map(|x| (x, x.path_name()))
     }
 
-    /// `<ethers::*>`
+    /// `<corebc::*>`
     #[inline]
-    pub fn ethers_path_names() -> impl Iterator<Item = (Self, &'static str)> {
-        Self::iter().map(|x| (x, x.ethers_path_name()))
+    pub fn corebc_path_names() -> impl Iterator<Item = (Self, &'static str)> {
+        Self::iter().map(|x| (x, x.corebc_path_name()))
     }
 
     /// Returns the [`Path`][syn::Path] in the current project.
     #[inline]
     pub fn get_path(&self) -> syn::Path {
-        let name = ETHERS_CRATE_NAMES[self];
+        let name = COREBC_CRATE_NAMES[self];
         syn::parse_str(name).unwrap()
     }
 }
@@ -347,9 +347,9 @@ mod tests {
     };
     use tempfile::TempDir;
 
-    impl Distribution<EthersCrate> for Standard {
-        fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> EthersCrate {
-            const RANGE: std::ops::Range<u8> = 0..EthersCrate::COUNT as u8;
+    impl Distribution<CorebcCrate> for Standard {
+        fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> CorebcCrate {
+            const RANGE: std::ops::Range<u8> = 0..CorebcCrate::COUNT as u8;
             // SAFETY: generates in the safe range
             unsafe { std::mem::transmute(rng.gen_range(RANGE)) }
         }
@@ -358,29 +358,29 @@ mod tests {
     #[test]
     #[ignore = "TODO: flaky and slow"]
     fn test_names() {
-        fn assert_names(s: &ProjectEnvironment, ethers: bool, dependencies: &[EthersCrate]) {
-            write_manifest(s, ethers, dependencies);
+        fn assert_names(s: &ProjectEnvironment, corebc: bool, dependencies: &[CorebcCrate]) {
+            write_manifest(s, corebc, dependencies);
 
             // speeds up consecutive runs by not having to re-create and delete the lockfile
             // this is tested separately: test_lock_file
             std::fs::write(s.manifest_dir.join("Cargo.lock"), "").unwrap();
 
             let names = s
-                .determine_ethers_crates()
-                .unwrap_or_else(|| EthersCrate::ethers_path_names().collect());
+                .determine_corebc_crates()
+                .unwrap_or_else(|| CorebcCrate::corebc_path_names().collect());
 
-            let krate = s.crate_name.as_ref().and_then(|x| x.parse::<EthersCrate>().ok());
+            let krate = s.crate_name.as_ref().and_then(|x| x.parse::<CorebcCrate>().ok());
             let is_internal = krate.is_some();
-            let expected: CrateNames = match (is_internal, ethers) {
+            let expected: CrateNames = match (is_internal, corebc) {
                 // internal
-                (true, _) => EthersCrate::path_names().collect(),
+                (true, _) => CorebcCrate::path_names().collect(),
 
-                // ethers
-                (_, true) => EthersCrate::ethers_path_names().collect(),
+                // corebc
+                (_, true) => CorebcCrate::corebc_path_names().collect(),
 
-                // no ethers
+                // no corebc
                 (_, false) => {
-                    let mut n: CrateNames = EthersCrate::ethers_path_names().collect();
+                    let mut n: CrateNames = CorebcCrate::corebc_path_names().collect();
                     for &dep in dependencies {
                         n.insert(dep, dep.path_name());
                     }
@@ -393,12 +393,12 @@ mod tests {
                 // BTreeMap sorts the keys
                 let names: BTreeMap<_, _> = names.into_iter().collect();
                 let expected: BTreeMap<_, _> = expected.into_iter().collect();
-                panic!("\nCase failed: (`{:?}`, `{ethers}`, `{dependencies:?}`)\nNames: {names:#?}\nExpected: {expected:#?}\n", s.crate_name);
+                panic!("\nCase failed: (`{:?}`, `{corebc}`, `{dependencies:?}`)\nNames: {names:#?}\nExpected: {expected:#?}\n", s.crate_name);
             }
         }
 
-        fn gen_unique<const N: usize>() -> [EthersCrate; N] {
-            assert!(N < EthersCrate::COUNT);
+        fn gen_unique<const N: usize>() -> [CorebcCrate; N] {
+            assert!(N < CorebcCrate::COUNT);
             let rng = &mut thread_rng();
             let mut set = HashSet::with_capacity(N);
             while set.len() < N {
@@ -410,16 +410,16 @@ mod tests {
 
         let (s, _dir) = test_project();
         // crate_name        -> represents an external crate
-        // "ethers-contract" -> represents an internal crate
-        for name in [s.crate_name.as_ref().unwrap(), "ethers-contract"] {
+        // "corebc-contract" -> represents an internal crate
+        for name in [s.crate_name.as_ref().unwrap(), "corebc-contract"] {
             let s = ProjectEnvironment::new(&s.manifest_dir, name);
-            // only ethers
+            // only corebc
             assert_names(&s, true, &[]);
 
             // only others
             assert_names(&s, false, gen_unique::<3>().as_slice());
 
-            // ethers and others
+            // corebc and others
             assert_names(&s, true, gen_unique::<3>().as_slice());
         }
     }
@@ -432,13 +432,13 @@ mod tests {
         let lock_file = s.manifest_dir.join("Cargo.lock");
 
         assert!(!lock_file.exists());
-        s.determine_ethers_crates();
+        s.determine_corebc_crates();
         assert!(!lock_file.exists());
 
         std::fs::write(&lock_file, "").unwrap();
 
         assert!(lock_file.exists());
-        s.determine_ethers_crates();
+        s.determine_corebc_crates();
         assert!(lock_file.exists());
         assert!(!std::fs::read(lock_file).unwrap().is_empty());
     }
@@ -553,21 +553,21 @@ mod tests {
     }
 
     /// Writes a test manifest to `{root}/Cargo.toml`.
-    fn write_manifest(s: &ProjectEnvironment, ethers: bool, dependencies: &[EthersCrate]) {
+    fn write_manifest(s: &ProjectEnvironment, corebc: bool, dependencies: &[CorebcCrate]) {
         // use paths to avoid downloading dependencies
         const COREBC_CORE: &str = env!("CARGO_MANIFEST_DIR");
-        let ethers_root = Path::new(COREBC_CORE).parent().unwrap();
+        let corebc_root = Path::new(COREBC_CORE).parent().unwrap();
         let mut dependencies_toml =
-            String::with_capacity(150 * (ethers as usize + dependencies.len()));
+            String::with_capacity(150 * (corebc as usize + dependencies.len()));
 
-        if ethers {
-            let path = ethers_root.join("ethers");
-            let ethers = format!("ethers = {{ path = \"{}\" }}\n", path.display());
-            dependencies_toml.push_str(&ethers);
+        if corebc {
+            let path = corebc_root.join("corebc");
+            let corebc = format!("corebc = {{ path = \"{}\" }}\n", path.display());
+            dependencies_toml.push_str(&corebc);
         }
 
         for dep in dependencies.iter() {
-            let path = ethers_root.join(dep.fs_path());
+            let path = corebc_root.join(dep.fs_path());
             let dep = format!("{dep} = {{ path = \"{}\" }}\n", path.display());
             dependencies_toml.push_str(&dep);
         }

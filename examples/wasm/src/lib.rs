@@ -31,8 +31,8 @@ pub async fn deploy() {
     let provider = Provider::<Ws>::connect(endpoint).await.unwrap();
     log!("Connected to: `{endpoint}`");
 
-    let chain_id = provider.get_chainid().await.unwrap();
-    let wallet = utils::key(0).with_chain_id(chain_id.as_u64());
+    let network_id = provider.get_networkid().await.unwrap();
+    let wallet = utils::key(0).with_network_id(network_id.as_u64());
     log!("Wallet: {wallet:?}");
     let client = Arc::new(SignerMiddleware::new(provider, wallet));
 

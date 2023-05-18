@@ -5,12 +5,12 @@ Crates to modify
 - [ ] corebc-core
   - [x] ICAN Addresses
   - [ ] ED448
-  - [x] Hashing Function
-- [ ] ethers-contract
-- [ ] ethers-etherscan
-- [ ] ethers-middleware
-- [ ] ethers-providers
-- [ ] ethers-signers
-- [ ] ethers-solc
-- [ ] ethers
+  - [x] Sha3
+- [x] corebc-providers
+- [ ] corebc-contract
+- [ ] corebc-etherscan
+- [ ] corebc-middleware
+- [ ] corebc-signers
+- [ ] corebc-solc
+- [ ] corebc
 - [ ] examples

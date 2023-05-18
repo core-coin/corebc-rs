@@ -10,12 +10,12 @@ edition.workspace = true
 
 [features]
 default = ["ledger", "trezor", "yubi"]
-ledger = ["ethers/ledger"]
-trezor = ["ethers/trezor"]
-yubi = ["ethers/yubi"]
+ledger = ["corebc/ledger"]
+trezor = ["corebc/trezor"]
+yubi = ["corebc/yubi"]
 
 [dev-dependencies]
-ethers = { workspace = true, features = ["abigen", "ws", "rustls"] }
+corebc = { workspace = true, features = ["abigen", "ws", "rustls"] }
 
 tokio = { workspace = true, features = ["macros"] }
 

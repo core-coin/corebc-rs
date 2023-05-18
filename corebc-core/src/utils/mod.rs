@@ -10,9 +10,9 @@ mod geth;
 #[cfg(not(target_arch = "wasm32"))]
 pub use geth::{Geth, GethInstance};
 
-/// Utilities for working with a `genesis.json` and other chain config structs.
+/// Utilities for working with a `genesis.json` and other network config structs.
 mod genesis;
-pub use genesis::{ChainConfig, CliqueConfig, EthashConfig, Genesis, GenesisAccount};
+pub use genesis::{CliqueConfig, EthashConfig, Genesis, GenesisAccount, NetworkConfig};
 
 /// Utilities for launching an anvil instance
 #[cfg(not(target_arch = "wasm32"))]
@@ -422,20 +422,20 @@ pub fn secret_key_to_address(secret_key: &SigningKey, network: &NetworkType) -> 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
     let addr = H160::from(bytes);
-    to_ican(&addr, &network)
+    to_ican(&addr, network)
 }
 
 /// Encodes an Ethereum address to its [EIP-55] checksum.
 ///
-/// You can optionally specify an [EIP-155 chain ID] to encode the address using the [EIP-1191]
+/// You can optionally specify an [EIP-155 network ID] to encode the address using the [EIP-1191]
 /// extension.
 ///
 /// [EIP-55]: https://eips.ethereum.org/EIPS/eip-55
-/// [EIP-155 chain ID]: https://eips.ethereum.org/EIPS/eip-155
+/// [EIP-155 network ID]: https://eips.ethereum.org/EIPS/eip-155
 /// [EIP-1191]: https://eips.ethereum.org/EIPS/eip-1191
-pub fn to_checksum(addr: &Address, chain_id: Option<u8>) -> String {
-    let prefixed_addr = match chain_id {
-        Some(chain_id) => format!("{chain_id}0x{addr:x}"),
+pub fn to_checksum(addr: &Address, network_id: Option<u8>) -> String {
+    let prefixed_addr = match network_id {
+        Some(network_id) => format!("{network_id}0x{addr:x}"),
         None => format!("{addr:x}"),
     };
     let hash = hex::encode(sha3(prefixed_addr));

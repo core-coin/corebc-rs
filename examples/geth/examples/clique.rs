@@ -20,8 +20,8 @@ async fn main() -> Result<()> {
     let _geth = Geth::new()
         // set the signer
         .set_clique_private_key(clique_key)
-        // must always set the chain id here
-        .chain_id(199u64)
+        // must always set the network id here
+        .network_id(199u64)
         // set the datadir to a temp dir
         .data_dir(dir_path)
         // spawn it

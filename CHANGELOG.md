@@ -40,7 +40,7 @@ Please do not manually edit this file.
 
 - Add Base Goerli chain ([#2338](https://github.com/gakonst/ethers-rs/issues/2338))
 - Very permissive etherscan gwei deser ([#2327](https://github.com/gakonst/ethers-rs/issues/2327))
-- Syn 2.0, merge eip712 crate into ethers-contract-derive ([#2279](https://github.com/gakonst/ethers-rs/issues/2279))
+- Syn 2.0, merge eip712 crate into corebc-contract-derive ([#2279](https://github.com/gakonst/ethers-rs/issues/2279))
 - Add Settings sanitize ([#2329](https://github.com/gakonst/ethers-rs/issues/2329))
 - `Transaction::decode()` sets the hash ([#2303](https://github.com/gakonst/ethers-rs/issues/2303))
 
@@ -67,7 +67,7 @@ Please do not manually edit this file.
 
 ### Bug Fixes
 
-- Ensure ethers-solc has tokio-rt-multithread
+- Ensure corebc-solc has tokio-rt-multithread
 - Ambiguous_glob_reexports rustc lint ([#2301](https://github.com/gakonst/ethers-rs/issues/2301))
 - Broken eip155 logic in aws signer ([#2300](https://github.com/gakonst/ethers-rs/issues/2300))
 - Enable doc_cfg feature for docsrs ([#2294](https://github.com/gakonst/ethers-rs/issues/2294))
@@ -93,7 +93,7 @@ Please do not manually edit this file.
 
 ### Bug Fixes
 
-- Ethers-contract circular dep on ethers-signers ([#2291](https://github.com/gakonst/ethers-rs/issues/2291))
+- corebc-contract circular dep on corebc-signers ([#2291](https://github.com/gakonst/ethers-rs/issues/2291))
 - Features ([#2290](https://github.com/gakonst/ethers-rs/issues/2290))
 - Handle all struct field types ([#2289](https://github.com/gakonst/ethers-rs/issues/2289))
 - Re-export CallLogFrame from geth types ([#2283](https://github.com/gakonst/ethers-rs/issues/2283))
@@ -149,9 +149,9 @@ Please do not manually edit this file.
 - Reexport some ast types again ([#1968](https://github.com/gakonst/ethers-rs/issues/1968))
 - Add setter for MultiBindings' rustfmt ([#1948](https://github.com/gakonst/ethers-rs/issues/1948))
 - Source code serde ([#1962](https://github.com/gakonst/ethers-rs/issues/1962))
-- Ethers-etherscan solc feature ([#1965](https://github.com/gakonst/ethers-rs/issues/1965))
+- corebc-etherscan solc feature ([#1965](https://github.com/gakonst/ethers-rs/issues/1965))
 - Rebase to master for onbjerg's ast ([#1943](https://github.com/gakonst/ethers-rs/issues/1943))
-- Add `openssl` and `rustls` feature flags in ethers-middleware ([#1961](https://github.com/gakonst/ethers-rs/issues/1961))
+- Add `openssl` and `rustls` feature flags in corebc-middleware ([#1961](https://github.com/gakonst/ethers-rs/issues/1961))
 - Oracles, tests ([#1944](https://github.com/gakonst/ethers-rs/issues/1944))
 - Bump in .clippy.toml and add a comment in root Cargo.toml ([#1945](https://github.com/gakonst/ethers-rs/issues/1945))
 - Decode to correctly in Transaction ([#1946](https://github.com/gakonst/ethers-rs/issues/1946))
@@ -159,7 +159,7 @@ Please do not manually edit this file.
 - Set `GethInstance` p2p_port in spawn ([#1933](https://github.com/gakonst/ethers-rs/issues/1933))
 - Remove `OpCode` enum and update `VMOperation`'s `op` field type ([#1904](https://github.com/gakonst/ethers-rs/issues/1904))
 - Always set p2p port in non-dev mode ([#1919](https://github.com/gakonst/ethers-rs/issues/1919))
-- Make version  detection infallible ([#1916](https://github.com/gakonst/ethers-rs/issues/1916))
+- Make version detection infallible ([#1916](https://github.com/gakonst/ethers-rs/issues/1916))
 - Multicall decode error ([#1907](https://github.com/gakonst/ethers-rs/issues/1907))
 - Rm wrong brackets ([#1914](https://github.com/gakonst/ethers-rs/issues/1914))
 - Txpool_inspect unable to parse contract creations ([#1905](https://github.com/gakonst/ethers-rs/issues/1905))
@@ -272,7 +272,7 @@ Please do not manually edit this file.
 - Support emitting bytecode as extra files ([#2074](https://github.com/gakonst/ethers-rs/issues/2074))
 - Add helper functions to access solidity types ([#2081](https://github.com/gakonst/ethers-rs/issues/2081))
 - Allow `ClientBuilder` to create `Client` without API key ([#2067](https://github.com/gakonst/ethers-rs/issues/2067))
-- Enable Clique mode  ([#2063](https://github.com/gakonst/ethers-rs/issues/2063))
+- Enable Clique mode ([#2063](https://github.com/gakonst/ethers-rs/issues/2063))
 - Switch shanghaiBlock to shanghaiTime ([#2049](https://github.com/gakonst/ethers-rs/issues/2049))
 - Use u64 and add more chains to multicall ([#2042](https://github.com/gakonst/ethers-rs/issues/2042))
 - Allow parsing of private key that has `0x` prefix ([#2037](https://github.com/gakonst/ethers-rs/issues/2037))
@@ -343,8 +343,8 @@ Please do not manually edit this file.
 - Reconnection & Request Reissuance ([#2181](https://github.com/gakonst/ethers-rs/issues/2181))
 - // to https:// on Celo link ([#2193](https://github.com/gakonst/ethers-rs/issues/2193))
 - Workaround for https://github.com/LedgerHQ/app-ethereum/issues/409 ([#2192](https://github.com/gakonst/ethers-rs/issues/2192))
-- Organize ethers-providers ([#2159](https://github.com/gakonst/ethers-rs/issues/2159))
-- Include deployed bytecode in abigen output  ([#2163](https://github.com/gakonst/ethers-rs/issues/2163))
+- Organize corebc-providers ([#2159](https://github.com/gakonst/ethers-rs/issues/2159))
+- Include deployed bytecode in abigen output ([#2163](https://github.com/gakonst/ethers-rs/issues/2163))
 - Use Option for CliqueConfig fields ([#2162](https://github.com/gakonst/ethers-rs/issues/2162))
 - Prestwich/event no lifetime ([#2105](https://github.com/gakonst/ethers-rs/issues/2105))
 - Extend model checker options ([#2147](https://github.com/gakonst/ethers-rs/issues/2147))
@@ -403,7 +403,7 @@ Please do not manually edit this file.
 - Fix to round-trip serialize and deserialize optional address ([#2057](https://github.com/gakonst/ethers-rs/issues/2057))
 - Use sepolia ([#1989](https://github.com/gakonst/ethers-rs/issues/1989))
 - Add celo chain ([#1932](https://github.com/gakonst/ethers-rs/issues/1932))
-- Handle panic on Ws error  ([#1915](https://github.com/gakonst/ethers-rs/issues/1915))
+- Handle panic on Ws error ([#1915](https://github.com/gakonst/ethers-rs/issues/1915))
 - Feat middleware stack builder ([#1890](https://github.com/gakonst/ethers-rs/issues/1890))
 
 ### Testing
@@ -511,7 +511,7 @@ Please do not manually edit this file.
 - Use empty bytecode as default instead unlinked ([#1743](https://github.com/gakonst/ethers-rs/issues/1743))
 - Transaction object rlp decoding ([#1740](https://github.com/gakonst/ethers-rs/issues/1740))
 - Use correct tx field const ([#1735](https://github.com/gakonst/ethers-rs/issues/1735))
-- Legacy signed rlp  decoding ([#1733](https://github.com/gakonst/ethers-rs/issues/1733))
+- Legacy signed rlp decoding ([#1733](https://github.com/gakonst/ethers-rs/issues/1733))
 - Cyclic deps ([#1730](https://github.com/gakonst/ethers-rs/issues/1730))
 - Relax Middleware trait bound for getters ([#1728](https://github.com/gakonst/ethers-rs/issues/1728))
 - WASM example ([#1719](https://github.com/gakonst/ethers-rs/issues/1719))
@@ -527,7 +527,7 @@ Please do not manually edit this file.
 - Emit null transaction fields ([#1654](https://github.com/gakonst/ethers-rs/issues/1654))
 - Only derive default of no arrays len > 32 ([#1653](https://github.com/gakonst/ethers-rs/issues/1653))
 - Use correct model for metadata libraries ([#1648](https://github.com/gakonst/ethers-rs/issues/1648))
-- Set chain id  explicitly ([#1647](https://github.com/gakonst/ethers-rs/issues/1647))
+- Set chain id explicitly ([#1647](https://github.com/gakonst/ethers-rs/issues/1647))
 - Dont skip null to field ([#1631](https://github.com/gakonst/ethers-rs/issues/1631))
 - QuorumProvider zero-parameter json Value handling ([#1613](https://github.com/gakonst/ethers-rs/issues/1613))
 - Handle provider error correctly ([#1630](https://github.com/gakonst/ethers-rs/issues/1630))
@@ -546,7 +546,7 @@ Please do not manually edit this file.
 - Use correct moonbeam ([#1552](https://github.com/gakonst/ethers-rs/issues/1552))
 - Convert source paths on windows ([#1540](https://github.com/gakonst/ethers-rs/issues/1540))
 - Resolve output struct types correctly ([#1546](https://github.com/gakonst/ethers-rs/issues/1546))
-- Add missing moonbase  fromstr ([#1531](https://github.com/gakonst/ethers-rs/issues/1531))
+- Add missing moonbase fromstr ([#1531](https://github.com/gakonst/ethers-rs/issues/1531))
 - Support stringified numbers in response ([#1524](https://github.com/gakonst/ethers-rs/issues/1524))
 - Use fully qualified path for Result ([#1527](https://github.com/gakonst/ethers-rs/issues/1527))
 - Make compatible with edition2018 ([#1522](https://github.com/gakonst/ethers-rs/issues/1522))
@@ -571,7 +571,7 @@ Please do not manually edit this file.
 - Net_version returns string ([#1376](https://github.com/gakonst/ethers-rs/issues/1376))
 - ChainId 31337 corresponds to Anvil/Hardhat not Dev
 - Fix fields for `UserDoc` and `DevDoc` ([#1355](https://github.com/gakonst/ethers-rs/issues/1355))
-- `Transfered` -> `Transferred* ([#1357](https://github.com/gakonst/ethers-rs/issues/1357))
+- `Transfered` -> `Transferred\* ([#1357](https://github.com/gakonst/ethers-rs/issues/1357))
 - Emit empty vec for empty artifacts ([#1345](https://github.com/gakonst/ethers-rs/issues/1345))
 - Invalidate cache on unresolve error ([#1337](https://github.com/gakonst/ethers-rs/issues/1337))
 - Wrong unit for gas_price (ether -> gwei) ([#1316](https://github.com/gakonst/ethers-rs/issues/1316))
@@ -645,7 +645,7 @@ Please do not manually edit this file.
 - Skip artifacts check for files without artifacts ([#1018](https://github.com/gakonst/ethers-rs/issues/1018))
 - Feature-gate TestProvider.ws fn
 - Bump svm-rs for mac m1 solc installs
-- Export `ethers_providers::IpcError` and `ethers_providers::QuorumError` ([#1012](https://github.com/gakonst/ethers-rs/issues/1012))
+- Export `corebc_providers::IpcError` and `corebc_providers::QuorumError` ([#1012](https://github.com/gakonst/ethers-rs/issues/1012))
 - Use svm-rs with fixed solc checksums
 - Use correct types ([#1004](https://github.com/gakonst/ethers-rs/issues/1004))
 - Respect offline mode ([#1002](https://github.com/gakonst/ethers-rs/issues/1002))
@@ -657,7 +657,7 @@ Please do not manually edit this file.
 - Safe ident underscore followed by numeric ([#970](https://github.com/gakonst/ethers-rs/issues/970))
 - Support functions with different casing ([#972](https://github.com/gakonst/ethers-rs/issues/972))
 - Dont generate empty shared_types module ([#965](https://github.com/gakonst/ethers-rs/issues/965))
-- Make abigen work with ethers-solc and abiencoderv2 ([#952](https://github.com/gakonst/ethers-rs/issues/952))
+- Make abigen work with corebc-solc and abiencoderv2 ([#952](https://github.com/gakonst/ethers-rs/issues/952))
 - Handle lossy ethabi generated abi structs ([#950](https://github.com/gakonst/ethers-rs/issues/950))
 - Consistent serde for linked and unlinked bytecode ([#948](https://github.com/gakonst/ethers-rs/issues/948))
 - Flatten import loc ([#946](https://github.com/gakonst/ethers-rs/issues/946))
@@ -675,7 +675,7 @@ Please do not manually edit this file.
 - PendingTransaction::log() missing deref ([#886](https://github.com/gakonst/ethers-rs/issues/886))
 - Prevent chain_id from serializing for requests ([#879](https://github.com/gakonst/ethers-rs/issues/879))
 - Use nodesiter when printing tree ([#878](https://github.com/gakonst/ethers-rs/issues/878))
-- Bump ethers-solc version ([#864](https://github.com/gakonst/ethers-rs/issues/864))
+- Bump corebc-solc version ([#864](https://github.com/gakonst/ethers-rs/issues/864))
 - Bump solang ([#861](https://github.com/gakonst/ethers-rs/issues/861))
 - Doc test for dev_rpc ([#857](https://github.com/gakonst/ethers-rs/issues/857))
 - Adjust Ganache for new cli output ([#851](https://github.com/gakonst/ethers-rs/issues/851))
@@ -683,7 +683,7 @@ Please do not manually edit this file.
 - Flatten replacement target location ([#846](https://github.com/gakonst/ethers-rs/issues/846))
 - Use already instantiated tokio runtime if exists ([#811](https://github.com/gakonst/ethers-rs/issues/811))
 - Make http crate required ([#836](https://github.com/gakonst/ethers-rs/issues/836))
-- Duplicate contracts segments  ([#832](https://github.com/gakonst/ethers-rs/issues/832))
+- Duplicate contracts segments ([#832](https://github.com/gakonst/ethers-rs/issues/832))
 - Propagate deserialization errors upstream + infura quickfix ([#827](https://github.com/gakonst/ethers-rs/issues/827))
 - Derive serde Ser and De for log metadata ([#823](https://github.com/gakonst/ethers-rs/issues/823))
 - Flatten duplicates ([#813](https://github.com/gakonst/ethers-rs/issues/813))
@@ -856,7 +856,7 @@ Please do not manually edit this file.
 - Bump tracing from 0.1.34 to 0.1.35 ([#1364](https://github.com/gakonst/ethers-rs/issues/1364))
 - Bump http from 0.2.7 to 0.2.8 ([#1352](https://github.com/gakonst/ethers-rs/issues/1352))
 - Bump crossbeam-utils from 0.8.6 to 0.8.8 ([#1351](https://github.com/gakonst/ethers-rs/issues/1351))
-- Make ethers-solc dev dep ([#1358](https://github.com/gakonst/ethers-rs/issues/1358))
+- Make corebc-solc dev dep ([#1358](https://github.com/gakonst/ethers-rs/issues/1358))
 - Bump syn from 1.0.95 to 1.0.96 ([#1342](https://github.com/gakonst/ethers-rs/issues/1342))
 - Bump auto_impl from 0.5.0 to 1.0.1 ([#1341](https://github.com/gakonst/ethers-rs/issues/1341))
 - Bump serde_derive from 1.0.136 to 1.0.137 ([#1333](https://github.com/gakonst/ethers-rs/issues/1333))
@@ -1083,7 +1083,7 @@ Please do not manually edit this file.
 - Emit artifacts for standalone source files ([#1296](https://github.com/gakonst/ethers-rs/issues/1296))
 - Add tx builder methods ([#1289](https://github.com/gakonst/ethers-rs/issues/1289))
 - Include id in artifact ([#1284](https://github.com/gakonst/ethers-rs/issues/1284))
-- Add  helpers to unwrap `TypedTransaction` ([#1278](https://github.com/gakonst/ethers-rs/issues/1278))
+- Add helpers to unwrap `TypedTransaction` ([#1278](https://github.com/gakonst/ethers-rs/issues/1278))
 - Added Cronos testnet ([#1276](https://github.com/gakonst/ethers-rs/issues/1276))
 - Load previous logs before subscribing ([#1264](https://github.com/gakonst/ethers-rs/issues/1264))
 - Add eip-1898 deserialize for BlockId ([#1257](https://github.com/gakonst/ethers-rs/issues/1257))
@@ -1116,7 +1116,7 @@ Please do not manually edit this file.
 - Implemented signed transaction RLP decoding ([#1096](https://github.com/gakonst/ethers-rs/issues/1096))
 - Add standard-json-input ([#1126](https://github.com/gakonst/ethers-rs/issues/1126))
 - Strip experimental pragma from all imported contracts ([#1116](https://github.com/gakonst/ethers-rs/issues/1116))
-- Add caching  ([#1108](https://github.com/gakonst/ethers-rs/issues/1108))
+- Add caching ([#1108](https://github.com/gakonst/ethers-rs/issues/1108))
 - Add bytecode hash variants ([#1104](https://github.com/gakonst/ethers-rs/issues/1104))
 - Pass compile time to reporter ([#1098](https://github.com/gakonst/ethers-rs/issues/1098))
 - Include project paths in cache ([#1097](https://github.com/gakonst/ethers-rs/issues/1097))
@@ -1248,12 +1248,12 @@ Please do not manually edit this file.
 - Make clippy happy ([#1525](https://github.com/gakonst/ethers-rs/issues/1525))
 - Add Anvil::at and anvil example ([#1486](https://github.com/gakonst/ethers-rs/issues/1486))
 - Make clippy happy ([#1475](https://github.com/gakonst/ethers-rs/issues/1475))
-- Make ethers-solc optional ([#1463](https://github.com/gakonst/ethers-rs/issues/1463))
+- Make corebc-solc optional ([#1463](https://github.com/gakonst/ethers-rs/issues/1463))
 - Export quorum's JsonRpcClientWrapper ([#1439](https://github.com/gakonst/ethers-rs/issues/1439))
 - Add gas_mut function ([#1427](https://github.com/gakonst/ethers-rs/issues/1427))
 - Convenience impls for Bytes ([#1421](https://github.com/gakonst/ethers-rs/issues/1421))
 - Update svm-rs ([#1415](https://github.com/gakonst/ethers-rs/issues/1415))
-- Make ethers-etherscan compile for wasm32 ([#1403](https://github.com/gakonst/ethers-rs/issues/1403))
+- Make corebc-etherscan compile for wasm32 ([#1403](https://github.com/gakonst/ethers-rs/issues/1403))
 - Silence wasm warnings ([#1404](https://github.com/gakonst/ethers-rs/issues/1404))
 - Add moonbase chain id ([#1397](https://github.com/gakonst/ethers-rs/issues/1397))
 - Improve checksum error message ([#1394](https://github.com/gakonst/ethers-rs/issues/1394))
@@ -1317,7 +1317,7 @@ Please do not manually edit this file.
 
 ### Other
 
-- Add safe and finalized  tag to BlockNumber ([#1792](https://github.com/gakonst/ethers-rs/issues/1792))
+- Add safe and finalized tag to BlockNumber ([#1792](https://github.com/gakonst/ethers-rs/issues/1792))
 - Add option to disable CBOR metadata in bytecode. ([#1782](https://github.com/gakonst/ethers-rs/issues/1782))
 - Disable remove_liq and revert to always use rinkeby
 - Fix Transaction decoding ([#1773](https://github.com/gakonst/ethers-rs/issues/1773))
@@ -1360,7 +1360,7 @@ Please do not manually edit this file.
 - Add Block::time ([#1250](https://github.com/gakonst/ethers-rs/issues/1250))
 - Impl TryFrom<U256> for Chain ([#1247](https://github.com/gakonst/ethers-rs/issues/1247))
 - Robust gas oracles ([#1222](https://github.com/gakonst/ethers-rs/issues/1222))
-- Make Ganache Startup Timeout *Configurable*. ([#1224](https://github.com/gakonst/ethers-rs/issues/1224))
+- Make Ganache Startup Timeout _Configurable_. ([#1224](https://github.com/gakonst/ethers-rs/issues/1224))
 - Update document to enable ws & rustls / openssl if user wants to use websockets ([#1197](https://github.com/gakonst/ethers-rs/issues/1197))
 - Adds From<H160> trait to ValueOrArray<H160> ([#1200](https://github.com/gakonst/ethers-rs/issues/1200))
 - Ledger should have correct signature v value for chains with large chain ID ([#1204](https://github.com/gakonst/ethers-rs/issues/1204))
@@ -1405,7 +1405,7 @@ Please do not manually edit this file.
 - Check for warnings after compilation ([#772](https://github.com/gakonst/ethers-rs/issues/772))
 - Remove unofficial testnet dai ([#771](https://github.com/gakonst/ethers-rs/issues/771))
 - Add WETH to address book ([#770](https://github.com/gakonst/ethers-rs/issues/770))
-- Ethers-addressbook crate ([#769](https://github.com/gakonst/ethers-rs/issues/769))
+- corebc-addressbook crate ([#769](https://github.com/gakonst/ethers-rs/issues/769))
 - Update README links ([#754](https://github.com/gakonst/ethers-rs/issues/754))
 - [draft] Add Optimism & OptimismKovan chains ([#737](https://github.com/gakonst/ethers-rs/issues/737))
 - Reexport multiabigen ([#731](https://github.com/gakonst/ethers-rs/issues/731))
@@ -1439,7 +1439,7 @@ Please do not manually edit this file.
 - Refactors ipc transport internals ([#1174](https://github.com/gakonst/ethers-rs/issues/1174))
 - Replace anyhow with eyre ([#858](https://github.com/gakonst/ethers-rs/issues/858))
 - MultiAbigen rework ([#852](https://github.com/gakonst/ethers-rs/issues/852))
-- More temp project features  ([#778](https://github.com/gakonst/ethers-rs/issues/778))
+- More temp project features ([#778](https://github.com/gakonst/ethers-rs/issues/778))
 - Remappings detection rewrite ([#732](https://github.com/gakonst/ethers-rs/issues/732))
 - Move fill_transaction impl to provider rather than default ([#697](https://github.com/gakonst/ethers-rs/issues/697))
 - Move FeeHistory to core types ([#688](https://github.com/gakonst/ethers-rs/issues/688))
@@ -1452,7 +1452,7 @@ Please do not manually edit this file.
 - Seal extension traits ([#1553](https://github.com/gakonst/ethers-rs/issues/1553))
 - Fmt ([#1539](https://github.com/gakonst/ethers-rs/issues/1539))
 - Add support to Aurora network ([#1535](https://github.com/gakonst/ethers-rs/issues/1535))
-- Update broken test and use it module for ethers-contract ([#1502](https://github.com/gakonst/ethers-rs/issues/1502))
+- Update broken test and use it module for corebc-contract ([#1502](https://github.com/gakonst/ethers-rs/issues/1502))
 - Fmt
 - Fmt
 - Add basic solc model checker options ([#1258](https://github.com/gakonst/ethers-rs/issues/1258))
@@ -1596,13 +1596,13 @@ Please do not manually edit this file.
 - Allow providing --allow-args ([#553](https://github.com/gakonst/ethers-rs/issues/553))
 - Multiple Solc Version detection ([#551](https://github.com/gakonst/ethers-rs/issues/551))
 - Add solc svm find support ([#547](https://github.com/gakonst/ethers-rs/issues/547))
-- Use ethers_solc::Solc instead of ethers_core::utils::Solc ([#546](https://github.com/gakonst/ethers-rs/issues/546))
+- Use corebc-solc::Solc instead of corebc_core::utils::Solc ([#546](https://github.com/gakonst/ethers-rs/issues/546))
 - Enumerate overloaded functions if they are nameless ([#545](https://github.com/gakonst/ethers-rs/issues/545))
 - Only compile changed files ([#544](https://github.com/gakonst/ethers-rs/issues/544))
 - Improved solc management ([#539](https://github.com/gakonst/ethers-rs/issues/539))
 - Unify get_block_receipts for eth/parity RPCs ([#541](https://github.com/gakonst/ethers-rs/issues/541))
 - Add abi code trait impls ([#531](https://github.com/gakonst/ethers-rs/issues/531))
-- Add ethers-solc crate ([#522](https://github.com/gakonst/ethers-rs/issues/522))
+- Add corebc-solc crate ([#522](https://github.com/gakonst/ethers-rs/issues/522))
 - Expose Wallet::sign_hash
 - Add ethabitype support for solidity style enums ([#526](https://github.com/gakonst/ethers-rs/issues/526))
 - Add abi type trait ([#519](https://github.com/gakonst/ethers-rs/issues/519))
@@ -1651,7 +1651,7 @@ Please do not manually edit this file.
 - Remove failing workflow
 - Load rinkeby privkey from envvar instead of secrets
 - Load rinkeby privkey from secrets
-- Add Decimal support to ethers::utils::parse_units ([#463](https://github.com/gakonst/ethers-rs/issues/463))
+- Add Decimal support to corebc::utils::parse_units ([#463](https://github.com/gakonst/ethers-rs/issues/463))
 - Change wei from 1 to 0 ([#460](https://github.com/gakonst/ethers-rs/issues/460))
 - Add getProof to provider ([#459](https://github.com/gakonst/ethers-rs/issues/459))
 - Add cache

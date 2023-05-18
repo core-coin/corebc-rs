@@ -6,14 +6,14 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 
-/// This represents the chain configuration, specifying the genesis block, header fields, and hard
+/// This represents the network configuration, specifying the genesis block, header fields, and hard
 /// fork switch blocks.
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Genesis {
     /// The fork configuration for this network.
     #[serde(default)]
-    pub config: ChainConfig,
+    pub config: NetworkConfig,
 
     /// The genesis header nonce.
     #[serde(default)]
@@ -65,16 +65,16 @@ pub struct Genesis {
 }
 
 impl Genesis {
-    /// Creates a chain config using the given chain id.
+    /// Creates a network config using the given network id.
     /// and funds the given address with max coins.
     ///
     /// Enables all hard forks up to London at genesis.
-    pub fn new(chain_id: u64, signer_addr: Address) -> Genesis {
+    pub fn new(network_id: u64, signer_addr: Address) -> Genesis {
         // set up a clique config with an instant sealing period and short (8 block) epoch
         let clique_config = CliqueConfig { period: Some(0), epoch: Some(8) };
 
-        let config = ChainConfig {
-            chain_id,
+        let config = NetworkConfig {
+            network_id,
             eip155_block: Some(0),
             eip150_block: Some(0),
             eip158_block: Some(0),
@@ -142,17 +142,17 @@ pub struct GenesisAccount {
     pub storage: Option<HashMap<H256, H256>>,
 }
 
-/// Represents a node's chain configuration.
+/// Represents a node's network configuration.
 ///
-/// See [geth's `ChainConfig`
+/// See [geth's `NetworkConfig`
 /// struct](https://github.com/ethereum/go-ethereum/blob/64dccf7aa411c5c7cd36090c3d9b9892945ae813/params/config.go#L349)
 /// for the source of each field.
 #[derive(Clone, Debug, Deserialize, Serialize, Default, PartialEq, Eq)]
 #[serde(default, rename_all = "camelCase")]
-pub struct ChainConfig {
-    /// The network's chain ID.
+pub struct NetworkConfig {
+    /// The network's network ID.
     #[serde(default = "one")]
-    pub chain_id: u64,
+    pub network_id: u64,
 
     /// The homestead switch block (None = no fork, 0 = already homestead).
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -270,7 +270,7 @@ pub struct CliqueConfig {
 
 #[cfg(test)]
 mod tests {
-    use super::{ChainConfig, Genesis, GenesisAccount, H256};
+    use super::{Genesis, GenesisAccount, NetworkConfig, H256};
     use crate::{
         types::{Address, Bytes, H176, U256},
         utils::EthashConfig,
@@ -286,7 +286,7 @@ mod tests {
             "alloc": {},
             "config": {
               "ethash": {},
-              "chainId": 1
+              "networkId": 1
             }
         }
         "#;
@@ -346,7 +346,7 @@ mod tests {
             },
             "config": {
                 "ethash": {},
-                "chainId": 10,
+                "networkId": 10,
                 "homesteadBlock": 0,
                 "eip150Block": 0,
                 "eip155Block": 0,
@@ -377,7 +377,7 @@ mod tests {
         let geth_genesis = r#"
         {
           "config": {
-            "chainId": 7,
+            "networkId": 7,
             "homesteadBlock": 0,
             "eip150Block": 0,
             "eip150Hash": "0x5de1ee4135274003348e80b788e5afa4b18b18d320a5622218d5c493fedf5689",
@@ -454,7 +454,7 @@ mod tests {
         let geth_genesis = r#"
         {
           "config": {
-            "chainId": 7,
+            "networkId": 7,
             "homesteadBlock": 0,
             "eip150Block": 0,
             "eip150Hash": "0x5de1ee4135274003348e80b788e5afa4b18b18d320a5622218d5c493fedf5689",
@@ -524,7 +524,7 @@ mod tests {
         let geth_genesis = r#"
         {
             "config": {
-                "chainId": 19763,
+                "networkId": 19763,
                 "homesteadBlock": 0,
                 "eip150Block": 0,
                 "eip155Block": 0,
@@ -558,7 +558,7 @@ mod tests {
         let geth_genesis = r#"
         {
           "config": {
-            "chainId": 1337,
+            "networkId": 1337,
             "homesteadBlock": 0,
             "eip150Block": 0,
             "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -636,7 +636,7 @@ mod tests {
             "clique": {
               "period": 1
             },
-            "chainId": 7,
+            "networkId": 7,
             "homesteadBlock": 0,
             "eip150Block": 0,
             "eip155Block": 0,
@@ -762,7 +762,7 @@ mod tests {
             },
             "config": {
                 "ethash": {},
-                "chainId": 10,
+                "networkId": 10,
                 "homesteadBlock": 0,
                 "eip150Block": 0,
                 "eip155Block": 0,
@@ -863,9 +863,9 @@ mod tests {
                     },
                 ),
             ]),
-            config: ChainConfig {
+            config: NetworkConfig {
                 ethash: Some(EthashConfig{}),
-                chain_id: 10,
+                network_id: 10,
                 homestead_block: Some(0),
                 eip150_block: Some(0),
                 eip155_block: Some(0),

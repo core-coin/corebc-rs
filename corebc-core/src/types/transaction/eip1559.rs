@@ -72,9 +72,9 @@ pub struct Eip1559TransactionRequest {
     pub max_fee_per_gas: Option<U256>,
 
     #[serde(skip_serializing)]
-    #[serde(default, rename = "chainId")]
-    /// Chain ID (None for mainnet)
-    pub chain_id: Option<U64>,
+    #[serde(default, rename = "networkId")]
+    /// Network ID (None for mainnet)
+    pub network_id: Option<U64>,
 }
 
 impl Eip1559TransactionRequest {
@@ -148,10 +148,10 @@ impl Eip1559TransactionRequest {
         self
     }
 
-    /// Sets the `chain_id` field in the transaction to the provided value
+    /// Sets the `network_id` field in the transaction to the provided value
     #[must_use]
-    pub fn chain_id<T: Into<U64>>(mut self, chain_id: T) -> Self {
-        self.chain_id = Some(chain_id.into());
+    pub fn network_id<T: Into<U64>>(mut self, network_id: T) -> Self {
+        self.network_id = Some(network_id.into());
         self
     }
 
@@ -169,11 +169,11 @@ impl Eip1559TransactionRequest {
         rlp.begin_unbounded_list();
         self.rlp_base(&mut rlp);
 
-        // if the chain_id is none we assume mainnet and choose one
-        let chain_id = self.chain_id.unwrap_or_else(U64::one);
+        // if the network is none we assume mainnet and choose one
+        let network_id = self.network_id.unwrap_or_else(U64::one);
 
         // append the signature
-        let v = normalize_v(signature.v, chain_id);
+        let v = normalize_v(signature.v, network_id);
         rlp.append(&v);
         rlp.append(&signature.r);
         rlp.append(&signature.s);
@@ -182,7 +182,7 @@ impl Eip1559TransactionRequest {
     }
 
     pub(crate) fn rlp_base(&self, rlp: &mut RlpStream) {
-        rlp_opt(rlp, &self.chain_id);
+        rlp_opt(rlp, &self.network_id);
         rlp_opt(rlp, &self.nonce);
         rlp_opt(rlp, &self.max_priority_fee_per_gas);
         rlp_opt(rlp, &self.max_fee_per_gas);
@@ -198,7 +198,7 @@ impl Eip1559TransactionRequest {
     #[inline]
     pub fn decode_base_rlp(rlp: &rlp::Rlp, offset: &mut usize) -> Result<Self, DecoderError> {
         let mut tx = Self::new();
-        tx.chain_id = Some(rlp.val_at(*offset)?);
+        tx.network_id = Some(rlp.val_at(*offset)?);
         *offset += 1;
         tx.nonce = Some(rlp.val_at(*offset)?);
         *offset += 1;
@@ -262,7 +262,7 @@ impl From<Eip1559TransactionRequest> for super::request::TransactionRequest {
             gateway_fee_recipient: None,
             #[cfg(feature = "celo")]
             gateway_fee: None,
-            chain_id: tx.chain_id,
+            network_id: tx.network_id,
         }
     }
 }
@@ -279,7 +279,7 @@ impl From<&Transaction> for Eip1559TransactionRequest {
             access_list: tx.access_list.clone().unwrap_or_default(),
             max_priority_fee_per_gas: tx.max_priority_fee_per_gas,
             max_fee_per_gas: tx.max_fee_per_gas,
-            chain_id: tx.chain_id.map(|x| U64::from(x.as_u64())),
+            network_id: tx.network_id.map(|x| U64::from(x.as_u64())),
         }
     }
 }

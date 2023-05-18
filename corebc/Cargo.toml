@@ -1,0 +1,91 @@
+[package]
+name = "corebc"
+authors = ["Georgios Konstantopoulos <me@gakonst.com>"]
+readme = "../README.md"
+description = "A complete Ethereum and Celo Rust library"
+
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+documentation.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+exclude.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.playground]
+all-features = true
+
+[features]
+default = ["abigen", "rustls"]
+
+celo = [
+    "corebc-core/celo",
+    "corebc-providers/celo",
+    "corebc-signers/celo",
+    "corebc-contract/celo",
+    "corebc-middleware/celo",
+    "legacy",
+]
+
+legacy = ["corebc-core/legacy", "corebc-contract/legacy"]
+
+# individual features per sub-crate
+## providers
+ws = ["corebc-providers/ws"]
+legacy-ws = ["corebc-providers/legacy-ws"]
+ipc = ["corebc-providers/ipc"]
+rustls = [
+    "corebc-middleware/rustls",
+    "corebc-providers/rustls",
+    "corebc-etherscan/rustls",
+    "corebc-contract/rustls",
+    "corebc-solc/rustls",
+]
+openssl = [
+    "corebc-middleware/openssl",
+    "corebc-providers/openssl",
+    "corebc-etherscan/openssl",
+    "corebc-contract/openssl",
+    "corebc-solc/openssl",
+]
+dev-rpc = ["corebc-providers/dev-rpc"]
+## signers
+ledger = ["corebc-signers/ledger"]
+trezor = ["corebc-signers/trezor"]
+yubi = ["corebc-signers/yubi"]
+## contracts
+abigen = ["corebc-contract/abigen"]
+### abigen without reqwest
+abigen-offline = ["corebc-contract/abigen-offline"]
+## solc
+solc-full = ["corebc-solc/full"]
+solc-tests = ["corebc-solc/tests"]
+
+# Deprecated
+solc-sha2-asm = []
+eip712 = []
+
+[dependencies]
+corebc-addressbook.workspace = true
+corebc-contract.workspace = true
+corebc-core.workspace = true
+corebc-etherscan = { workspace = true, features = ["corebc-solc"] }
+corebc-middleware.workspace = true
+corebc-providers.workspace = true
+corebc-signers.workspace = true
+corebc-solc.workspace = true
+
+[dev-dependencies]
+serde.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+corebc-contract.workspace = true
+corebc-providers = { workspace = true, features = ["rustls"] } # allow https connections
+corebc-solc = { workspace = true, features = ["svm-solc"] }

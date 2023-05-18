@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
     let client = Arc::new(client);
 
     // WETH Token
-    let address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".parse::<Address>()?;
+    let address = "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48".parse::<Address>()?;
     let weth = ERC20::new(address, Arc::clone(&client));
 
     // Subscribe Transfer events

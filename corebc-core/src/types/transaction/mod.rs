@@ -34,18 +34,18 @@ pub(super) fn rlp_opt_list<T: rlp::Encodable>(rlp: &mut rlp::RlpStream, opt: &Op
 }
 
 /// normalizes the signature back to 0/1
-pub(crate) fn normalize_v(v: u64, chain_id: crate::types::U64) -> u64 {
+pub(crate) fn normalize_v(v: u64, network_id: crate::types::U64) -> u64 {
     if v > 1 {
-        v - chain_id.as_u64() * 2 - 35
+        v - network_id.as_u64() * 2 - 35
     } else {
         v
     }
 }
 
-/// extracts the chainid from the signature v value based on EIP-155
-pub(crate) fn extract_chain_id(v: u64) -> Option<crate::types::U64> {
+/// extracts the networkid from the signature v value based on EIP-155
+pub(crate) fn extract_network_id(v: u64) -> Option<crate::types::U64> {
     // https://eips.ethereum.org/EIPS/eip-155
-    // if chainid is available, v = {0, 1} + CHAIN_ID * 2 + 35
+    // if networkid is available, v = {0, 1} + NETWORK_ID * 2 + 35
     if v >= 35 {
         return Some(crate::types::U64::from((v - 35) >> 1))
     }
@@ -100,8 +100,8 @@ mod tests {
     #[test]
     fn test_rlp_opt_none() {
         let mut stream = RlpStream::new_list(1);
-        let empty_chainid: Option<U64> = None;
-        rlp_opt(&mut stream, &empty_chainid);
+        let empty_networkid: Option<U64> = None;
+        rlp_opt(&mut stream, &empty_networkid);
         let out = stream.out();
         assert_eq!(out, vec![0xc1, 0x80]);
     }

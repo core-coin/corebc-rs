@@ -7,7 +7,7 @@ The Ws provider allows you to send JSON-RPC requests and receive responses over 
 Lets look at a few ways to create a new `WS` provider. Below is the most straightforward way to initialize a new `Ws` provider.
 
 ```rust
-use ethers::providers::{Provider, Ws};
+use corebc::providers::{Provider, Ws};
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
@@ -19,7 +19,7 @@ async fn main() -> eyre::Result<()> {
 Similar to the other providers, you can also establish an authorized connection with a node via websockets.
 
 ```rust
-use ethers::providers::{Authorization, Provider, Ws};
+use providers::{Authorization, Provider, Ws};
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {

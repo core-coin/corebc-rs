@@ -1,5 +1,5 @@
 use crate::{
-    types::{Address, Chain},
+    types::{Address, Network},
     utils::{secret_key_to_address, unused_ports},
 };
 use generic_array::GenericArray;
@@ -24,7 +24,7 @@ pub struct AnvilInstance {
     private_keys: Vec<K256SecretKey>,
     addresses: Vec<Address>,
     port: u16,
-    chain_id: Option<u64>,
+    network_id: Option<u64>,
 }
 
 impl AnvilInstance {
@@ -43,9 +43,10 @@ impl AnvilInstance {
         self.port
     }
 
-    /// Returns the chain of the anvil instance
-    pub fn chain_id(&self) -> u64 {
-        self.chain_id.unwrap_or_else(|| Chain::AnvilHardhat.into())
+    /// Returns the network of the anvil instance
+    //  CORETODO: Should be a local node instead of Devin
+    pub fn network_id(&self) -> u64 {
+        self.network_id.unwrap_or_else(|| Network::Devin.into())
     }
 
     /// Returns the HTTP endpoint of this instance
@@ -92,7 +93,7 @@ pub struct Anvil {
     program: Option<PathBuf>,
     port: Option<u16>,
     block_time: Option<u64>,
-    chain_id: Option<u64>,
+    network_id: Option<u64>,
     mnemonic: Option<String>,
     fork: Option<String>,
     fork_block_number: Option<u64>,
@@ -149,9 +150,9 @@ impl Anvil {
         self
     }
 
-    /// Sets the chain_id the `anvil` instance will use.
-    pub fn chain_id<T: Into<u64>>(mut self, chain_id: T) -> Self {
-        self.chain_id = Some(chain_id.into());
+    /// Sets the network_id the `anvil` instance will use.
+    pub fn network_id<T: Into<u64>>(mut self, network_id: T) -> Self {
+        self.network_id = Some(network_id.into());
         self
     }
 
@@ -229,10 +230,10 @@ impl Anvil {
         }
         let network: NetworkType;
 
-        if let Some(chain_id) = self.chain_id {
-            cmd.arg("--chain-id").arg(chain_id.to_string());
+        if let Some(network_id) = self.network_id {
+            cmd.arg("--network-id").arg(network_id.to_string());
 
-            if chain_id == 1 {
+            if network_id == 1 {
                 network = NetworkType::Mainnet;
             } else {
                 network = NetworkType::Testnet;
@@ -292,7 +293,7 @@ impl Anvil {
             }
         }
 
-        AnvilInstance { pid: child, private_keys, addresses, port, chain_id: self.chain_id }
+        AnvilInstance { pid: child, private_keys, addresses, port, network_id: self.network_id }
     }
 }
 

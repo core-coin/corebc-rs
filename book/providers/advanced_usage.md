@@ -7,7 +7,7 @@ The `CallBuilder` is an enum to help create complex calls. `CallBuilder` impleme
 Lets take a quick look at how to use the `CallBuilder`.
 
 ```rust
-use ethers::{
+use corebc::{
     providers::{ Http, Provider},
     types::{TransactionRequest, H160},
     utils::parse_ether,
@@ -41,7 +41,7 @@ First, we initialize a new provider and create a transaction that sends `1 ETH` 
 Here is an example with the exact same raw call, but executed on the previous block.
 
 ```rust
-use ethers::{
+use {
     providers::{call_raw::RawCall, Http, Middleware, Provider},
     types::{BlockId, TransactionRequest, H160},
     utils::parse_ether,
@@ -73,7 +73,7 @@ async fn main() -> eyre::Result<()> {
 Let's look at how to use the state override set. In short, the state override set is an optional address-to-state mapping, where each entry specifies some state to be ephemerally overridden prior to executing the call. The state override set allows you to override an account's balance, an account's nonce, the code at a given address, the entire state of an account's storage or an individual slot in an account's storage. Note that the state override set is not a default feature and is not available on every node.
 
 ```rust
-use ethers::{
+use {
     providers::{
         call_raw::{spoof::State, RawCall},
         Http, Provider,
