@@ -8,7 +8,7 @@ Crates to modify
   - [x] Sha3
 - [x] corebc-providers
 - [ ] corebc-contract
-- [ ] corebc-etherscan
+- [ ] corebc-blockindex
 - [ ] corebc-middleware
 - [ ] corebc-signers
 - [ ] corebc-solc

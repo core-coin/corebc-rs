@@ -8,9 +8,6 @@ pub use eth_gas_station::EthGasStation;
 pub mod etherchain;
 pub use etherchain::Etherchain;
 
-pub mod etherscan;
-pub use etherscan::Etherscan;
-
 pub mod middleware;
 pub use middleware::{GasOracleMiddleware, MiddlewareError};
 
@@ -64,10 +61,10 @@ pub enum GasOracleError {
     #[error("invalid oracle response")]
     InvalidResponse,
 
-    /// An internal error in the Etherscan client request made from the underlying
+    /// An internal error in the Blockindex client request made from the underlying
     /// gas oracle
     #[error(transparent)]
-    EtherscanError(#[from] corebc_etherscan::errors::EtherscanError),
+    BlockindexError(#[from] corebc_blockindex::errors::BlockindexError),
 
     /// An internal error thrown when the required gas category is not
     /// supported by the gas oracle API

@@ -22,10 +22,6 @@ pub enum Source {
     /// An ABI located on the local file system.
     Local(PathBuf),
 
-    /// An address of a smart contract address verified at a supported blockchain explorer.
-    #[cfg(all(feature = "online", not(target_arch = "wasm32")))]
-    Explorer(Explorer, corebc_core::types::Address),
-
     /// The package identifier of an npm package with a path to a Truffle artifact or ABI to be
     /// retrieved from `unpkg.io`.
     #[cfg(all(feature = "online", not(target_arch = "wasm32")))]

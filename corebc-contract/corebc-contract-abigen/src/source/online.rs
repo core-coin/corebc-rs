@@ -1,7 +1,7 @@
 use super::Source;
 use crate::util;
+use corebc_blockindex::Client;
 use corebc_core::types::{Address, Network};
-use corebc_etherscan::Client;
 use eyre::{Context, Result};
 use std::{fmt, str::FromStr};
 use url::Url;
@@ -60,27 +60,11 @@ impl Explorer {
         }
     }
 
-    /// Creates an `corebc-etherscan` client using this Explorer's settings.
-    pub fn client(self, api_key: Option<String>) -> Result<Client> {
+    /// Creates an `corebc-blockindex` client using this Explorer's settings.
+    pub fn client(self) -> Result<Client> {
         let network = self.network();
-        let client = match api_key {
-            Some(api_key) => Client::new(network, api_key),
-            None => Client::new_from_opt_env(network),
-        }?;
+        let client = Client::new(network)?;
         Ok(client)
-    }
-
-    /// Retrieves a contract ABI from the Etherscan HTTP API and wraps it in an artifact JSON for
-    /// compatibility with the code generation facilities.
-    pub fn get(self, address: Address) -> Result<String> {
-        // TODO: Improve this
-        let client = self.client(None)?;
-        let future = client.contract_abi(address);
-        let abi = match tokio::runtime::Handle::try_current() {
-            Ok(handle) => handle.block_on(future),
-            _ => tokio::runtime::Runtime::new().expect("Could not start runtime").block_on(future),
-        }?;
-        Ok(serde_json::to_string(&abi)?)
     }
 }
 
@@ -95,18 +79,9 @@ impl Source {
                 // npm:<npm package>
                 "npm" => Ok(Self::npm(url.path())),
 
-                // try first: <explorer url>/.../<address>
-                // then: any http url
-                "http" | "https" => Ok(url
-                    .host_str()
-                    .and_then(|host| Self::from_explorer(host, &url).ok())
-                    .unwrap_or(Self::Http(url))),
-
-                // custom scheme: <explorer or network>:<address>
+                // custom scheme: <network>:<address>
                 // fallback: local fs path
-                scheme => Self::from_explorer(scheme, &url)
-                    .or_else(|_| Self::local(source))
-                    .wrap_err("Invalid path or URL"),
+                _ => Self::local(source).wrap_err("Invalid path or URL"),
             }
         } else {
             // not a valid URL so fallback to path
@@ -114,25 +89,9 @@ impl Source {
         }
     }
 
-    /// Parse `s` as an explorer ("etherscan"), explorer domain ("etherscan.io") or a network that
-    /// has an explorer ("mainnet").
-    ///
-    /// The URL can be either `<explorer>:<address>` or `<explorer_url>/.../<address>`
-    fn from_explorer(s: &str, url: &Url) -> Result<Self> {
-        let explorer: Explorer = s.parse().or_else(|_| Explorer::from_network(s.parse()?))?;
-        let address = last_segment_address(url).ok_or_else(|| eyre::eyre!("Invalid URL: {url}"))?;
-        Ok(Self::Explorer(explorer, address))
-    }
-
     /// Creates an HTTP source from a URL.
     pub fn http(url: impl AsRef<str>) -> Result<Self> {
         Ok(Self::Http(Url::parse(url.as_ref())?))
-    }
-
-    /// Creates an Etherscan source from an address string.
-    pub fn explorer(network: Network, address: Address) -> Result<Self> {
-        let explorer = Explorer::from_network(network)?;
-        Ok(Self::Explorer(explorer, address))
     }
 
     /// Creates an Etherscan source from an address string.
@@ -146,7 +105,6 @@ impl Source {
             Self::Http(url) => {
                 util::http_get(url.clone()).wrap_err("Failed to retrieve ABI from URL")
             }
-            Self::Explorer(explorer, address) => explorer.get(*address),
             Self::Npm(package) => {
                 // TODO: const?
                 let unpkg = Url::parse("https://unpkg.io/").unwrap();
@@ -156,10 +114,6 @@ impl Source {
             _ => unreachable!(),
         }
     }
-}
-
-fn last_segment_address(url: &Url) -> Option<Address> {
-    url.path().rsplit('/').next()?.parse().ok()
 }
 
 #[cfg(test)]
@@ -177,27 +131,6 @@ mod tests {
             Source::parse("npm:@openzeppelin/contracts@2.5.0/build/contracts/IERC20.json").unwrap(),
             Source::npm("@openzeppelin/contracts@2.5.0/build/contracts/IERC20.json")
         );
-
-        // CORETODO add devin blockchain explorer
-        let explorers =
-            &[("mainnet:", "etherscan:", "https://etherscan.io/address/", Network::Mainnet)];
-
-        let address: Address = "0x0102030405060708091011121314151617181920".parse().unwrap();
-        for &(network_s, scan_s, url_s, network) in explorers {
-            let expected = Source::explorer(network, address).unwrap();
-
-            let tests2 =
-                [network_s, scan_s, url_s].map(|s| s.to_string() + &format!("{address:?}"));
-            let tests2 = tests2.map(Source::parse).into_iter().chain(Some(Ok(expected.clone())));
-            let tests2 = tests2.collect::<Result<Vec<_>>>().unwrap();
-
-            for slice in tests2.windows(2) {
-                let (a, b) = (&slice[0], &slice[1]);
-                if a != b {
-                    panic!("Expected: {expected:?}; Got: {a:?} | {b:?}");
-                }
-            }
-        }
     }
 
     #[test]
