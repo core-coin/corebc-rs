@@ -130,7 +130,7 @@ impl Client {
         }
         Ok(AccountBalance {
             account: *address,
-            balance: response["balance"].to_string().replace("\"", ""),
+            balance: response["balance"].to_string().replace('\"', ""),
         })
     }
 
@@ -160,7 +160,7 @@ impl Client {
             .as_array()
             .unwrap()
             .iter()
-            .map(|x| x.to_string().replace("\"", ""))
+            .map(|x| x.to_string().replace('\"', ""))
             .collect())
     }
 

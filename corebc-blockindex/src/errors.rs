@@ -37,8 +37,6 @@ pub enum BlockindexError {
     Builder(String),
     #[error("Missing solc version: {0}")]
     MissingSolcVersion(String),
-    #[error("Invalid API Key")]
-    InvalidApiKey,
     #[error("Sorry, you have been blocked by Cloudflare, See also https://community.cloudflare.com/t/sorry-you-have-been-blocked/110790")]
     BlockedByCloudflare,
     #[error("The Requested prompted a cloudflare captcha security challenge to review the security of your connection before proceeding.")]

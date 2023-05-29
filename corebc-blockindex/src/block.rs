@@ -40,17 +40,16 @@ impl Client {
         &self,
         block_query_option: BlockQueryOption,
     ) -> Result<Block, BlockindexError> {
-        let mut query_param:String;
-        match block_query_option {
-            BlockQueryOption::ByNumber(number) => query_param = format!("{number}"),
-            BlockQueryOption::ByHash(block_hash) => query_param = block_hash,
-        }
+        let query_param: String = match block_query_option {
+            BlockQueryOption::ByNumber(number) => format!("{number}"),
+            BlockQueryOption::ByHash(block_hash) => block_hash,
+        };
         let query =
             self.create_query("block", query_param.as_str(), HashMap::from([("details", "basic")]));
         let response: Value = self.get_json(&query).await?;
         if response["error"].as_str().is_some() {
             return Err(BlockindexError::ErrorResponse { error: response["error"].to_string() })
         }
-        Ok(serde_json::from_value(response.clone()).unwrap())
+        Ok(serde_json::from_value(response).unwrap())
     }
 }

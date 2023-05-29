@@ -51,15 +51,15 @@ impl Client {
             return Err(BlockindexError::ErrorResponse { error: response["error"].to_string() })
         }
         let mut res: Transaction = serde_json::from_value(response.clone()).unwrap();
-        res.from = response["vin"][0]["addresses"][0].to_string().replace("\"", "");
-        res.to = response["vout"][0]["addresses"][0].to_string().replace("\"", "");
+        res.from = response["vin"][0]["addresses"][0].to_string().replace('\"', "");
+        res.to = response["vout"][0]["addresses"][0].to_string().replace('\"', "");
         res.status = response["ethereumSpecific"]["status"].as_u64().unwrap();
         res.nonce = response["ethereumSpecific"]["nonce"].as_u64().unwrap();
         res.energy_limit = response["ethereumSpecific"]["energyLimit"].as_u64().unwrap();
         res.energy_used = response["ethereumSpecific"]["energyUsed"].as_u64().unwrap();
         res.energy_price =
-            response["ethereumSpecific"]["energyPrice"].to_string().replace("\"", "");
-        res.data = response["ethereumSpecific"]["data"].to_string().replace("\"", "");
+            response["ethereumSpecific"]["energyPrice"].to_string().replace('\"', "");
+        res.data = response["ethereumSpecific"]["data"].to_string().replace('\"', "");
 
         Ok(res)
     }
@@ -80,6 +80,6 @@ impl Client {
         if response["error"].as_str().is_some() {
             return Err(BlockindexError::ErrorResponse { error: response["error"].to_string() })
         }
-        Ok(response["result"].to_string().replace("\"", "").parse().unwrap())
+        Ok(response["result"].to_string().replace('\"', "").parse().unwrap())
     }
 }

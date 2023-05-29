@@ -1,7 +1,7 @@
 use super::Source;
 use crate::util;
 use corebc_blockindex::Client;
-use corebc_core::types::{Address, Network};
+use corebc_core::types::Network;
 use eyre::{Context, Result};
 use std::{fmt, str::FromStr};
 use url::Url;
