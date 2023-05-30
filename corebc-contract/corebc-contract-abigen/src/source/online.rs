@@ -1,72 +1,8 @@
 use super::Source;
 use crate::util;
-use corebc_blockindex::Client;
-use corebc_core::types::Network;
 use eyre::{Context, Result};
-use std::{fmt, str::FromStr};
 use url::Url;
 
-/// An [etherscan](https://etherscan.io)-like blockchain explorer.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-//CORETODO remove unused variants
-pub enum Explorer {
-    /// <https://etherscan.io>
-    #[default]
-    Etherscan,
-    /// <https://bscscan.com>
-    Bscscan,
-    /// <https://polygonscan.com>
-    Polygonscan,
-    /// <https://snowtrace.io>
-    Snowtrace,
-}
-
-impl FromStr for Explorer {
-    type Err = eyre::Report;
-
-    fn from_str(s: &str) -> Result<Self> {
-        match s.to_lowercase().as_str() {
-            "etherscan" | "etherscan.io" => Ok(Self::Etherscan),
-            "bscscan" | "bscscan.com" => Ok(Self::Bscscan),
-            "polygonscan" | "polygonscan.com" => Ok(Self::Polygonscan),
-            "snowtrace" | "snowtrace.io" => Ok(Self::Snowtrace),
-            _ => Err(eyre::eyre!("Invalid or unsupported blockchain explorer: {s}")),
-        }
-    }
-}
-
-impl fmt::Display for Explorer {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(self, f)
-    }
-}
-
-impl Explorer {
-    /// Returns the network's Explorer, if it is known.
-    pub fn from_network(network: Network) -> Result<Self> {
-        match network {
-            Network::Mainnet => Ok(Self::Etherscan),
-            _ => Err(eyre::eyre!("Provided network has no known blockchain explorer")),
-        }
-    }
-
-    /// Returns the Explorer's network. If it has multiple, the main one is returned.
-    pub const fn network(&self) -> Network {
-        match self {
-            Self::Etherscan => Network::Mainnet,
-            Self::Bscscan => Network::Devin,
-            Self::Polygonscan => Network::Devin,
-            Self::Snowtrace => Network::Devin,
-        }
-    }
-
-    /// Creates an `corebc-blockindex` client using this Explorer's settings.
-    pub fn client(self) -> Result<Client> {
-        let network = self.network();
-        let client = Client::new(network)?;
-        Ok(client)
-    }
-}
 
 impl Source {
     #[inline]
@@ -79,9 +15,12 @@ impl Source {
                 // npm:<npm package>
                 "npm" => Ok(Self::npm(url.path())),
 
+                // any http url
+                "http" | "https" => Ok(Self::Http(url)),
+
                 // custom scheme: <network>:<address>
-                // fallback: local fs path
-                _ => Self::local(source).wrap_err("Invalid path or URL"),
+                 _ =>  Self::local(source)
+                    .wrap_err("Invalid path or URL"),
             }
         } else {
             // not a valid URL so fallback to path

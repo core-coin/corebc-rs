@@ -4,8 +4,6 @@
 
 #[cfg(all(feature = "online", not(target_arch = "wasm32")))]
 mod online;
-#[cfg(all(feature = "online", not(target_arch = "wasm32")))]
-pub use online::Explorer;
 
 use crate::util;
 use eyre::{Error, Result};
@@ -61,13 +59,6 @@ impl Source {
     /// - `http://...`: an HTTP URL to a contract ABI. <br> Note: either the `rustls` or `openssl`
     ///   feature must be enabled to support *HTTPS* URLs.
     ///
-    /// - `<name>:<address>`, `<network>:<address>` or `<url>/.../<address>`: an address or URL of a
-    ///   verified contract on a blockchain explorer. <br> Supported explorers and their respective
-    ///   network:
-    ///   - `etherscan`   -> `mainnet`
-    ///   - `bscscan`     -> `bsc`
-    ///   - `polygonscan` -> `polygon`
-    ///   - `snowtrace`   -> `avalanche`
     pub fn parse(source: impl AsRef<str>) -> Result<Self> {
         let source = source.as_ref().trim();
         match source.chars().next() {
