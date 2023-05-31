@@ -6,16 +6,16 @@ use std::collections::HashMap;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Block {
-    hash: H256,
-    previous_block_hash: H256,
-    next_block_hash: H256,
-    height: u64,
-    confirmations: u64,
-    size: u64,
-    time: u64,
-    nonce: String,
-    difficulty: String,
-    tx_count: u64,
+    pub hash: H256,
+    pub previous_block_hash: H256,
+    pub next_block_hash: H256,
+    pub height: u64,
+    pub confirmations: u64,
+    pub size: u64,
+    pub time: u64,
+    pub nonce: String,
+    pub difficulty: String,
+    pub tx_count: u64,
 }
 
 /// Options for querying blocks

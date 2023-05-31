@@ -7,29 +7,29 @@ use std::collections::HashMap;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Transaction {
-    txid: String,
-    block_hash: String,
-    block_height: u64,
-    confirmations: u64,
-    block_time: u64,
-    value: String,
-    fees: String,
+    pub txid: String,
+    pub block_hash: String,
+    pub block_height: u64,
+    pub confirmations: u64,
+    pub block_time: u64,
+    pub value: String,
+    pub fees: String,
     #[serde(default)]
-    from: String,
+    pub from: String,
     #[serde(default)]
-    to: String,
+    pub to: String,
     #[serde(default)]
-    status: u64,
+    pub status: u64,
     #[serde(default)]
-    nonce: u64,
+    pub nonce: u64,
     #[serde(default)]
-    energy_limit: u64,
+    pub energy_limit: u64,
     #[serde(default)]
-    energy_used: u64,
+    pub energy_used: u64,
     #[serde(default)]
-    energy_price: String,
+    pub energy_price: String,
     #[serde(default)]
-    data: String,
+    pub data: String,
 }
 
 impl Client {
