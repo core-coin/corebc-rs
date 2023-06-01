@@ -35,7 +35,7 @@ pub enum BlockindexError {
     Unknown(String),
     #[error("Missing field: {0}")]
     Builder(String),
-    #[error("Missing solc version: {0}")]
+    #[error("Missing ylem version: {0}")]
     MissingYlemVersion(String),
     #[error("Sorry, you have been blocked by Cloudflare, See also https://community.cloudflare.com/t/sorry-you-have-been-blocked/110790")]
     BlockedByCloudflare,
