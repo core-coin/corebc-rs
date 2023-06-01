@@ -58,7 +58,6 @@ impl Source {
     ///
     /// - `http://...`: an HTTP URL to a contract ABI. <br> Note: either the `rustls` or `openssl`
     ///   feature must be enabled to support *HTTPS* URLs.
-    ///
     pub fn parse(source: impl AsRef<str>) -> Result<Self> {
         let source = source.as_ref().trim();
         match source.chars().next() {

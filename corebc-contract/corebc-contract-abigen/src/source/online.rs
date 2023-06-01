@@ -3,7 +3,6 @@ use crate::util;
 use eyre::{Context, Result};
 use url::Url;
 
-
 impl Source {
     #[inline]
     pub(super) fn parse_online(source: &str) -> Result<Self> {
@@ -19,8 +18,7 @@ impl Source {
                 "http" | "https" => Ok(Self::Http(url)),
 
                 // custom scheme: <network>:<address>
-                 _ =>  Self::local(source)
-                    .wrap_err("Invalid path or URL"),
+                _ => Self::local(source).wrap_err("Invalid path or URL"),
             }
         } else {
             // not a valid URL so fallback to path
