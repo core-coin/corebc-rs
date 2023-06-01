@@ -1,10 +1,7 @@
 use async_trait::async_trait;
-use corebc_core::{
-    types::*,
-    utils::{parse_ether, Anvil},
-};
+use corebc_core::{types::*, utils::Anvil};
 use corebc_middleware::gas_oracle::{
-    BlockNative, Etherchain, GasCategory, GasNow, GasOracle, GasOracleError, ProviderOracle, Result,
+    BlockNative, Etherchain, GasNow, GasOracle, GasOracleError, ProviderOracle, Result,
 };
 use corebc_providers::{Http, Middleware, Provider};
 

@@ -1,9 +1,8 @@
 use crate::{BlockindexError, Result};
 use semver::Version;
-use serde_json::Value;
 
 static YLEM_BIN_LIST_URL: &str =
-    "https://raw.githubusercontent.com/core-coin/ylem-bins/main/list.json";
+    "https://raw.githubusercontent.com/core-coin/ylem-bins/main/list.txt";
 
 /// Options for querying Ylem versions
 #[derive(Clone, Debug)]
@@ -22,16 +21,13 @@ pub enum YlemLookupResult {
 
 /// Returns the requested Ylem version(s).
 pub async fn lookup_compiler_version(query: &YlemLookupQuery) -> Result<YlemLookupResult> {
-    let response: Value = reqwest::get(YLEM_BIN_LIST_URL).await?.json().await?;
+    let response = reqwest::get(YLEM_BIN_LIST_URL).await?.text().await?;
 
-    let versions: Vec<Version> = response["builds"]
-        .as_array()
-        .ok_or_else(|| BlockindexError::Builder("txids".to_string()))?
-        .iter()
-        .map(|x| {
-            x["version"]
-                .as_str()
-                .ok_or_else(|| BlockindexError::Builder("version".to_string()))?
+    let versions: Vec<Version> = response
+        .lines()
+        .map(|l| {
+            l.to_string()
+                .trim_start_matches('v')
                 .parse::<Version>()
                 .map_err(|_| BlockindexError::Builder("version".to_string()))
         })
