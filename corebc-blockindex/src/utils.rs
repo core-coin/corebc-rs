@@ -9,8 +9,8 @@ static YLEM_BIN_LIST_URL: &str =
 #[derive(Clone, Debug)]
 pub enum YlemLookupQuery {
     Given(Version),
-    Latest(),
-    All(),
+    Latest,
+    All,
 }
 
 /// Result of a Ylem version lookup
@@ -26,11 +26,17 @@ pub async fn lookup_compiler_version(query: &YlemLookupQuery) -> Result<YlemLook
 
     let versions: Vec<Version> = response["builds"]
         .as_array()
-        .unwrap()
+        .ok_or_else(|| BlockindexError::Builder("txids".to_string()))?
         .iter()
-        .map(|x| x["version"].as_str().unwrap().parse::<Version>().unwrap())
-        .collect();
-
+        .map(|x| {
+            x["version"]
+                .as_str()
+                .ok_or_else(|| BlockindexError::Builder("version".to_string()))?
+                .parse::<Version>()
+                .map_err(|_| BlockindexError::Builder("version".to_string()))
+        })
+        .collect::<Result<Vec<Version>>>()?;
+    // let versions = versions?;
     match query {
         YlemLookupQuery::Given(requested) => {
             let version = versions
@@ -39,9 +45,13 @@ pub async fn lookup_compiler_version(query: &YlemLookupQuery) -> Result<YlemLook
                 .ok_or_else(|| BlockindexError::MissingYlemVersion(requested.to_string()))?;
             Ok(YlemLookupResult::Version(version.to_owned()))
         }
-        YlemLookupQuery::Latest() => {
-            Ok(YlemLookupResult::Version(versions.iter().max().unwrap().to_owned()))
+        YlemLookupQuery::Latest => {
+            let version = versions
+                .iter()
+                .max()
+                .ok_or_else(|| BlockindexError::MissingYlemVersion("latest".to_string()))?;
+            Ok(YlemLookupResult::Version(version.to_owned()))
         }
-        YlemLookupQuery::All() => Ok(YlemLookupResult::All(versions)),
+        YlemLookupQuery::All => Ok(YlemLookupResult::All(versions)),
     }
 }

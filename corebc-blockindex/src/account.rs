@@ -158,7 +158,7 @@ impl Client {
         }
         Ok(response["txids"]
             .as_array()
-            .unwrap()
+            .ok_or_else(|| BlockindexError::Builder("txids".to_string()))?
             .iter()
             .map(|x| x.to_string().replace('\"', ""))
             .collect())
@@ -188,12 +188,15 @@ impl Client {
         if response["error"].as_str().is_some() {
             return Err(BlockindexError::ErrorResponse { error: response["error"].to_string() })
         }
-        Ok(response["tokens"]
+        response["tokens"]
             .as_array()
-            .unwrap()
+            .ok_or_else(|| BlockindexError::Builder("tokens".to_string()))?
             .iter()
-            .map(|x| serde_json::from_value(x.clone()).unwrap())
-            .collect())
+            .map(|x| {
+                serde_json::from_value(x.to_owned())
+                    .map_err(|_| BlockindexError::Builder("tokens".to_string()))
+            })
+            .collect()
     }
 
     /// Returns the balance history of an address.
@@ -219,11 +222,13 @@ impl Client {
         if response["error"].as_str().is_some() {
             return Err(BlockindexError::ErrorResponse { error: response["error"].to_string() })
         }
-        Ok(response
+        response
             .as_array()
-            .unwrap()
+            .ok_or_else(|| BlockindexError::BalanceFailed)?
             .iter()
-            .map(|x| serde_json::from_value(x.clone()).unwrap())
-            .collect())
+            .map(|x| {
+                serde_json::from_value(x.to_owned()).map_err(|_| BlockindexError::BalanceFailed)
+            })
+            .collect()
     }
 }

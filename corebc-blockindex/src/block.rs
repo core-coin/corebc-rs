@@ -50,6 +50,6 @@ impl Client {
         if response["error"].as_str().is_some() {
             return Err(BlockindexError::ErrorResponse { error: response["error"].to_string() })
         }
-        Ok(serde_json::from_value(response).unwrap())
+        Ok(serde_json::from_value(response)?)
     }
 }
