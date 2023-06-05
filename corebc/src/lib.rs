@@ -87,11 +87,11 @@
 #[doc(inline)]
 pub use corebc_addressbook as addressbook;
 #[doc(inline)]
+pub use corebc_blockindex as blockindex;
+#[doc(inline)]
 pub use corebc_contract as contract;
 #[doc(inline)]
 pub use corebc_core as core;
-#[doc(inline)]
-pub use corebc_etherscan as etherscan;
 #[doc(inline)]
 pub use corebc_middleware as middleware;
 #[doc(inline)]
@@ -114,7 +114,7 @@ pub mod prelude {
 
     pub use super::core::{types::*, *};
 
-    pub use super::etherscan::*;
+    pub use super::blockindex::*;
 
     pub use super::middleware::*;
 

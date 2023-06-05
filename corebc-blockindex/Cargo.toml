@@ -1,8 +1,8 @@
 [package]
-name = "corebc-etherscan"
+name = "corebc-blockindex"
 readme = "README.md"
-description = "Bindings for the etherscan.io web API"
-keywords = ["crypto", "ethers", "ethereum", "web3", "etherscan"]
+description = "Bindings for the blockindex.net web API"
+keywords = ["crypto", "core", "core-coin", "web3", "blockindex"]
 
 version.workspace = true
 edition.workspace = true

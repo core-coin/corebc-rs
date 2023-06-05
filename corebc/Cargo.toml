@@ -45,14 +45,14 @@ ipc = ["corebc-providers/ipc"]
 rustls = [
     "corebc-middleware/rustls",
     "corebc-providers/rustls",
-    "corebc-etherscan/rustls",
+    "corebc-blockindex/rustls",
     "corebc-contract/rustls",
     "corebc-solc/rustls",
 ]
 openssl = [
     "corebc-middleware/openssl",
     "corebc-providers/openssl",
-    "corebc-etherscan/openssl",
+    "corebc-blockindex/openssl",
     "corebc-contract/openssl",
     "corebc-solc/openssl",
 ]
@@ -77,7 +77,7 @@ eip712 = []
 corebc-addressbook.workspace = true
 corebc-contract.workspace = true
 corebc-core.workspace = true
-corebc-etherscan = { workspace = true, features = ["corebc-solc"] }
+corebc-blockindex = { workspace = true, features = ["corebc-solc"] }
 corebc-middleware.workspace = true
 corebc-providers.workspace = true
 corebc-signers.workspace = true

@@ -27,8 +27,6 @@ pub mod multi;
 pub use multi::MultiAbigen;
 
 mod source;
-#[cfg(all(feature = "online", not(target_arch = "wasm32")))]
-pub use source::Explorer;
 pub use source::Source;
 
 mod util;

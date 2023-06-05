@@ -196,7 +196,7 @@ impl Network {
         }
     }
 
-    /// Returns the network's blockchain explorer and its API (Etherscan and Etherscan-like) URLs.
+    /// Returns the network's blockchain explorer and its API URLs.
     ///
     /// Returns `(API_URL, BASE_URL)`
     ///
@@ -206,58 +206,23 @@ impl Network {
     /// use corebc_core::types::Network;
     ///
     /// assert_eq!(
-    ///     Network::Mainnet.etherscan_urls(),
-    ///     Some(("https://api.etherscan.io/api", "https://etherscan.io"))
+    ///     Network::Mainnet.blockindex_urls(),
+    ///     Some(("https://blockindex.net/api/v2", "https://blockindex.net"))
     /// );
     /// assert_eq!(
-    ///     Network::Devin.etherscan_urls(),
-    ///     Some(("https://api-goerli.etherscan.io/api", "https://goerli.etherscan.io"))
+    ///     Network::Devin.blockindex_urls(),
+    ///     Some(("https://devin.blockindex.net/api/v2", "https://devin.blockindex.net"))
     /// );
     /// ```
-    pub const fn etherscan_urls(&self) -> Option<(&'static str, &'static str)> {
+    pub const fn blockindex_urls(&self) -> Option<(&'static str, &'static str)> {
         use Network::*;
         //CORETODO change to core coin blockchain explorers
         let urls = match self {
-            Mainnet => ("https://api.etherscan.io/api", "https://etherscan.io"),
-            Devin => ("https://api-goerli.etherscan.io/api", "https://goerli.etherscan.io"),
+            Mainnet => ("https://blockindex.net/api/v2", "https://blockindex.net"),
+            Devin => ("https://devin.blockindex.net/api/v2", "https://devin.blockindex.net"),
         };
 
         Some(urls)
-    }
-
-    /// Returns the network's blockchain explorer's API key environment variable's default name.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use corebc_core::types::Network;
-    ///
-    /// assert_eq!(Network::Mainnet.etherscan_api_key_name(), Some("ETHERSCAN_API_KEY"));
-    /// ```
-    pub const fn etherscan_api_key_name(&self) -> Option<&'static str> {
-        use Network::*;
-
-        let api_key_name = match self {
-            Mainnet | Devin => "ETHERSCAN_API_KEY",
-        };
-
-        Some(api_key_name)
-    }
-
-    /// Returns the network's blockchain explorer's API key, from the environment variable with the
-    /// name specified in [`etherscan_api_key_name`](Network::etherscan_api_key_name).
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use corebc_core::types::Network;
-    ///
-    /// let network = Network::Mainnet;
-    /// std::env::set_var(network.etherscan_api_key_name().unwrap(), "KEY");
-    /// assert_eq!(network.etherscan_api_key().as_deref(), Some("KEY"));
-    /// ```
-    pub fn etherscan_api_key(&self) -> Option<String> {
-        self.etherscan_api_key_name().and_then(|name| std::env::var(name).ok())
     }
 }
 

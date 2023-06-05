@@ -2,7 +2,7 @@ use corebc_core::types::{Address, Network};
 use std::env::VarError;
 
 #[derive(Debug, thiserror::Error)]
-pub enum EtherscanError {
+pub enum BlockindexError {
     #[error("Network {0} not supported")]
     NetworkNotSupported(Network),
     #[error("Contract execution call failed: {0}")]
@@ -29,16 +29,14 @@ pub enum EtherscanError {
     IO(#[from] std::io::Error),
     #[error("Local networks (e.g. anvil, ganache, geth --dev) cannot be indexed by etherscan")]
     LocalNetworksNotSupported,
-    #[error("Received error response: status={status},message={message}, result={result:?}")]
-    ErrorResponse { status: String, message: String, result: Option<String> },
+    #[error("Received error response: {error}")]
+    ErrorResponse { error: String },
     #[error("Unknown error: {0}")]
     Unknown(String),
     #[error("Missing field: {0}")]
     Builder(String),
-    #[error("Missing solc version: {0}")]
-    MissingSolcVersion(String),
-    #[error("Invalid API Key")]
-    InvalidApiKey,
+    #[error("Missing ylem version: {0}")]
+    MissingYlemVersion(String),
     #[error("Sorry, you have been blocked by Cloudflare, See also https://community.cloudflare.com/t/sorry-you-have-been-blocked/110790")]
     BlockedByCloudflare,
     #[error("The Requested prompted a cloudflare captcha security challenge to review the security of your connection before proceeding.")]

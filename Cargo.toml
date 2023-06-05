@@ -35,7 +35,7 @@ members = [
     "corebc-addressbook",
     "corebc-contract",
     "corebc-core",
-    "corebc-etherscan",
+    "corebc-blockindex",
     "corebc-middleware",
     "corebc-providers",
     "corebc-signers",
@@ -51,7 +51,7 @@ default-members = [
     "corebc-addressbook",
     "corebc-contract",
     "corebc-core",
-    "corebc-etherscan",
+    "corebc-blockindex",
     "corebc-middleware",
     "corebc-providers",
     "corebc-signers",
@@ -68,7 +68,7 @@ corebc = { version = "2.0.3", path = "corebc", default-features = false }
 corebc-addressbook = { version = "2.0.3", path = "corebc-addressbook", default-features = false }
 corebc-contract = { version = "2.0.3", path = "corebc-contract", default-features = false }
 corebc-core = { version = "2.0.3", path = "corebc-core", default-features = false }
-corebc-etherscan = { version = "2.0.3", path = "corebc-etherscan", default-features = false }
+corebc-blockindex = { version = "2.0.3", path = "corebc-blockindex", default-features = false }
 corebc-middleware = { version = "2.0.3", path = "corebc-middleware", default-features = false }
 corebc-providers = { version = "2.0.3", path = "corebc-providers", default-features = false }
 corebc-signers = { version = "2.0.3", path = "corebc-signers", default-features = false }

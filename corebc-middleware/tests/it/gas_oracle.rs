@@ -1,12 +1,7 @@
 use async_trait::async_trait;
-use corebc_core::{
-    types::*,
-    utils::{parse_ether, Anvil},
-};
-use corebc_etherscan::Client;
+use corebc_core::{types::*, utils::Anvil};
 use corebc_middleware::gas_oracle::{
-    BlockNative, Etherchain, Etherscan, GasCategory, GasNow, GasOracle, GasOracleError,
-    ProviderOracle, Result,
+    BlockNative, Etherchain, GasNow, GasOracle, GasOracleError, ProviderOracle, Result,
 };
 use corebc_providers::{Http, Middleware, Provider};
 
@@ -88,26 +83,6 @@ async fn etherchain() {
     let etherchain_oracle = Etherchain::default();
     let gas_price = etherchain_oracle.fetch().await.unwrap();
     assert!(gas_price > U256::zero());
-}
-
-#[tokio::test]
-async fn etherscan() {
-    let network = Network::Mainnet;
-    let etherscan_client = Client::new_from_opt_env(network).unwrap();
-
-    // initialize and fetch gas estimates from Etherscan
-    // since etherscan does not support `fastest` category, we expect an error
-    let etherscan_oracle = Etherscan::new(etherscan_client.clone()).category(GasCategory::Fastest);
-    let error = etherscan_oracle.fetch().await.unwrap_err();
-    assert!(matches!(error, GasOracleError::GasCategoryNotSupported));
-
-    // but fetching the `standard` gas price should work fine
-    let etherscan_oracle = Etherscan::new(etherscan_client).category(GasCategory::SafeLow);
-
-    let gas_price = etherscan_oracle.fetch().await.unwrap();
-    assert!(gas_price > U256::zero());
-    let ten_ethers = parse_ether(10).unwrap();
-    assert!(gas_price < ten_ethers, "gas calculation is wrong (too high)");
 }
 
 #[tokio::test]

@@ -1,8 +1,8 @@
 use ethers::{
+    blockindex::Client,
     core::types::Network,
-    etherscan::Client,
     middleware::gas_oracle::{
-        BlockNative, Etherscan, GasCategory, GasNow, GasOracle, Polygon, ProviderOracle,
+        BlockNative, GasCategory, GasNow, GasOracle, Polygon, ProviderOracle,
     },
     providers::{Http, Provider},
 };
@@ -21,7 +21,6 @@ use ethers::{
 #[tokio::main]
 async fn main() {
     blocknative().await;
-    etherscan().await;
     gas_now().await;
     polygon().await;
     provider_oracle().await;
@@ -34,15 +33,6 @@ async fn blocknative() {
     match oracle.fetch().await {
         Ok(gas_price) => println!("[Blocknative]: Gas price is {gas_price:?}"),
         Err(e) => panic!("[Blocknative]: Cannot estimate gas: {e:?}"),
-    }
-}
-
-async fn etherscan() {
-    let client = Client::new_from_opt_env(Network::Mainnet).unwrap();
-    let oracle = Etherscan::new(client).category(GasCategory::Fast);
-    match oracle.fetch().await {
-        Ok(gas_price) => println!("[Etherscan]: Gas price is {gas_price:?}"),
-        Err(e) => panic!("[Etherscan]: Cannot estimate gas: {e:?}"),
     }
 }
 

@@ -45,7 +45,7 @@ toml.workspace = true
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # online
-corebc-etherscan = { workspace = true, optional = true }
+corebc-blockindex = { workspace = true, optional = true }
 reqwest = { workspace = true, features = ["blocking"], optional = true }
 tokio = { workspace = true, optional = true }
 url = { workspace = true, optional = true }
@@ -55,9 +55,9 @@ url = { workspace = true, optional = true }
 getrandom.workspace = true
 
 [features]
-online = ["reqwest", "corebc-etherscan", "url", "tokio"]
-openssl = ["online", "reqwest/native-tls", "corebc-etherscan/openssl"]
-rustls = ["online", "reqwest/rustls-tls", "corebc-etherscan/rustls"]
+online = ["reqwest", "corebc-blockindex", "url", "tokio"]
+openssl = ["online", "reqwest/native-tls", "corebc-blockindex/openssl"]
+rustls = ["online", "reqwest/rustls-tls", "corebc-blockindex/rustls"]
 
 [dev-dependencies]
 tempfile.workspace = true

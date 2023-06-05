@@ -63,11 +63,11 @@ jobs:
             - uses: Swatinem/rust-cache@v2
             - name: test ${{ matrix.flags.flags }}
               shell: bash
-              # skip `corebc_etherscan::it`
+              # skip `corebc_blockindex::it`
               run: |
                   cargo nextest run \
                   ${{ matrix.flags.flags }} \
-                  -E "!(deps(corebc-etherscan) & kind(test))" \
+                  -E "!(deps(corebc-blockindex) & kind(test))" \
                   --retries 3
 
     etherscan-tests:
@@ -84,7 +84,7 @@ jobs:
             - uses: Swatinem/rust-cache@v2
             # Don't use cargo-nextest since all the tests have to be ran sequentially
             - name: live tests
-              run: cargo test -p corebc-etherscan --test it
+              run: cargo test -p corebc-blockindex --test it
 
     # TODO: Create a new `ethers-tests` crate in the workspace for live tests.
     # live-tests:

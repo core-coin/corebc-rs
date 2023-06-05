@@ -360,7 +360,7 @@ where
 mod tests {
     use super::*;
     use corebc_core::{
-        types::{Eip1559TransactionRequest, TransactionRequest},
+        types::TransactionRequest,
         utils::{self, sha3, Anvil},
     };
     use corebc_providers::Provider;
