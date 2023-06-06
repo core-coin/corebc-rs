@@ -439,7 +439,7 @@ impl Graph {
     }
 }
 
-#[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+#[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
 impl Graph {
     /// Consumes the nodes of the graph and returns all input files together with their appropriate
     /// version and the edges of the graph
@@ -769,7 +769,7 @@ impl<'a> Iterator for NodesIter<'a> {
 }
 
 /// Container type for ylem versions and their compatible sources
-#[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+#[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
 #[derive(Debug)]
 pub struct VersionedSources {
     resolved_ylem_include_paths: IncludePaths,
@@ -777,7 +777,7 @@ pub struct VersionedSources {
     offline: bool,
 }
 
-#[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+#[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
 impl VersionedSources {
     /// Resolves or installs the corresponding `Ylem` installation.
     ///
@@ -805,8 +805,8 @@ impl VersionedSources {
                     Ylem::blocking_install(version.as_ref())?
                 }
             } else {
-                // find installed svm
-                Ylem::find_svm_installed_version(version.to_string())?.ok_or_else(|| {
+                // find installed yvm
+                Ylem::find_yvm_installed_version(version.to_string())?.ok_or_else(|| {
                     YlemError::msg(format!("ylem \"{version}\" should have been installed"))
                 })?
             };

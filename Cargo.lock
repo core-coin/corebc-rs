@@ -803,28 +803,6 @@ dependencies = [
 ]
 
 [[package]]
-<<<<<<< HEAD
-=======
-name = "corebc-etherscan"
-version = "2.0.3"
-dependencies = [
- "corebc-core",
- "corebc-ylem",
- "getrandom",
- "reqwest",
- "semver",
- "serde",
- "serde_json",
- "serial_test",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
->>>>>>> b8cbbbfc (Rename Solc to Ylem)
 name = "corebc-middleware"
 version = "2.0.3"
 dependencies = [

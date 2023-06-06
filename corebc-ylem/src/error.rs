@@ -40,9 +40,9 @@ pub enum YlemError {
         {2:?}"#
     )]
     FailedResolveImport(Box<YlemError>, PathBuf, PathBuf),
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     #[error(transparent)]
-    SvmError(#[from] svm::SolcVmError),
+    YvmError(#[from] yvm::YlemVmError),
     #[error("No contracts found at \"{0}\"")]
     NoContracts(String),
     #[error(transparent)]

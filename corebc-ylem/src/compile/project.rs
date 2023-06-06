@@ -140,7 +140,7 @@ impl<'a, T: ArtifactOutput> ProjectCompiler<'a, T> {
     /// let project = Project::builder().build().unwrap();
     /// let output = project.compile().unwrap();
     /// ```
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn new(project: &'a Project<T>) -> Result<Self> {
         Self::with_sources(project, project.paths.read_input_files()?)
     }
@@ -151,7 +151,7 @@ impl<'a, T: ArtifactOutput> ProjectCompiler<'a, T> {
     ///
     /// Multiple (`Ylem` -> `Sources`) pairs can be compiled in parallel if the `Project` allows
     /// multiple `jobs`, see [`crate::Project::set_ylem_jobs()`].
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn with_sources(project: &'a Project<T>, sources: Sources) -> Result<Self> {
         let graph = Graph::resolve_sources(&project.paths, sources)?;
         let (versions, edges) = graph.into_sources_by_version(project.offline)?;
@@ -705,7 +705,10 @@ mod tests {
         assert!(cache.filtered.is_empty());
         assert!(cache.cache.is_empty());
 
+        println!("{:#?}", prep);
         let compiled = prep.compile().unwrap();
+        println!("{:#?}", compiled.output.contracts);
+
         assert_eq!(compiled.output.contracts.files().count(), 3);
     }
 

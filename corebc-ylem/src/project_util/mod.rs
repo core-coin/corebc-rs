@@ -69,9 +69,9 @@ impl<T: ArtifactOutput> TempProject<T> {
     }
 
     /// Explicitly sets the ylem version for the project
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn set_ylem(&mut self, ylem: impl AsRef<str>) -> &mut Self {
-        self.inner.ylem = crate::Ylem::find_or_install_svm_version(ylem).unwrap();
+        self.inner.ylem = crate::Ylem::find_or_install_yvm_version(ylem).unwrap();
         self.inner.auto_detect = false;
         self
     }

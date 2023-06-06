@@ -70,17 +70,17 @@ pub(crate) fn take_ylem_installer_lock() -> std::sync::MutexGuard<'static, ()> {
 /// A list of upstream Ylem releases, used to check which version
 /// we should download.
 /// The boolean value marks whether there was an error accessing the release list
-#[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
-pub static RELEASES: once_cell::sync::Lazy<(svm::Releases, Vec<Version>, bool)> =
+#[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
+pub static RELEASES: once_cell::sync::Lazy<(yvm::Releases, Vec<Version>, bool)> =
     once_cell::sync::Lazy::new(|| {
-        match serde_json::from_str::<svm::Releases>(svm_builds::RELEASE_LIST_JSON) {
+        match serde_json::from_str::<yvm::Releases>(yvm_builds::RELEASE_LIST_JSON) {
             Ok(releases) => {
                 let sorted_versions = releases.clone().into_versions();
                 (releases, sorted_versions, true)
             }
             Err(err) => {
                 tracing::error!("{:?}", err);
-                (svm::Releases::default(), Vec::new(), false)
+                (yvm::Releases::default(), Vec::new(), false)
             }
         }
     });
@@ -129,7 +129,7 @@ impl fmt::Display for YlemVersion {
 ///
 /// By default the ylem path is configured as follows, with descending priority:
 ///   1. `YLEM_PATH` environment variable
-///   2. [svm](https://github.com/roynalnaruto/svm-rs)'s  `global_version` (set via `svm use <version>`), stored at `<svm_home>/.global_version`
+///   2. [yvm](https://github.com/roynalnaruto/yvm-rs)'s  `global_version` (set via `yvm use <version>`), stored at `<yvm_home>/.global_version`
 ///   3. `ylem` otherwise
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct Ylem {
@@ -148,8 +148,8 @@ impl Default for Ylem {
         }
         #[cfg(not(target_arch = "wasm32"))]
         {
-            if let Some(ylem) = Ylem::svm_global_version()
-                .and_then(|vers| Ylem::find_svm_installed_version(vers.to_string()).ok())
+            if let Some(ylem) = Ylem::yvm_global_version()
+                .and_then(|vers| Ylem::find_yvm_installed_version(vers.to_string()).ok())
                 .flatten()
             {
                 return ylem
@@ -204,30 +204,30 @@ impl Ylem {
         self
     }
 
-    /// Returns the directory in which [svm](https://github.com/roynalnaruto/svm-rs) stores all versions
+    /// Returns the directory in which [yvm](https://github.com/roynalnaruto/yvm-rs) stores all versions
     ///
-    /// This will be `~/.svm` on unix
+    /// This will be `~/.yvm` on unix
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn svm_home() -> Option<PathBuf> {
-        home::home_dir().map(|dir| dir.join(".svm"))
+    pub fn yvm_home() -> Option<PathBuf> {
+        home::home_dir().map(|dir| dir.join(".yvm"))
     }
 
-    /// Returns the `semver::Version` [svm](https://github.com/roynalnaruto/svm-rs)'s `.global_version` is currently set to.
-    ///  `global_version` is configured with (`svm use <version>`)
+    /// Returns the `semver::Version` [yvm](https://github.com/roynalnaruto/yvm-rs)'s `.global_version` is currently set to.
+    ///  `global_version` is configured with (`yvm use <version>`)
     ///
-    /// This will read the version string (eg: "0.8.9") that the  `~/.svm/.global_version` file
+    /// This will read the version string (eg: "0.8.9") that the  `~/.yvm/.global_version` file
     /// contains
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn svm_global_version() -> Option<Version> {
+    pub fn yvm_global_version() -> Option<Version> {
         let version =
-            std::fs::read_to_string(Self::svm_home().map(|p| p.join(".global_version"))?).ok()?;
+            std::fs::read_to_string(Self::yvm_home().map(|p| p.join(".global_version"))?).ok()?;
         Version::parse(&version).ok()
     }
 
-    /// Returns the list of all ylem instances installed at `SVM_HOME`
+    /// Returns the list of all ylem instances installed at `YVM_HOME`
     #[cfg(not(target_arch = "wasm32"))]
     pub fn installed_versions() -> Vec<YlemVersion> {
-        if let Some(home) = Self::svm_home() {
+        if let Some(home) = Self::yvm_home() {
             utils::installed_versions(home)
                 .unwrap_or_default()
                 .into_iter()
@@ -240,7 +240,7 @@ impl Ylem {
 
     /// Returns the list of all versions that are available to download and marking those which are
     /// already installed.
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn all_versions() -> Vec<YlemVersion> {
         let mut all_versions = Self::installed_versions();
         let mut uniques = all_versions
@@ -262,22 +262,22 @@ impl Ylem {
         all_versions
     }
 
-    /// Returns the path for a [svm](https://github.com/roynalnaruto/svm-rs) installed version.
+    /// Returns the path for a [yvm](https://github.com/roynalnaruto/yvm-rs) installed version.
     ///
     /// # Example
     /// ```no_run
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///  use corebc_ylem::Ylem;
-    /// let ylem = Ylem::find_svm_installed_version("0.8.9").unwrap();
-    /// assert_eq!(ylem, Some(Ylem::new("~/.svm/0.8.9/ylem-0.8.9")));
+    /// let ylem = Ylem::find_yvm_installed_version("0.8.9").unwrap();
+    /// assert_eq!(ylem, Some(Ylem::new("~/.yvm/0.8.9/ylem-0.8.9")));
     /// # Ok(())
     /// # }
     /// ```
     #[cfg(not(target_arch = "wasm32"))]
-    pub fn find_svm_installed_version(version: impl AsRef<str>) -> Result<Option<Self>> {
+    pub fn find_yvm_installed_version(version: impl AsRef<str>) -> Result<Option<Self>> {
         let version = version.as_ref();
-        let ylem = Self::svm_home()
-            .ok_or_else(|| YlemError::ylem("svm home dir not found"))?
+        let ylem = Self::yvm_home()
+            .ok_or_else(|| YlemError::ylem("yvm home dir not found"))?
             .join(version)
             .join(format!("ylem-{version}"));
 
@@ -287,7 +287,7 @@ impl Ylem {
         Ok(Some(Ylem::new(ylem)))
     }
 
-    /// Returns the path for a [svm](https://github.com/roynalnaruto/svm-rs) installed version.
+    /// Returns the path for a [yvm](https://github.com/roynalnaruto/yvm-rs) installed version.
     ///
     /// If the version is not installed yet, it will install it.
     ///
@@ -295,15 +295,15 @@ impl Ylem {
     /// ```no_run
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///  use corebc_ylem::Ylem;
-    /// let ylem = Ylem::find_or_install_svm_version("0.8.9").unwrap();
-    /// assert_eq!(ylem, Ylem::new("~/.svm/0.8.9/ylem-0.8.9"));
+    /// let ylem = Ylem::find_or_install_yvm_version("0.8.9").unwrap();
+    /// assert_eq!(ylem, Ylem::new("~/.yvm/0.8.9/ylem-0.8.9"));
     /// # Ok(())
     /// # }
     /// ```
-    #[cfg(all(not(target_arch = "wasm32"), all(feature = "svm-ylem")))]
-    pub fn find_or_install_svm_version(version: impl AsRef<str>) -> Result<Self> {
+    #[cfg(all(not(target_arch = "wasm32"), all(feature = "yvm-ylem")))]
+    pub fn find_or_install_yvm_version(version: impl AsRef<str>) -> Result<Self> {
         let version = version.as_ref();
-        if let Some(ylem) = Ylem::find_svm_installed_version(version)? {
+        if let Some(ylem) = Ylem::find_yvm_installed_version(version)? {
             Ok(ylem)
         } else {
             Ok(Ylem::blocking_install(&version.parse::<Version>()?)?)
@@ -324,7 +324,7 @@ impl Ylem {
     /// to build it, and returns it.
     ///
     /// If the required compiler version is not installed, it also proceeds to install it.
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn detect_version(source: &Source) -> Result<Version> {
         // detects the required ylem version
         let sol_version = Self::source_version_req(source)?;
@@ -335,13 +335,13 @@ impl Ylem {
     /// used to build it, and returns it.
     ///
     /// If the required compiler version is not installed, it also proceeds to install it.
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn ensure_installed(sol_version: &VersionReq) -> Result<Version> {
         #[cfg(any(test, feature = "tests"))]
         let _lock = take_ylem_installer_lock();
 
         // load the local / remote versions
-        let versions = utils::installed_versions(svm::SVM_HOME.as_path()).unwrap_or_default();
+        let versions = utils::installed_versions(yvm::YVM_DATA_DIR.as_path()).unwrap_or_default();
 
         let local_versions = Self::find_matching_installation(&versions, sol_version);
         let remote_versions = Self::find_matching_installation(&RELEASES.1, sol_version);
@@ -389,7 +389,7 @@ impl Ylem {
         Ok(version)
     }
 
-    /// Installs the provided version of Ylem in the machine under the svm dir and returns the
+    /// Installs the provided version of Ylem in the machine under the yvm dir and returns the
     /// [Ylem] instance pointing to the installation.
     ///
     /// # Example
@@ -400,30 +400,30 @@ impl Ylem {
     /// # Ok(())
     /// # }
     /// ```
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
-    pub async fn install(version: &Version) -> std::result::Result<Self, svm::SolcVmError> {
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
+    pub async fn install(version: &Version) -> std::result::Result<Self, yvm::YlemVmError> {
         tracing::trace!("installing ylem version \"{}\"", version);
         crate::report::ylem_installation_start(version);
-        let result = svm::install(version).await;
+        let result = yvm::install(version).await;
         crate::report::ylem_installation_success(version);
         result.map(Ylem::new)
     }
 
     /// Blocking version of `Self::install`
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
-    pub fn blocking_install(version: &Version) -> std::result::Result<Self, svm::SolcVmError> {
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
+    pub fn blocking_install(version: &Version) -> std::result::Result<Self, yvm::YlemVmError> {
         use crate::utils::RuntimeOrHandle;
 
         tracing::trace!("blocking installing ylem version \"{}\"", version);
         crate::report::ylem_installation_start(version);
-        // the async version `svm::install` is used instead of `svm::blocking_intsall`
+        // the async version `yvm::install` is used instead of `yvm::blocking_intsall`
         // because the underlying `reqwest::blocking::Client` does not behave well
         // in tokio rt. see https://github.com/seanmonstar/reqwest/issues/1017
         cfg_if::cfg_if! {
             if #[cfg(target_arch = "wasm32")] {
-                let installation = svm::blocking_install(version);
+                let installation = yvm::blocking_install(version);
             } else {
-                let installation = RuntimeOrHandle::new().block_on(svm::install(version));
+                let installation = RuntimeOrHandle::new().block_on(yvm::install(version));
             }
         };
         match installation {
@@ -440,10 +440,10 @@ impl Ylem {
 
     /// Verify that the checksum for this version of ylem is correct. We check against the SHA256
     /// checksum from the build information published by [binaries.soliditylang.org](https://binaries.soliditylang.org/)
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn verify_checksum(&self) -> Result<()> {
         let version = self.version_short()?;
-        let mut version_path = svm::version_path(version.to_string().as_str());
+        let mut version_path = yvm::version_path(version.to_string().as_str());
         version_path.push(format!("ylem-{}", version.to_string().as_str()));
         tracing::trace!(target:"ylem", "reading ylem binary for checksum {:?}", version_path);
         let content =
@@ -843,7 +843,7 @@ mod tests {
 
     #[test]
     // This test might be a bit hard to maintain
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     fn test_detect_version() {
         for (pragma, expected) in [
             // pinned
@@ -874,21 +874,21 @@ mod tests {
         // this test does not take the lock by default, so we need to manually
         // add it here.
         let _lock = LOCK.lock();
-        let ver = "0.8.6";
+        let ver = "0.0.19";
         let version = Version::from_str(ver).unwrap();
-        if utils::installed_versions(svm::SVM_HOME.as_path())
+        if utils::installed_versions(yvm::YVM_DATA_DIR.as_path())
             .map(|versions| !versions.contains(&version))
             .unwrap_or_default()
         {
             Ylem::blocking_install(&version).unwrap();
         }
-        let res = Ylem::find_svm_installed_version(version.to_string()).unwrap().unwrap();
-        let expected = svm::SVM_HOME.join(ver).join(format!("ylem-{ver}"));
+        let res = Ylem::find_yvm_installed_version(version.to_string()).unwrap().unwrap();
+        let expected = yvm::YVM_DATA_DIR.join(ver).join(format!("ylem-{ver}"));
         assert_eq!(res.ylem, expected);
     }
 
     #[test]
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     fn can_install_ylem_in_tokio_rt() {
         let version = Version::from_str("0.8.6").unwrap();
         let rt = tokio::runtime::Runtime::new().unwrap();
@@ -900,7 +900,7 @@ mod tests {
     fn does_not_find_not_installed_version() {
         let ver = "1.1.1";
         let version = Version::from_str(ver).unwrap();
-        let res = Ylem::find_svm_installed_version(version.to_string()).unwrap();
+        let res = Ylem::find_yvm_installed_version(version.to_string()).unwrap();
         assert!(res.is_none());
     }
 

@@ -92,4 +92,4 @@ serde.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 corebc-contract.workspace = true
 corebc-providers = { workspace = true, features = ["rustls"] } # allow https connections
-corebc-ylem = { workspace = true, features = ["svm-ylem"] }
+corebc-ylem = { workspace = true, features = ["yvm-ylem"] }

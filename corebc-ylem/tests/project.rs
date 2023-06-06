@@ -1117,7 +1117,7 @@ library MyLib {
     assert!(bytecode.is_unlinked());
 
     // provide the library settings to let ylem link
-    tmp.project_mut().ylem.settings.libraries = BTreeMap::from([(
+    tmp.project_mut().ylem_config.settings.libraries = BTreeMap::from([(
         lib,
         BTreeMap::from([("MyLib".to_string(), format!("{:?}", Address::zero()))]),
     )])
@@ -1614,7 +1614,7 @@ fn can_compile_std_json_input() {
     assert!(input.sources.contains_key(Path::new("lib/ds-test/src/test.sol")));
 
     // should be installed
-    if let Some(ylem) = Ylem::find_svm_installed_version("0.8.10").ok().flatten() {
+    if let Some(ylem) = Ylem::find_yvm_installed_version("0.8.10").ok().flatten() {
         let out = ylem.compile(&input).unwrap();
         assert!(!out.has_error());
         assert!(out.sources.contains_key("lib/ds-test/src/test.sol"));
@@ -1720,8 +1720,8 @@ fn test_compiler_severity_filter_and_ignored_error_codes() {
 }
 
 fn remove_ylem_if_exists(version: &Version) {
-    if Ylem::find_svm_installed_version(version.to_string()).unwrap().is_some() {
-        svm::remove_version(version).expect("failed to remove version")
+    if Ylem::find_yvm_installed_version(version.to_string()).unwrap().is_some() {
+        yvm::remove_version(version).expect("failed to remove version")
     }
 }
 

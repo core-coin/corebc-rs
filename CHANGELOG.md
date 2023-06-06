@@ -631,7 +631,7 @@ Please do not manually edit this file.
 - Bump svm-rs for lockfile + checksum adjustments
 - Clippy before nightly ring regression
 - Change abiarraytype trait bounds for tuple ([#1079](https://github.com/gakonst/ethers-rs/issues/1079))
-- Bundle new svm-ylem feature ([#1071](https://github.com/gakonst/ethers-rs/issues/1071))
+- Bundle new yvm-ylem feature ([#1071](https://github.com/gakonst/ethers-rs/issues/1071))
 - Remove debug print ([#1067](https://github.com/gakonst/ethers-rs/issues/1067))
 - Eip1559 gas price should be max_fee_per_gas ([#1062](https://github.com/gakonst/ethers-rs/issues/1062))
 - Check against ethers internal crate names ([#1060](https://github.com/gakonst/ethers-rs/issues/1060))

@@ -257,7 +257,7 @@ pub fn resolve_absolute_library(
 /// Reads the list of Ylem versions that have been installed in the machine. The version list is
 /// sorted in ascending order.
 /// Checks for installed ylem versions under the given path as
-/// `<root>/<major.minor.path>`, (e.g.: `~/.svm/0.8.10`)
+/// `<root>/<major.minor.path>`, (e.g.: `~/.yvm/0.8.10`)
 /// and returns them sorted in ascending order
 pub fn installed_versions(root: impl AsRef<Path>) -> Result<Vec<Version>, YlemError> {
     let mut versions: Vec<_> = walkdir::WalkDir::new(root)

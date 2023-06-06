@@ -251,7 +251,7 @@ impl<T: ArtifactOutput> Project<T> {
     /// NOTE: this does not check if the contracts were successfully compiled, see
     /// `CompilerOutput::has_error` instead.
     ///
-    /// NB: If the `svm` feature is enabled, this function will automatically detect
+    /// NB: If the `yvm` feature is enabled, this function will automatically detect
     /// ylem versions across files.
     ///
     /// # Example
@@ -268,16 +268,16 @@ impl<T: ArtifactOutput> Project<T> {
         let sources = self.paths.read_input_files()?;
         tracing::trace!("found {} sources to compile: {:?}", sources.len(), sources.keys());
 
-        #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+        #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
         if self.auto_detect {
             tracing::trace!("using ylem auto detection to compile sources");
-            return self.svm_compile(sources)
+            return self.yvm_compile(sources)
         }
 
         self.compile_with_version(&self.ylem, sources)
     }
 
-    /// Compiles a set of contracts using `svm` managed ylem installs
+    /// Compiles a set of contracts using `yvm` managed ylem installs
     ///
     /// This will autodetect the appropriate `Ylem` version(s) to use when compiling the provided
     /// `Sources`. Ylem auto-detection follows semver rules, see also
@@ -297,16 +297,16 @@ impl<T: ArtifactOutput> Project<T> {
     /// let project = Project::builder().build().unwrap();
     /// let files = utils::source_files("./src");
     /// let sources = Source::read_all(files).unwrap();
-    /// let output = project.svm_compile(sources).unwrap();
+    /// let output = project.yvm_compile(sources).unwrap();
     /// # }
     /// ```
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
-    pub fn svm_compile(&self, sources: Sources) -> Result<ProjectCompileOutput<T>> {
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
+    pub fn yvm_compile(&self, sources: Sources) -> Result<ProjectCompileOutput<T>> {
         project::ProjectCompiler::with_sources(self, sources)?.compile()
     }
 
     /// Convenience function to compile a single solidity file with the project's settings.
-    /// Same as [`Self::svm_compile()`] but with the given `file` as input.
+    /// Same as [`Self::yvm_compile()`] but with the given `file` as input.
     ///
     /// # Example
     ///
@@ -317,7 +317,7 @@ impl<T: ArtifactOutput> Project<T> {
     /// let output = project.compile_file("example/Greeter.sol").unwrap();
     /// # }
     /// ```
-    #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+    #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     pub fn compile_file(&self, file: impl Into<PathBuf>) -> Result<ProjectCompileOutput<T>> {
         let file = file.into();
         let source = Source::read(&file)?;
@@ -346,7 +346,7 @@ impl<T: ArtifactOutput> Project<T> {
     {
         let sources = Source::read_all(files)?;
 
-        #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+        #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
         if self.auto_detect {
             return project::ProjectCompiler::with_sources(self, sources)?.compile()
         }
@@ -393,7 +393,7 @@ impl<T: ArtifactOutput> Project<T> {
             Source::read_all(self.paths.input_files().into_iter().filter(|p| filter.is_match(p)))?;
         let filter: Box<dyn FileFilter> = Box::new(filter);
 
-        #[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+        #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
         if self.auto_detect {
             return project::ProjectCompiler::with_sources(self, sources)?
                 .with_sparse_output(filter)
@@ -422,7 +422,7 @@ impl<T: ArtifactOutput> Project<T> {
     /// let sources = project.paths.read_sources().unwrap();
     /// project
     ///     .compile_with_version(
-    ///         &Ylem::find_svm_installed_version("0.8.11").unwrap().unwrap(),
+    ///         &Ylem::find_yvm_installed_version("0.8.11").unwrap().unwrap(),
     ///         sources,
     ///     )
     ///     .unwrap();
@@ -964,7 +964,7 @@ impl<T: ArtifactOutput> ArtifactOutput for Project<T> {
 }
 
 #[cfg(test)]
-#[cfg(all(feature = "svm-ylem", not(target_arch = "wasm32")))]
+#[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
 mod tests {
     use crate::remappings::Remapping;
 
