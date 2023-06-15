@@ -273,6 +273,7 @@ impl<'a, T: ArtifactOutput> PreprocessedState<'a, T> {
             cache.graph(),
             project.build_info,
         )?;
+        println!("output: {:?}", output);
 
         // source paths get stripped before handing them over to ylem, so ylem never uses absolute
         // paths, instead `--base-path <root dir>` is set. this way any metadata that's derived from
@@ -705,11 +706,10 @@ mod tests {
         assert!(cache.filtered.is_empty());
         assert!(cache.cache.is_empty());
 
-        println!("{:#?}", prep);
-        let compiled = prep.compile().unwrap();
-        println!("{:#?}", compiled.output.contracts);
+        let compiled = prep.compile();
+        // println!("{:#?}", compiled);
 
-        assert_eq!(compiled.output.contracts.files().count(), 3);
+        assert_eq!(compiled.unwrap().output.contracts.files().count(), 3);
     }
 
     #[test]

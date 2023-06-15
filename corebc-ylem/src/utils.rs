@@ -508,7 +508,7 @@ mod tests {
         std::fs::write(
             existing,
             r#"
-pragma solidity ^0.8.10;
+pragma solidity ^0.0.19;
 contract A {}
         "#,
         )
