@@ -20,33 +20,15 @@ pub mod project;
 /// The name of the `ylem` binary on the system
 pub const YLEM: &str = "ylem";
 
-/// Support for configuring the EVM version
-/// <https://blog.soliditylang.org/2018/03/08/solidity-0.4.21-release-announcement/>
-pub const CONSTANTINOPLE_YLEM: Version = Version::new(0, 4, 21);
-
-/// Petersburg support
-/// <https://blog.soliditylang.org/2019/03/05/solidity-0.5.5-release-announcement/>
-pub const PETERSBURG_YLEM: Version = Version::new(0, 5, 5);
-
-/// Istanbul support
-/// <https://blog.soliditylang.org/2019/12/09/solidity-0.5.14-release-announcement/>
-pub const ISTANBUL_YLEM: Version = Version::new(0, 5, 14);
-
-/// Berlin support
-/// <https://blog.soliditylang.org/2021/06/10/solidity-0.8.5-release-announcement/>
-pub const BERLIN_YLEM: Version = Version::new(0, 8, 5);
-
-/// London support
-/// <https://blog.soliditylang.org/2021/08/11/solidity-0.8.7-release-announcement/>
-pub const LONDON_YLEM: Version = Version::new(0, 8, 7);
+pub const NUCLEUS_YLEM: Version = Version::new(1, 0, 0);
 
 // `--base-path` was introduced in 0.6.9 <https://github.com/ethereum/solidity/releases/tag/v0.6.9>
 pub static SUPPORTS_BASE_PATH: once_cell::sync::Lazy<VersionReq> =
-    once_cell::sync::Lazy::new(|| VersionReq::parse(">=0.6.9").unwrap());
+    once_cell::sync::Lazy::new(|| VersionReq::parse(">=1.0.0").unwrap());
 
 // `--include-path` was introduced in 0.8.8 <https://github.com/ethereum/solidity/releases/tag/v0.8.8>
 pub static SUPPORTS_INCLUDE_PATH: once_cell::sync::Lazy<VersionReq> =
-    once_cell::sync::Lazy::new(|| VersionReq::parse(">=0.8.8").unwrap());
+    once_cell::sync::Lazy::new(|| VersionReq::parse(">=1.0.0").unwrap());
 
 #[cfg(any(test, feature = "tests"))]
 use std::sync::Mutex;
@@ -377,7 +359,7 @@ impl Ylem {
     pub fn version_req(version: &str) -> Result<VersionReq> {
         let version = version.replace(' ', ",");
 
-        // Somehow, Solidity semver without an operator is considered to be "exact",
+        // Somehow, Ylem semver without an operator is considered to be "exact",
         // but lack of operator automatically marks the operator as Caret, so we need
         // to manually patch it? :shrug:
         let exact = !matches!(&version[0..1], "*" | "^" | "=" | ">" | "<" | "~");
@@ -395,8 +377,8 @@ impl Ylem {
     /// # Example
     /// ```no_run
     /// # async fn run() -> Result<(), Box<dyn std::error::Error>> {
-    ///  use corebc_ylem::{Ylem, ISTANBUL_YLEM};
-    ///  let ylem = Ylem::install(&ISTANBUL_YLEM).await.unwrap();
+    ///  use corebc_ylem::{Ylem, NUCLEUS_YLEM};
+    ///  let ylem = Ylem::install(&NUCLEUS_YLEM).await.unwrap();
     /// # Ok(())
     /// # }
     /// ```

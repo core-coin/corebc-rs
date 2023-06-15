@@ -864,7 +864,7 @@ ast_node!(
         #[serde(rename = "AST")]
         ast: YulBlock,
         // TODO: We need this camel case for the AST, but pascal case other places in corebc-ylem
-        //evm_version: EvmVersion,
+        //evm_version: CvmVersion,
         external_references: Vec<ExternalInlineAssemblyReference>,
         #[serde(default)]
         flags: Vec<InlineAssemblyFlag>,

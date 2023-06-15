@@ -134,7 +134,7 @@ impl CompilerInput {
 
     /// Sets the EVM version for compilation
     #[must_use]
-    pub fn evm_version(mut self, version: EvmVersion) -> Self {
+    pub fn evm_version(mut self, version: CvmVersion) -> Self {
         self.settings.evm_version = Some(version);
         self
     }
@@ -275,7 +275,7 @@ pub struct Settings {
         with = "serde_helpers::display_from_str_opt",
         skip_serializing_if = "Option::is_none"
     )]
-    pub evm_version: Option<EvmVersion>,
+    pub evm_version: Option<CvmVersion>,
     /// Change compilation pipeline to go through the Yul intermediate representation. This is
     /// false by default.
     #[serde(rename = "viaIR", default, skip_serializing_if = "Option::is_none")]
@@ -521,7 +521,7 @@ impl Default for Settings {
             optimizer: Default::default(),
             metadata: None,
             output_selection: OutputSelection::default_output_selection(),
-            evm_version: Some(EvmVersion::default()),
+            evm_version: Some(CvmVersion::default()),
             via_ir: None,
             debug: None,
             libraries: Default::default(),
@@ -739,78 +739,37 @@ impl YulDetails {
 }
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-pub enum EvmVersion {
-    Homestead,
-    TangerineWhistle,
-    SpuriousDragon,
-    Byzantium,
-    Constantinople,
-    Petersburg,
-    Istanbul,
-    Berlin,
+pub enum CvmVersion {
     #[default]
-    London,
+    Nucleus,
 }
 
-impl EvmVersion {
+impl CvmVersion {
     /// Checks against the given solidity `semver::Version`
-    pub fn normalize_version(self, version: &Version) -> Option<EvmVersion> {
-        // the EVM version flag was only added at 0.4.21
-        // we work our way backwards
-        if version >= &CONSTANTINOPLE_YLEM {
-            // If the Ylem is at least at london, it supports all EVM versions
-            Some(if version >= &LONDON_YLEM {
-                self
-                // For all other cases, cap at the at-the-time highest possible
-                // fork
-            } else if version >= &BERLIN_YLEM && self >= EvmVersion::Berlin {
-                EvmVersion::Berlin
-            } else if version >= &ISTANBUL_YLEM && self >= EvmVersion::Istanbul {
-                EvmVersion::Istanbul
-            } else if version >= &PETERSBURG_YLEM && self >= EvmVersion::Petersburg {
-                EvmVersion::Petersburg
-            } else if self >= EvmVersion::Constantinople {
-                EvmVersion::Constantinople
-            } else {
-                self
-            })
-        } else {
+    pub fn normalize_version(self, version: &Version) -> Option<CvmVersion> {
+        if *version > Version::new(1, 0, 0) {
             None
+        } else {
+            Some(CvmVersion::Nucleus)
         }
     }
 }
 
-impl fmt::Display for EvmVersion {
+impl fmt::Display for CvmVersion {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let string = match self {
-            EvmVersion::Homestead => "homestead",
-            EvmVersion::TangerineWhistle => "tangerineWhistle",
-            EvmVersion::SpuriousDragon => "spuriousDragon",
-            EvmVersion::Constantinople => "constantinople",
-            EvmVersion::Petersburg => "petersburg",
-            EvmVersion::Istanbul => "istanbul",
-            EvmVersion::Berlin => "berlin",
-            EvmVersion::London => "london",
-            EvmVersion::Byzantium => "byzantium",
+            CvmVersion::Nucleus => "nucleus",
         };
         write!(f, "{string}")
     }
 }
 
-impl FromStr for EvmVersion {
+impl FromStr for CvmVersion {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "homestead" => Ok(EvmVersion::Homestead),
-            "tangerineWhistle" => Ok(EvmVersion::TangerineWhistle),
-            "spuriousDragon" => Ok(EvmVersion::SpuriousDragon),
-            "constantinople" => Ok(EvmVersion::Constantinople),
-            "petersburg" => Ok(EvmVersion::Petersburg),
-            "istanbul" => Ok(EvmVersion::Istanbul),
-            "berlin" => Ok(EvmVersion::Berlin),
-            "london" => Ok(EvmVersion::London),
-            "byzantium" => Ok(EvmVersion::Byzantium),
+            "nucleus" => Ok(CvmVersion::Nucleus),
             s => Err(format!("Unknown evm version: {s}")),
         }
     }
@@ -2148,30 +2107,9 @@ mod tests {
 
     #[test]
     fn test_evm_version_normalization() {
-        for (ylem_version, evm_version, expected) in &[
-            // Ensure 0.4.21 it always returns None
-            ("0.4.20", EvmVersion::Homestead, None),
-            // Constantinople clipping
-            ("0.4.21", EvmVersion::Homestead, Some(EvmVersion::Homestead)),
-            ("0.4.21", EvmVersion::Constantinople, Some(EvmVersion::Constantinople)),
-            ("0.4.21", EvmVersion::London, Some(EvmVersion::Constantinople)),
-            // Petersburg
-            ("0.5.5", EvmVersion::Homestead, Some(EvmVersion::Homestead)),
-            ("0.5.5", EvmVersion::Petersburg, Some(EvmVersion::Petersburg)),
-            ("0.5.5", EvmVersion::London, Some(EvmVersion::Petersburg)),
-            // Istanbul
-            ("0.5.14", EvmVersion::Homestead, Some(EvmVersion::Homestead)),
-            ("0.5.14", EvmVersion::Istanbul, Some(EvmVersion::Istanbul)),
-            ("0.5.14", EvmVersion::London, Some(EvmVersion::Istanbul)),
-            // Berlin
-            ("0.8.5", EvmVersion::Homestead, Some(EvmVersion::Homestead)),
-            ("0.8.5", EvmVersion::Berlin, Some(EvmVersion::Berlin)),
-            ("0.8.5", EvmVersion::London, Some(EvmVersion::Berlin)),
-            // London
-            ("0.8.7", EvmVersion::Homestead, Some(EvmVersion::Homestead)),
-            ("0.8.7", EvmVersion::London, Some(EvmVersion::London)),
-            ("0.8.7", EvmVersion::London, Some(EvmVersion::London)),
-        ] {
+        for (ylem_version, evm_version, expected) in
+            &[("1.0.0", CvmVersion::Nucleus, Some(CvmVersion::Nucleus))]
+        {
             assert_eq!(
                 &evm_version.normalize_version(&Version::from_str(ylem_version).unwrap()),
                 expected

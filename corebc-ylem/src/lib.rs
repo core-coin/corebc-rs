@@ -5,7 +5,7 @@
 pub mod artifacts;
 pub mod sourcemap;
 
-pub use artifacts::{CompilerInput, CompilerOutput, EvmVersion};
+pub use artifacts::{CompilerInput, CompilerOutput, CvmVersion};
 use std::collections::{BTreeMap, HashSet};
 
 mod artifact_output;
