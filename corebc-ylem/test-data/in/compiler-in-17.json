@@ -1,1 +1,29 @@
-{"language":"Solidity","sources":{"A.sol":{"content":"\npragma solidity >0.6.6;\ncontract A {}\n"}},"settings":{"evmVersion":"byzantium","metadata":{"useLiteralContent":true},"optimizer":{"runs":200,"enabled":false},"outputSelection":{"*":{"*":["evm.bytecode.object","abi"],"":["ast"]}}}}
+{
+    "language": "Solidity",
+    "sources": {
+        "A.sol": {
+            "content": "\npragma solidity ^1.0.1;\ncontract A {}\n"
+        }
+    },
+    "settings": {
+        "evmVersion": "nucleus",
+        "metadata": {
+            "useLiteralContent": true
+        },
+        "optimizer": {
+            "runs": 200,
+            "enabled": false
+        },
+        "outputSelection": {
+            "*": {
+                "*": [
+                    "evm.bytecode.object",
+                    "abi"
+                ],
+                "": [
+                    "ast"
+                ]
+            }
+        }
+    }
+}

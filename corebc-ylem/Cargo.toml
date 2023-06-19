@@ -59,10 +59,10 @@ futures-util = { workspace = true, optional = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 home = "0.5.4"
-yvm = { git = "https://github.com/core-coin/yvm-rs", package = "yvm-rs", version = "0.2", default-features = false, features = [
+yvm = { git = "https://github.com/core-coin/yvm-rs", package = "yvm-rs", default-features = false, features = [
     "blocking",
 ], optional = true }
-yvm-builds = { git = "https://github.com/core-coin/yvm-rs", package = "yvm-rs-builds", version = "0.1", optional = true }
+yvm-builds = { git = "https://github.com/core-coin/yvm-rs", package = "yvm-rs-builds", optional = true }
 tokio = { workspace = true, features = ["full"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

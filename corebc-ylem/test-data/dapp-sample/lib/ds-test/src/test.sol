@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-pragma solidity 0.0.19;
+pragma solidity ^1.0.0;
 
 contract DSTest {
     event log(string);

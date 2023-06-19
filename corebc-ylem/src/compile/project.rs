@@ -273,7 +273,6 @@ impl<'a, T: ArtifactOutput> PreprocessedState<'a, T> {
             cache.graph(),
             project.build_info,
         )?;
-        println!("output: {:?}", output);
 
         // source paths get stripped before handing them over to ylem, so ylem never uses absolute
         // paths, instead `--base-path <root dir>` is set. this way any metadata that's derived from
@@ -707,7 +706,6 @@ mod tests {
         assert!(cache.cache.is_empty());
 
         let compiled = prep.compile();
-        // println!("{:#?}", compiled);
 
         assert_eq!(compiled.unwrap().output.contracts.files().count(), 3);
     }
@@ -734,7 +732,7 @@ mod tests {
         tmp.add_source(
             "A",
             r#"
-    pragma solidity ^0.8.10;
+    pragma solidity ^1.0.1;
     import "./B.sol";
     contract A {}
    "#,
@@ -744,7 +742,7 @@ mod tests {
         tmp.add_source(
             "B",
             r#"
-    pragma solidity ^0.8.10;
+    pragma solidity ^1.0.1;
     contract B {
         function hello() public {}
     }
@@ -756,7 +754,7 @@ mod tests {
         tmp.add_source(
             "C",
             r#"
-    pragma solidity ^0.8.10;
+    pragma solidity ^1.0.1;
     contract C {
             function hello() public {}
     }
@@ -772,7 +770,7 @@ mod tests {
         tmp.add_source(
             "A",
             r#"
-    pragma solidity ^0.8.10;
+    pragma solidity ^1.0.1;
     import "./B.sol";
     contract A {
         function testExample() public {}

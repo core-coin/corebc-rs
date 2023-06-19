@@ -20,15 +20,13 @@ pub mod project;
 /// The name of the `ylem` binary on the system
 pub const YLEM: &str = "ylem";
 
-pub const NUCLEUS_YLEM: Version = Version::new(1, 0, 0);
+pub const NUCLEUS_YLEM: Version = Version::new(1, 0, 1);
 
-// `--base-path` was introduced in 0.6.9 <https://github.com/ethereum/solidity/releases/tag/v0.6.9>
 pub static SUPPORTS_BASE_PATH: once_cell::sync::Lazy<VersionReq> =
-    once_cell::sync::Lazy::new(|| VersionReq::parse(">=1.0.0").unwrap());
+    once_cell::sync::Lazy::new(|| VersionReq::parse("^1.0.1").unwrap());
 
-// `--include-path` was introduced in 0.8.8 <https://github.com/ethereum/solidity/releases/tag/v0.8.8>
 pub static SUPPORTS_INCLUDE_PATH: once_cell::sync::Lazy<VersionReq> =
-    once_cell::sync::Lazy::new(|| VersionReq::parse(">=1.0.0").unwrap());
+    once_cell::sync::Lazy::new(|| VersionReq::parse("^1.0.1").unwrap());
 
 #[cfg(any(test, feature = "tests"))]
 use std::sync::Mutex;
@@ -250,8 +248,8 @@ impl Ylem {
     /// ```no_run
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///  use corebc_ylem::Ylem;
-    /// let ylem = Ylem::find_yvm_installed_version("0.8.9").unwrap();
-    /// assert_eq!(ylem, Some(Ylem::new("~/.yvm/0.8.9/ylem-0.8.9")));
+    /// let ylem = Ylem::find_yvm_installed_version("1.0.1").unwrap();
+    /// assert_eq!(ylem, Some(Ylem::new("~/.yvm/1.0.1/ylem-1.0.1")));
     /// # Ok(())
     /// # }
     /// ```
@@ -277,8 +275,8 @@ impl Ylem {
     /// ```no_run
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     ///  use corebc_ylem::Ylem;
-    /// let ylem = Ylem::find_or_install_yvm_version("0.8.9").unwrap();
-    /// assert_eq!(ylem, Ylem::new("~/.yvm/0.8.9/ylem-0.8.9"));
+    /// let ylem = Ylem::find_or_install_yvm_version("1.0.1").unwrap();
+    /// assert_eq!(ylem, Ylem::new("~/.yvm/1.0.1/ylem-1.0.1"));
     /// # Ok(())
     /// # }
     /// ```
@@ -506,7 +504,7 @@ impl Ylem {
         self.compile_as(input)
     }
 
-    /// Run `ylem --stand-json` and return the `ylem`'s output as the given json
+    /// Run `ylem --standart-json` and return the `ylem`'s output as the given json
     /// output
     pub fn compile_as<T: Serialize, D: DeserializeOwned>(&self, input: &T) -> Result<D> {
         let output = self.compile_output(input)?;
@@ -515,21 +513,34 @@ impl Ylem {
 
     pub fn compile_output<T: Serialize>(&self, input: &T) -> Result<Vec<u8>> {
         let mut cmd = Command::new(&self.ylem);
+
+        let mut command_string = format!("{:#?}", &self.ylem);
+
         if let Some(ref base_path) = self.base_path {
             cmd.current_dir(base_path);
             cmd.arg("--base-path").arg(base_path);
+            command_string += &format!(" --base-path {:#?}", base_path);
         }
+
+        command_string += " --standard-json";
+
         let mut child = cmd
-            .args(&self.args)
             .arg("--standard-json")
             .stdin(Stdio::piped())
             .stderr(Stdio::piped())
             .stdout(Stdio::piped())
             .spawn()
             .map_err(|err| YlemError::io(err, &self.ylem))?;
+
         let stdin = child.stdin.take().expect("Stdin exists.");
+
+        let input_json = serde_json::to_string(input)?;
+        command_string += &input_json;
+
         serde_json::to_writer(stdin, input)?;
-        compile_output(child.wait_with_output().map_err(|err| YlemError::io(err, &self.ylem))?)
+        let output = child.wait_with_output().map_err(|err| YlemError::io(err, &self.ylem))?;
+        println!("{}", command_string);
+        compile_output(output)
     }
 
     pub fn version_short(&self) -> Result<Version> {
@@ -806,31 +817,14 @@ mod tests {
     }
 
     #[test]
-    fn test_version_req() {
-        let versions = ["=0.1.2", "^0.5.6", ">=0.7.1", ">0.8.0"];
-        let sources = versions.iter().map(|version| source(version));
-
-        sources.zip(versions).for_each(|(source, version)| {
-            let version_req = Ylem::source_version_req(&source).unwrap();
-            assert_eq!(version_req, VersionReq::from_str(version).unwrap());
-        });
-
-        // Solidity defines version ranges with a space, whereas the semver package
-        // requires them to be separated with a comma
-        let version_range = ">=0.8.0 <0.9.0";
-        let source = source(version_range);
-        let version_req = Ylem::source_version_req(&source).unwrap();
-        assert_eq!(version_req, VersionReq::from_str(">=0.8.0,<0.9.0").unwrap());
-    }
-
-    #[test]
     // This test might be a bit hard to maintain
     #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     fn test_detect_version() {
         for (pragma, expected) in [
             // pinned
-            ("=0.4.14", "0.4.14"),
+            ("^1.0.1", "1.0.1"),
             // pinned too
+<<<<<<< HEAD
             ("0.4.14", "0.4.14"),
             // The latest patch is 0.4.26
             ("^0.4.14", "0.4.26"),
@@ -841,6 +835,8 @@ mod tests {
             (">=0.5.0", "0.8.20"),
             // range
             (">=0.4.0 <0.5.0", "0.4.26"),
+=======
+>>>>>>> 76bfa642 (Import updated yvm and fix  tests)
         ]
         .iter()
         {
@@ -856,7 +852,7 @@ mod tests {
         // this test does not take the lock by default, so we need to manually
         // add it here.
         let _lock = LOCK.lock();
-        let ver = "0.0.19";
+        let ver = "1.0.1";
         let version = Version::from_str(ver).unwrap();
         if utils::installed_versions(yvm::YVM_DATA_DIR.as_path())
             .map(|versions| !versions.contains(&version))

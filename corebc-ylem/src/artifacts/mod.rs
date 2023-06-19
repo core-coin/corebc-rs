@@ -740,17 +740,18 @@ impl YulDetails {
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum CvmVersion {
-    #[default]
     Nucleus,
+    #[default]
+    Berlin,
 }
 
 impl CvmVersion {
-    /// Checks against the given solidity `semver::Version`
+    // CORETODO: After the solc compiler will implement nucleus we can change it back
     pub fn normalize_version(self, version: &Version) -> Option<CvmVersion> {
-        if *version > Version::new(1, 0, 0) {
+        if *version > Version::new(1, 0, 1) {
             None
         } else {
-            Some(CvmVersion::Nucleus)
+            Some(CvmVersion::Berlin)
         }
     }
 }
@@ -759,6 +760,7 @@ impl fmt::Display for CvmVersion {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let string = match self {
             CvmVersion::Nucleus => "nucleus",
+            CvmVersion::Berlin => "berlin",
         };
         write!(f, "{string}")
     }
@@ -2007,7 +2009,7 @@ mod tests {
         assert_eq!(out.errors.len(), 1);
 
         let mut aggregated = AggregatedCompilerOutput::default();
-        aggregated.extend("0.8.12".parse().unwrap(), out);
+        aggregated.extend("1.0.1".parse().unwrap(), out);
         assert!(!aggregated.is_unchanged());
     }
 
@@ -2139,7 +2141,7 @@ mod tests {
 
     #[test]
     fn can_sanitize_cbor_metadata() {
-        let version: Version = "0.8.18".parse().unwrap();
+        let version: Version = "1.0.1".parse().unwrap();
 
         let settings = Settings {
             metadata: Some(SettingsMetadata::new(BytecodeHash::Ipfs, true)),
@@ -2155,7 +2157,7 @@ mod tests {
         let i = input.clone().sanitized(&version);
         assert_eq!(i.settings.metadata.unwrap().cbor_metadata, Some(true));
 
-        let version: Version = "0.8.0".parse().unwrap();
+        let version: Version = "1.0.1".parse().unwrap();
         let i = input.sanitized(&version);
         assert!(i.settings.metadata.unwrap().cbor_metadata.is_none());
     }

@@ -1529,7 +1529,7 @@ fn can_compile_sparse_with_link_references() {
     tmp.add_source(
         "ATest.t.sol",
         r#"
-    pragma solidity =0.8.12;
+    pragma solidity ^1.0.1;
     import {MyLib} from "./mylib.sol";
     contract ATest {
       function test_mylib() public returns (uint256) {
@@ -1544,7 +1544,7 @@ fn can_compile_sparse_with_link_references() {
         .add_source(
             "mylib.sol",
             r#"
-    pragma solidity =0.8.12;
+    pragma solidity ^1.0.1;
     library MyLib {
        function doStuff() external pure returns (uint256) {return 1337;}
     }
@@ -1728,7 +1728,7 @@ fn remove_ylem_if_exists(version: &Version) {
 #[tokio::test(flavor = "multi_thread")]
 async fn can_install_ylem_and_compile_version() {
     let project = TempProject::dapptools().unwrap();
-    let version = Version::new(0, 8, 10);
+    let version = Version::new(1, 0, 1);
 
     project
         .add_source(
@@ -1745,6 +1745,8 @@ contract Contract {{ }}
     remove_ylem_if_exists(&version);
 
     let compiled = project.compile().unwrap();
+    println!("{:#?}", compiled);
+    todo!();
     assert!(!compiled.has_compiler_errors());
 }
 

@@ -24,7 +24,7 @@
                             ]
                         }
                     },
-                    "evmVersion": "london"
+                    "evmVersion": "nucleus"
                 }
             },
             "imports": [],
@@ -58,7 +58,7 @@
                             ]
                         }
                     },
-                    "evmVersion": "london"
+                    "evmVersion": "nucleus"
                 }
             },
             "imports": [],
@@ -92,7 +92,7 @@
                             ]
                         }
                     },
-                    "evmVersion": "london"
+                    "evmVersion": "nucleus"
                 }
             },
             "imports": [

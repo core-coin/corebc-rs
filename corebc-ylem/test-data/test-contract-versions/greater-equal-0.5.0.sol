@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0;
+pragma solidity ^1.0.0;
 
 contract C {
     function foo() public {}

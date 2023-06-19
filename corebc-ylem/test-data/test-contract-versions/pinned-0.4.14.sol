@@ -1,4 +1,4 @@
-pragma solidity =0.4.14;
+pragma solidity ^1.0.0;
 
 contract D {
     function foo() public {}

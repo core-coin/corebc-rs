@@ -1,4 +1,4 @@
-pragma solidity 0.8.6;
+pragma solidity ^1.0.0;
 
 import "bar/Bar.sol";
 
