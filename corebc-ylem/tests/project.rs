@@ -1697,7 +1697,7 @@ fn test_compiler_severity_filter_and_ignored_error_codes() {
         .ephemeral()
         .build()
         .unwrap();
-    let compiled = project.compile().unwrap();
+    let _compiled = project.compile().unwrap();
 
     let project = Project::builder()
         .no_artifacts()
@@ -1717,7 +1717,7 @@ fn test_compiler_severity_filter_and_ignored_error_codes() {
         .set_compiler_severity_filter(corebc_ylem::artifacts::Severity::Warning)
         .build()
         .unwrap();
-    let compiled = project.compile().unwrap();
+    let _compiled = project.compile().unwrap();
 }
 
 fn remove_ylem_if_exists(version: &Version) {

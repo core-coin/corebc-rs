@@ -594,9 +594,9 @@ name = "corebc"
 version = "2.0.3"
 dependencies = [
  "corebc-addressbook",
+ "corebc-blockindex",
  "corebc-contract",
  "corebc-core",
- "corebc-etherscan",
  "corebc-middleware",
  "corebc-providers",
  "corebc-signers",
@@ -613,6 +613,25 @@ dependencies = [
  "once_cell",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "corebc-blockindex"
+version = "2.0.3"
+dependencies = [
+ "corebc-core",
+ "corebc-ylem",
+ "getrandom",
+ "reqwest",
+ "semver",
+ "serde",
+ "serde_json",
+ "serial_test",
+ "tempfile",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -640,8 +659,8 @@ name = "corebc-contract-abigen"
 version = "2.0.3"
 dependencies = [
  "Inflector",
+ "corebc-blockindex",
  "corebc-core",
- "corebc-etherscan",
  "corebc-ylem",
  "dunce",
  "eyre",
@@ -708,33 +727,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "corebc-etherscan"
-version = "2.0.3"
-dependencies = [
- "corebc-core",
- "corebc-ylem",
- "getrandom",
- "reqwest",
- "semver",
- "serde",
- "serde_json",
- "serial_test",
- "tempfile",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "corebc-middleware"
 version = "2.0.3"
 dependencies = [
  "async-trait",
  "auto_impl",
+ "corebc-blockindex",
  "corebc-contract",
  "corebc-core",
- "corebc-etherscan",
  "corebc-providers",
  "corebc-signers",
  "corebc-ylem",
@@ -1315,7 +1315,7 @@ dependencies = [
 [[package]]
 name = "ethabi"
 version = "18.0.0"
-source = "git+https://github.com/core-coin/coreabi#17563d16987f21ea5a3f470583a4853fc6ce6958"
+source = "git+https://github.com/core-coin/coreabi?rev=17563d16987f21ea5a3f470583a4853fc6ce6958#17563d16987f21ea5a3f470583a4853fc6ce6958"
 dependencies = [
  "ethereum-types",
  "hex",

@@ -122,7 +122,7 @@ pub mod prelude {
 
     pub use super::signers::*;
 
-    pub use super::solc::*;
+    pub use super::ylem::*;
 }
 
 // For macro expansions only, not public API.

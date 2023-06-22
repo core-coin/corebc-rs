@@ -77,11 +77,7 @@ eip712 = []
 corebc-addressbook.workspace = true
 corebc-contract.workspace = true
 corebc-core.workspace = true
-<<<<<<< HEAD
-corebc-blockindex = { workspace = true, features = ["corebc-solc"] }
-=======
-corebc-etherscan = { workspace = true, features = ["corebc-ylem"] }
->>>>>>> b8cbbbfc (Rename Solc to Ylem)
+corebc-blockindex = { workspace = true, features = ["corebc-ylem"] }
 corebc-middleware.workspace = true
 corebc-providers.workspace = true
 corebc-signers.workspace = true

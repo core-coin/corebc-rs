@@ -679,7 +679,6 @@ fn compile_parallel(
 #[cfg(feature = "project-util")]
 mod tests {
     use super::*;
-    use crate::{project_util::TempProject, MinimalCombinedArtifacts};
 
     use std::path::PathBuf;
 
@@ -699,15 +698,12 @@ mod tests {
 
         let compiler = ProjectCompiler::new(&project).unwrap();
         let prep = compiler.preprocess().unwrap();
-        println!("{:#?}", prep);
-        let cache = prep.cache.as_cached().unwrap();
         // 3 contracts
         // assert_eq!(cache.dirty_source_files.len(), 3);
         // assert!(cache.filtered.is_empty());
         // assert!(cache.cache.is_empty());
 
         let compiled = prep.compile();
-        println!("{:#?}", compiled);
 
         assert_eq!(compiled.unwrap().output.contracts.files().count(), 3);
     }
