@@ -53,8 +53,8 @@ impl RawBuildInfo {
         let mut s = serializer.serialize_struct("BuildInfo", 6)?;
         s.serialize_field("_format", &ETHERS_FORMAT_VERSION)?;
         let ylem_short = format!("{}.{}.{}", version.major, version.minor, version.patch);
-        s.serialize_field("YlemVersion", &ylem_short)?;
-        s.serialize_field("YlemLongVersion", &version)?;
+        s.serialize_field("ylemVersion", &ylem_short)?;
+        s.serialize_field("ylemLongVersion", &version)?;
         s.serialize_field("input", input)?;
 
         // create the hash for `{_format,ylemVersion,ylemLongVersion,input}`

@@ -966,26 +966,6 @@ enum SourceVersionError {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn can_resolve_hardhat_dependency_graph() {
-    //     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("test-data/hardhat-sample");
-    //     let paths = ProjectPathsConfig::hardhat(root).unwrap();
-
-    //     let graph = Graph::resolve(&paths).unwrap();
-    //     println!("{:#?}", graph.files());
-
-    //     assert_eq!(graph.edges.num_input_files, 1);
-    //     assert_eq!(graph.files().len(), 2);
-
-    //     assert_eq!(
-    //         graph.files().clone(),
-    //         HashMap::from([
-    //             (paths.sources.join("Greeter.sol"), 0),
-    //             (paths.root.join("node_modules/hardhat/console.sol"), 1),
-    //         ])
-    //     );
-    // }
-
     #[test]
     fn can_resolve_dapp_dependency_graph() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("test-data/dapp-sample");

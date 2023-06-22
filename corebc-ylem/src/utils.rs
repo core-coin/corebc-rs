@@ -1,5 +1,4 @@
 //! Utility functions
-
 use cfg_if::cfg_if;
 use std::{
     collections::HashSet,

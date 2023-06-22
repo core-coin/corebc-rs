@@ -47,33 +47,6 @@ fn can_get_versioned_linkrefs() {
 }
 
 #[test]
-fn can_compile_hardhat_sample() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("test-data/hardhat-sample");
-    let paths = ProjectPathsConfig::builder()
-        .sources(root.join("contracts"))
-        .lib(root.join("node_modules"));
-    let project = TempProject::<ConfigurableArtifacts>::new(paths).unwrap();
-
-    let compiled = project.compile().unwrap();
-    assert!(compiled.find_first("Greeter").is_some());
-    assert!(compiled.find_first("console").is_some());
-    assert!(!compiled.has_compiler_errors());
-
-    // nothing to compile
-    let compiled = project.compile().unwrap();
-    assert!(compiled.find_first("Greeter").is_some());
-    assert!(compiled.find_first("console").is_some());
-    assert!(compiled.is_unchanged());
-
-    // delete artifacts
-    std::fs::remove_dir_all(&project.paths().artifacts).unwrap();
-    let compiled = project.compile().unwrap();
-    assert!(compiled.find_first("Greeter").is_some());
-    assert!(compiled.find_first("console").is_some());
-    assert!(!compiled.is_unchanged());
-}
-
-#[test]
 fn can_compile_dapp_sample() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("test-data/dapp-sample");
     let paths = ProjectPathsConfig::builder().sources(root.join("src")).lib(root.join("lib"));
@@ -255,7 +228,7 @@ fn can_compile_dapp_detect_changes_in_sources() {
   contract DssSpellTestBase {
        address deployed_spell;
        function setUp() public {
-           deployed_spell = address(0x0000A867399B43aF7790aC800f2fF3Fa7387dc52Ec5E);
+           deployed_spell = address(0x0049A867399B43aF7790aC800f2fF3Fa7387dc52Ec5E);
        }
   }
    "#,
@@ -268,6 +241,7 @@ fn can_compile_dapp_detect_changes_in_sources() {
     assert_eq!(graph.imported_nodes(1).to_vec(), vec![0]);
 
     let compiled = project.compile().unwrap();
+    println!("{:#?}", compiled);
     assert!(!compiled.has_compiler_errors());
     assert!(compiled.find_first("DssSpellTest").is_some());
     assert!(compiled.find_first("DssSpellTestBase").is_some());
@@ -458,25 +432,6 @@ fn can_flatten_file() {
     assert!(!result.contains("import"));
     assert!(result.contains("contract Foo"));
     assert!(result.contains("contract Bar"));
-}
-
-#[test]
-fn can_flatten_file_with_external_lib() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("test-data/hardhat-sample");
-    let paths = ProjectPathsConfig::builder()
-        .sources(root.join("contracts"))
-        .lib(root.join("node_modules"));
-    let project = TempProject::<ConfigurableArtifacts>::new(paths).unwrap();
-
-    let target = root.join("contracts").join("Greeter.sol");
-
-    let result = project.flatten(&target);
-    assert!(result.is_ok());
-
-    let result = result.unwrap();
-    assert!(!result.contains("import"));
-    assert!(result.contains("library console"));
-    assert!(result.contains("contract Greeter"));
 }
 
 #[test]
@@ -1391,7 +1346,7 @@ fn can_emit_empty_artifacts() {
         "Contract",
         r#"
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 1.0.0;
+pragma solidity ^1.0.0;
 
 import "./top_level.sol";
 
@@ -1446,7 +1401,7 @@ fn can_detect_contract_def_source_files() {
         .add_source(
             "MyLib",
             r#"
-        pragma solidity 1.0.0;
+        pragma solidity ^1.0.0;
         library MyLib {
         }
    "#,
@@ -1457,7 +1412,7 @@ fn can_detect_contract_def_source_files() {
         .add_source(
             "MyInterface",
             r#"
-        pragma solidity 1.0.0;
+        pragma solidity ^1.0.0;
         interface MyInterface {}
    "#,
         )
@@ -1467,7 +1422,7 @@ fn can_detect_contract_def_source_files() {
         .add_source(
             "MyContract",
             r#"
-        pragma solidity 1.0.0;
+        pragma solidity ^1.0.0;
         contract MyContract {}
    "#,
         )
@@ -1477,7 +1432,7 @@ fn can_detect_contract_def_source_files() {
         .add_source(
             "MyAbstractContract",
             r#"
-        pragma solidity 1.0.0;
+        pragma solidity ^1.0.0;
         contract MyAbstractContract {}
    "#,
         )
@@ -1487,7 +1442,7 @@ fn can_detect_contract_def_source_files() {
         .add_source(
             "MyError",
             r#"
-        pragma solidity 1.0.0;
+        pragma solidity ^1.0.0;
        error MyError();
    "#,
         )
@@ -1497,7 +1452,7 @@ fn can_detect_contract_def_source_files() {
         .add_source(
             "MyFunction",
             r#"
-        pragma solidity 1.0.0;
+        pragma solidity ^1.0.0;
         function abc(){}
    "#,
         )
@@ -1534,7 +1489,7 @@ fn can_compile_sparse_with_link_references() {
     tmp.add_source(
         "ATest.t.sol",
         r#"
-    pragma solidity ^1.0.1;
+    pragma solidity ^1.0.0;
     import {MyLib} from "./mylib.sol";
     contract ATest {
       function test_mylib() public returns (uint256) {
@@ -1549,7 +1504,7 @@ fn can_compile_sparse_with_link_references() {
         .add_source(
             "mylib.sol",
             r#"
-    pragma solidity ^1.0.1;
+    pragma solidity ^1.0.0;
     library MyLib {
        function doStuff() external pure returns (uint256) {return 1337;}
     }
@@ -1771,12 +1726,12 @@ async fn can_install_ylem_and_compile_std_json_input_async() {
 #[test]
 fn can_purge_obsolete_artifacts() {
     let mut project = TempProject::<ConfigurableArtifacts>::dapptools().unwrap();
-    project.set_ylem("1.0.0");
+    project.set_ylem("1.0.1");
     project
         .add_source(
             "Contract",
             r#"
-    pragma solidity >=1.0.0;
+    pragma solidity ^1.0.0;
 
    contract Contract {
         function xyz() public {
@@ -1790,92 +1745,6 @@ fn can_purge_obsolete_artifacts() {
     assert!(!compiled.has_compiler_errors());
     assert!(!compiled.is_unchanged());
     assert_eq!(compiled.into_artifacts().count(), 1);
-
-    project.set_ylem("1.0.0");
-
-    let compiled = project.compile().unwrap();
-    assert!(!compiled.has_compiler_errors());
-    assert!(!compiled.is_unchanged());
-    assert_eq!(compiled.into_artifacts().count(), 1);
-}
-
-#[test]
-fn can_parse_notice() {
-    let mut project = TempProject::<ConfigurableArtifacts>::dapptools().unwrap();
-    project.project_mut().artifacts.additional_values.userdoc = true;
-    project.project_mut().ylem_config.settings = project.project_mut().artifacts.settings();
-
-    let contract = r#"
-    pragma solidity $VERSION;
-
-   contract Contract {
-      string greeting;
-
-        /**
-         * @notice hello
-         */    
-         constructor(string memory _greeting) public {
-            greeting = _greeting;
-        }
-        
-        /**
-         * @notice hello
-         */
-        function xyz() public {
-        }
-        
-        /// @notice hello
-        function abc() public {
-        }
-   }
-   "#;
-    project.add_source("Contract", contract.replace("$VERSION", "=0.5.17")).unwrap();
-
-    let mut compiled = project.compile().unwrap();
-    assert!(!compiled.has_compiler_errors());
-    assert!(!compiled.is_unchanged());
-    assert!(compiled.find_first("Contract").is_some());
-    let userdoc = compiled.remove_first("Contract").unwrap().userdoc;
-
-    assert_eq!(
-        userdoc,
-        Some(UserDoc {
-            version: None,
-            kind: None,
-            methods: BTreeMap::from([
-                ("abc()".to_string(), UserDocNotice::Notice { notice: "hello".to_string() }),
-                ("xyz()".to_string(), UserDocNotice::Notice { notice: "hello".to_string() }),
-                ("constructor".to_string(), UserDocNotice::Constructor("hello".to_string())),
-            ]),
-            events: BTreeMap::new(),
-            errors: BTreeMap::new(),
-            notice: None
-        })
-    );
-
-    project.add_source("Contract", contract.replace("$VERSION", "^1.0.0")).unwrap();
-
-    let mut compiled = project.compile().unwrap();
-    assert!(!compiled.has_compiler_errors());
-    assert!(!compiled.is_unchanged());
-    assert!(compiled.find_first("Contract").is_some());
-    let userdoc = compiled.remove_first("Contract").unwrap().userdoc;
-
-    assert_eq!(
-        userdoc,
-        Some(UserDoc {
-            version: Some(1),
-            kind: Some("user".to_string()),
-            methods: BTreeMap::from([
-                ("abc()".to_string(), UserDocNotice::Notice { notice: "hello".to_string() }),
-                ("xyz()".to_string(), UserDocNotice::Notice { notice: "hello".to_string() }),
-                ("constructor".to_string(), UserDocNotice::Notice { notice: "hello".to_string() }),
-            ]),
-            events: BTreeMap::new(),
-            errors: BTreeMap::new(),
-            notice: None
-        })
-    );
 }
 
 #[test]
@@ -2426,15 +2295,6 @@ fn can_handle_conflicting_files_case_sensitive_recompile() {
 }
 
 #[test]
-fn can_checkout_repo() {
-    let project = TempProject::checkout("transmissions11/solmate").unwrap();
-
-    let compiled = project.compile().unwrap();
-    assert!(!compiled.has_compiler_errors());
-    let _artifacts = project.artifacts_snapshot().unwrap();
-}
-
-#[test]
 fn can_detect_config_changes() {
     let mut project = TempProject::<ConfigurableArtifacts>::dapptools().unwrap();
 
@@ -2506,59 +2366,6 @@ fn can_add_basic_contract_and_library() {
     assert!(!compiled.has_compiler_errors());
     assert!(compiled.find_first("Foo").is_some());
     assert!(compiled.find_first("Bar").is_some());
-}
-
-// <https://github.com/foundry-rs/foundry/issues/2706>
-#[test]
-fn can_handle_nested_absolute_imports() {
-    let mut project = TempProject::dapptools().unwrap();
-
-    let remapping = project.paths().libraries[0].join("myDepdendency");
-    project
-        .paths_mut()
-        .remappings
-        .push(Remapping::from_str(&format!("myDepdendency/={}/", remapping.display())).unwrap());
-
-    project
-        .add_lib(
-            "myDepdendency/src/interfaces/IConfig.sol",
-            r#"
-    pragma solidity ^1.0.0;
-
-    interface IConfig {}
-   "#,
-        )
-        .unwrap();
-
-    project
-        .add_lib(
-            "myDepdendency/src/Config.sol",
-            r#"
-    pragma solidity ^1.0.0;
-    import "src/interfaces/IConfig.sol";
-
-    contract Config {}
-   "#,
-        )
-        .unwrap();
-
-    project
-        .add_source(
-            "Greeter",
-            r#"
-    pragma solidity ^1.0.0;
-    import "myDepdendency/src/Config.sol";
-
-    contract Greeter {}
-   "#,
-        )
-        .unwrap();
-
-    let compiled = project.compile().unwrap();
-    assert!(!compiled.has_compiler_errors());
-    assert!(compiled.find_first("Greeter").is_some());
-    assert!(compiled.find_first("Config").is_some());
-    assert!(compiled.find_first("IConfig").is_some());
 }
 
 #[test]

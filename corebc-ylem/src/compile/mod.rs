@@ -693,7 +693,7 @@ impl<T: Into<PathBuf>> From<T> for Ylem {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::CompilerInput;
+    use crate::{artifact_output::Artifact, CompilerInput};
 
     fn ylem() -> Ylem {
         Ylem::default()
@@ -735,29 +735,29 @@ mod tests {
         }
     }
 
-    // #[test]
-    // fn can_compile_with_remapped_links() {
-    //     let input: CompilerInput =
-    //         serde_json::from_str(include_str!("../../test-data/library-remapping-in.json"))
-    //             .unwrap();
-    //     let out = ylem().compile(&input).unwrap();
-    //     let (_, mut contracts) = out.split();
-    //     let contract = contracts.remove("LinkTest").unwrap();
-    //     let bytecode = &contract.get_bytecode().unwrap().object;
-    //     assert!(!bytecode.is_unlinked());
-    // }
+    #[test]
+    fn can_compile_with_remapped_links() {
+        let input: CompilerInput =
+            serde_json::from_str(include_str!("../../test-data/library-remapping-in.json"))
+                .unwrap();
+        let out = ylem().compile(&input).unwrap();
+        let (_, mut contracts) = out.split();
+        let contract = contracts.remove("LinkTest").unwrap();
+        let bytecode = &contract.get_bytecode().unwrap().object;
+        assert!(!bytecode.is_unlinked());
+    }
 
-    // #[test]
-    // fn can_compile_with_remapped_links_temp_dir() {
-    //     let input: CompilerInput =
-    //         serde_json::from_str(include_str!("../../test-data/library-remapping-in-2.json"))
-    //             .unwrap();
-    //     let out = ylem().compile(&input).unwrap();
-    //     let (_, mut contracts) = out.split();
-    //     let contract = contracts.remove("LinkTest").unwrap();
-    //     let bytecode = &contract.get_bytecode().unwrap().object;
-    //     assert!(!bytecode.is_unlinked());
-    // }
+    #[test]
+    fn can_compile_with_remapped_links_temp_dir() {
+        let input: CompilerInput =
+            serde_json::from_str(include_str!("../../test-data/library-remapping-in-2.json"))
+                .unwrap();
+        let out = ylem().compile(&input).unwrap();
+        let (_, mut contracts) = out.split();
+        let contract = contracts.remove("LinkTest").unwrap();
+        let bytecode = &contract.get_bytecode().unwrap().object;
+        assert!(!bytecode.is_unlinked());
+    }
 
     #[cfg(feature = "async")]
     #[tokio::test]

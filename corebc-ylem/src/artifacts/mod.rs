@@ -773,6 +773,7 @@ impl FromStr for CvmVersion {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "nucleus" => Ok(CvmVersion::Nucleus),
+            "istanbul" => Ok(CvmVersion::Istanbul),
             s => Err(format!("Unknown evm version: {s}")),
         }
     }
