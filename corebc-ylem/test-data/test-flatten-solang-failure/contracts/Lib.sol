@@ -1,4 +1,4 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.10;
+pragma solidity ^1.0.0;
 
 library Lib {}

@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity >=0.6.6;
+pragma solidity ^1.0.0;
 
-contract NewContract {
-}
+contract NewContract {}

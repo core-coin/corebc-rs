@@ -307,66 +307,67 @@ impl Settings {
 
     /// This will remove/adjust values in the settings that are not compatible with this
     /// version
+    /// CORETODO: Since we use ylem 0.8.4 and up we don't need all of this.
     pub fn sanitize(&mut self, version: &Version) {
-        static PRE_V0_6_0: once_cell::sync::Lazy<VersionReq> =
-            once_cell::sync::Lazy::new(|| VersionReq::parse("<0.6.0").unwrap());
-        static PRE_V0_7_5: once_cell::sync::Lazy<VersionReq> =
-            once_cell::sync::Lazy::new(|| VersionReq::parse("<0.7.5").unwrap());
-        static PRE_V0_8_7: once_cell::sync::Lazy<VersionReq> =
-            once_cell::sync::Lazy::new(|| VersionReq::parse("<0.8.7").unwrap());
-        static PRE_V0_8_10: once_cell::sync::Lazy<VersionReq> =
-            once_cell::sync::Lazy::new(|| VersionReq::parse("<0.8.10").unwrap());
-        static PRE_V0_8_18: once_cell::sync::Lazy<VersionReq> =
-            once_cell::sync::Lazy::new(|| VersionReq::parse("<0.8.18").unwrap());
+        // static PRE_V0_6_0: once_cell::sync::Lazy<VersionReq> =
+        //     once_cell::sync::Lazy::new(|| VersionReq::parse("<0.6.0").unwrap());
+        // static PRE_V0_7_5: once_cell::sync::Lazy<VersionReq> =
+        //     once_cell::sync::Lazy::new(|| VersionReq::parse("<0.7.5").unwrap());
+        static PRE_V1_0_1: once_cell::sync::Lazy<VersionReq> =
+            once_cell::sync::Lazy::new(|| VersionReq::parse("<1.0.1").unwrap());
+        // static PRE_V0_8_10: once_cell::sync::Lazy<VersionReq> =
+        //     once_cell::sync::Lazy::new(|| VersionReq::parse("<0.8.10").unwrap());
+        // static PRE_V0_8_18: once_cell::sync::Lazy<VersionReq> =
+        //     once_cell::sync::Lazy::new(|| VersionReq::parse("<0.8.18").unwrap());
 
-        if PRE_V0_6_0.matches(version) {
-            if let Some(ref mut meta) = self.metadata {
-                // introduced in <https://docs.soliditylang.org/en/v0.6.0/using-the-compiler.html#compiler-api>
-                // missing in <https://docs.soliditylang.org/en/v0.5.17/using-the-compiler.html#compiler-api>
-                meta.bytecode_hash.take();
-            }
-            // introduced in <https://docs.soliditylang.org/en/v0.6.0/using-the-compiler.html#compiler-api>
-            let _ = self.debug.take();
-        }
+        // if PRE_V0_6_0.matches(version) {
+        //     if let Some(ref mut meta) = self.metadata {
+        //         // introduced in <https://docs.soliditylang.org/en/v0.6.0/using-the-compiler.html#compiler-api>
+        //         // missing in <https://docs.soliditylang.org/en/v0.5.17/using-the-compiler.html#compiler-api>
+        //         meta.bytecode_hash.take();
+        //     }
+        //     // introduced in <https://docs.soliditylang.org/en/v0.6.0/using-the-compiler.html#compiler-api>
+        //     let _ = self.debug.take();
+        // }
 
-        if PRE_V0_7_5.matches(version) {
-            // introduced in 0.7.5 <https://github.com/ethereum/solidity/releases/tag/v0.7.5>
-            self.via_ir.take();
-        }
+        // if PRE_V0_7_5.matches(version) {
+        //     // introduced in 0.7.5 <https://github.com/ethereum/solidity/releases/tag/v0.7.5>
+        //     self.via_ir.take();
+        // }
 
-        if PRE_V0_8_7.matches(version) {
+        if PRE_V1_0_1.matches(version) {
             // lower the disable version from 0.8.10 to 0.8.7, due to `divModNoSlacks`,
             // `showUnproved` and `solvers` are implemented
             // introduced in <https://github.com/ethereum/solidity/releases/tag/v0.8.7>
             self.model_checker = None;
         }
 
-        if PRE_V0_8_10.matches(version) {
-            if let Some(ref mut debug) = self.debug {
-                // introduced in <https://docs.soliditylang.org/en/v0.8.10/using-the-compiler.html#compiler-api>
-                // <https://github.com/ethereum/solidity/releases/tag/v0.8.10>
-                debug.debug_info.clear();
-            }
+        // if PRE_V0_8_10.matches(version) {
+        //     if let Some(ref mut debug) = self.debug {
+        //         // introduced in <https://docs.soliditylang.org/en/v0.8.10/using-the-compiler.html#compiler-api>
+        //         // <https://github.com/ethereum/solidity/releases/tag/v0.8.10>
+        //         debug.debug_info.clear();
+        //     }
 
-            if let Some(ref mut model_checker) = self.model_checker {
-                // introduced in <https://github.com/ethereum/solidity/releases/tag/v0.8.10>
-                model_checker.invariants = None;
-            }
-        }
+        //     if let Some(ref mut model_checker) = self.model_checker {
+        //         // introduced in <https://github.com/ethereum/solidity/releases/tag/v0.8.10>
+        //         model_checker.invariants = None;
+        //     }
+        // }
 
-        if PRE_V0_8_18.matches(version) {
-            // introduced in 0.8.18 <https://github.com/ethereum/solidity/releases/tag/v0.8.18>
-            if let Some(ref mut meta) = self.metadata {
-                meta.cbor_metadata = None;
-            }
+        // if PRE_V0_8_18.matches(version) {
+        //     // introduced in 0.8.18 <https://github.com/ethereum/solidity/releases/tag/v0.8.18>
+        //     if let Some(ref mut meta) = self.metadata {
+        //         meta.cbor_metadata = None;
+        //     }
 
-            if let Some(ref mut model_checker) = self.model_checker {
-                if let Some(ref mut solvers) = model_checker.solvers {
-                    // elf solver introduced in 0.8.18 <https://github.com/ethereum/solidity/releases/tag/v0.8.18>
-                    solvers.retain(|solver| *solver != ModelCheckerSolver::Eld);
-                }
-            }
-        }
+        //     if let Some(ref mut model_checker) = self.model_checker {
+        //         if let Some(ref mut solvers) = model_checker.solvers {
+        //             // elf solver introduced in 0.8.18 <https://github.com/ethereum/solidity/releases/tag/v0.8.18>
+        //             solvers.retain(|solver| *solver != ModelCheckerSolver::Eld);
+        //         }
+        //     }
+        // }
     }
 
     /// Inserts a set of `ContractOutputSelection`
@@ -742,7 +743,7 @@ impl YulDetails {
 pub enum CvmVersion {
     Nucleus,
     #[default]
-    Berlin,
+    Istanbul,
 }
 
 impl CvmVersion {
@@ -751,7 +752,7 @@ impl CvmVersion {
         if *version > Version::new(1, 0, 1) {
             None
         } else {
-            Some(CvmVersion::Berlin)
+            Some(CvmVersion::Istanbul)
         }
     }
 }
@@ -760,7 +761,7 @@ impl fmt::Display for CvmVersion {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let string = match self {
             CvmVersion::Nucleus => "nucleus",
-            CvmVersion::Berlin => "berlin",
+            CvmVersion::Istanbul => "istanbul",
         };
         write!(f, "{string}")
     }
@@ -2110,7 +2111,7 @@ mod tests {
     #[test]
     fn test_evm_version_normalization() {
         for (ylem_version, evm_version, expected) in
-            &[("1.0.0", CvmVersion::Nucleus, Some(CvmVersion::Nucleus))]
+            &[("1.0.0", CvmVersion::Istanbul, Some(CvmVersion::Istanbul))]
         {
             assert_eq!(
                 &evm_version.normalize_version(&Version::from_str(ylem_version).unwrap()),
@@ -2121,7 +2122,7 @@ mod tests {
 
     #[test]
     fn can_sanitize_byte_code_hash() {
-        let version: Version = "0.6.0".parse().unwrap();
+        let version: Version = "1.0.0".parse().unwrap();
 
         let settings = Settings { metadata: Some(BytecodeHash::Ipfs.into()), ..Default::default() };
 
@@ -2133,15 +2134,11 @@ mod tests {
 
         let i = input.clone().sanitized(&version);
         assert_eq!(i.settings.metadata.unwrap().bytecode_hash, Some(BytecodeHash::Ipfs));
-
-        let version: Version = "0.5.17".parse().unwrap();
-        let i = input.sanitized(&version);
-        assert!(i.settings.metadata.unwrap().bytecode_hash.is_none());
     }
 
     #[test]
     fn can_sanitize_cbor_metadata() {
-        let version: Version = "1.0.1".parse().unwrap();
+        let version: Version = "1.0.0".parse().unwrap();
 
         let settings = Settings {
             metadata: Some(SettingsMetadata::new(BytecodeHash::Ipfs, true)),
@@ -2156,10 +2153,6 @@ mod tests {
 
         let i = input.clone().sanitized(&version);
         assert_eq!(i.settings.metadata.unwrap().cbor_metadata, Some(true));
-
-        let version: Version = "1.0.1".parse().unwrap();
-        let i = input.sanitized(&version);
-        assert!(i.settings.metadata.unwrap().cbor_metadata.is_none());
     }
 
     #[test]

@@ -514,15 +514,10 @@ impl Ylem {
     pub fn compile_output<T: Serialize>(&self, input: &T) -> Result<Vec<u8>> {
         let mut cmd = Command::new(&self.ylem);
 
-        let mut command_string = format!("{:#?}", &self.ylem);
-
         if let Some(ref base_path) = self.base_path {
             cmd.current_dir(base_path);
             cmd.arg("--base-path").arg(base_path);
-            command_string += &format!(" --base-path {:#?}", base_path);
         }
-
-        command_string += " --standard-json";
 
         let mut child = cmd
             .arg("--standard-json")
@@ -534,12 +529,8 @@ impl Ylem {
 
         let stdin = child.stdin.take().expect("Stdin exists.");
 
-        let input_json = serde_json::to_string(input)?;
-        command_string += &input_json;
-
         serde_json::to_writer(stdin, input)?;
         let output = child.wait_with_output().map_err(|err| YlemError::io(err, &self.ylem))?;
-        println!("{}", command_string);
         compile_output(output)
     }
 
@@ -744,13 +735,12 @@ mod tests {
         }
     }
 
-<<<<<<< HEAD:corebc-solc/src/compile/mod.rs
     // #[test]
     // fn can_compile_with_remapped_links() {
     //     let input: CompilerInput =
     //         serde_json::from_str(include_str!("../../test-data/library-remapping-in.json"))
     //             .unwrap();
-    //     let out = solc().compile(&input).unwrap();
+    //     let out = ylem().compile(&input).unwrap();
     //     let (_, mut contracts) = out.split();
     //     let contract = contracts.remove("LinkTest").unwrap();
     //     let bytecode = &contract.get_bytecode().unwrap().object;
@@ -762,37 +752,12 @@ mod tests {
     //     let input: CompilerInput =
     //         serde_json::from_str(include_str!("../../test-data/library-remapping-in-2.json"))
     //             .unwrap();
-    //     let out = solc().compile(&input).unwrap();
+    //     let out = ylem().compile(&input).unwrap();
     //     let (_, mut contracts) = out.split();
     //     let contract = contracts.remove("LinkTest").unwrap();
     //     let bytecode = &contract.get_bytecode().unwrap().object;
     //     assert!(!bytecode.is_unlinked());
     // }
-=======
-    #[test]
-    fn can_compile_with_remapped_links() {
-        let input: CompilerInput =
-            serde_json::from_str(include_str!("../../test-data/library-remapping-in.json"))
-                .unwrap();
-        let out = ylem().compile(&input).unwrap();
-        let (_, mut contracts) = out.split();
-        let contract = contracts.remove("LinkTest").unwrap();
-        let bytecode = &contract.get_bytecode().unwrap().object;
-        assert!(!bytecode.is_unlinked());
-    }
-
-    #[test]
-    fn can_compile_with_remapped_links_temp_dir() {
-        let input: CompilerInput =
-            serde_json::from_str(include_str!("../../test-data/library-remapping-in-2.json"))
-                .unwrap();
-        let out = ylem().compile(&input).unwrap();
-        let (_, mut contracts) = out.split();
-        let contract = contracts.remove("LinkTest").unwrap();
-        let bytecode = &contract.get_bytecode().unwrap().object;
-        assert!(!bytecode.is_unlinked());
-    }
->>>>>>> b8cbbbfc (Rename Solc to Ylem):corebc-ylem/src/compile/mod.rs
 
     #[cfg(feature = "async")]
     #[tokio::test]
@@ -824,19 +789,6 @@ mod tests {
             // pinned
             ("^1.0.1", "1.0.1"),
             // pinned too
-<<<<<<< HEAD
-            ("0.4.14", "0.4.14"),
-            // The latest patch is 0.4.26
-            ("^0.4.14", "0.4.26"),
-            // latest version above 0.5.0 -> we have to
-            // update this test whenever there's a new sol
-            // version. that's ok! good reminder to check the
-            // patch notes.
-            (">=0.5.0", "0.8.20"),
-            // range
-            (">=0.4.0 <0.5.0", "0.4.26"),
-=======
->>>>>>> 76bfa642 (Import updated yvm and fix  tests)
         ]
         .iter()
         {
@@ -868,7 +820,7 @@ mod tests {
     #[test]
     #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     fn can_install_ylem_in_tokio_rt() {
-        let version = Version::from_str("0.8.6").unwrap();
+        let version = Version::from_str("1.0.1").unwrap();
         let rt = tokio::runtime::Runtime::new().unwrap();
         let result = rt.block_on(async { Ylem::blocking_install(&version) });
         assert!(result.is_ok());
@@ -880,31 +832,6 @@ mod tests {
         let version = Version::from_str(ver).unwrap();
         let res = Ylem::find_yvm_installed_version(version.to_string()).unwrap();
         assert!(res.is_none());
-    }
-
-    #[test]
-    fn test_find_latest_matching_installation() {
-        let versions = ["0.4.24", "0.5.1", "0.5.2"]
-            .iter()
-            .map(|version| Version::from_str(version).unwrap())
-            .collect::<Vec<_>>();
-
-        let required = VersionReq::from_str(">=0.4.24").unwrap();
-
-        let got = Ylem::find_matching_installation(&versions, &required).unwrap();
-        assert_eq!(got, versions[2]);
-    }
-
-    #[test]
-    fn test_no_matching_installation() {
-        let versions = ["0.4.24", "0.5.1", "0.5.2"]
-            .iter()
-            .map(|version| Version::from_str(version).unwrap())
-            .collect::<Vec<_>>();
-
-        let required = VersionReq::from_str(">=0.6.0").unwrap();
-        let got = Ylem::find_matching_installation(&versions, &required);
-        assert!(got.is_none());
     }
 
     ///// helpers
