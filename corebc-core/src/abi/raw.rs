@@ -291,10 +291,10 @@ mod tests {
         let _ = serde_json::from_str::<RawAbi>(VERIFIER_ABI).unwrap();
     }
 
-    /// due to ethabi's limitations some may be stripped when corebc-solc generates the abi, such as
+    /// due to ethabi's limitations some may be stripped when corebc-ylem generates the abi, such as
     /// the name of the component
     #[test]
-    fn can_parse_corebc_solc_generated_abi() {
+    fn can_parse_corebc_ylem_generated_abi() {
         let s = r#"[{"type":"function","name":"greet","inputs":[{"internalType":"struct Greeter.Stuff","name":"stuff","type":"tuple","components":[{"type":"bool"}]}],"outputs":[{"internalType":"struct Greeter.Stuff","name":"","type":"tuple","components":[{"type":"bool"}]}],"stateMutability":"view"}]"#;
         let _ = serde_json::from_str::<RawAbi>(s).unwrap();
     }

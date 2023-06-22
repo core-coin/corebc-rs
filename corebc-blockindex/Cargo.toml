@@ -25,7 +25,7 @@ all-features = true
 [dependencies]
 corebc-core.workspace = true
 
-corebc-solc = { workspace = true, optional = true }
+corebc-ylem = { workspace = true, optional = true }
 
 reqwest = { workspace = true, features = ["json"] }
 serde = { workspace = true, features = ["derive"] }
@@ -39,7 +39,7 @@ semver.workspace = true
 getrandom.workspace = true
 
 [dev-dependencies]
-corebc-solc.workspace = true
+corebc-ylem.workspace = true
 
 tempfile.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"] }

@@ -859,7 +859,7 @@ mod tests {
     use super::*;
 
     use crate::{ExcludeContracts, SelectContracts};
-    use corebc_solc::project_util::TempProject;
+    use corebc_ylem::project_util::TempProject;
     use std::{env, panic, path::PathBuf};
 
     struct Context {

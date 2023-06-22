@@ -5,7 +5,7 @@ use corebc_core::{
     utils::AnvilInstance,
 };
 use corebc_providers::{Http, Middleware, Provider};
-use corebc_solc::Solc;
+use corebc_ylem::Solc;
 use std::{convert::TryFrom, sync::Arc, time::Duration};
 
 // Note: The `EthEvent` derive macro implements the necessary conversion between `Tokens` and

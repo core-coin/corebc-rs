@@ -47,14 +47,14 @@ rustls = [
     "corebc-providers/rustls",
     "corebc-blockindex/rustls",
     "corebc-contract/rustls",
-    "corebc-solc/rustls",
+    "corebc-ylem/rustls",
 ]
 openssl = [
     "corebc-middleware/openssl",
     "corebc-providers/openssl",
     "corebc-blockindex/openssl",
     "corebc-contract/openssl",
-    "corebc-solc/openssl",
+    "corebc-ylem/openssl",
 ]
 dev-rpc = ["corebc-providers/dev-rpc"]
 ## signers
@@ -66,8 +66,8 @@ abigen = ["corebc-contract/abigen"]
 ### abigen without reqwest
 abigen-offline = ["corebc-contract/abigen-offline"]
 ## solc
-solc-full = ["corebc-solc/full"]
-solc-tests = ["corebc-solc/tests"]
+solc-full = ["corebc-ylem/full"]
+solc-tests = ["corebc-ylem/tests"]
 
 # Deprecated
 solc-sha2-asm = []
@@ -77,15 +77,19 @@ eip712 = []
 corebc-addressbook.workspace = true
 corebc-contract.workspace = true
 corebc-core.workspace = true
+<<<<<<< HEAD
 corebc-blockindex = { workspace = true, features = ["corebc-solc"] }
+=======
+corebc-etherscan = { workspace = true, features = ["corebc-ylem"] }
+>>>>>>> b8cbbbfc (Rename Solc to Ylem)
 corebc-middleware.workspace = true
 corebc-providers.workspace = true
 corebc-signers.workspace = true
-corebc-solc.workspace = true
+corebc-ylem.workspace = true
 
 [dev-dependencies]
 serde.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 corebc-contract.workspace = true
 corebc-providers = { workspace = true, features = ["rustls"] } # allow https connections
-corebc-solc = { workspace = true, features = ["svm-solc"] }
+corebc-ylem = { workspace = true, features = ["svm-ylem"] }

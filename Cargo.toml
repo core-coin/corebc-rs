@@ -39,7 +39,7 @@ members = [
     "corebc-middleware",
     "corebc-providers",
     "corebc-signers",
-    "corebc-solc",
+    "corebc-ylem",
 
     # Example crates
     "examples/*",
@@ -55,7 +55,7 @@ default-members = [
     "corebc-middleware",
     "corebc-providers",
     "corebc-signers",
-    "corebc-solc",
+    "corebc-ylem",
 ]
 
 # Explicitly set the resolver to version 2, which is the default for packages with edition >= 2021
@@ -72,7 +72,7 @@ corebc-blockindex = { version = "2.0.3", path = "corebc-blockindex", default-fea
 corebc-middleware = { version = "2.0.3", path = "corebc-middleware", default-features = false }
 corebc-providers = { version = "2.0.3", path = "corebc-providers", default-features = false }
 corebc-signers = { version = "2.0.3", path = "corebc-signers", default-features = false }
-corebc-solc = { version = "2.0.3", path = "corebc-solc", default-features = false }
+corebc-ylem = { version = "2.0.3", path = "corebc-ylem", default-features = false }
 
 corebc-contract-abigen = { version = "2.0.3", path = "corebc-contract/corebc-contract-abigen", default-features = false }
 corebc-contract-derive = { version = "2.0.3", path = "corebc-contract/corebc-contract-derive", default-features = false }

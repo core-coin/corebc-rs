@@ -52,7 +52,7 @@ tokio.workspace = true
 
 [dev-dependencies]
 corebc-providers = { workspace = true, features = ["ws", "rustls"] }
-corebc-solc.workspace = true
+corebc-ylem.workspace = true
 
 hex.workspace = true
 rand.workspace = true
