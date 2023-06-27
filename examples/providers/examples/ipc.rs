@@ -4,7 +4,7 @@
 //!
 //! It functions much the same as a Ws connection.
 
-use ethers::prelude::*;
+use corebc::prelude::*;
 use std::sync::Arc;
 
 abigen!(

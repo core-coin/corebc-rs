@@ -1,4 +1,4 @@
-use ethers::types::U256;
+use corebc::types::U256;
 
 /// `U256` implements traits in `std::cmp`, that means `U256` instances
 /// can be easily compared using standard Rust operators.

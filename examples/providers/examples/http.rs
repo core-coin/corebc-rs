@@ -1,7 +1,7 @@
 //! The Http transport is used to send JSON-RPC requests over HTTP to an Ethereum node.
 //! This is the most basic connection to a node.
 
-use ethers::prelude::*;
+use corebc::prelude::*;
 use reqwest::header::{HeaderMap, HeaderValue};
 use std::sync::Arc;
 
@@ -17,7 +17,7 @@ async fn main() -> eyre::Result<()> {
 async fn create_instance() -> eyre::Result<()> {
     // An Http provider can be created from an http(s) URI.
     // In case of https you must add the "rustls" or "openssl" feature
-    // to the ethers library dependency in `Cargo.toml`.
+    // to the corebc library dependency in `Cargo.toml`.
     let _provider = Provider::<Http>::try_from(RPC_URL)?;
 
     // Instantiate with auth to append basic authorization headers across requests

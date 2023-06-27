@@ -9,7 +9,7 @@
 //! In these examples we use the common Arrange, Act, Assert (AAA) test approach.
 //! It is a useful pattern for well-structured, understandable and maintainable tests.
 
-use ethers::prelude::*;
+use corebc::prelude::*;
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {

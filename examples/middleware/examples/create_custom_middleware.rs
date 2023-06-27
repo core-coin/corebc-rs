@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use ethers::{
+use corebc::{
     core::{
         types::{transaction::eip2718::TypedTransaction, BlockId, TransactionRequest, U256},
         utils::{parse_units, Anvil},
@@ -10,12 +10,12 @@ use ethers::{
 };
 use thiserror::Error;
 
-/// This example demonstrates the mechanisms for creating custom middlewares in ethers-rs.
+/// This example demonstrates the mechanisms for creating custom middlewares in corebc-rs.
 /// The example includes explanations of the process and code snippets to illustrate the
 /// concepts. It is intended for developers who want to learn how to customize the behavior of
-/// ethers-rs providers by creating and using custom middlewares.
+/// corebc-rs providers by creating and using custom middlewares.
 ///
-/// This custom middleware increases the gas value of transactions sent through an ethers-rs
+/// This custom middleware increases the gas value of transactions sent through an corebc-rs
 /// provider by a specified percentage and will be called for each transaction before it is sent.
 /// This can be useful if you want to ensure that transactions have a higher gas value than the
 /// estimated, in order to improve the chances of them not to run out of gas when landing on-chain.

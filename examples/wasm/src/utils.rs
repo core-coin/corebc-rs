@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     prelude::{LocalWallet, MnemonicBuilder},
     signers::coins_bip39::English,
 };

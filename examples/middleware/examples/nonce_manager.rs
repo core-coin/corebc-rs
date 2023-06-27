@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     core::{
         types::{BlockNumber, TransactionRequest},
         utils::Anvil,
@@ -13,7 +13,7 @@ use eyre::Result;
 /// processed in the order they are intended, and to prevent the same transaction from being
 /// processed multiple times.
 ///
-/// The nonce manager in ethers-rs is a middleware that helps you manage the nonce
+/// The nonce manager in corebc-rs is a middleware that helps you manage the nonce
 /// of transactions by keeping track of the current nonce for a given account and automatically
 /// incrementing it as needed. This can be useful if you want to ensure that transactions are sent
 /// in the correct order, or if you want to avoid having to manually manage the nonce yourself.

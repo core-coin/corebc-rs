@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     contract::abigen,
     prelude::{Provider, SignerMiddleware},
     providers::{Middleware, Ws},

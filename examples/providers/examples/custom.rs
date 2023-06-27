@@ -1,7 +1,7 @@
 //! Create a custom data transport to use with a Provider.
 
 use async_trait::async_trait;
-use ethers::{core::utils::Anvil, prelude::*};
+use corebc::{core::utils::Anvil, prelude::*};
 use serde::{de::DeserializeOwned, Serialize};
 use std::fmt::Debug;
 use thiserror::Error;
@@ -37,7 +37,7 @@ pub enum WsOrIpcError {
 /// why the request failed. In order to make these accessible, we implement
 /// `as_error_response()`.
 impl RpcError for WsOrIpcError {
-    fn as_error_response(&self) -> Option<&ethers::providers::JsonRpcError> {
+    fn as_error_response(&self) -> Option<&corebc::providers::JsonRpcError> {
         match self {
             WsOrIpcError::Ws(e) => e.as_error_response(),
             WsOrIpcError::Ipc(e) => e.as_error_response(),

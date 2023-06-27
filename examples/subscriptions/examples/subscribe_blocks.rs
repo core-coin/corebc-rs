@@ -1,4 +1,4 @@
-use ethers::providers::{Middleware, Provider, StreamExt, Ws};
+use corebc::providers::{Middleware, Provider, StreamExt, Ws};
 use eyre::Result;
 
 #[tokio::main]

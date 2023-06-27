@@ -4,7 +4,7 @@ use std::{
     sync::Arc,
 };
 
-use ethers::{
+use corebc::{
     contract::abigen,
     core::{
         types::{Address, I256, U256},

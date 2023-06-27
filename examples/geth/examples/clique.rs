@@ -1,6 +1,6 @@
 //! Instantiate `Geth` with Clique enabled.
 
-use ethers::{
+use corebc::{
     core::{rand::thread_rng, utils::Geth},
     signers::LocalWallet,
 };

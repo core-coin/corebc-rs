@@ -1,4 +1,4 @@
-use ethers::{prelude::Abigen, solc::Solc};
+use corebc::{prelude::Abigen, solc::Solc};
 use eyre::Result;
 
 fn main() -> Result<()> {

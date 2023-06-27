@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     contract::abigen,
     core::types::Address,
     providers::{Http, Provider},

@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     prelude::{abigen, Abigen},
     providers::{Http, Provider},
     types::Address,

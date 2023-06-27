@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     core::{types::TransactionRequest, utils::Anvil},
     middleware::SignerMiddleware,
     providers::{Http, Middleware, Provider},
@@ -8,7 +8,7 @@ use eyre::Result;
 use std::convert::TryFrom;
 
 /// In Ethereum, transactions must be signed with a private key before they can be broadcast to the
-/// network. Ethers-rs provides a way to customize this process by allowing
+/// network. corebc-rs provides a way to customize this process by allowing
 /// you to define a signer, called to sign transactions before they are sent.
 #[tokio::main]
 async fn main() -> Result<()> {

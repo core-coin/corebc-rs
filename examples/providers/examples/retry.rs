@@ -6,7 +6,7 @@
 //! rate-limiting errors. In addition to the RetryPolicy, errors caused by connectivity issues such
 //! as timed out connections or responses in the 5xx range can also be retried separately.
 
-use ethers::prelude::*;
+use corebc::prelude::*;
 use reqwest::Url;
 use std::time::Duration;
 
@@ -20,7 +20,7 @@ async fn main() -> eyre::Result<()> {
         .rate_limit_retries(10)
         .timeout_retries(3)
         .initial_backoff(Duration::from_millis(500))
-        .build(provider, Box::<ethers::providers::HttpRateLimitRetryPolicy>::default());
+        .build(provider, Box::<corebc::providers::HttpRateLimitRetryPolicy>::default());
 
     // Send a JSON-RPC request for the latest block
     let block_num = "latest".to_string();

@@ -1,6 +1,6 @@
 //! Spawn an [anvil](https://github.com/foundry-rs/foundry/tree/master/anvil) instance in forking mode
 
-use ethers::utils::Anvil;
+use corebc::utils::Anvil;
 use eyre::Result;
 
 #[tokio::main]

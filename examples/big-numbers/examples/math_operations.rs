@@ -1,4 +1,4 @@
-use ethers::{types::U256, utils::format_units};
+use corebc::{types::U256, utils::format_units};
 use std::ops::{Div, Mul};
 
 /// `U256` implements traits in `std::ops`, that means it supports arithmetic operations

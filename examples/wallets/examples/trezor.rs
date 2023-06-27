@@ -1,7 +1,7 @@
 #[tokio::main]
 #[cfg(feature = "trezor")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    use ethers::{prelude::*, utils::parse_ether};
+    use corebc::{prelude::*, utils::parse_ether};
 
     // Connect over websockets
     let provider = Provider::new(Ws::connect("ws://localhost:8545").await?);

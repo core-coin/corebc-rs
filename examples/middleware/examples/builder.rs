@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     core::types::BlockNumber,
     middleware::{
         gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
@@ -13,7 +13,7 @@ use std::convert::TryFrom;
 const RPC_URL: &str = "https://eth.llamarpc.com";
 const SIGNING_KEY: &str = "fdb33e2105f08abe41a8ee3b758726a31abdd57b7a443f470f23efce853af169";
 
-/// In ethers-rs, middleware is a way to customize the behavior of certain aspects of the library by
+/// In corebc-rs, middleware is a way to customize the behavior of certain aspects of the library by
 /// injecting custom logic into the process of sending transactions and interacting with contracts
 /// on the Ethereum blockchain. The MiddlewareBuilder trait provides a way to define a chain of
 /// middleware that will be called at different points in this process, allowing you to customize

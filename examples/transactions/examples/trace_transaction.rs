@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     core::types::{GethDebugTracingOptions, H256},
     providers::{Http, Middleware, Provider},
     types::{GethDebugBuiltInTracerType, GethDebugTracerType},

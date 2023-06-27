@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     contract::{abigen, Contract},
     core::types::ValueOrArray,
     providers::{Provider, StreamExt, Ws},
