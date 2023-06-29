@@ -1,7 +1,7 @@
 //! The `QuorumProvider` sends a request to multiple backends and only returns a value
 //! if the configured `Quorum` was reached.
 
-use ethers::{
+use corebc::{
     core::utils::Anvil,
     providers::{Http, Middleware, Provider, Quorum, QuorumProvider, WeightedProvider, Ws},
 };

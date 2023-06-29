@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     contract::abigen,
     core::{
         types::{Address, TransactionRequest, H256},
@@ -26,7 +26,7 @@ async fn main() -> Result<()> {
                 eprint!(": {e}");
             }
             eprintln!();
-            return Ok(())
+            return Ok(());
         }
         Ok(true) => {}
     }

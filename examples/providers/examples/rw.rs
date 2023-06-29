@@ -1,7 +1,7 @@
 //! The RwClient wraps two data transports: the first is used for read operations, and the second
 //! one is used for write operations, that consume gas like sending transactions.
 
-use ethers::{prelude::*, utils::Anvil};
+use corebc::{prelude::*, utils::Anvil};
 use url::Url;
 
 #[tokio::main]

@@ -1,4 +1,4 @@
-use ethers::contract::abigen;
+use corebc::contract::abigen;
 
 abigen!(
     SimpleContract,
@@ -19,20 +19,20 @@ abigen!(
 #[tokio::main]
 #[cfg(feature = "legacy")]
 async fn main() -> eyre::Result<()> {
-    use ethers::prelude::*;
+    use corebc::prelude::*;
     use std::{convert::TryFrom, path::Path, sync::Arc, time::Duration};
 
     const MOONBEAM_DEV_ENDPOINT: &str = "http://localhost:9933";
 
     // set the path to the contract, `CARGO_MANIFEST_DIR` points to the directory containing the
-    // manifest of `ethers`. which will be `../` relative to this file
+    // manifest of `corebc`. which will be `../` relative to this file
     let source = Path::new(&env!("CARGO_MANIFEST_DIR")).join("examples/contract.sol");
     let compiled = Solc::default().compile_source(source).expect("Could not compile contracts");
     let (abi, bytecode, _runtime_bytecode) =
         compiled.find("SimpleStorage").expect("could not find contract").into_parts_or_default();
 
     // 1. get a moonbeam dev key
-    let key = ethers::core::utils::moonbeam::dev_keys()[0].clone();
+    let key = corebc::core::utils::moonbeam::dev_keys()[0].clone();
 
     // 2. instantiate our wallet with network id
     let wallet: LocalWallet = LocalWallet::from(key).with_network_id(Network::Devin);

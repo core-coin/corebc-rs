@@ -320,7 +320,7 @@ where
 /// # Example
 ///
 /// ```no_run
-/// use corebc_solc::Solc;
+/// use corebc_ylem::Solc;
 /// use corebc_contract::ContractFactory;
 /// use corebc_providers::{Provider, Http};
 /// use std::convert::TryFrom;

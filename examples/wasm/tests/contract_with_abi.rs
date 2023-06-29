@@ -1,7 +1,7 @@
 #![cfg(target_arch = "wasm32")]
 
 use corebc::addressbook::Network;
-use ethers::{
+use corebc::{
     prelude::{Http, JsonRpcClient, LocalWallet, Provider, SignerMiddleware, Ws},
     signers::Signer,
     types::Network,

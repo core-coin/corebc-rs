@@ -1,4 +1,4 @@
-use ethers::{types::U256, utils::format_units};
+use corebc::{types::U256, utils::format_units};
 
 /// `U256` provides useful conversion functions to enable transformation into native Rust types.
 ///

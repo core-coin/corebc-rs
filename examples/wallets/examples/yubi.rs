@@ -1,7 +1,7 @@
 #[tokio::main]
 #[cfg(feature = "yubi")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    use ethers::{prelude::*, utils::parse_ether};
+    use corebc::{prelude::*, utils::parse_ether};
     use yubihsm::{Connector, Credentials, UsbConfig};
 
     // Connect over websockets

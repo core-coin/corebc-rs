@@ -2,7 +2,7 @@
 
 use std::{sync::Arc, time::Duration};
 
-use ethers::{
+use corebc::{
     contract::abigen,
     core::{
         types::{Address, U256},
@@ -13,7 +13,7 @@ use ethers::{
     signers::LocalWallet,
 };
 
-abigen!(VerifierContract, "ethers-contract/tests/solidity-contracts/verifier_abi.json");
+abigen!(VerifierContract, "corebc-contract/tests/solidity-contracts/verifier_abi.json");
 
 /// This example only demonstrates how to use generated structs for solidity functions that
 /// have structs as input.

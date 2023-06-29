@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     contract::{Eip712, EthAbiType},
     core::{
         types::{transaction::eip712::Eip712, Address, U256},

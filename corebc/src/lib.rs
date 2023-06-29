@@ -99,7 +99,7 @@ pub use corebc_providers as providers;
 #[doc(inline)]
 pub use corebc_signers as signers;
 #[doc(inline)]
-pub use corebc_solc as solc;
+pub use corebc_ylem as ylem;
 
 #[doc(inline)]
 pub use corebc_core::{abi, types, utils};
@@ -122,7 +122,7 @@ pub mod prelude {
 
     pub use super::signers::*;
 
-    pub use super::solc::*;
+    pub use super::ylem::*;
 }
 
 // For macro expansions only, not public API.

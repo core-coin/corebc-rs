@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     types::{serde_helpers::Numeric, U256},
     utils::{parse_units, ParseUnits},
 };

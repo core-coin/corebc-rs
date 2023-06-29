@@ -61,4 +61,4 @@ rustls = ["online", "reqwest/rustls-tls", "corebc-blockindex/rustls"]
 
 [dev-dependencies]
 tempfile.workspace = true
-corebc-solc = { workspace = true, features = ["project-util", "svm-solc"] }
+corebc-ylem = { workspace = true, features = ["project-util", "yvm-ylem"] }

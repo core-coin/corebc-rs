@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     contract::abigen,
     core::utils::Anvil,
     middleware::SignerMiddleware,
@@ -12,7 +12,7 @@ use std::{convert::TryFrom, sync::Arc, time::Duration};
 // *Note*: this requires a `bytecode` and `abi` object in the `greeter.json` artifact:
 // `{"abi": [..], "bin": "..."}` , `{"abi": [..], "bytecode": {"object": "..."}}` or
 // `{"abi": [..], "bytecode": "..."}` this will embedd the bytecode in a variable `GREETER_BYTECODE`
-abigen!(Greeter, "ethers-contract/tests/solidity-contracts/greeter.json",);
+abigen!(Greeter, "corebc-contract/tests/solidity-contracts/greeter.json",);
 
 #[tokio::main]
 async fn main() -> Result<()> {

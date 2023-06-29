@@ -224,7 +224,7 @@ pub enum CorebcCrate {
     CorebcMiddleware,
     CorebcProviders,
     CorebcSigners,
-    CorebcSolc,
+    CorebcYlem,
 }
 
 impl AsRef<str> for CorebcCrate {
@@ -253,7 +253,7 @@ impl CorebcCrate {
             Self::CorebcMiddleware => "corebc-middleware",
             Self::CorebcProviders => "corebc-providers",
             Self::CorebcSigners => "corebc-signers",
-            Self::CorebcSolc => "corebc-solc",
+            Self::CorebcYlem => "corebc-ylem",
         }
     }
 
@@ -270,7 +270,7 @@ impl CorebcCrate {
             Self::CorebcMiddleware => "::corebc_middleware",
             Self::CorebcProviders => "::corebc_providers",
             Self::CorebcSigners => "::corebc_signers",
-            Self::CorebcSolc => "::corebc_solc",
+            Self::CorebcYlem => "::corebc_ylem",
         }
     }
 
@@ -289,7 +289,7 @@ impl CorebcCrate {
             Self::CorebcMiddleware => "::corebc::middleware",
             Self::CorebcProviders => "::corebc::providers",
             Self::CorebcSigners => "::corebc::signers",
-            Self::CorebcSolc => "::corebc::solc",
+            Self::CorebcYlem => "::corebc::ylem",
         }
     }
 

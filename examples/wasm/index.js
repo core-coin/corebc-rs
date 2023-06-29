@@ -1,6 +1,6 @@
-const ethers = import("./pkg");
+const corebc = import("./pkg");
 
-ethers
+corebc
     .then(m => {
         m.deploy().catch(console.error);
     })

@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     core::rand,
     signers::{coins_bip39::English, MnemonicBuilder},
 };

@@ -1,8 +1,8 @@
 # Contracts
-In this guide, we will go over some examples of using ethers-rs to work with contracts, including using abigen to generate Rust bindings for a contract, listening for contract events, calling contract methods, and instantiating contracts.
+In this guide, we will go over some examples of using corebc-rs to work with contracts, including using abigen to generate Rust bindings for a contract, listening for contract events, calling contract methods, and instantiating contracts.
 
 ## Generating Rust bindings with abigen
-To use a contract with ethers-rs, you will need to generate Rust bindings using the abigen tool. abigen is included with the ethers-rs library and can be used to generate Rust bindings for any Solidity contract.
+To use a contract with corebc-rs, you will need to generate Rust bindings using the abigen tool. abigen is included with the corebc-rs library and can be used to generate Rust bindings for any Solidity contract.
 
 ### Generate a Rust file
 This method takes a smart contract's Application Binary Interface (ABI) file and generates a Rust file to interact with it. This is useful if the smart contract is referenced in different places in a project. File generation from ABI can also be easily included as a build step of your application.

@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     blockindex::Client,
     core::types::Network,
     middleware::gas_oracle::{
@@ -16,7 +16,7 @@ use ethers::{
 /// to include in a transaction, in order to ensure that it will be processed in a timely manner
 /// without running out of gas.
 ///
-/// Ethers-rs includes a feature called "gas oracle middleware" that allows you to customize the
+/// corebc-rs includes a feature called "gas oracle middleware" that allows you to customize the
 /// behavior of the library when it comes to determining the gas cost of transactions.
 #[tokio::main]
 async fn main() {

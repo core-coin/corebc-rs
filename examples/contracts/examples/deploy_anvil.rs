@@ -1,4 +1,4 @@
-use ethers::{
+use corebc::{
     contract::{abigen, ContractFactory},
     core::utils::Anvil,
     middleware::SignerMiddleware,

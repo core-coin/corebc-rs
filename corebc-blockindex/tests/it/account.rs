@@ -58,7 +58,7 @@ async fn get_tokens_success() {
     let account: &Address = &"ab57dde1a47041fc3c570c0318a713128ced55fd2ada".parse().unwrap();
     run_with_client(Network::Devin, |client| async move {
         let tokens = client.get_tokens(account, None).await;
-        assert_eq!(tokens.unwrap().len(), 6);
+        assert_eq!(tokens.unwrap().len(), 7);
     })
     .await
 }

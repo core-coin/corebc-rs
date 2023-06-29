@@ -369,7 +369,7 @@ impl ContractBindings {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use corebc_solc::project_util::TempProject;
+    use corebc_ylem::project_util::TempProject;
 
     #[test]
     fn can_generate_structs() {
