@@ -15,7 +15,7 @@ use std::{
     sync::Arc,
 };
 
-abigen!(Greeter, "ethers-contract/tests/solidity-contracts/greeter.json",);
+abigen!(Greeter, "corebc-contract/tests/solidity-contracts/greeter.json",);
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -26,7 +26,7 @@ async fn main() -> Result<()> {
                 eprint!(": {e}");
             }
             eprintln!();
-            return Ok(());
+            return Ok(())
         }
         Ok(true) => {}
     }

@@ -50,3 +50,7 @@ tracing-subscriber = { workspace = true, features = ["env-filter", "fmt"] }
 default = ["rustls"]
 openssl = ["reqwest/native-tls"]
 rustls = ["reqwest/rustls-tls"]
+
+corebc-ylem = ["dep:corebc-ylem"]
+corebc-full = ["corebc-ylem?/full"]
+corebc-tests = ["corebc-ylem?/tests"]

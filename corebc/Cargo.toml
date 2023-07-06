@@ -47,14 +47,14 @@ rustls = [
     "corebc-providers/rustls",
     "corebc-blockindex/rustls",
     "corebc-contract/rustls",
-    "corebc-ylem/rustls",
+    "corebc-ylem?/rustls",
 ]
 openssl = [
     "corebc-middleware/openssl",
     "corebc-providers/openssl",
     "corebc-blockindex/openssl",
     "corebc-contract/openssl",
-    "corebc-ylem/openssl",
+    "corebc-ylem?/openssl",
 ]
 dev-rpc = ["corebc-providers/dev-rpc"]
 ## signers
@@ -65,10 +65,11 @@ yubi = ["corebc-signers/yubi"]
 abigen = ["corebc-contract/abigen"]
 ### abigen without reqwest
 abigen-offline = ["corebc-contract/abigen-offline"]
-## solc
+
+# corebc-ylem
 corebc-ylem = ["dep:corebc-ylem", "corebc-blockindex/corebc-ylem"]
 ylem-full = ["corebc-ylem?/full"]
-ylem-tests = ["corebc-ylem?/tests"]
+solc-tests = ["corebc-ylem?/tests"]
 
 # Deprecated
 ylem-sha2-asm = []
@@ -82,11 +83,5 @@ corebc-blockindex.workspace = true
 corebc-middleware.workspace = true
 corebc-providers.workspace = true
 corebc-signers.workspace = true
-corebc-ylem.workspace = true
+corebc-ylem = { workspace = true, optional = true }
 
-[dev-dependencies]
-serde.workspace = true
-tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
-corebc-contract.workspace = true
-corebc-providers = { workspace = true, features = ["rustls"] } # allow https connections
-corebc-ylem = { workspace = true, features = ["yvm-ylem"] }

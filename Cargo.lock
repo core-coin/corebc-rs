@@ -601,8 +601,6 @@ dependencies = [
  "corebc-providers",
  "corebc-signers",
  "corebc-ylem",
- "serde",
- "tokio",
 ]
 
 [[package]]
