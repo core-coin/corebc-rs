@@ -69,7 +69,7 @@ abigen-offline = ["corebc-contract/abigen-offline"]
 # corebc-ylem
 corebc-ylem = ["dep:corebc-ylem", "corebc-blockindex/corebc-ylem"]
 ylem-full = ["corebc-ylem?/full"]
-solc-tests = ["corebc-ylem?/tests"]
+ylem-tests = ["corebc-ylem?/tests"]
 
 # Deprecated
 ylem-sha2-asm = []
