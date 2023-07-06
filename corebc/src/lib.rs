@@ -99,6 +99,7 @@ pub use corebc_providers as providers;
 #[doc(inline)]
 pub use corebc_signers as signers;
 #[doc(inline)]
+#[cfg(feature = "corebc-ylem")]
 pub use corebc_ylem as ylem;
 
 #[doc(inline)]
@@ -122,6 +123,7 @@ pub mod prelude {
 
     pub use super::signers::*;
 
+    #[cfg(feature = "corebc-ylem")]
     pub use super::ylem::*;
 }
 

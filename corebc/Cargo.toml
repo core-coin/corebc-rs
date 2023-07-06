@@ -66,18 +66,19 @@ abigen = ["corebc-contract/abigen"]
 ### abigen without reqwest
 abigen-offline = ["corebc-contract/abigen-offline"]
 ## solc
-solc-full = ["corebc-ylem/full"]
-solc-tests = ["corebc-ylem/tests"]
+corebc-ylem = ["dep:corebc-ylem", "corebc-blockindex/corebc-ylem"]
+ylem-full = ["corebc-ylem?/full"]
+ylem-tests = ["corebc-ylem?/tests"]
 
 # Deprecated
-solc-sha2-asm = []
+ylem-sha2-asm = []
 eip712 = []
 
 [dependencies]
 corebc-addressbook.workspace = true
 corebc-contract.workspace = true
 corebc-core.workspace = true
-corebc-blockindex = { workspace = true, features = ["corebc-ylem"] }
+corebc-blockindex.workspace = true
 corebc-middleware.workspace = true
 corebc-providers.workspace = true
 corebc-signers.workspace = true
