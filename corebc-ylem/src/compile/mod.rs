@@ -109,7 +109,8 @@ impl fmt::Display for YlemVersion {
 ///
 /// By default the ylem path is configured as follows, with descending priority:
 ///   1. `YLEM_PATH` environment variable
-///   2. [yvm](https://github.com/roynalnaruto/yvm-rs)'s  `global_version` (set via `yvm use <version>`), stored at `<yvm_home>/.global_version`
+///   2. [yvm](https://github.com/roynalnaruto/yvm-rs)'s  `global_version` (set via `yvm use
+///      <version>`), stored at `<yvm_home>/.global_version`
 ///   3. `ylem` otherwise
 #[derive(Debug, Clone, Eq, PartialEq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct Ylem {

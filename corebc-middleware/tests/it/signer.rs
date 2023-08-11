@@ -103,10 +103,8 @@
 // async fn check_tx<P: JsonRpcClient + Clone>(
 //     pending_tx: corebc_providers::PendingTransaction<'_, P>,
 //     expected: u64,
-// ) {
-//     let provider = pending_tx.provider();
-//     let receipt = pending_tx.await.unwrap().unwrap();
-//     let tx = provider.get_transaction(receipt.transaction_hash).await.unwrap().unwrap();
+// ) { let provider = pending_tx.provider(); let receipt = pending_tx.await.unwrap().unwrap(); let
+//   tx = provider.get_transaction(receipt.transaction_hash).await.unwrap().unwrap();
 
 //     let expected = U64::from(expected);
 //     for ty in [receipt.transaction_type, tx.transaction_type] {

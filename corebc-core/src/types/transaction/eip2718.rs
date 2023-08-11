@@ -680,8 +680,7 @@ impl From<TypedTransaction> for Eip2930TransactionRequest {
 //     //             Bytes::from_str(
 //     //
 // "0x6ecd23060000000000000000000000000000000000000000000000000000000000000002",     //
-// )     //             .unwrap(),
-//     //         );
+// ) //             .unwrap(), //         );
 
 //     //     let expected_envelope = TypedTransaction::Eip1559(expected_tx);
 //     //     let typed_tx_hex =

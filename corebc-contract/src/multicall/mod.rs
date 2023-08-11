@@ -311,8 +311,8 @@
 //         client: impl Into<Arc<M>>,
 //         address: Option<Address>,
 //         network_id: Option<impl Into<u64>>,
-//     ) -> Result<Self, M> {
-//         // If no address is provided, check if network_id is supported and use the default
+//     ) -> Result<Self, M> { // If no address is provided, check if network_id is supported and use
+//       the default
 // multicall         // address.
 //         let address: Address = match (address, network_id) {
 //             (Some(addr), _) => addr,
@@ -391,26 +391,13 @@
 //         &mut self,
 //         call: ContractCall<M, D>,
 //         allow_failure: bool,
-//     ) -> &mut Self {
-//         let (to, data, value) = match call.tx {
-//             TypedTransaction::Legacy(tx) => (tx.to, tx.data, tx.value),
-//             TypedTransaction::Eip2930(tx) => (tx.tx.to, tx.tx.data, tx.tx.value),
-//             TypedTransaction::Eip1559(tx) => (tx.to, tx.data, tx.value),
-//         };
-//         if data.is_none() && !call.function.outputs.is_empty() {
-//             return self;
-//         }
-//         if let Some(NameOrAddress::Address(target)) = to {
-//             let call = Call {
-//                 target,
-//                 data: data.unwrap_or_default(),
-//                 value: value.unwrap_or_default(),
-//                 allow_failure,
-//                 function: call.function,
-//             };
-//             self.calls.push(call);
-//         }
-//         self
+//     ) -> &mut Self { let (to, data, value) = match call.tx { TypedTransaction::Legacy(tx) =>
+//       (tx.to, tx.data, tx.value), TypedTransaction::Eip2930(tx) => (tx.tx.to, tx.tx.data,
+//       tx.tx.value), TypedTransaction::Eip1559(tx) => (tx.to, tx.data, tx.value), }; if
+//       data.is_none() && !call.function.outputs.is_empty() { return self; } if let
+//       Some(NameOrAddress::Address(target)) = to { let call = Call { target, data:
+//       data.unwrap_or_default(), value: value.unwrap_or_default(), allow_failure, function:
+//       call.function, }; self.calls.push(call); } self
 //     }
 
 //     /// Appends multiple `call`s to the list of calls of the Multicall instance.
@@ -422,11 +409,7 @@
 //         &mut self,
 //         allow_failure: bool,
 //         calls: impl IntoIterator<Item = ContractCall<M, D>>,
-//     ) -> &mut Self {
-//         for call in calls {
-//             self.add_call(call, allow_failure);
-//         }
-//         self
+//     ) -> &mut Self { for call in calls { self.add_call(call, allow_failure); } self
 //     }
 
 //     /// Appends a `call` to the list of calls of the Multicall instance for querying the block
@@ -484,9 +467,8 @@
 //         &mut self,
 //         address: impl Into<Address>,
 //         allow_failure: bool,
-//     ) -> &mut Self {
-//         let call = self.contract.get_eth_balance(address.into());
-//         self.add_call(call, allow_failure)
+//     ) -> &mut Self { let call = self.contract.get_eth_balance(address.into());
+//       self.add_call(call, allow_failure)
 //     }
 
 //     /// Appends a `call` to the list of calls of the Multicall instance for querying the last
@@ -717,9 +699,9 @@
 //     fn parse_call_result(
 //         &self,
 //         return_data: impl Iterator<Item = MulticallResult>,
-//     ) -> Result<Vec<StdResult<Token, Bytes>>, M> {
-//         let mut results = Vec::with_capacity(self.calls.len());
-//         for (call, MulticallResult { success, return_data }) in
+//     ) -> Result<Vec<StdResult<Token, Bytes>>, M> { let mut results =
+//       Vec::with_capacity(self.calls.len()); for (call, MulticallResult { success, return_data })
+//       in
 // self.calls.iter().zip(return_data) {             let result = if !success ||
 // return_data.is_empty() {                 // v2: In the function call to `tryAggregate`, the
 // `allow_failure` check                 // is done on a per-transaction basis, and we set this

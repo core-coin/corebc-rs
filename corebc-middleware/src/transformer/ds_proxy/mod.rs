@@ -86,8 +86,7 @@
 //         client: C,
 //         factory: Option<Address>,
 //         owner: Address,
-//     ) -> Result<Self, ContractError<M>> {
-//         let client = client.into();
+//     ) -> Result<Self, ContractError<M>> { let client = client.into();
 
 //         // Fetch network id and the corresponding address of DsProxyFactory contract
 //         // preference is given to DsProxyFactory contract's address if provided
@@ -152,9 +151,9 @@
 //         client: C,
 //         target: T,
 //         data: Bytes,
-//     ) -> Result<ContractCall<M, Bytes>, ContractError<M>> {
-//         // construct the full contract using DsProxy's address and the injected client.
-//         let ds_proxy = self.contract.clone().into_contract(self.address, client.into());
+//     ) -> Result<ContractCall<M, Bytes>, ContractError<M>> { // construct the full contract using
+//       DsProxy's address and the injected client. let ds_proxy =
+//       self.contract.clone().into_contract(self.address, client.into());
 
 //         match target.into() {
 //             // handle the case when the target is an address to a deployed contract.
