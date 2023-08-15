@@ -5,7 +5,7 @@ use corebc_core::{
     utils::AnvilInstance,
 };
 use corebc_providers::{Http, Middleware, Provider};
-use corebc_ylem::Solc;
+use corebc_ylem::Ylem;
 use std::{convert::TryFrom, sync::Arc, time::Duration};
 
 // Note: The `EthEvent` derive macro implements the necessary conversion between `Tokens` and
@@ -25,7 +25,7 @@ pub struct ValueChanged {
 #[track_caller]
 pub fn compile_contract(name: &str, filename: &str) -> (Abi, Bytes) {
     let path = format!("./tests/solidity-contracts/{filename}");
-    let compiled = Solc::default().compile_source(&path).unwrap();
+    let compiled = Ylem::default().compile_source(&path).unwrap();
     let contract = compiled.get(&path, name).expect("could not find contract");
     let (abi, bin, _) = contract.into_parts_or_default();
     (abi, bin)

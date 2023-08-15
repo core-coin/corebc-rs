@@ -1,35 +1,17 @@
 use super::{U128, U256, U512, U64};
-use serde::{Deserialize, Serialize, Serializer};
-use std::{
-    convert::{TryFrom, TryInto},
-    fmt,
-    time::Duration,
-};
-use strum::{AsRefStr, EnumCount, EnumIter, EnumString, EnumVariantNames};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::{convert::TryFrom, fmt, str::FromStr, time::Duration};
+use strum::{EnumCount, EnumIter, EnumVariantNames};
 
-// compatibility re-export
-#[doc(hidden)]
-pub use num_enum::{TryFromPrimitive, TryFromPrimitiveError};
-#[doc(hidden)]
-pub type ParseNetworkError = TryFromPrimitiveError<Network>;
+#[derive(Debug)]
+pub struct ParseNetworkError {
+    pub number: u64,
+}
 
 // When adding a new network:
 //   1. add new variant to the Network enum;
 //   2. add extra information in the last `impl` block (explorer URLs, block time) when applicable;
-//   3. (optional) add aliases:
-//     - Strum (in kebab-case): `#[strum(to_string = "<main>", serialize = "<aliasX>", ...)]`
-//      `to_string = "<main>"` must be present and will be used in `Display`, `Serialize`
-//      and `FromStr`, while `serialize = "<aliasX>"` will be appended to `FromStr`.
-//      More info: <https://docs.rs/strum/latest/strum/additional_attributes/index.html#attributes-on-variants>
-//     - Serde (in snake_case): `#[serde(alias = "<aliasX>", ...)]`
-//      Aliases are appended to the `Deserialize` implementation.
-//      More info: <https://serde.rs/variant-attrs.html>
 //     - Add a test at the bottom of the file
-
-// We don't derive Serialize because it is manually implemented using AsRef<str> and it would
-// break a lot of things since Serialize is `kebab-case` vs Deserialize `snake_case`.
-// This means that the Network type is not "round-trippable", because the Serialize and Deserialize
-// implementations do not use the same case style.
 
 /// An Ethereum EIP-155 Network.
 #[derive(
@@ -41,30 +23,19 @@ pub type ParseNetworkError = TryFromPrimitiveError<Network>;
     PartialOrd,
     Ord,
     Hash,
-    AsRefStr,         // AsRef<str>, fmt::Display and serde::Serialize
     EnumVariantNames, // Network::VARIANTS
-    EnumString,       // FromStr, TryFrom<&str>
     EnumIter,         // Network::iter
-    EnumCount,        // Network::COUNT
-    TryFromPrimitive, // TryFrom<u64>
-    Deserialize,
+    EnumCount,        /* Network::COUNT */
 )]
-#[serde(rename_all = "snake_case")]
-#[strum(serialize_all = "kebab-case")]
 #[repr(u64)]
 pub enum Network {
-    #[strum(to_string = "mainnet", serialize = "xcblive")]
-    #[serde(alias = "xcblive")]
     Mainnet = 1,
-    #[strum(to_string = "devin", serialize = "xablive")]
-    #[serde(alias = "xablive")]
     Devin = 3,
+    Private(u64),
 }
 
 // === impl Network ===
 
-// This must be implemented manually so we avoid a conflict with `TryFromPrimitive` where it treats
-// the `#[default]` attribute as its own `#[num_enum(default)]`
 impl Default for Network {
     fn default() -> Self {
         Self::Mainnet
@@ -75,7 +46,11 @@ macro_rules! impl_into_numeric {
     ($($ty:ty)+) => {$(
         impl From<Network> for $ty {
             fn from(network: Network) -> Self {
-                u64::from(network).into()
+                match network {
+                    Network::Mainnet => (1 as u64).into(),
+                    Network::Devin =>(3 as u64).into(),
+                    Network::Private(n) => (n as u64).into(),
+                }
             }
         }
     )+};
@@ -88,7 +63,11 @@ macro_rules! impl_try_from_numeric {
                 type Error = ParseNetworkError;
 
                 fn try_from(value: $native) -> Result<Self, Self::Error> {
-                    (value as u64).try_into()
+                    match value as u64 {
+                        1 => Ok(Network::Mainnet),
+                        3 => Ok(Network::Devin),
+                        n => Ok(Network::Private(n)),
+                    }
                 }
             }
         )+
@@ -99,11 +78,13 @@ macro_rules! impl_try_from_numeric {
 
                 fn try_from(value: $primitive) -> Result<Self, Self::Error> {
                     if value.bits() > 64 {
-                        // `TryFromPrimitiveError` only has a `number` field which has the same type
-                        // as the `#[repr(_)]` attribute on the enum.
                         return Err(ParseNetworkError { number: value.low_u64() })
                     }
-                    value.low_u64().try_into()
+                    match value.low_u64() {
+                        1 => Ok(Network::Mainnet),
+                        3 => Ok(Network::Devin),
+                        n => Ok(Network::Private(n)),
+                    }
                 }
             }
         )*
@@ -112,7 +93,11 @@ macro_rules! impl_try_from_numeric {
 
 impl From<Network> for u64 {
     fn from(network: Network) -> Self {
-        network as u64
+        match network {
+            Network::Mainnet => 1,
+            Network::Devin => 3,
+            Network::Private(n) => n,
+        }
     }
 }
 
@@ -122,15 +107,31 @@ impl TryFrom<U64> for Network {
     type Error = ParseNetworkError;
 
     fn try_from(value: U64) -> Result<Self, Self::Error> {
-        value.low_u64().try_into()
+        match value.low_u64() {
+            1 => Ok(Network::Mainnet),
+            3 => Ok(Network::Devin),
+            n => Ok(Network::Private(n)),
+        }
     }
 }
 
-impl_try_from_numeric!(u8 u16 u32 usize; U128 U256 U512);
+impl TryFrom<&str> for Network {
+    type Error = ParseNetworkError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Ok(Network::from(value.to_string()))
+    }
+}
+
+impl_try_from_numeric!(u8 u16 u32 u64 usize; U128 U256 U512);
 
 impl fmt::Display for Network {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.pad(self.as_ref())
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Network::Mainnet => write!(f, "mainnet"),
+            Network::Devin => write!(f, "devin"),
+            Network::Private(id) => write!(f, "private-{}", id),
+        }
     }
 }
 
@@ -139,7 +140,42 @@ impl Serialize for Network {
     where
         S: Serializer,
     {
-        s.serialize_str(self.as_ref())
+        s.serialize_str(format!("{}", self).as_str())
+    }
+}
+
+impl<'de> Deserialize<'de> for Network {
+    fn deserialize<D>(deserializer: D) -> Result<Network, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        Ok(Network::from(s))
+    }
+}
+
+impl From<String> for Network {
+    fn from(s: String) -> Network {
+        match s.as_str() {
+            "mainnet" => Network::Mainnet,
+            "devin" => Network::Devin,
+            unknown => {
+                if let ["private", id_str] = unknown.split('-').collect::<Vec<_>>().as_slice() {
+                    if let Ok(id) = id_str.parse::<u64>() {
+                        return Network::Private(id)
+                    }
+                }
+                panic!("Unknown network: {}", unknown);
+            }
+        }
+    }
+}
+
+impl FromStr for Network {
+    type Err = ParseNetworkError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Network::from(s.to_string()))
     }
 }
 
@@ -171,7 +207,7 @@ impl Network {
         use Network::*;
 
         let ms = match self {
-            Mainnet | Devin => 7_000,
+            Mainnet | Devin | Private(_) => 7_000,
         };
 
         Some(Duration::from_millis(ms))
@@ -192,7 +228,7 @@ impl Network {
 
         match self {
             // Known EIP-1559 networks
-            Mainnet | Devin => false,
+            Mainnet | Devin | Private(_) => false,
         }
     }
 
@@ -220,6 +256,7 @@ impl Network {
         let urls = match self {
             Mainnet => ("https://blockindex.net/api/v2", "https://blockindex.net"),
             Devin => ("https://devin.blockindex.net/api/v2", "https://devin.blockindex.net"),
+            Private(_) => ("", ""),
         };
 
         Some(urls)
@@ -246,7 +283,6 @@ mod tests {
         for network in Network::iter() {
             let network_string = network.to_string();
             assert_eq!(network_string, format!("{network}"));
-            assert_eq!(network_string.as_str(), network.as_ref());
             assert_eq!(serde_json::to_string(&network).unwrap(), format!("\"{network_string}\""));
 
             assert_eq!(network_string.parse::<Network>().unwrap(), network);
@@ -257,25 +293,7 @@ mod tests {
     fn roundtrip_serde() {
         for network in Network::iter() {
             let network_string = serde_json::to_string(&network).unwrap();
-            let network_string = network_string.replace('-', "_");
             assert_eq!(serde_json::from_str::<'_, Network>(&network_string).unwrap(), network);
-        }
-    }
-
-    #[test]
-    // CORETODO: Needs anvil
-    fn aliases() {
-        use Network::*;
-
-        // kebab-case
-        const ALIASES: &[(Network, &[&str])] = &[(Mainnet, &["xcblive"]), (Devin, &["xablive"])];
-
-        for &(network, aliases) in ALIASES {
-            for &alias in aliases {
-                assert_eq!(alias.parse::<Network>().unwrap(), network);
-                let s = alias.to_string().replace('-', "_");
-                assert_eq!(serde_json::from_str::<Network>(&format!("\"{s}\"")).unwrap(), network);
-            }
         }
     }
 

@@ -53,21 +53,21 @@ impl Client {
         let mut res: Transaction = serde_json::from_value(response.clone())?;
         res.from = response["vin"][0]["addresses"][0].to_string().replace('\"', "");
         res.to = response["vout"][0]["addresses"][0].to_string().replace('\"', "");
-        res.status = response["ethereumSpecific"]["status"]
+        res.status = response["corecoinSpecific"]["status"]
             .as_u64()
             .ok_or_else(|| BlockindexError::Builder("status".to_string()))?;
-        res.nonce = response["ethereumSpecific"]["nonce"]
+        res.nonce = response["corecoinSpecific"]["nonce"]
             .as_u64()
             .ok_or_else(|| BlockindexError::Builder("nonce".to_string()))?;
-        res.energy_limit = response["ethereumSpecific"]["energyLimit"]
+        res.energy_limit = response["corecoinSpecific"]["energyLimit"]
             .as_u64()
             .ok_or_else(|| BlockindexError::Builder("energyLimit".to_string()))?;
-        res.energy_used = response["ethereumSpecific"]["energyUsed"]
+        res.energy_used = response["corecoinSpecific"]["energyUsed"]
             .as_u64()
             .ok_or_else(|| BlockindexError::Builder("energyUsed".to_string()))?;
         res.energy_price =
-            response["ethereumSpecific"]["energyPrice"].to_string().replace('\"', "");
-        res.data = response["ethereumSpecific"]["data"].to_string().replace('\"', "");
+            response["corecoinSpecific"]["energyPrice"].to_string().replace('\"', "");
+        res.data = response["corecoinSpecific"]["data"].to_string().replace('\"', "");
 
         Ok(res)
     }

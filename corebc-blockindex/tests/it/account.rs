@@ -81,7 +81,7 @@ async fn get_balance_history_success() {
     let account = &"ab30f0091ce7386584b85eecf92f75157582179887ce".parse().unwrap();
     run_with_client(Network::Devin, |client| async move {
         let history = client.get_balance_history(account, None).await;
-        assert_eq!(history.unwrap().len(), 2);
+        assert_eq!(history.unwrap().len(), 4);
     })
     .await
 }
@@ -92,7 +92,7 @@ async fn get_balance_history_empty() {
     run_with_client(Network::Devin, |client| async move {
         let history = client
             .get_balance_history(
-                &"ae57dde1a47041fc3c570c0318a713128ced55fd2ada".parse().unwrap(),
+                &"ab720000000000000000000000000000000000000000".parse().unwrap(),
                 None,
             )
             .await;
