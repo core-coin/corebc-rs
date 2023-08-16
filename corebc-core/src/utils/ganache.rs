@@ -1,5 +1,5 @@
 use crate::{
-    types::Address,
+    types::{Address, Network},
     utils::{secret_key_to_address, unused_ports},
 };
 use generic_array::GenericArray;
@@ -9,8 +9,6 @@ use std::{
     process::{Child, Command},
     time::{Duration, Instant},
 };
-
-use super::NetworkType;
 
 /// Default amount of time we will wait for ganache to indicate that it is ready.
 const GANACHE_STARTUP_TIMEOUT_MILLIS: u64 = 10_000;
@@ -156,7 +154,7 @@ impl Ganache {
     /// If spawning the instance fails at any point.
     #[track_caller]
     pub fn spawn(self) -> GanacheInstance {
-        let network: NetworkType;
+        let network: Network;
         let mut cmd = Command::new("ganache-cli");
         cmd.stdout(std::process::Stdio::piped());
         let port = if let Some(port) = self.port { port } else { unused_ports::<1>()[0] };
@@ -172,9 +170,9 @@ impl Ganache {
 
         if let Some(fork) = self.fork {
             cmd.arg("-f").arg(fork);
-            network = NetworkType::Mainnet;
+            network = Network::Mainnet;
         } else {
-            network = NetworkType::Testnet;
+            network = Network::Devin;
         }
 
         cmd.args(self.args);
