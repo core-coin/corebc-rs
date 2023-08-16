@@ -36,7 +36,7 @@ pub use rlp;
 /// Re-export hex
 pub use hex;
 
-use crate::types::{Address, Bytes, ParseI256Error, H160, H256, I256, U256, U64};
+use crate::types::{Address, Bytes, Network, ParseI256Error, H160, H256, I256, U256, U64};
 use ethabi::ethereum_types::FromDecStrErr;
 use k256::ecdsa::SigningKey;
 use std::{
@@ -76,13 +76,6 @@ pub enum ConversionError {
     ParseOverflow,
     #[error(transparent)]
     ParseI256Error(#[from] ParseI256Error),
-}
-
-#[derive(Debug)]
-pub enum NetworkType {
-    Mainnet,
-    Testnet,
-    Private,
 }
 
 /// 1 Ether = 1e18 Wei == 0x0de0b6b3a7640000 Wei
@@ -298,7 +291,7 @@ where
 pub fn get_contract_address(
     sender: impl Into<Address>,
     nonce: impl Into<U256>,
-    network: &NetworkType,
+    network: &Network,
 ) -> Address {
     let mut stream = rlp::RlpStream::new();
     stream.begin_list(2);
@@ -322,7 +315,7 @@ pub fn get_create2_address(
     from: impl Into<Address>,
     salt: impl AsRef<[u8]>,
     init_code: impl AsRef<[u8]>,
-    network: NetworkType,
+    network: Network,
 ) -> Address {
     let init_code_hash = sha3(init_code.as_ref());
     get_create2_address_from_hash(from, salt, init_code_hash, network)
@@ -332,7 +325,7 @@ pub fn get_create2_address_from_hash(
     from: impl Into<Address>,
     salt: impl AsRef<[u8]>,
     init_code_hash: impl AsRef<[u8]>,
-    network: NetworkType,
+    network: Network,
 ) -> Address {
     let from = from.into();
     let salt = salt.as_ref();
@@ -353,11 +346,11 @@ pub fn get_create2_address_from_hash(
     to_ican(&addr, &network)
 }
 
-pub fn to_ican(addr: &H160, network: &NetworkType) -> Address {
+pub fn to_ican(addr: &H160, network: &Network) -> Address {
     let prefix = match network {
-        NetworkType::Mainnet => MAINNET,
-        NetworkType::Testnet => TESTNET,
-        NetworkType::Private => PRIVATE,
+        Network::Mainnet => MAINNET,
+        Network::Devin => TESTNET,
+        Network::Private(_) => PRIVATE,
     };
 
     let number_str = get_number_string(addr, network);
@@ -367,11 +360,11 @@ pub fn to_ican(addr: &H160, network: &NetworkType) -> Address {
     construct_ican_address(prefix, &checksum, addr)
 }
 
-fn get_number_string(addr: &H160, network: &NetworkType) -> String {
+fn get_number_string(addr: &H160, network: &Network) -> String {
     let prefix = match network {
-        NetworkType::Mainnet => MAINNET,
-        NetworkType::Testnet => TESTNET,
-        NetworkType::Private => PRIVATE,
+        Network::Mainnet => MAINNET,
+        Network::Devin => TESTNET,
+        Network::Private(_) => PRIVATE,
     };
 
     // We have to use the Debug trait for addr https://github.com/paritytech/parity-common/issues/656
@@ -412,7 +405,7 @@ fn construct_ican_address(prefix: &str, checksum: &u64, addr: &H160) -> Address 
 
 /// Converts a K256 SigningKey to an Ethereum Address
 /// CORETODO: FIX ASAP ICAN ADDRESSES
-pub fn secret_key_to_address(secret_key: &SigningKey, network: &NetworkType) -> Address {
+pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Address {
     let public_key = secret_key.verifying_key();
     let public_key = public_key.to_encoded_point(/* compress = */ false);
     let public_key = public_key.as_bytes();
@@ -917,7 +910,7 @@ mod tests {
         .iter()
         .enumerate()
         {
-            let address = get_contract_address(from, nonce, &NetworkType::Mainnet);
+            let address = get_contract_address(from, nonce, &Network::Mainnet);
             assert_eq!(address, expected.parse::<Address>().unwrap());
         }
     }
@@ -973,11 +966,11 @@ mod tests {
             let salt = hex::decode(salt).unwrap();
             let init_code = hex::decode(init_code).unwrap();
             let expected = expected.parse::<Address>().unwrap();
-            assert_eq!(expected, get_create2_address(from, salt.clone(), init_code.clone(), NetworkType::Mainnet));
+            assert_eq!(expected, get_create2_address(from, salt.clone(), init_code.clone(), Network::Mainnet));
 
             // get_create2_address_from_hash()
             let init_code_hash = sha3(init_code).to_vec();
-            assert_eq!(expected, get_create2_address_from_hash(from, salt, init_code_hash, NetworkType::Mainnet))
+            assert_eq!(expected, get_create2_address_from_hash(from, salt, init_code_hash, Network::Mainnet))
         }
     }
 

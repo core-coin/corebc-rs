@@ -1,7 +1,7 @@
 // Code adapted from: https://github.com/tomusdrw/rust-web3/blob/master/src/api/accounts.rs
 use crate::{
-    types::{Address, H256, U256},
-    utils::{hash_message, to_ican, NetworkType},
+    types::{Address, Network, H256, U256},
+    utils::{hash_message, to_ican},
 };
 use elliptic_curve::{consts::U32, sec1::ToEncodedPoint};
 use ethabi::ethereum_types::H160;
@@ -133,7 +133,7 @@ impl Signature {
         bytes.copy_from_slice(&hash[12..]);
         let addr = H160::from(bytes);
         // CORETODO: Change the networktype logic
-        Ok(to_ican(&addr, &NetworkType::Mainnet))
+        Ok(to_ican(&addr, &Network::Mainnet))
     }
 
     /// Retrieves the recovery signature.

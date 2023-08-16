@@ -4,9 +4,9 @@ use corebc_core::{
     k256::ecdsa::{Error as K256Error, Signature as KSig, VerifyingKey},
     types::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},
-        Address, Signature as EthSig, H256,
+        Address, Network, Signature as EthSig, H256,
     },
-    utils::{hash_message, NetworkType},
+    utils::hash_message,
 };
 use rusoto_core::RusotoError;
 use rusoto_kms::{
@@ -156,7 +156,7 @@ impl AwsSigner {
         kms: KmsClient,
         key_id: T,
         network_id: u64,
-        network: NetworkType,
+        network: Network,
     ) -> Result<AwsSigner, AwsSignerError>
     where
         T: AsRef<str>,

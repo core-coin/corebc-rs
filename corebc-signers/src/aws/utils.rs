@@ -9,8 +9,8 @@ use corebc_core::{
         ecdsa::{RecoveryId, Signature as RSig, Signature as KSig, VerifyingKey},
         FieldBytes,
     },
-    types::{Address, Signature as EthSig, H160, U256},
-    utils::{sha3, to_ican, NetworkType},
+    types::{Address, Network, Signature as EthSig, H160, U256},
+    utils::{sha3, to_ican},
 };
 use rusoto_kms::{GetPublicKeyResponse, SignResponse};
 
@@ -56,7 +56,7 @@ pub(super) fn apply_eip155(sig: &mut EthSig, network_id: u64) {
 }
 
 /// Convert a verifying key to an ethereum address
-pub(super) fn verifying_key_to_address(key: &VerifyingKey, network: NetworkType) -> Address {
+pub(super) fn verifying_key_to_address(key: &VerifyingKey, network: Network) -> Address {
     // false for uncompressed
     let uncompressed_pub_key = key.to_encoded_point(false);
     let public_key = uncompressed_pub_key.to_bytes();

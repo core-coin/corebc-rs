@@ -305,4 +305,21 @@ mod tests {
             assert_eq!(network_serde, network_string);
         }
     }
+
+    #[test]
+    fn u64_to_network() {
+        let mainnet = Network::try_from(1u64).expect("cannot parse mainnet network_id");
+        assert_eq!(mainnet, Network::Mainnet);
+
+        let devin = Network::try_from(3u64).expect("cannot parse devin network_id");
+        assert_eq!(devin, Network::Devin);
+
+        let private = Network::try_from(6u64).expect("cannot parse private network_id 6");
+        assert_eq!(private, Network::Private(6));
+
+        for network_id in 1..10u64 {
+            let network = Network::try_from(network_id).expect("cannot parse u64 as network_id");
+            assert_eq!(u64::from(network), network_id);
+        }
+    }
 }

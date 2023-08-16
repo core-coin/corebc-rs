@@ -1,4 +1,4 @@
-use corebc_core::{rand::thread_rng, utils::NetworkType};
+use corebc_core::{rand::thread_rng, types::Network};
 use corebc_middleware::{
     gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
     gas_oracle::{GasCategory, GasNow, GasOracleMiddleware},
@@ -14,7 +14,7 @@ async fn mock_with_middleware() {
 
     // add a bunch of middlewares
     let gas_oracle = GasNow::new().category(GasCategory::SafeLow);
-    let signer = LocalWallet::new(&mut thread_rng(), NetworkType::Mainnet);
+    let signer = LocalWallet::new(&mut thread_rng(), Network::Mainnet);
     let address = signer.address();
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
     let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
