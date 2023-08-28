@@ -8,6 +8,12 @@ pub struct ParseNetworkError {
     pub number: u64,
 }
 
+impl std::fmt::Display for ParseNetworkError {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        write!(fmt, "Cannot parse network with id {}", self.number)
+    }
+}
+
 // When adding a new network:
 //   1. add new variant to the Network enum;
 //   2. add extra information in the last `impl` block (explorer URLs, block time) when applicable;
