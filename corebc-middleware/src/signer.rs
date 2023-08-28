@@ -458,7 +458,7 @@ mod tests {
 
         // Intentionally do not set the network id here so we ensure that the signer pulls the
         // provider's network id.
-        let key = LocalWallet::new(&mut rand::thread_rng(), utils::NetworkType::Mainnet);
+        let key = LocalWallet::new(&mut rand::thread_rng(), Network::Mainnet);
 
         // combine the provider and wallet and test that the network id is the same for both the
         // signer returned by the middleware and through the middleware itself.
@@ -480,7 +480,7 @@ mod tests {
 
         // Intentionally do not set the network id here so we ensure that the signer pulls the
         // provider's network id.
-        let key = LocalWallet::new(&mut rand::thread_rng(), utils::NetworkType::Mainnet);
+        let key = LocalWallet::new(&mut rand::thread_rng(), Network::Mainnet);
 
         // combine the provider and wallet and test that the network id is the same for both the
         // signer returned by the middleware and through the middleware itself.
@@ -499,7 +499,7 @@ mod tests {
     //     let anvil = Anvil::new().spawn();
     //     let acc = anvil.addresses()[0];
     //     let provider = Provider::try_from(anvil.endpoint()).unwrap();
-    //     let key = LocalWallet::new(&mut rand::thread_rng(), utils::NetworkType::Mainnet)
+    //     let key = LocalWallet::new(&mut rand::thread_rng(), utils::Network::Mainnet)
     //         .with_network_id(1u32);
     //     provider
     //         .send_transaction(

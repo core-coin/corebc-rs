@@ -1,6 +1,6 @@
-use super::{unused_ports, CliqueConfig, Genesis, NetworkType};
+use super::{unused_ports, CliqueConfig, Genesis};
 use crate::{
-    types::{Bytes, H256},
+    types::{Bytes, Network, H256},
     utils::secret_key_to_address,
 };
 use k256::ecdsa::SigningKey;
@@ -376,7 +376,7 @@ impl Geth {
         cmd.arg("--ws.port").arg(port_s);
         cmd.arg("--ws.api").arg(API);
 
-        let network: NetworkType;
+        let network: Network;
         // pass insecure unlock flag if set
         let is_clique = self.is_clique();
         if self.insecure_unlock || is_clique {
@@ -393,7 +393,7 @@ impl Geth {
 
         // use geth init to initialize the datadir if the genesis exists
         if is_clique {
-            network = NetworkType::Testnet;
+            network = Network::Devin;
             if let Some(genesis) = &mut self.genesis {
                 // set up a clique config with an instant sealing period and short (8 block) epoch
                 let clique_config = CliqueConfig { period: Some(0), epoch: Some(8) };

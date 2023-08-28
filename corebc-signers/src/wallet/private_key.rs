@@ -7,7 +7,8 @@ use coins_bip39::MnemonicError;
 use corebc_core::{
     k256::ecdsa::{self, SigningKey},
     rand::{CryptoRng, Rng},
-    utils::{secret_key_to_address, NetworkType},
+    types::Network,
+    utils::secret_key_to_address,
 };
 #[cfg(not(target_arch = "wasm32"))]
 use elliptic_curve::rand_core;
@@ -59,7 +60,7 @@ impl Wallet<SigningKey> {
         rng: &mut R,
         password: S,
         name: Option<&str>,
-        network: NetworkType,
+        network: Network,
     ) -> Result<(Self, String), WalletError>
     where
         P: AsRef<Path>,
@@ -77,7 +78,7 @@ impl Wallet<SigningKey> {
     pub fn decrypt_keystore<P, S>(
         keypath: P,
         password: S,
-        network: NetworkType,
+        network: Network,
     ) -> Result<Self, WalletError>
     where
         P: AsRef<Path>,
@@ -89,15 +90,15 @@ impl Wallet<SigningKey> {
         Ok(Self { signer, address, network_id: 1 })
     }
 
-    /// Creates a new random keypair seeded with the provided RNG
-    pub fn new<R: Rng + CryptoRng>(rng: &mut R, network: NetworkType) -> Self {
+    /// Creates a new random keypair seeded with the provided Network
+    pub fn new<R: Rng + CryptoRng>(rng: &mut R, network: Network) -> Self {
         let signer = SigningKey::random(rng);
         let address = secret_key_to_address(&signer, &network);
         Self { signer, address, network_id: 1 }
     }
 
     /// Creates a new Wallet instance from a raw scalar value (big endian).
-    pub fn from_bytes(bytes: &[u8], network: NetworkType) -> Result<Self, WalletError> {
+    pub fn from_bytes(bytes: &[u8], network: Network) -> Result<Self, WalletError> {
         let signer = SigningKey::from_bytes(bytes.into())?;
         let address = secret_key_to_address(&signer, &network);
         Ok(Self { signer, address, network_id: 1 })
@@ -114,7 +115,7 @@ impl PartialEq for Wallet<SigningKey> {
 
 impl From<SigningKey> for Wallet<SigningKey> {
     fn from(signer: SigningKey) -> Self {
-        let network = NetworkType::Mainnet;
+        let network = Network::Mainnet;
         let address = secret_key_to_address(&signer, &network);
 
         Self { signer, address, network_id: 1 }
@@ -125,7 +126,7 @@ use corebc_core::k256::SecretKey as K256SecretKey;
 
 impl From<K256SecretKey> for Wallet<SigningKey> {
     fn from(key: K256SecretKey) -> Self {
-        let network = NetworkType::Mainnet;
+        let network = Network::Mainnet;
         let signer = key.into();
         let address = secret_key_to_address(&signer, &network);
 
@@ -179,14 +180,9 @@ mod tests {
         // create and store a random encrypted JSON keystore in this directory
         let dir = tempdir().unwrap();
         let mut rng = rand::thread_rng();
-        let (key, uuid) = Wallet::<SigningKey>::new_keystore(
-            &dir,
-            &mut rng,
-            "randpsswd",
-            None,
-            NetworkType::Mainnet,
-        )
-        .unwrap();
+        let (key, uuid) =
+            Wallet::<SigningKey>::new_keystore(&dir, &mut rng, "randpsswd", None, Network::Mainnet)
+                .unwrap();
 
         // sign a message using the above key
         let message = "Some data";
@@ -196,7 +192,7 @@ mod tests {
         // signatures produced by both the keys should match
         let path = Path::new(dir.path()).join(uuid);
         let key2 =
-            Wallet::<SigningKey>::decrypt_keystore(path.clone(), "randpsswd", NetworkType::Mainnet)
+            Wallet::<SigningKey>::decrypt_keystore(path.clone(), "randpsswd", Network::Mainnet)
                 .unwrap();
         let signature2 = key2.sign_message(message).await.unwrap();
         assert_eq!(signature, signature2);
@@ -207,7 +203,7 @@ mod tests {
     async fn signs_msg() {
         let message = "Some data";
         let hash = corebc_core::utils::hash_message(message);
-        let key = Wallet::<SigningKey>::new(&mut rand::thread_rng(), NetworkType::Mainnet);
+        let key = Wallet::<SigningKey>::new(&mut rand::thread_rng(), Network::Mainnet);
         let address = key.address;
 
         // sign a message
@@ -366,7 +362,7 @@ mod tests {
             "0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
 
         let key_as_bytes = wallet.signer.to_bytes();
-        let wallet_from_bytes = Wallet::from_bytes(&key_as_bytes, NetworkType::Mainnet).unwrap();
+        let wallet_from_bytes = Wallet::from_bytes(&key_as_bytes, Network::Mainnet).unwrap();
 
         assert_eq!(wallet.address, wallet_from_bytes.address);
         assert_eq!(wallet.network_id, wallet_from_bytes.network_id);

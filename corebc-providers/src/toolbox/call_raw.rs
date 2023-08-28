@@ -593,7 +593,7 @@ mod tests {
     //     // assert that overriding nonce works (contract is deployed to expected address)
     //     let bytes = provider.call_raw(&tx).state(&state).await.unwrap();
     //     let deployed = Address::from_slice(&bytes.as_ref()[10..]);
-    //     assert_eq!(deployed, get_contract_address(adr2, nonce.as_u64(), &NetworkType::Mainnet));
+    //     assert_eq!(deployed, get_contract_address(adr2, nonce.as_u64(), &Network::Mainnet));
 
     //     // bytecode that returns the value of storage slot 1
     //     const RETURN_STORAGE: &str = "0x60015460005260206000f3";
