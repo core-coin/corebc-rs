@@ -36,7 +36,7 @@ use std::fmt;
 ///
 /// ```
 /// use corebc_core::rand::thread_rng;
-/// use corebc_core::types:Network;
+/// use corebc_core::types::Network;
 /// use corebc_signers::{LocalWallet, Signer};
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {

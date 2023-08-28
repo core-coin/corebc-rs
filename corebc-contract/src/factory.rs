@@ -320,7 +320,7 @@ where
 /// # Example
 ///
 /// ```no_run
-/// use corebc_ylem::Solc;
+/// use corebc_ylem::Ylem;
 /// use corebc_contract::ContractFactory;
 /// use corebc_providers::{Provider, Http};
 /// use std::convert::TryFrom;
@@ -328,7 +328,7 @@ where
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// // first we'll compile the contract (you can alternatively compile it yourself
 /// // and pass the ABI/Bytecode
-/// let compiled = Solc::default().compile_source("./tests/contract.sol").unwrap();
+/// let compiled = Ylem::default().compile_source("./tests/contract.sol").unwrap();
 /// let contract = compiled
 ///     .get("./tests/contract.sol", "SimpleStorage")
 ///     .expect("could not find contract");
