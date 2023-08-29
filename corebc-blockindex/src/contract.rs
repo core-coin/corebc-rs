@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::Path};
 
 #[cfg(feature = "corebc-ylem")]
-use corebc_ylem::{artifacts::Settings, EvmVersion, Project, ProjectBuilder, SolcConfig};
+use corebc_ylem::{artifacts::Settings, CvmVersion, Project, ProjectBuilder, YlemConfig};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SourceCodeEntry {
@@ -123,10 +123,10 @@ pub struct Metadata {
     /// The constructor arguments the contract was deployed with.
     pub constructor_arguments: Bytes,
 
-    /// The version of the EVM the contract was deployed in. Can be either a variant of EvmVersion
+    /// The version of the YVM the contract was deployed in. Can be either a variant of YvmVersion
     /// or "Default" which indicates the compiler's default.
-    #[serde(rename = "EVMVersion")]
-    pub evm_version: String,
+    #[serde(rename = "YVMVersion")]
+    pub yvm_version: String,
 
     // ?
     pub library: String,
@@ -212,32 +212,32 @@ impl Metadata {
             settings.optimizer.runs(self.runs as usize);
         }
 
-        settings.evm_version = self.evm_version()?;
+        settings.evm_version = self.yvm_version()?;
 
         Ok(settings)
     }
 
-    /// Creates a Solc [ProjectBuilder] with this contract's settings.
+    /// Creates a Ylem [ProjectBuilder] with this contract's settings.
     #[cfg(feature = "corebc-ylem")]
     pub fn project_builder(&self) -> Result<ProjectBuilder> {
-        let solc_config = SolcConfig::builder().settings(self.settings()?).build();
+        let ylem_config = YlemConfig::builder().settings(self.settings()?).build();
 
-        Ok(Project::builder().solc_config(solc_config))
+        Ok(Project::builder().ylem_config(ylem_config))
     }
 
-    /// Parses the EVM version.
+    /// Parses the YVM version.
     #[cfg(feature = "corebc-ylem")]
-    pub fn evm_version(&self) -> Result<Option<EvmVersion>> {
-        match self.evm_version.as_str() {
+    pub fn yvm_version(&self) -> Result<Option<CvmVersion>> {
+        match self.yvm_version.as_str() {
             "" | "Default" => {
-                Ok(EvmVersion::default().normalize_version(&self.compiler_version()?))
+                Ok(CvmVersion::default().normalize_version(&self.compiler_version()?))
             }
             _ => {
-                let evm_version = self
-                    .evm_version
+                let yvm_version = self
+                    .yvm_version
                     .parse()
-                    .map_err(|e| BlockindexError::Unknown(format!("bad evm version: {e}")))?;
-                Ok(Some(evm_version))
+                    .map_err(|e| BlockindexError::Unknown(format!("bad yvm version: {e}")))?;
+                Ok(Some(yvm_version))
             }
         }
     }
