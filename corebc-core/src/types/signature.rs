@@ -1,6 +1,6 @@
 // Code adapted from: https://github.com/tomusdrw/rust-web3/blob/master/src/api/accounts.rs
 use crate::{
-    types::{Address, H256, U256},
+    types::{Address, H256, U256, U1368},
     utils::{hash_message, to_ican, NetworkType},
 };
 use elliptic_curve::{consts::U32, sec1::ToEncodedPoint};
@@ -13,6 +13,7 @@ use k256::{
     },
     PublicKey as K256PublicKey,
 };
+use libgoldilocks;
 use open_fastrlp::Decodable;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, fmt, str::FromStr};
@@ -55,12 +56,8 @@ pub enum RecoveryMessage {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Copy, Hash)]
 /// An ECDSA signature
 pub struct Signature {
-    /// R value
-    pub r: U256,
-    /// S Value
-    pub s: U256,
-    /// V value
-    pub v: u64,
+    /// signature + privateKey value
+    pub sig: U1368,
 }
 
 impl fmt::Display for Signature {
@@ -116,7 +113,7 @@ impl Signature {
             RecoveryMessage::Hash(hash) => hash,
         };
 
-        let (recoverable_sig, recovery_id) = self.as_signature()?;
+        let (recoverable_sig, recovery_id) = self.as_signature()?; // USING K256
         let verify_key = VerifyingKey::recover_from_prehash(
             message_hash.as_ref(),
             &recoverable_sig,
@@ -146,13 +143,15 @@ impl Signature {
             self.s.to_big_endian(&mut s_bytes);
             let gar: &GenericArray<u8, U32> = GenericArray::from_slice(&r_bytes);
             let gas: &GenericArray<u8, U32> = GenericArray::from_slice(&s_bytes);
-            K256Signature::from_scalars(*gar, *gas)?
+            K256Signature::from_scalars(*gar, *gas)? // USING K256
         };
 
         Ok((signature, recovery_id))
     }
 
     /// Retrieve the recovery ID.
+    // Достает рековери айди
+    // Юзается один раз в функции выше
     pub fn recovery_id(&self) -> Result<RecoveryId, SignatureError> {
         let standard_v = normalize_recovery_id(self.v);
         Ok(RecoveryId::from_byte(standard_v).expect("normalized recovery id always valid"))

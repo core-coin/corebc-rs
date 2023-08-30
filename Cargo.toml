@@ -99,6 +99,7 @@ url = { version = "2.3", default-features = false }
 elliptic-curve = { version = "0.13.3", default-features = false }
 generic-array = { version = "0.14.7", default-features = false }
 k256 = { version = "0.13.0", default-features = false, features = ["ecdsa", "std"] }
+libgoldilocks = { git = "https://github.com/todesstille/ed448-rs", version = "*" }
 sha2 = { version = "0.10.6", default-features = false }
 tiny-keccak = { version = "2.0.2", default-features = false }
 spki = { version = "0.7.1", default-features = false }
