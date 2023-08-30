@@ -13,7 +13,8 @@ use k256::{
     },
     PublicKey as K256PublicKey,
 };
-use libgoldilocks;
+use libgoldilocks::goldilocks::ed448_verify;
+use libgoldilocks::errors::LibgoldilockErrors;
 use open_fastrlp::Decodable;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, fmt, str::FromStr};
@@ -103,7 +104,7 @@ impl Signature {
     ///
     /// Recovery signature data uses 'Electrum' notation, this means the `v`
     /// value is expected to be either `27` or `28`.
-    pub fn recover<M>(&self, message: M) -> Result<Address, SignatureError>
+    pub fn recover<M>(&self, message: M) -> Result<Address, LibgoldilockErrors>
     where
         M: Into<RecoveryMessage>,
     {
@@ -112,6 +113,15 @@ impl Signature {
             RecoveryMessage::Data(ref message) => hash_message(message),
             RecoveryMessage::Hash(hash) => hash,
         };
+
+        let mut sig_pub_bytes = [0u8; 171];
+        self.sig.to_big_endian(&mut sig_pub_bytes);
+        let mut sig_bytes = [0u8; 114];
+        let mut pub_bytes = [0u8; 57];
+        sig_bytes.copy_from_slice(&sig_pub_bytes[..114]);
+        pub_bytes.copy_from_slice(&sig_pub_bytes[114..]);
+
+        let result = ed448_verify(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
 
         let (recoverable_sig, recovery_id) = self.as_signature()?; // USING K256
         let verify_key = VerifyingKey::recover_from_prehash(
