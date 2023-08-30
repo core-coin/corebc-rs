@@ -2279,7 +2279,7 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 [[package]]
 name = "libgoldilocks"
 version = "0.1.0"
-source = "git+https://github.com/todesstille/ed448-rs#23bf1abb8aea0e2ca6832e47c0a10bba4b5a1495"
+source = "git+https://github.com/todesstille/ed448-rs#91bc878eee17da27c9db4fe333e79e1c3ca15e46"
 dependencies = [
  "hex",
  "rand",
