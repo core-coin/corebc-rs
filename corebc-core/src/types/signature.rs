@@ -35,7 +35,7 @@ pub enum SignatureError {
     VerificationError(Address, Address),
     /// Internal error during signature recovery
     #[error(transparent)]
-    K256Error(#[from] K256SignatureError),
+    ED448Error(#[from] LibgoldilockErrors),
     /// Error in recovering public key from signature
     #[error("Public key recovery error")]
     RecoveryError,
