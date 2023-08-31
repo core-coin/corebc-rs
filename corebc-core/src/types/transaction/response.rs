@@ -6,7 +6,7 @@ use super::{
 use crate::{
     types::{
         transaction::extract_network_id, Address, Bloom, Bytes, Log, Signature, SignatureError,
-        H256, U256, U64,
+        H256, U256, U64, U1368,
     },
     utils::sha3,
 };
@@ -57,13 +57,7 @@ pub struct Transaction {
     pub input: Bytes,
 
     /// ECDSA recovery id
-    pub v: U64,
-
-    /// ECDSA signature r
-    pub r: U256,
-
-    /// ECDSA signature s
-    pub s: U256,
+    pub sig: U1368,
 
     /////////////////  Celo-specific transaction fields /////////////////
     /// The currency fees are paid in (None for native currency)
