@@ -2279,7 +2279,7 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 [[package]]
 name = "libgoldilocks"
 version = "0.1.0"
-source = "git+https://github.com/todesstille/ed448-rs#91bc878eee17da27c9db4fe333e79e1c3ca15e46"
+source = "git+https://github.com/todesstille/ed448-rs#76a03197257b9781763b054c85a81951bea0fe28"
 dependencies = [
  "hex",
  "rand",
@@ -4552,9 +4552,9 @@ dependencies = [
 
 [[package]]
 name = "webpki"
-version = "0.22.0"
+version = "0.22.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f095d78192e208183081cc07bc5515ef55216397af48b873e5edcd72637fa1bd"
+checksum = "f0e74f82d49d545ad128049b7e88f6576df2da6b02e9ce565c6f533be576957e"
 dependencies = [
  "ring",
  "untrusted",
