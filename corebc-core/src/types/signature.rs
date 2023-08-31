@@ -8,7 +8,7 @@ use ethabi::ethereum_types::H160;
 use generic_array::GenericArray;
 use k256::{
     ecdsa::{
-        Error as K256SignatureError, RecoveryId, Signature as RecoverableSignature,
+        RecoveryId, Signature as RecoverableSignature,
         Signature as K256Signature, VerifyingKey,
     },
     PublicKey as K256PublicKey,
@@ -63,7 +63,7 @@ pub struct Signature {
 
 impl fmt::Display for Signature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let sig = <[u8; 65]>::from(self);
+        let sig = <[u8; 171]>::from(self);
         write!(f, "{}", hex::encode(&sig[..]))
     }
 }
@@ -122,19 +122,9 @@ impl Signature {
         pub_bytes.copy_from_slice(&sig_pub_bytes[114..]);
 
         let result = ed448_verify(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
+        // Add logic to throw error in case of false
 
-        let (recoverable_sig, recovery_id) = self.as_signature()?; // USING K256
-        let verify_key = VerifyingKey::recover_from_prehash(
-            message_hash.as_ref(),
-            &recoverable_sig,
-            recovery_id,
-        )?;
-
-        let public_key = K256PublicKey::from(&verify_key);
-        let public_key = public_key.to_encoded_point(/* compress = */ false);
-        let public_key = public_key.as_bytes();
-        debug_assert_eq!(public_key[0], 0x04);
-        let hash = crate::utils::sha3(&public_key[1..]);
+        let hash = crate::utils::sha3(&pub_bytes[..]);
 
         let mut bytes = [0u8; 20];
         bytes.copy_from_slice(&hash[12..]);
@@ -143,29 +133,6 @@ impl Signature {
         Ok(to_ican(&addr, &NetworkType::Mainnet))
     }
 
-    /// Retrieves the recovery signature.
-    fn as_signature(&self) -> Result<(RecoverableSignature, RecoveryId), SignatureError> {
-        let recovery_id = self.recovery_id()?;
-        let signature = {
-            let mut r_bytes = [0u8; 32];
-            let mut s_bytes = [0u8; 32];
-            self.r.to_big_endian(&mut r_bytes);
-            self.s.to_big_endian(&mut s_bytes);
-            let gar: &GenericArray<u8, U32> = GenericArray::from_slice(&r_bytes);
-            let gas: &GenericArray<u8, U32> = GenericArray::from_slice(&s_bytes);
-            K256Signature::from_scalars(*gar, *gas)? // USING K256
-        };
-
-        Ok((signature, recovery_id))
-    }
-
-    /// Retrieve the recovery ID.
-    // Достает рековери айди
-    // Юзается один раз в функции выше
-    pub fn recovery_id(&self) -> Result<RecoveryId, SignatureError> {
-        let standard_v = normalize_recovery_id(self.v);
-        Ok(RecoveryId::from_byte(standard_v).expect("normalized recovery id always valid"))
-    }
 
     /// Copies and serializes `self` into a new `Vec` with the recovery id included
     #[allow(clippy::wrong_self_convention)]
@@ -175,8 +142,8 @@ impl Signature {
 
     /// Decodes a signature from RLP bytes, assuming no RLP header
     pub(crate) fn decode_signature(buf: &mut &[u8]) -> Result<Self, open_fastrlp::DecodeError> {
-        let v = u64::decode(buf)?;
-        Ok(Self { r: U256::decode(buf)?, s: U256::decode(buf)?, v })
+        let sig = U1368::decode(buf)?;
+        Ok(Self { sig: sig })
     }
 }
 
@@ -188,12 +155,10 @@ impl open_fastrlp::Decodable for Signature {
 
 impl open_fastrlp::Encodable for Signature {
     fn length(&self) -> usize {
-        self.r.length() + self.s.length() + self.v.length()
+        self.sig.length()
     }
     fn encode(&self, out: &mut dyn bytes::BufMut) {
-        self.v.encode(out);
-        self.r.encode(out);
-        self.s.encode(out);
+        self.sig.encode(out);
     }
 }
 
@@ -215,15 +180,13 @@ impl<'a> TryFrom<&'a [u8]> for Signature {
     /// the first 32 bytes is the `r` value, the second 32 bytes the `s` value
     /// and the final byte is the `v` value in 'Electrum' notation.
     fn try_from(bytes: &'a [u8]) -> Result<Self, Self::Error> {
-        if bytes.len() != 65 {
+        if bytes.len() != 171 {
             return Err(SignatureError::InvalidLength(bytes.len()))
         }
 
-        let v = bytes[64];
-        let r = U256::from_big_endian(&bytes[0..32]);
-        let s = U256::from_big_endian(&bytes[32..64]);
+        let sig = U1368::from_big_endian(&bytes[..]);
 
-        Ok(Signature { r, s, v: v.into() })
+        Ok(Signature { sig })
     }
 }
 
@@ -237,15 +200,10 @@ impl FromStr for Signature {
     }
 }
 
-impl From<&Signature> for [u8; 65] {
-    fn from(src: &Signature) -> [u8; 65] {
-        let mut sig = [0u8; 65];
-        let mut r_bytes = [0u8; 32];
-        let mut s_bytes = [0u8; 32];
-        src.r.to_big_endian(&mut r_bytes);
-        src.s.to_big_endian(&mut s_bytes);
-        sig[..32].copy_from_slice(&r_bytes);
-        sig[32..64].copy_from_slice(&s_bytes);
+impl From<&Signature> for [u8; 171] {
+    fn from(src: &Signature) -> [u8; 171] {
+        let mut sig = [0u8; 171];
+        src.sig.to_big_endian(&mut sig);
         // TODO: What if we try to serialize a signature where
         // the `v` is not normalized?
 
@@ -253,26 +211,25 @@ impl From<&Signature> for [u8; 65] {
         // here. Regarding EIP-155, the modification to `v` happens during tx
         // creation only _after_ the transaction is signed using
         // `corebc_signers::to_eip155_v`.
-        sig[64] = src.v as u8;
         sig
     }
 }
 
-impl From<Signature> for [u8; 65] {
-    fn from(src: Signature) -> [u8; 65] {
-        <[u8; 65]>::from(&src)
+impl From<Signature> for [u8; 171] {
+    fn from(src: Signature) -> [u8; 171] {
+        <[u8; 171]>::from(&src)
     }
 }
 
 impl From<&Signature> for Vec<u8> {
     fn from(src: &Signature) -> Vec<u8> {
-        <[u8; 65]>::from(src).to_vec()
+        <[u8; 171]>::from(src).to_vec()
     }
 }
 
 impl From<Signature> for Vec<u8> {
     fn from(src: Signature) -> Vec<u8> {
-        <[u8; 65]>::from(&src).to_vec()
+        <[u8; 171]>::from(&src).to_vec()
     }
 }
 
