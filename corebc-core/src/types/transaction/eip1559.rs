@@ -172,11 +172,7 @@ impl Eip1559TransactionRequest {
         // if the network is none we assume mainnet and choose one
         let network_id = self.network_id.unwrap_or_else(U64::one);
 
-        // append the signature
-        let v = normalize_v(signature.v, network_id);
-        rlp.append(&v);
-        rlp.append(&signature.r);
-        rlp.append(&signature.s);
+        rlp.append(&signature.sig);
         rlp.finalize_unbounded_list();
         rlp.out().freeze().into()
     }
@@ -227,13 +223,9 @@ impl Eip1559TransactionRequest {
         let mut offset = 0;
         let mut txn = Self::decode_base_rlp(rlp, &mut offset)?;
 
-        let v = rlp.val_at(offset)?;
-        offset += 1;
-        let r = rlp.val_at(offset)?;
-        offset += 1;
-        let s = rlp.val_at(offset)?;
+        let sig = rlp.val_at(offset)?;
 
-        let sig = Signature { r, s, v };
+        let sig = Signature { sig };
         txn.from = Some(sig.recover(TypedTransaction::Eip1559(txn.clone()).sighash())?);
 
         Ok((txn, sig))

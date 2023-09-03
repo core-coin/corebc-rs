@@ -104,7 +104,7 @@ impl Signature {
     ///
     /// Recovery signature data uses 'Electrum' notation, this means the `v`
     /// value is expected to be either `27` or `28`.
-    pub fn recover<M>(&self, message: M) -> Result<Address, LibgoldilockErrors>
+    pub fn recover<M>(&self, message: M) -> Result<Address, SignatureError>
     where
         M: Into<RecoveryMessage>,
     {

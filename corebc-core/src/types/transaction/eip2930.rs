@@ -129,11 +129,7 @@ impl Eip2930TransactionRequest {
         // append the access list in addition to the base rlp encoding
         rlp.append(&self.access_list);
 
-        // append the signature
-        let v = normalize_v(signature.v, network_id);
-        rlp.append(&v);
-        rlp.append(&signature.r);
-        rlp.append(&signature.s);
+        rlp.append(&signature.sig);
         rlp.out().freeze().into()
     }
 
@@ -160,13 +156,9 @@ impl Eip2930TransactionRequest {
         let mut offset = 0;
         let mut txn = Self::decode_base_rlp(rlp, &mut offset)?;
 
-        let v = rlp.val_at(offset)?;
-        offset += 1;
-        let r = rlp.val_at(offset)?;
-        offset += 1;
-        let s = rlp.val_at(offset)?;
+        let sig = rlp.val_at(offset)?;
 
-        let sig = Signature { r, s, v };
+        let sig = Signature { sig };
         txn.tx.from = Some(sig.recover(TypedTransaction::Eip2930(txn.clone()).sighash())?);
         Ok((txn, sig))
     }
