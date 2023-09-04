@@ -507,7 +507,7 @@ mod tests {
         std::fs::write(
             existing,
             r#"
-pragma solidity ^1.0.1;
+pragma solidity ^1.1.0;
 contract A {}
         "#,
         )
@@ -593,7 +593,7 @@ contract A {}
     fn can_find_single_quote_imports() {
         let content = r#"
 // SPDX-License-Identifier: MIT
-pragma solidity 1.0.1;
+pragma solidity 1.1.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Address.sol';

@@ -451,7 +451,7 @@ impl TempProject<ConfigurableArtifacts> {
     /// ```no_run
     /// use corebc_ylem::project_util::mock::MockProjectSettings;
     /// use corebc_ylem::project_util::TempProject;
-    /// let tmp = TempProject::mocked(&MockProjectSettings::default(), "^1.0.0").unwrap();
+    /// let tmp = TempProject::mocked(&MockProjectSettings::default(), "^1.1.0").unwrap();
     /// ```
     pub fn mocked(settings: &MockProjectSettings, version: impl AsRef<str>) -> Result<Self> {
         let mut tmp = Self::dapptools()?;
@@ -474,7 +474,7 @@ impl TempProject<ConfigurableArtifacts> {
     /// ```no_run
     /// use corebc_ylem::project_util::mock::MockProjectSettings;
     /// use corebc_ylem::project_util::TempProject;
-    /// let tmp = TempProject::mocked(&MockProjectSettings::random(), "^1.0.0").unwrap();
+    /// let tmp = TempProject::mocked(&MockProjectSettings::random(), "^1.1.0").unwrap();
     /// ```
     pub fn mocked_random(version: impl AsRef<str>) -> Result<Self> {
         Self::mocked(&MockProjectSettings::random(), version)
@@ -563,7 +563,7 @@ mod tests {
 
     #[test]
     fn can_mock_project() {
-        let _prj = TempProject::mocked(&Default::default(), "^1.0.0").unwrap();
-        let _prj = TempProject::mocked_random("^1.0.0").unwrap();
+        let _prj = TempProject::mocked(&Default::default(), "^1.1.0").unwrap();
+        let _prj = TempProject::mocked_random("^1.1.0").unwrap();
     }
 }

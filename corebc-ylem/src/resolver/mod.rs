@@ -1004,10 +1004,10 @@ mod tests {
 
         assert_eq!(
             "
-src/Dapp.sol ^1.0.0
-src/Dapp.t.sol ^1.0.0
-├── lib/ds-test/src/test.sol ^1.0.0
-└── src/Dapp.sol ^1.0.0
+src/Dapp.sol ^1.1.0
+src/Dapp.t.sol ^1.1.0
+├── lib/ds-test/src/test.sol ^1.1.0
+└── src/Dapp.sol ^1.1.0
 "
             .trim_start()
             .as_bytes()
@@ -1026,8 +1026,8 @@ src/Dapp.t.sol ^1.0.0
     //         tree::print(&graph, &Default::default(), &mut out).unwrap();
     //         assert_eq!(
     //             "
-    // contracts/Greeter.sol ^1.0.0
-    // └── node_modules/hardhat/console.sol ^1.0.0
+    // contracts/Greeter.sol ^1.1.0
+    // └── node_modules/hardhat/console.sol ^1.1.0
     // "
     //             .trim_start()
     //             .as_bytes()
