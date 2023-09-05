@@ -726,7 +726,7 @@ mod tests {
     //         tmp.add_source(
     //             "A",
     //             r#"
-    //     pragma solidity ^1.0.0;
+    //     pragma solidity ^1.1.0;
     //     import "./B.sol";
     //     contract A {}
     //    "#,
@@ -736,7 +736,7 @@ mod tests {
     //         tmp.add_source(
     //             "B",
     //             r#"
-    //     pragma solidity ^1.0.0;
+    //     pragma solidity ^1.1.0;
     //     contract B {
     //         function hello() public {}
     //     }
@@ -748,7 +748,7 @@ mod tests {
     //         tmp.add_source(
     //             "C",
     //             r#"
-    //     pragma solidity ^1.0.0;
+    //     pragma solidity ^1.1.0;
     //     contract C {
     //             function hello() public {}
     //     }
@@ -764,7 +764,7 @@ mod tests {
     //         tmp.add_source(
     //             "A",
     //             r#"
-    //     pragma solidity ^1.0.0;
+    //     pragma solidity ^1.1.0;
     //     import "./B.sol";
     //     contract A {
     //         function testExample() public {}

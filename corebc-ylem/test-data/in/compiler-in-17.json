@@ -2,7 +2,7 @@
     "language": "Solidity",
     "sources": {
         "A.sol": {
-            "content": "\npragma solidity ^1.0.1;\ncontract A {}\n"
+            "content": "\npragma solidity ^1.1.0;\ncontract A {}\n"
         }
     },
     "settings": {

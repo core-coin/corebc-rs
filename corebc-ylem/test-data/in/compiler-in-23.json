@@ -2,7 +2,7 @@
     "language": "Solidity",
     "sources": {
         "contracts/Greeter.sol": {
-            "content": "pragma solidity ^1.0.1;\n\n\ncontract Greeter {\n\n    string greeting;\n    string bad;\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n        bad = \"baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad\";\n    }\n\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n\n}\n"
+            "content": "pragma solidity ^1.1.0;\n\n\ncontract Greeter {\n\n    string greeting;\n    string bad;\n    constructor(string memory _greeting) public {\n        greeting = _greeting;\n        bad = \"baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaad\";\n    }\n\n    function greet() public view returns (string memory) {\n        return greeting;\n    }\n\n}\n"
         }
     },
     "settings": {
