@@ -422,7 +422,7 @@ impl<T: ArtifactOutput> Project<T> {
     /// let sources = project.paths.read_sources().unwrap();
     /// project
     ///     .compile_with_version(
-    ///         &Ylem::find_yvm_installed_version("1.0.1").unwrap().unwrap(),
+    ///         &Ylem::find_yvm_installed_version("1.1.0").unwrap().unwrap(),
     ///         sources,
     ///     )
     ///     .unwrap();

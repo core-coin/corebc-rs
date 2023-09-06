@@ -2,7 +2,7 @@
     "language": "Solidity",
     "sources": {
         "contracts/B.sol": {
-            "content": "pragma solidity ^1.0.1;\n\ncontract B {}\n"
+            "content": "pragma solidity ^1.1.0;\n\ncontract B {}\n"
         }
     },
     "settings": {

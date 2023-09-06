@@ -9,7 +9,7 @@ use corebc_ylem::{
 };
 
 // default version to use
-const DEFAULT_VERSION: &str = "^1.0.0";
+const DEFAULT_VERSION: &str = "^1.1.0";
 
 struct MockSettings {
     settings: MockProjectSettings,

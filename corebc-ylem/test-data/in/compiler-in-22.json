@@ -2,7 +2,7 @@
     "language": "Solidity",
     "sources": {
         "contracts/EVMInspector.sol": {
-            "content": "pragma solidity ^1.0.1;\n\ncontract EVMConsumer {\n\n    uint256 theChainID;\n\n    constructor() public {\n        uint256 id;\n        assembly {\n            id := chainid()\n        }\n        theChainID = id;\n    }\n\n}\n"
+            "content": "pragma solidity ^1.1.0;\n\ncontract EVMConsumer {\n\n    uint256 theChainID;\n\n    constructor() public {\n        uint256 id;\n        assembly {\n            id := chainid()\n        }\n        theChainID = id;\n    }\n\n}\n"
         }
     },
     "settings": {
