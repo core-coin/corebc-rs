@@ -4766,7 +4766,7 @@ dependencies = [
 [[package]]
 name = "yvm-rs"
 version = "0.3.0"
-source = "git+https://github.com/core-coin/yvm-rs#eaddd48dfc636d0308600c88335213cd91237b03"
+source = "git+https://github.com/core-coin/yvm-rs#f7a838d12ff209efbf8c934fdf7e124997010e24"
 dependencies = [
  "dirs",
  "fs2",
@@ -4785,7 +4785,7 @@ dependencies = [
 [[package]]
 name = "yvm-rs-builds"
 version = "0.2.0"
-source = "git+https://github.com/core-coin/yvm-rs#eaddd48dfc636d0308600c88335213cd91237b03"
+source = "git+https://github.com/core-coin/yvm-rs#f7a838d12ff209efbf8c934fdf7e124997010e24"
 dependencies = [
  "build_const",
  "hex",

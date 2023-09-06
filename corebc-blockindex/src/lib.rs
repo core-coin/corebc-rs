@@ -14,6 +14,8 @@ use std::{borrow::Cow, fmt::Debug};
 use tracing::{error, trace};
 pub mod account;
 pub mod block;
+pub mod contract;
+pub mod source_tree;
 pub mod errors;
 pub mod transaction;
 pub mod utils;
