@@ -418,6 +418,20 @@ pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Addr
     to_ican(&addr, network)
 }
 
+/// Converts a K256 SigningKey to an Ethereum H160 Address
+/// CORETODO: FIX ASAP ICAN ADDRESSES
+pub fn secret_key_to_h160_address(secret_key: &SigningKey) -> H160 {
+    let public_key = secret_key.verifying_key();
+    let public_key = public_key.to_encoded_point(/* compress = */ false);
+    let public_key = public_key.as_bytes();
+    debug_assert_eq!(public_key[0], 0x04);
+    let hash = sha3(&public_key[1..]);
+
+    let mut bytes = [0u8; 20];
+    bytes.copy_from_slice(&hash[12..]);
+    H160::from(bytes)
+}
+
 /// Encodes an Ethereum address to its [EIP-55] checksum.
 ///
 /// You can optionally specify an [EIP-155 network ID] to encode the address using the [EIP-1191]

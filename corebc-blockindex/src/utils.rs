@@ -1,7 +1,7 @@
-use crate::{BlockindexError, Result, contract::SourceCodeMetadata};
+use crate::{contract::SourceCodeMetadata, BlockindexError, Result};
 use corebc_core::types::Address;
-use serde::{Deserialize, Deserializer};
 use semver::Version;
+use serde::{Deserialize, Deserializer};
 
 static YLEM_BIN_LIST_URL: &str =
     "https://raw.githubusercontent.com/core-coin/ylem-bins/main/list.txt";
