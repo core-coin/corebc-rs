@@ -1,7 +1,7 @@
 use crate::{
     source_tree::{SourceTree, SourceTreeEntry},
     utils::{deserialize_address_opt, deserialize_source_code},
-    Client, BlockindexError, Result,
+    BlockindexError, Client, Result,
 };
 use corebc_core::{
     abi::{Abi, Address, RawAbi},
@@ -179,7 +179,8 @@ impl Metadata {
             Err(e) => {
                 let v = v.replace('a', "-alpha.");
                 let v = v.replace('b', "-beta.");
-                v.parse().map_err(|_| BlockindexError::Unknown(format!("bad compiler version: {e}")))
+                v.parse()
+                    .map_err(|_| BlockindexError::Unknown(format!("bad compiler version: {e}")))
             }
             Ok(v) => Ok(v),
         }
@@ -293,7 +294,7 @@ impl Client {
     /// ```
     pub async fn contract_abi(&self, address: Address) -> Result<Abi> {
         //TODO:error2215 implement when blockindex wiil be ready
-        Ok(Abi{..Default::default()})
+        Ok(Abi { ..Default::default() })
     }
 
     /// Fetches a contract's verified source code and its metadata.

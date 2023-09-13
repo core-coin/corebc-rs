@@ -307,6 +307,22 @@ pub fn get_contract_address(
     to_ican(&addr, network)
 }
 
+/// The H160 address for an Ethereum contract is deterministically computed from the
+/// address of its creator (sender) and how many transactions the creator has
+/// sent (nonce). The sender and nonce are RLP encoded and then hashed with Keccak-256.
+pub fn get_contract_h160_address(sender: impl Into<Address>, nonce: impl Into<U256>) -> H160 {
+    let mut stream = rlp::RlpStream::new();
+    stream.begin_list(2);
+    stream.append(&sender.into());
+    stream.append(&nonce.into());
+
+    let hash = sha3(&stream.out());
+
+    let mut bytes = [0u8; 20];
+    bytes.copy_from_slice(&hash[12..]);
+    H160::from(bytes)
+}
+
 /// Returns the CREATE2 address of a smart contract as specified in
 /// [EIP1014](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1014.md)
 ///
@@ -318,15 +334,28 @@ pub fn get_create2_address(
     network: Network,
 ) -> Address {
     let init_code_hash = sha3(init_code.as_ref());
-    get_create2_address_from_hash(from, salt, init_code_hash, network)
+    let addr = get_create2_h160_address_from_hash(from, salt, init_code_hash);
+    to_ican(&addr, &network)
 }
 
-pub fn get_create2_address_from_hash(
+/// Returns the CREATE2 H160 address of a smart contract as specified in
+/// [EIP1014](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1014.md)
+///
+/// keccak256( 0xff ++ senderAddress ++ salt ++ keccak256(init_code))[12..]
+pub fn get_create2_h160_address(
+    from: impl Into<Address>,
+    salt: impl AsRef<[u8]>,
+    init_code: impl AsRef<[u8]>,
+) -> H160 {
+    let init_code_hash = sha3(init_code.as_ref());
+    get_create2_h160_address_from_hash(from, salt, init_code_hash)
+}
+
+pub fn get_create2_h160_address_from_hash(
     from: impl Into<Address>,
     salt: impl AsRef<[u8]>,
     init_code_hash: impl AsRef<[u8]>,
-    network: Network,
-) -> Address {
+) -> H160 {
     let from = from.into();
     let salt = salt.as_ref();
     let init_code_hash = init_code_hash.as_ref();
@@ -341,9 +370,7 @@ pub fn get_create2_address_from_hash(
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
-    let addr = H160::from(bytes);
-
-    to_ican(&addr, &network)
+    H160::from(bytes)
 }
 
 pub fn to_ican(addr: &H160, network: &Network) -> Address {
@@ -416,6 +443,20 @@ pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Addr
     bytes.copy_from_slice(&hash[12..]);
     let addr = H160::from(bytes);
     to_ican(&addr, network)
+}
+
+/// Converts a K256 SigningKey to an Ethereum H160 Address
+/// CORETODO: FIX ASAP ICAN ADDRESSES
+pub fn secret_key_to_h160_address(secret_key: &SigningKey) -> H160 {
+    let public_key = secret_key.verifying_key();
+    let public_key = public_key.to_encoded_point(/* compress = */ false);
+    let public_key = public_key.as_bytes();
+    debug_assert_eq!(public_key[0], 0x04);
+    let hash = sha3(&public_key[1..]);
+
+    let mut bytes = [0u8; 20];
+    bytes.copy_from_slice(&hash[12..]);
+    H160::from(bytes)
 }
 
 /// Encodes an Ethereum address to its [EIP-55] checksum.
@@ -968,9 +1009,10 @@ mod tests {
             let expected = expected.parse::<Address>().unwrap();
             assert_eq!(expected, get_create2_address(from, salt.clone(), init_code.clone(), Network::Mainnet));
 
-            // get_create2_address_from_hash()
+            // get_create2_h160_address_from_hash()
             let init_code_hash = sha3(init_code).to_vec();
-            assert_eq!(expected, get_create2_address_from_hash(from, salt, init_code_hash, Network::Mainnet))
+            let h160 = get_create2_h160_address_from_hash(from, salt, init_code_hash);
+            assert_eq!(expected, to_ican(&h160, &Network::Mainnet))
         }
     }
 
