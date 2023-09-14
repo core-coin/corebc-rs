@@ -3,9 +3,11 @@
 //! Adapted from [Gnosis' `ethcontract-rs`](https://github.com/gnosis/ethcontract-rs).
 
 use crate::{
-    types::{Bytes, Selector, Uint8, H256, H512, I256, U128, U256, U64},
+    types::{Selector, Uint8, H256, H512, I256, U128, U256, U64},
     utils::id,
 };
+
+pub use crate::types::Bytes;
 pub use ethabi::{self, Contract as Abi, *};
 
 mod tokens;

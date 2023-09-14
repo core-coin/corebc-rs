@@ -23,10 +23,7 @@ pub mod contract;
 pub mod output_selection;
 pub mod serde_helpers;
 use crate::{
-    artifacts::{
-        lowfidelity::NodeType,
-        output_selection::{ContractOutputSelection, OutputSelection},
-    },
+    artifacts::output_selection::{ContractOutputSelection, OutputSelection},
     filter::FilteredSources,
 };
 pub use bytecode::*;
@@ -572,7 +569,7 @@ impl Libraries {
             if items.next().is_some() {
                 return Err(YlemError::msg(format!(
                     "failed to parse, too many arguments passed: {lib}"
-                )))
+                )));
             }
             libraries
                 .entry(file.into())
@@ -705,15 +702,15 @@ pub struct OptimizerDetails {
 impl OptimizerDetails {
     /// Returns true if no settings are set.
     pub fn is_empty(&self) -> bool {
-        self.peephole.is_none() &&
-            self.inliner.is_none() &&
-            self.jumpdest_remover.is_none() &&
-            self.order_literals.is_none() &&
-            self.deduplicate.is_none() &&
-            self.cse.is_none() &&
-            self.constant_optimizer.is_none() &&
-            self.yul.is_none() &&
-            self.yul_details.as_ref().map(|yul| yul.is_empty()).unwrap_or(true)
+        self.peephole.is_none()
+            && self.inliner.is_none()
+            && self.jumpdest_remover.is_none()
+            && self.order_literals.is_none()
+            && self.deduplicate.is_none()
+            && self.cse.is_none()
+            && self.constant_optimizer.is_none()
+            && self.yul.is_none()
+            && self.yul_details.as_ref().map(|yul| yul.is_empty()).unwrap_or(true)
     }
 }
 
@@ -1938,7 +1935,7 @@ impl SourceFile {
     pub fn contains_contract_definition(&self) -> bool {
         if let Some(ref ast) = self.ast {
             // contract definitions are only allowed at the source-unit level <https://docs.soliditylang.org/en/latest/grammar.html>
-            return ast.nodes.iter().any(|node| node.node_type == NodeType::ContractDefinition)
+            return ast.nodes.iter().any(|node| node.node_type == NodeType::ContractDefinition);
             // abstract contract, interfaces: ContractDefinition
         }
 
