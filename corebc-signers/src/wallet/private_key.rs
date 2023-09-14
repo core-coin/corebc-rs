@@ -107,9 +107,9 @@ impl Wallet<SigningKey> {
 
 impl PartialEq for Wallet<SigningKey> {
     fn eq(&self, other: &Self) -> bool {
-        self.signer.to_bytes().eq(&other.signer.to_bytes()) &&
-            self.address == other.address &&
-            self.network_id == other.network_id
+        self.signer.to_bytes().eq(&other.signer.to_bytes())
+            && self.address == other.address
+            && self.network_id == other.network_id
     }
 }
 
@@ -223,7 +223,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn signs_tx() {
         use crate::TypedTransaction;
         use corebc_core::types::{TransactionRequest, U64};
@@ -252,7 +251,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn signs_tx_empty_network_id() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;
@@ -287,7 +285,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(not(feature = "celo"))]
     fn signs_tx_empty_network_id_sync() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;

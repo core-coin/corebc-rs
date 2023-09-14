@@ -59,25 +59,6 @@ pub struct TransactionRequest {
     #[serde(skip_serializing)]
     #[serde(default, rename = "networkId")]
     pub network_id: Option<U64>,
-
-    /////////////////  Celo-specific transaction fields /////////////////
-    /// The currency fees are paid in (None for native currency)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fee_currency: Option<Address>,
-
-    /// Gateway fee recipient (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub gateway_fee_recipient: Option<Address>,
-
-    /// Gateway fee amount (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub gateway_fee: Option<U256>,
 }
 
 impl TransactionRequest {
@@ -201,9 +182,6 @@ impl TransactionRequest {
         rlp_opt(rlp, &self.gas_price);
         rlp_opt(rlp, &self.gas);
 
-        #[cfg(feature = "celo")]
-        self.inject_celo_metadata(rlp);
-
         rlp_opt(rlp, &self.to.as_ref());
         rlp_opt(rlp, &self.value);
         rlp_opt(rlp, &self.data.as_ref().map(|d| d.as_ref()));
@@ -222,16 +200,6 @@ impl TransactionRequest {
         *offset += 1;
         txn.gas = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
-
-        #[cfg(feature = "celo")]
-        {
-            txn.fee_currency = Some(rlp.at(*offset)?.as_val()?);
-            *offset += 1;
-            txn.gateway_fee_recipient = Some(rlp.at(*offset)?.as_val()?);
-            *offset += 1;
-            txn.gateway_fee = Some(rlp.at(*offset)?.as_val()?);
-            *offset += 1;
-        }
 
         txn.to = decode_to(rlp, offset)?.map(NameOrAddress::Address);
         txn.value = Some(rlp.at(*offset)?.as_val()?);
@@ -301,56 +269,11 @@ impl From<&Transaction> for TransactionRequest {
             data: Some(Bytes(tx.input.0.clone())),
             nonce: Some(tx.nonce),
             network_id: tx.network_id.map(|x| U64::from(x.as_u64())),
-
-            #[cfg(feature = "celo")]
-            fee_currency: tx.fee_currency,
-
-            #[cfg(feature = "celo")]
-            gateway_fee_recipient: tx.gateway_fee_recipient,
-
-            #[cfg(feature = "celo")]
-            gateway_fee: tx.gateway_fee,
         }
     }
 }
 
-// Separate impl block for the celo-specific fields
-#[cfg(feature = "celo")]
-impl TransactionRequest {
-    // modifies the RLP stream with the Celo-specific information
-    fn inject_celo_metadata(&self, rlp: &mut RlpStream) {
-        rlp_opt(rlp, &self.fee_currency);
-        rlp_opt(rlp, &self.gateway_fee_recipient);
-        rlp_opt(rlp, &self.gateway_fee);
-    }
-
-    /// Sets the `fee_currency` field in the transaction to the provided value
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[must_use]
-    pub fn fee_currency<T: Into<Address>>(mut self, fee_currency: T) -> Self {
-        self.fee_currency = Some(fee_currency.into());
-        self
-    }
-
-    /// Sets the `gateway_fee` field in the transaction to the provided value
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[must_use]
-    pub fn gateway_fee<T: Into<U256>>(mut self, gateway_fee: T) -> Self {
-        self.gateway_fee = Some(gateway_fee.into());
-        self
-    }
-
-    /// Sets the `gateway_fee_recipient` field in the transaction to the provided value
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[must_use]
-    pub fn gateway_fee_recipient<T: Into<Address>>(mut self, gateway_fee_recipient: T) -> Self {
-        self.gateway_fee_recipient = Some(gateway_fee_recipient.into());
-        self
-    }
-}
-
 #[cfg(test)]
-#[cfg(not(feature = "celo"))]
 mod tests {
     use super::*;
     use crate::types::Bytes;

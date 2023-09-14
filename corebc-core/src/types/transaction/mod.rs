@@ -10,11 +10,7 @@ pub mod eip712;
 pub(crate) const BASE_NUM_TX_FIELDS: usize = 9;
 
 // Number of tx fields before signing
-#[cfg(not(feature = "celo"))]
 pub(crate) const NUM_TX_FIELDS: usize = BASE_NUM_TX_FIELDS;
-// Celo has 3 additional fields
-#[cfg(feature = "celo")]
-pub(crate) const NUM_TX_FIELDS: usize = BASE_NUM_TX_FIELDS + 3;
 
 pub(super) fn rlp_opt<T: rlp::Encodable>(rlp: &mut rlp::RlpStream, opt: &Option<T>) {
     if let Some(inner) = opt {
@@ -47,7 +43,7 @@ pub(crate) fn extract_network_id(v: u64) -> Option<crate::types::U64> {
     // https://eips.ethereum.org/EIPS/eip-155
     // if networkid is available, v = {0, 1} + NETWORK_ID * 2 + 35
     if v >= 35 {
-        return Some(crate::types::U64::from((v - 35) >> 1))
+        return Some(crate::types::U64::from((v - 35) >> 1));
     }
     None
 }
@@ -81,7 +77,7 @@ fn decode_to(
             if to.is_data() {
                 None
             } else {
-                return Err(rlp::DecoderError::RlpExpectedToBeData)
+                return Err(rlp::DecoderError::RlpExpectedToBeData);
             }
         } else {
             Some(to.as_val()?)

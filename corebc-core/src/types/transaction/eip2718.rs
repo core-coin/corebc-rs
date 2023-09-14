@@ -326,7 +326,7 @@ impl TypedTransaction {
             // Legacy (0x00)
             // use the original rlp
             let decoded_request = TransactionRequest::decode_signed_rlp(rlp)?;
-            return Ok((Self::Legacy(decoded_request.0), decoded_request.1))
+            return Ok((Self::Legacy(decoded_request.0), decoded_request.1));
         }
 
         let rest = rlp::Rlp::new(
@@ -336,12 +336,12 @@ impl TypedTransaction {
         if first == 0x01 {
             // EIP-2930 (0x01)
             let decoded_request = Eip2930TransactionRequest::decode_signed_rlp(&rest)?;
-            return Ok((Self::Eip2930(decoded_request.0), decoded_request.1))
+            return Ok((Self::Eip2930(decoded_request.0), decoded_request.1));
         }
         if first == 0x02 {
             // EIP-1559 (0x02)
             let decoded_request = Eip1559TransactionRequest::decode_signed_rlp(&rest)?;
-            return Ok((Self::Eip1559(decoded_request.0), decoded_request.1))
+            return Ok((Self::Eip1559(decoded_request.0), decoded_request.1));
         }
 
         Err(rlp::DecoderError::Custom("invalid tx type").into())
@@ -496,15 +496,6 @@ impl TypedTransaction {
                 gas_price: self.gas_price(),
                 network_id: self.network_id(),
                 data: self.data().cloned(),
-                #[cfg(feature = "celo")]
-                #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-                fee_currency: None,
-                #[cfg(feature = "celo")]
-                #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-                gateway_fee_recipient: None,
-                #[cfg(feature = "celo")]
-                #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-                gateway_fee: None,
             },
         }
     }
@@ -533,15 +524,6 @@ impl TypedTransaction {
                     gas_price: self.gas_price(),
                     network_id: self.network_id(),
                     data: self.data().cloned(),
-                    #[cfg(feature = "celo")]
-                    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-                    fee_currency: None,
-                    #[cfg(feature = "celo")]
-                    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-                    gateway_fee_recipient: None,
-                    #[cfg(feature = "celo")]
-                    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-                    gateway_fee: None,
                 },
                 access_list,
             },
@@ -698,7 +680,6 @@ impl From<TypedTransaction> for Eip2930TransactionRequest {
 // .unwrap()     //     );
 //     // }
 
-//     #[cfg(not(feature = "celo"))]
 //     #[test]
 //     fn test_eip155_decode() {
 //         let tx = TransactionRequest::new()

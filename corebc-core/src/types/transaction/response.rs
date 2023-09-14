@@ -65,25 +65,6 @@ pub struct Transaction {
     /// ECDSA signature s
     pub s: U256,
 
-    /////////////////  Celo-specific transaction fields /////////////////
-    /// The currency fees are paid in (None for native currency)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none", rename = "feeCurrency")]
-    pub fee_currency: Option<Address>,
-
-    /// Gateway fee recipient (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none", rename = "gatewayFeeRecipient")]
-    pub gateway_fee_recipient: Option<Address>,
-
-    /// Gateway fee amount (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none", rename = "gatewayFee")]
-    pub gateway_fee: Option<U256>,
-
     // EIP2718
     /// Transaction type, Some(2) for EIP-1559 transaction,
     /// Some(1) for AccessList transaction, None for Legacy
@@ -116,22 +97,11 @@ pub struct Transaction {
     pub network_id: Option<U256>,
 
     /// Captures unknown fields such as additional fields used by L2s
-    #[cfg(not(feature = "celo"))]
     #[serde(flatten)]
     pub other: crate::types::OtherFields,
 }
 
 impl Transaction {
-    // modifies the RLP stream with the Celo-specific information
-    // This is duplicated from TransactionRequest. Is there a good way to get rid
-    // of this code duplication?
-    #[cfg(feature = "celo")]
-    fn inject_celo_metadata(&self, rlp: &mut RlpStream) {
-        rlp_opt(rlp, &self.fee_currency);
-        rlp_opt(rlp, &self.gateway_fee_recipient);
-        rlp_opt(rlp, &self.gateway_fee);
-    }
-
     pub fn hash(&self) -> H256 {
         sha3(self.rlp().as_ref()).into()
     }
@@ -147,9 +117,6 @@ impl Transaction {
                 rlp.append(&self.nonce);
                 rlp_opt(&mut rlp, &self.gas_price);
                 rlp.append(&self.gas);
-
-                #[cfg(feature = "celo")]
-                self.inject_celo_metadata(&mut rlp);
 
                 rlp_opt(&mut rlp, &self.to);
                 rlp.append(&self.value);
@@ -180,9 +147,6 @@ impl Transaction {
                 rlp_opt(&mut rlp, &self.gas_price);
                 rlp.append(&self.gas);
 
-                #[cfg(feature = "celo")]
-                self.inject_celo_metadata(&mut rlp);
-
                 rlp_opt(&mut rlp, &self.to);
                 rlp.append(&self.value);
                 rlp.append(&self.input.as_ref());
@@ -210,24 +174,6 @@ impl Transaction {
             }
             _ => rlp_bytes,
         }
-    }
-
-    /// Decodes the Celo-specific metadata starting at the RLP offset passed.
-    /// Increments the offset for each element parsed.
-    #[cfg(feature = "celo")]
-    #[inline]
-    fn decode_celo_metadata(
-        &mut self,
-        rlp: &rlp::Rlp,
-        offset: &mut usize,
-    ) -> Result<(), DecoderError> {
-        self.fee_currency = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.gateway_fee_recipient = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.gateway_fee = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        Ok(())
     }
 
     /// Decodes fields of the type 2 transaction response starting at the RLP offset passed.
@@ -275,9 +221,6 @@ impl Transaction {
         self.gas = rlp.val_at(*offset)?;
         *offset += 1;
 
-        #[cfg(feature = "celo")]
-        self.decode_celo_metadata(rlp, offset)?;
-
         self.to = decode_to(rlp, offset)?;
         self.value = rlp.val_at(*offset)?;
         *offset += 1;
@@ -304,9 +247,6 @@ impl Transaction {
         *offset += 1;
         self.gas = rlp.val_at(*offset)?;
         *offset += 1;
-
-        #[cfg(feature = "celo")]
-        self.decode_celo_metadata(rlp, offset)?;
 
         self.to = decode_to(rlp, offset)?;
         self.value = rlp.val_at(*offset)?;
@@ -434,7 +374,6 @@ pub struct TransactionReceipt {
     #[serde(rename = "effectiveGasPrice", default, skip_serializing_if = "Option::is_none")]
     pub effective_gas_price: Option<U256>,
     /// Captures unknown fields such as additional fields used by L2s
-    #[cfg(not(feature = "celo"))]
     #[serde(flatten)]
     pub other: crate::types::OtherFields,
 }
@@ -472,7 +411,6 @@ impl PartialOrd<Self> for TransactionReceipt {
 }
 
 #[cfg(test)]
-#[cfg(not(feature = "celo"))]
 mod tests {
     use rlp::{Encodable, Rlp};
 

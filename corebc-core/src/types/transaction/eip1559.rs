@@ -256,12 +256,6 @@ impl From<Eip1559TransactionRequest> for super::request::TransactionRequest {
             value: tx.value,
             data: tx.data,
             nonce: tx.nonce,
-            #[cfg(feature = "celo")]
-            fee_currency: None,
-            #[cfg(feature = "celo")]
-            gateway_fee_recipient: None,
-            #[cfg(feature = "celo")]
-            gateway_fee: None,
             network_id: tx.network_id,
         }
     }

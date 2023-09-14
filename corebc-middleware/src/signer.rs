@@ -301,7 +301,7 @@ where
                 .inner
                 .send_transaction(tx, block)
                 .await
-                .map_err(SignerMiddlewareError::MiddlewareError)
+                .map_err(SignerMiddlewareError::MiddlewareError);
         }
 
         // if we have a nonce manager set, we should try handling the result in
@@ -356,7 +356,7 @@ where
     }
 }
 
-#[cfg(all(test, not(feature = "celo"), not(target_arch = "wasm32")))]
+#[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
     use corebc_core::{
