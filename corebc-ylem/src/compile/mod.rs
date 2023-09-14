@@ -125,7 +125,7 @@ pub struct Ylem {
 impl Default for Ylem {
     fn default() -> Self {
         if let Ok(ylem) = std::env::var("YLEM_PATH") {
-            return Ylem::new(ylem);
+            return Ylem::new(ylem)
         }
         #[cfg(not(target_arch = "wasm32"))]
         {
@@ -133,7 +133,7 @@ impl Default for Ylem {
                 .and_then(|vers| Ylem::find_yvm_installed_version(vers.to_string()).ok())
                 .flatten()
             {
-                return ylem;
+                return ylem
             }
         }
 
@@ -263,7 +263,7 @@ impl Ylem {
             .join(format!("ylem-{version}"));
 
         if !ylem.is_file() {
-            return Ok(None);
+            return Ok(None)
         }
         Ok(Some(Ylem::new(ylem)))
     }
@@ -433,7 +433,7 @@ impl Ylem {
         if !RELEASES.2 {
             // we skip checksum verification because the underlying request to fetch release info
             // failed so we have nothing to compare against
-            return Ok(());
+            return Ok(())
         }
 
         use sha2::Digest;
