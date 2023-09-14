@@ -78,9 +78,6 @@ pub struct Block<TX> {
     /// Base fee per unit of gas (if past London)
     #[serde(rename = "baseFeePerGas")]
     pub base_fee_per_gas: Option<U256>,
-
-    #[serde(flatten)]
-    pub other: crate::types::OtherFields,
 }
 
 fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
@@ -127,9 +124,9 @@ impl<TX> Block<TX> {
             Ordering::Greater => {
                 let gas_used_delta = self.gas_used - self.gas_target();
                 let base_fee_per_gas_delta = U256::max(
-                    base_fee_per_gas * gas_used_delta /
-                        target_usage /
-                        BASE_FEE_MAX_CHANGE_DENOMINATOR,
+                    base_fee_per_gas * gas_used_delta
+                        / target_usage
+                        / BASE_FEE_MAX_CHANGE_DENOMINATOR,
                     U256::from(1u32),
                 );
                 let expected_base_fee_per_gas = base_fee_per_gas + base_fee_per_gas_delta;
@@ -137,9 +134,9 @@ impl<TX> Block<TX> {
             }
             Ordering::Less => {
                 let gas_used_delta = self.gas_target() - self.gas_used;
-                let base_fee_per_gas_delta = base_fee_per_gas * gas_used_delta /
-                    target_usage /
-                    BASE_FEE_MAX_CHANGE_DENOMINATOR;
+                let base_fee_per_gas_delta = base_fee_per_gas * gas_used_delta
+                    / target_usage
+                    / BASE_FEE_MAX_CHANGE_DENOMINATOR;
                 let expected_base_fee_per_gas = base_fee_per_gas - base_fee_per_gas_delta;
                 Some(expected_base_fee_per_gas)
             }
@@ -156,10 +153,10 @@ impl<TX> Block<TX> {
     ///   [`DateTime<Utc>`].
     pub fn time(&self) -> Result<DateTime<Utc>, TimeError> {
         if self.timestamp.is_zero() {
-            return Err(TimeError::TimestampZero)
+            return Err(TimeError::TimestampZero);
         }
         if self.timestamp.bits() > 63 {
-            return Err(TimeError::TimestampOverflow)
+            return Err(TimeError::TimestampOverflow);
         }
         // Casting to i64 is safe because the timestamp is guaranteed to be less than 2^63.
         // TODO: It would be nice if there was `TryInto<i64> for U256`.
@@ -194,7 +191,6 @@ impl Block<TxHash> {
                 mix_hash,
                 nonce,
                 base_fee_per_gas,
-                other,
                 ..
             } = self;
             Block {
@@ -220,7 +216,6 @@ impl Block<TxHash> {
                 nonce,
                 base_fee_per_gas,
                 transactions,
-                other,
             }
         }
     }
@@ -252,7 +247,6 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 mix_hash,
                 nonce,
                 base_fee_per_gas,
-                other,
             } = full;
             Block {
                 hash,
@@ -277,7 +271,6 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 nonce,
                 base_fee_per_gas,
                 transactions: transactions.iter().map(|tx| tx.hash).collect(),
-                other,
             }
         }
     }
@@ -366,13 +359,13 @@ impl<'de> Deserialize<'de> for BlockId {
                     match key.as_str() {
                         "blockNumber" => {
                             if number.is_some() || hash.is_some() {
-                                return Err(serde::de::Error::duplicate_field("blockNumber"))
+                                return Err(serde::de::Error::duplicate_field("blockNumber"));
                             }
                             number = Some(BlockId::Number(map.next_value::<BlockNumber>()?))
                         }
                         "blockHash" => {
                             if number.is_some() || hash.is_some() {
-                                return Err(serde::de::Error::duplicate_field("blockHash"))
+                                return Err(serde::de::Error::duplicate_field("blockHash"));
                             }
                             hash = Some(BlockId::Hash(map.next_value::<H256>()?))
                         }

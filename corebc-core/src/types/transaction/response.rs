@@ -95,10 +95,6 @@ pub struct Transaction {
 
     #[serde(rename = "networkId", default, skip_serializing_if = "Option::is_none")]
     pub network_id: Option<U256>,
-
-    /// Captures unknown fields such as additional fields used by L2s
-    #[serde(flatten)]
-    pub other: crate::types::OtherFields,
 }
 
 impl Transaction {
@@ -373,9 +369,6 @@ pub struct TransactionReceipt {
     /// amount that's actually paid by users can only be determined post-execution
     #[serde(rename = "effectiveGasPrice", default, skip_serializing_if = "Option::is_none")]
     pub effective_gas_price: Option<U256>,
-    /// Captures unknown fields such as additional fields used by L2s
-    #[serde(flatten)]
-    pub other: crate::types::OtherFields,
 }
 
 impl rlp::Encodable for TransactionReceipt {
