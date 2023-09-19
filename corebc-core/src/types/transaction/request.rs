@@ -264,7 +264,7 @@ impl From<&Transaction> for TransactionRequest {
             from: Some(tx.from),
             to: tx.to.map(NameOrAddress::Address),
             energy: Some(tx.energy),
-            energy_price: tx.energy_price,
+            energy_price: Some(tx.energy_price),
             value: Some(tx.value),
             data: Some(Bytes(tx.input.0.clone())),
             nonce: Some(tx.nonce),

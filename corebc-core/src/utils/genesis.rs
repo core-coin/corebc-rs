@@ -27,8 +27,8 @@ pub struct Genesis {
     #[serde(default)]
     pub extra_data: Bytes,
 
-    /// The genesis header gas limit.
-    pub gas_limit: U64,
+    /// The genesis header energy limit.
+    pub energy_limit: U64,
 
     /// The genesis header difficulty.
     #[serde(deserialize_with = "from_int_or_hex")]
@@ -51,9 +51,9 @@ pub struct Genesis {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub number: Option<U64>,
 
-    /// The block gas gasUsed
+    /// The block energy energyUsed
     #[serde(skip_serializing_if = "Option::is_none", default)]
-    pub gas_used: Option<U64>,
+    pub energy_used: Option<U64>,
 
     /// The block parent hash
     #[serde(skip_serializing_if = "Option::is_none", default)]
@@ -95,7 +95,7 @@ impl Genesis {
             config,
             alloc,
             difficulty: U256::one(),
-            gas_limit: U64::from(5000000),
+            energy_limit: U64::from(5000000),
             extra_data,
             ..Default::default()
         }
@@ -134,6 +134,9 @@ pub struct NetworkConfig {
     /// The network's network ID.
     #[serde(default = "one")]
     pub network_id: u64,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub ewasm_block: Option<u64>,
 
     /// Ethash parameters.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -180,7 +183,7 @@ mod tests {
         let geth_genesis = r#"
         {
             "difficulty": "0x20000",
-            "gasLimit": "0x1",
+            "energyLimit": "0x1",
             "alloc": {},
             "config": {
               "ethash": {},
@@ -197,7 +200,7 @@ mod tests {
         let geth_genesis = r#"
         {
           "difficulty": "0x1",
-          "gasLimit": "0x400000",
+          "energyLimit": "0x400000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
           "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "nonce": "0x0",
@@ -221,7 +224,7 @@ mod tests {
             "timestamp": "0x123456",
             "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "extraData": "0xfafbfcfd",
-            "gasLimit": "0x2fefd8",
+            "energyLimit": "0x2fefd8",
             "alloc": {
                 "0x00003E951C9f69a06Bc3AD71fF7358DbC56bEd94b9F2": {
                   "balance": "1000000000000000000000000000"
@@ -285,7 +288,7 @@ mod tests {
           "coinbase": "0x00000000000000000000000000000000000000000000",
           "difficulty": "0x20000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-          "gasLimit": "0x2fefd8",
+          "energyLimit": "0x2fefd8",
           "nonce": "0x0000000000000000",
           "timestamp": "0x1234",
           "alloc": {
@@ -331,7 +334,7 @@ mod tests {
             "coinbase"   : "0x00008888f1f195afa192cfee860698584c030f4c9db1",
             "difficulty" : "0x020000",
             "extraData"  : "0x42",
-            "gasLimit"   : "0x2fefd8",
+            "energyLimit"   : "0x2fefd8",
             "mixHash"    : "0x2c85bcbce56429100b2108254bb56906257582aeafcbd682bc9af67a9f5aee46",
             "nonce"      : "0x78cc16f7b4f65485",
             "parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -371,7 +374,7 @@ mod tests {
           "coinbase": "0x00000000000000000000000000000000000000000000",
           "difficulty": "0x30000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-          "gasLimit": "0x2fefd8",
+          "energyLimit": "0x2fefd8",
           "nonce": "0x0000000000000000",
           "timestamp": "0x1234",
           "alloc": {
@@ -433,7 +436,7 @@ mod tests {
             "nonce": "0xdeadbeefdeadbeef",
             "timestamp": "0x0",
             "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000",
-            "gasLimit": "0x80000000",
+            "energyLimit": "0x80000000",
             "difficulty": "0x20000",
             "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "coinbase": "0x00000000000000000000000000000000000000000000",
@@ -443,7 +446,7 @@ mod tests {
                 }
             },
             "number": "0x0",
-            "gasUsed": "0x0",
+            "energyUsed": "0x0",
             "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
         }
         "#;
@@ -457,29 +460,12 @@ mod tests {
         {
           "config": {
             "networkId": 1337,
-            "homesteadBlock": 0,
-            "eip150Block": 0,
-            "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-            "eip155Block": 0,
-            "eip158Block": 0,
-            "byzantiumBlock": 0,
-            "constantinopleBlock": 0,
-            "petersburgBlock": 0,
-            "istanbulBlock": 0,
-            "muirGlacierBlock": 0,
-            "berlinBlock": 0,
-            "londonBlock": 0,
-            "arrowGlacierBlock": 0,
-            "grayGlacierBlock": 0,
-            "shanghaiTime": 0,
-            "terminalTotalDifficulty": 0,
-            "terminalTotalDifficultyPassed": true,
             "ethash": {}
           },
           "nonce": "0x0",
           "timestamp": "0x0",
           "extraData": "0x",
-          "gasLimit": "0x4c4b40",
+          "energyLimit": "0x4c4b40",
           "difficulty": "0x1",
           "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "coinbase": "0x00000000000000000000000000000000000000000000",
@@ -511,18 +497,16 @@ mod tests {
             }
           },
           "number": "0x0",
-          "gasUsed": "0x0",
-          "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "baseFeePerGas": "0x3b9aca00"
+          "energyUsed": "0x0",
+          "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
         }
         "#;
 
         let genesis: Genesis = serde_json::from_str(geth_genesis).unwrap();
 
         // ensure the test fields are parsed correctly
-        assert_eq!(genesis.base_fee_per_gas, Some(1000000000.into()));
         assert_eq!(genesis.number, Some(0.into()));
-        assert_eq!(genesis.gas_used, Some(0.into()));
+        assert_eq!(genesis.energy_used, Some(0.into()));
         assert_eq!(genesis.parent_hash, Some(H256::zero()));
     }
 
@@ -543,7 +527,7 @@ mod tests {
           "coinbase": "0x00000000000000000000000000000000000000000000",
           "difficulty": "0x020000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-          "gasLimit": "0x2fefd8",
+          "energyLimit": "0x2fefd8",
           "nonce": "0x0000000000000000",
           "timestamp": "0x1234",
           "alloc": {
@@ -626,7 +610,7 @@ mod tests {
             "timestamp": "0x123456",
             "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "extraData": "0xfafbfcfd",
-            "gasLimit": "0x2fefd8",
+            "energyLimit": "0x2fefd8",
             "alloc": {
                 "0000dbdbdb2cbd23b783741e8d7fcf51e459b497e4a6": {
                     "balance": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
@@ -681,7 +665,7 @@ mod tests {
             timestamp: 0x123456.into(),
             parent_hash: Some(H256::from_str("0x0000000000000000000000000000000000000000000000000000000000000000").unwrap()),
             extra_data: Bytes::from_str("0xfafbfcfd").unwrap(),
-            gas_limit: 0x2fefd8.into(),
+            energy_limit: 0x2fefd8.into(),
             alloc: HashMap::from_iter(vec![
                 (
                     Address::from_str("0x0000dbdbdb2cbd23b783741e8d7fcf51e459b497e4a6").unwrap(),

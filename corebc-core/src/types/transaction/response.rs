@@ -43,11 +43,11 @@ pub struct Transaction {
     /// Transferred value
     pub value: U256,
 
-    /// Gas Price, null for Type 2 transactions
+    /// energy Price
     #[serde(rename = "energyPrice")]
-    pub energy_price: Option<U256>,
+    pub energy_price: U256,
 
-    /// Gas amount
+    /// Energy amount
     pub energy: U256,
 
     /// Input data
@@ -76,7 +76,7 @@ impl Transaction {
         rlp.begin_unbounded_list();
 
         rlp.append(&self.nonce);
-        rlp_opt(&mut rlp, &self.energy_price);
+        rlp.append(&self.energy_price);
         rlp.append(&self.energy);
 
         rlp_opt(&mut rlp, &self.to);
@@ -102,7 +102,7 @@ impl Transaction {
     ) -> Result<(), DecoderError> {
         self.nonce = rlp.val_at(*offset)?;
         *offset += 1;
-        self.energy_price = Some(rlp.val_at(*offset)?);
+        self.energy_price = rlp.val_at(*offset)?;
         *offset += 1;
         self.energy = rlp.val_at(*offset)?;
         *offset += 1;
@@ -178,13 +178,13 @@ pub struct TransactionReceipt {
     pub from: Address,
     // address of the receiver. null when its a contract creation transaction.
     pub to: Option<Address>,
-    /// Cumulative gas used within the block after this was executed.
-    #[serde(rename = "cumulativeGasUsed")]
+    /// Cumulative energy used within the block after this was executed.
+    #[serde(rename = "cumulativeEnergyUsed")]
     pub cumulative_energy_used: U256,
-    /// Gas used by this transaction alone.
+    /// Energy used by this transaction alone.
     ///
-    /// Gas used is `None` if the the client is running in light client mode.
-    #[serde(rename = "gasUsed")]
+    /// Energy used is `None` if the the client is running in light client mode.
+    #[serde(rename = "energyUsed")]
     pub energy_used: Option<U256>,
     /// Contract address created, or `None` if not a deployment.
     #[serde(rename = "contractAddress")]
@@ -247,8 +247,8 @@ mod tests {
     "blockHash":"0x1d59ff54b1eb26b013ce3cb5fc9dab3705b415a67127a003c3e61eb445bb8df2",
     "blockNumber":"0x5daf3b",
     "from":"0x0000a7d9ddbe1f17865597fbd27ec712455208b6b76d",
-    "gas":"0xc350",
-    "gasPrice":"0x4a817c800",
+    "energy":"0xc350",
+    "energyPrice":"0x4a817c800",
     "hash":"0x88df016429689c079f3b2f6ad39fa052532c56795b733da78a91ebe6a713944b",
     "input":"0x68656c6c6f21",
     "nonce":"0x15",
@@ -272,8 +272,8 @@ mod tests {
             "from":"0x00001b67b03cdccfae10a2d80e52d3d026dbe2960ad0",
             "to":"0x0000986ee0c8b91a58e490ee59718cca41056cf55f24",
             "value":"0x2710",
-            "gas":"0x5208",
-            "gasPrice":"0x186a0",
+            "energy":"0x5208",
+            "energyPrice":"0x186a0",
             "input":"0x",
             "v":"0x25",
             "r":"0x75188beb2f601bb8cf52ef89f92a6ba2bb7edcf8e3ccde90548cc99cbea30b1e",
@@ -285,7 +285,7 @@ mod tests {
 
     #[test]
     fn tx_roundtrip() {
-        let json = serde_json::json!({"accessList":[{"address":"0x00008ba1f109551bd432803012645ac136ddd64dba72","storageKeys":["0x0000000000000000000000000000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000000000000000000000000042"]}],"blockHash":"0x55ae43d3511e327dc532855510d110676d340aa1bbba369b4b98896d86559586","blockNumber":"0xa3d322","networkId":"0x3","from":"0x0000541d6a0e9ca9e7a083e41e2e178eef9f22d7492e","gas":"0x6a40","gasPrice":"0x3b9aca07","hash":"0x824384376c5972498c6fcafe71fd8cad1689f64e7d5e270d025a898638c0c34d","input":"0x","maxFeePerGas":"0x3b9aca0e","maxPriorityFeePerGas":"0x3b9aca00","nonce":"0x0","r":"0xf13b5088108f783f4b6048d4be456971118aabfb88be96bb541d734b6c2b20dc","s":"0x13fb7eb25a7d5df42a176cd4c6a086e19163ed7cd8ffba015f939d24f66bc17a","to":"0x00008210357f377e901f18e45294e86a2a32215cc3c9","transactionIndex":"0xd","type":"0x2","v":"0x1","value":"0x7b"});
+        let json = serde_json::json!({"blockHash":"0x55ae43d3511e327dc532855510d110676d340aa1bbba369b4b98896d86559586","blockNumber":"0xa3d322","networkId":"0x3","from":"0x0000541d6a0e9ca9e7a083e41e2e178eef9f22d7492e","energy":"0x6a40","energyPrice":"0x3b9aca07","hash":"0x824384376c5972498c6fcafe71fd8cad1689f64e7d5e270d025a898638c0c34d","input":"0x","nonce":"0x0","r":"0xf13b5088108f783f4b6048d4be456971118aabfb88be96bb541d734b6c2b20dc","s":"0x13fb7eb25a7d5df42a176cd4c6a086e19163ed7cd8ffba015f939d24f66bc17a","to":"0x00008210357f377e901f18e45294e86a2a32215cc3c9","transactionIndex":"0xd","v":"0x1","value":"0x7b"});
         let tx: Transaction = serde_json::from_value(json.clone()).unwrap();
         assert_eq!(tx.nonce, 0u64.into());
 
@@ -300,7 +300,7 @@ mod tests {
             block_number: None,
             from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
             energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
-            energy_price: Some(U256::from_str_radix("0x12ec276caf", 16).unwrap()),
+            energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
             hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
             input: Bytes::from(
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
@@ -330,7 +330,7 @@ mod tests {
             block_number: None,
             from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
             energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
-            energy_price: Some(U256::from_str_radix("0x12ec276caf", 16).unwrap()),
+            energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
             hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
             input: Bytes::from(
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
@@ -357,7 +357,7 @@ mod tests {
     fn recover_from() {
         let tx = Transaction {
             hash: H256::from_str(
-                "7e4823cfb836f84e8cef3040c69e23558a7434b01b9006759af26a5f9d53977c",
+                "3a4e3aa4e85771e92fceec0195b13db70c0c52442733c74d41af13c907692849",
             )
             .unwrap(),
             nonce: 65.into(),
@@ -370,7 +370,7 @@ mod tests {
             from: Address::from_str("0000e66b278fa9fbb181522f6916ec2f6d66ab846e04").unwrap(),
             to: Some(Address::from_str("000011d7c2ab0d4aa26b7d8502f6a7ef6844908495c2").unwrap()),
             value: 0.into(),
-            energy_price: Some(1500000007.into()),
+            energy_price: 1500000007.into(),
             energy: 106703.into(),
             input: hex::decode("e5225381").unwrap().into(),
             v: 1.into(),
@@ -384,6 +384,7 @@ mod tests {
                 10,
             )
             .unwrap(),
+            network_id: None,
         };
 
         assert_eq!(tx.hash, tx.hash());
@@ -399,9 +400,9 @@ mod tests {
         "blockHash": "0xf6084155ff2022773b22df3217d16e9df53cbc42689b27ca4789e06b6339beb2",
         "blockNumber": "0x52a975",
         "contractAddress": null,
-        "cumulativeGasUsed": "0x797db0",
+        "cumulativeEnergyUsed": "0x797db0",
         "from": "0x0000d907941c8b3b966546fc408b8c942eb10a4f98df",
-        "gasUsed": "0x1308c",
+        "energyUsed": "0x1308c",
         "logs": [
             {
                 "blockHash": "0xf6084155ff2022773b22df3217d16e9df53cbc42689b27ca4789e06b6339beb2",
@@ -451,10 +452,9 @@ mod tests {
     "blockHash": "0xa11871d61e0e703ae33b358a6a9653c43e4216f277d4a1c7377b76b4d5b4cbf1",
     "blockNumber": "0xe3c1d8",
     "contractAddress": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
-    "cumulativeGasUsed": "0x1246047",
-    "effectiveGasPrice": "0xa02ffee00",
+    "cumulativeEnergyUsed": "0x1246047",
     "from": "0x00000968995a48162a23af60d3ca25cddfa143cd8891",
-    "gasUsed": "0x1b9229",
+    "energyUsed": "0x1b9229",
     "logs": [
       {
         "address": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
@@ -486,8 +486,7 @@ mod tests {
     "logsBloom": "0x00000000000000800000000040000000000000000000000000000000000000000000008000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
     "status": "0x1",
     "to": null,
-    "transactionIndex": "0xdf",
-    "type": "0x2"
+    "transactionIndex": "0xdf"
 }
 "#,
         )
@@ -551,7 +550,7 @@ mod tests {
             block_number: None,
             from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
             energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
-            energy_price: Some(U256::from_str_radix("0x12ec276caf", 16).unwrap()),
+            energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
             hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
             input: Bytes::from(
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
