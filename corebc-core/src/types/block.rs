@@ -108,10 +108,10 @@ impl<TX> Block<TX> {
     ///   [`DateTime<Utc>`].
     pub fn time(&self) -> Result<DateTime<Utc>, TimeError> {
         if self.timestamp.is_zero() {
-            return Err(TimeError::TimestampZero);
+            return Err(TimeError::TimestampZero)
         }
         if self.timestamp.bits() > 63 {
-            return Err(TimeError::TimestampOverflow);
+            return Err(TimeError::TimestampOverflow)
         }
         // Casting to i64 is safe because the timestamp is guaranteed to be less than 2^63.
         // TODO: It would be nice if there was `TryInto<i64> for U256`.
@@ -310,13 +310,13 @@ impl<'de> Deserialize<'de> for BlockId {
                     match key.as_str() {
                         "blockNumber" => {
                             if number.is_some() || hash.is_some() {
-                                return Err(serde::de::Error::duplicate_field("blockNumber"));
+                                return Err(serde::de::Error::duplicate_field("blockNumber"))
                             }
                             number = Some(BlockId::Number(map.next_value::<BlockNumber>()?))
                         }
                         "blockHash" => {
                             if number.is_some() || hash.is_some() {
-                                return Err(serde::de::Error::duplicate_field("blockHash"));
+                                return Err(serde::de::Error::duplicate_field("blockHash"))
                             }
                             hash = Some(BlockId::Hash(map.next_value::<H256>()?))
                         }

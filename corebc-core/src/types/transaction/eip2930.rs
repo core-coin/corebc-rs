@@ -52,8 +52,7 @@
 //     pub fn with_access_list<T: Into<AccessList>>(
 //         self,
 //         access_list: T,
-//     ) -> Eip2930TransactionRequest {
-//         Eip2930TransactionRequest::new(self, access_list.into())
+//     ) -> Eip2930TransactionRequest { Eip2930TransactionRequest::new(self, access_list.into())
 //     }
 // }
 
@@ -216,8 +215,8 @@
 // // "c9519f4f2b30335884581971573fadf60c6204f59a911df35ee8a540456b266032f1e8e2c5dd761f9e4f88f41c8310aeaba26a8bfcdacfedfa12ec3862d3752101"
 // // .parse().unwrap();         assert_eq!(
 // //             hash,
-// //             "49b486f0ec0a60dfbbca2d30cb07c9e8ffb2a2ff41f29a1ab6737475f6ff69f3".parse().unwrap()
-// //         );
+// //
+// "49b486f0ec0a60dfbbca2d30cb07c9e8ffb2a2ff41f29a1ab6737475f6ff69f3".parse().unwrap() //         );
 
 // //         let enc = rlp::encode(&tx.rlp_signed(&sig).as_ref());
 // //         let expected =
@@ -229,8 +228,8 @@
 // //     #[cfg_attr(feature = "legacy", ignore)]
 // //     fn serde_eip2930_tx() {
 // //         let access_list =
-// //             vec![AccessListItem { address: Address::zero(), storage_keys: vec![H256::zero()] }];
-// //         let tx = TransactionRequest::new()
+// //             vec![AccessListItem { address: Address::zero(), storage_keys: vec![H256::zero()]
+// }]; //         let tx = TransactionRequest::new()
 // //             .to(Address::zero())
 // //             .value(U256::from(100))
 // //             .with_access_list(access_list);
@@ -265,12 +264,12 @@
 // // ).unwrap())
 // // .from(Address::from_str("0x82a33964706683db62b85a59128ce2fc07c91658").unwrap())
 // // .with_access_list(AccessList(vec![]));         let r =
-// //             U256::from_str("0x881e7f5298290794bcaa0294986db5c375cbf135dd3c21456b159c470568b687")
-// //                 .unwrap();
-// //         let s =
-// //             U256::from_str("0x61fc5f52abab723053fbedf29e1c60b89006416d6c86e1c54ef85a3e84f2dc6e")
-// //                 .unwrap();
-// //         let v = 1;
+// //
+// U256::from_str("0x881e7f5298290794bcaa0294986db5c375cbf135dd3c21456b159c470568b687") //
+// .unwrap(); //         let s =
+// //
+// U256::from_str("0x61fc5f52abab723053fbedf29e1c60b89006416d6c86e1c54ef85a3e84f2dc6e") //
+// .unwrap(); //         let v = 1;
 // //         let expected_sig = Signature { r, s, v };
 
 // //         let raw_tx_rlp = rlp::Rlp::new(&raw_tx[..]);

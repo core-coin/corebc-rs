@@ -33,7 +33,7 @@ impl Encodable for NameOrAddress {
 impl Decodable for NameOrAddress {
     fn decode(rlp: &rlp::Rlp) -> Result<Self, rlp::DecoderError> {
         if !rlp.is_data() {
-            return Err(rlp::DecoderError::RlpExpectedToBeData);
+            return Err(rlp::DecoderError::RlpExpectedToBeData)
         }
 
         // the data needs to be 22 bytes long - ICAN Address

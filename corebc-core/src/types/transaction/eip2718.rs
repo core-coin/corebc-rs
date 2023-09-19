@@ -5,8 +5,8 @@
 // };
 // use crate::{
 //     types::{
-//         Address, Bytes, NameOrAddress, Signature, Transaction, TransactionRequest, H256, U256, U64,
-//     },
+//         Address, Bytes, NameOrAddress, Signature, Transaction, TransactionRequest, H256, U256,
+// U64,     },
 //     utils::sha3,
 // };
 // use rlp::Decodable;
@@ -537,8 +537,8 @@
 //     }
 // }
 
-// // CORETODO: Eip 2718 was implemented after the Istanbul hardfork so this is not necessary to test.
-// // I left it all here in case we will want to use it in the future.
+// // CORETODO: Eip 2718 was implemented after the Istanbul hardfork so this is not necessary to
+// test. // I left it all here in case we will want to use it in the future.
 // // #[cfg(test)]
 // // mod tests {
 // //     use hex::ToHex;
@@ -586,9 +586,9 @@
 // //         let envelope = TypedTransaction::Eip1559(tx);
 
 // //         let expected =
-// //             H256::from_str("0xa1ea3121940930f7e7b54506d80717f14c5163807951624c36354202a8bffda6")
-// //                 .unwrap();
-// //         let actual = envelope.sighash();
+// //
+// H256::from_str("0xa1ea3121940930f7e7b54506d80717f14c5163807951624c36354202a8bffda6") //
+// .unwrap(); //         let actual = envelope.sighash();
 // //         assert_eq!(expected, actual);
 // //     }
 
@@ -623,9 +623,9 @@
 // //         let envelope = TypedTransaction::Eip1559(tx);
 
 // //         let expected =
-// //             H256::from_str("0x090b19818d9d087a49c3d2ecee4829ee4acea46089c1381ac5e588188627466d")
-// //                 .unwrap();
-// //         let actual = envelope.sighash();
+// //
+// H256::from_str("0x090b19818d9d087a49c3d2ecee4829ee4acea46089c1381ac5e588188627466d") //
+// .unwrap(); //         let actual = envelope.sighash();
 // //         assert_eq!(expected, actual);
 // //     }
 
@@ -639,9 +639,9 @@
 // //         let actual_tx = TypedTransaction::decode(&tx_rlp).unwrap();
 
 // //         let expected =
-// //             H256::from_str("0x090b19818d9d087a49c3d2ecee4829ee4acea46089c1381ac5e588188627466d")
-// //                 .unwrap();
-// //         let actual = actual_tx.sighash();
+// //
+// H256::from_str("0x090b19818d9d087a49c3d2ecee4829ee4acea46089c1381ac5e588188627466d") //
+// .unwrap(); //         let actual = actual_tx.sighash();
 // //         assert_eq!(expected, actual);
 // //     }
 
@@ -656,9 +656,9 @@
 // //     //         .max_priority_fee_per_gas(413047990155u64)
 // //     //         .max_fee_per_gas(768658734568u64)
 // //     //         .gas(184156u64)
-// //     //         .to(Address::from_str("0x00000aa7420c43b8c1a7b165d216948870c8ecfe1ee1").unwrap())
-// //     //         .value(200000000000000000u64)
-// //     //         .data(
+// //     //
+// .to(Address::from_str("0x00000aa7420c43b8c1a7b165d216948870c8ecfe1ee1").unwrap()) //     //
+// .value(200000000000000000u64) //     //         .data(
 // //     //             Bytes::from_str(
 // //     //
 // // "0x6ecd23060000000000000000000000000000000000000000000000000000000000000002",     //
@@ -692,8 +692,8 @@
 
 // //         let expected_hex =
 // // hex::decode("
-// // ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").
-// // unwrap();         let expected_rlp = rlp::Rlp::new(expected_hex.as_slice());
+// // ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080"
+// ). // unwrap();         let expected_rlp = rlp::Rlp::new(expected_hex.as_slice());
 // //         let decoded_transaction = TypedTransaction::decode(&expected_rlp).unwrap();
 // //         assert_eq!(tx.sighash(), decoded_transaction.sighash());
 // //     }
@@ -701,10 +701,10 @@
 // //     #[test]
 // //     fn test_eip1559_deploy_tx_decode() {
 // //         let typed_tx_hex =
-// //             hex::decode("02dc8205058193849502f90085010c388d00837a120080808411223344c0").unwrap();
-// //         let tx_rlp = rlp::Rlp::new(typed_tx_hex.as_slice());
-// //         TypedTransaction::decode(&tx_rlp).unwrap();
-// //     }
+// //
+// hex::decode("02dc8205058193849502f90085010c388d00837a120080808411223344c0").unwrap(); //
+// let tx_rlp = rlp::Rlp::new(typed_tx_hex.as_slice()); //
+// TypedTransaction::decode(&tx_rlp).unwrap(); //     }
 
 // //     // CORETODO: Implement ED448 and fix this test
 // //     // #[test]
@@ -748,7 +748,8 @@
 
 // //     //     // compare rlp - sighash should then be the same
 // //     //     let tx_expected_rlp =
-// //     // "f90145052b85012a05f20085012a05f2148301b3cd8080b9012d608060405234801561001057600080fd5b5061010d806100206000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c8063cfae3217146037578063f8a8fd6d146066575b600080fd5b604080518082019091526003815262676d2160e81b60208201525b604051605d91906085565b60405180910390f35b6040805180820190915260048152636f6f662160e01b60208201526052565b600060208083528351808285015260005b8181101560b0578581018301518582016040015282016096565b8181111560c1576000604083870101525b50601f01601f191692909201604001939250505056fea2646970667358221220f89093a9819ba5d2a3384305511d0945ea94f36a8aa162ab62921b3841fe3afd64736f6c634300080c0033c0"
+// //     // "
+// f90145052b85012a05f20085012a05f2148301b3cd8080b9012d608060405234801561001057600080fd5b5061010d806100206000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c8063cfae3217146037578063f8a8fd6d146066575b600080fd5b604080518082019091526003815262676d2160e81b60208201525b604051605d91906085565b60405180910390f35b6040805180820190915260048152636f6f662160e01b60208201526052565b600060208083528351808285015260005b8181101560b0578581018301518582016040015282016096565b8181111560c1576000604083870101525b50601f01601f191692909201604001939250505056fea2646970667358221220f89093a9819ba5d2a3384305511d0945ea94f36a8aa162ab62921b3841fe3afd64736f6c634300080c0033c0"
 // //     // ;     let tx_real_rlp_vec = tx.rlp().to_vec();
 // //     //     let tx_real_rlp: String = tx_real_rlp_vec.encode_hex();
 // //     //     assert_eq!(tx_expected_rlp, tx_real_rlp);
@@ -765,9 +766,9 @@
 // //     //     assert_eq!(v, sig.v);
 
 // //     //     // finally check from
-// //     //     let addr = Address::from_str("0x216b32eCEbAe6aF164921D3943cd7A9634FcB199").unwrap();
-// //     //     assert_eq!(addr, tx.from.unwrap());
-// //     // }
+// //     //     let addr =
+// Address::from_str("0x216b32eCEbAe6aF164921D3943cd7A9634FcB199").unwrap(); //     //
+// assert_eq!(addr, tx.from.unwrap()); //     // }
 
 // //     #[test]
 // //     fn test_tx_casts() {

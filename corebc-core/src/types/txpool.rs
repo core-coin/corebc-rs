@@ -43,19 +43,19 @@ impl<'de> Visitor<'de> for TxpoolInspectSummaryVisitor {
     {
         let addr_split: Vec<&str> = value.split(": ").collect();
         if addr_split.len() != 2 {
-            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: to"));
+            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: to"))
         }
         let value_split: Vec<&str> = addr_split[1].split(" wei + ").collect();
         if value_split.len() != 2 {
-            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: energyLimit"));
+            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: energyLimit"))
         }
         let energy_split: Vec<&str> = value_split[1].split(" energy × ").collect();
         if energy_split.len() != 2 {
-            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: energy"));
+            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: energy"))
         }
         let energy_price_split: Vec<&str> = energy_split[1].split(" wei").collect();
         if energy_price_split.len() != 2 {
-            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: energy_price"));
+            return Err(de::Error::custom("invalid format for TxpoolInspectSummary: energy_price"))
         }
         let addr = match addr_split[0] {
             "" => None,

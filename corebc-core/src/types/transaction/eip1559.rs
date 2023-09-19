@@ -55,8 +55,8 @@
 //     #[serde(rename = "maxPriorityFeePerGas", default, skip_serializing_if = "Option::is_none")]
 //     /// Represents the maximum tx fee that will go to the miner as part of the user's
 //     /// fee payment. It serves 3 purposes:
-//     /// 1. Compensates miners for the uncle/ommer risk + fixed costs of including transaction in a
-//     /// block;
+//     /// 1. Compensates miners for the uncle/ommer risk + fixed costs of including transaction in
+// a     /// block;
 //     /// 2. Allows users with high opportunity costs to pay a premium to miners;
 //     /// 3. In times where demand exceeds the available block space (i.e. 100% full, 30mm gas),
 //     /// this component allows first price auctions (i.e. the pre-1559 fee model) to happen on the
@@ -108,8 +108,8 @@
 
 //     /// Sets the `max_priority_fee_per_gas` field in the transaction to the provided value
 //     #[must_use]
-//     pub fn max_priority_fee_per_gas<T: Into<U256>>(mut self, max_priority_fee_per_gas: T) -> Self {
-//         self.max_priority_fee_per_gas = Some(max_priority_fee_per_gas.into());
+//     pub fn max_priority_fee_per_gas<T: Into<U256>>(mut self, max_priority_fee_per_gas: T) -> Self
+// {         self.max_priority_fee_per_gas = Some(max_priority_fee_per_gas.into());
 //         self
 //     }
 
@@ -193,8 +193,8 @@
 //         rlp.append(&self.access_list);
 //     }
 
-//     /// Decodes fields of the request starting at the RLP offset passed. Increments the offset for
-//     /// each element parsed.
+//     /// Decodes fields of the request starting at the RLP offset passed. Increments the offset
+// for     /// each element parsed.
 //     #[inline]
 //     pub fn decode_base_rlp(rlp: &rlp::Rlp, offset: &mut usize) -> Result<Self, DecoderError> {
 //         let mut tx = Self::new();

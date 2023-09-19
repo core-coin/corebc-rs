@@ -117,7 +117,7 @@ impl GoCoreInstance {
             // gocore ids are trunated
             let truncated_id = hex::encode(&id.0[..8]);
             if line.contains("Adding p2p peer") && line.contains(&truncated_id) {
-                return Ok(());
+                return Ok(())
             }
         }
         Err(GoCoreInstanceError::Timeout("Timed out waiting for gocore to add a peer".into()))
@@ -329,8 +329,8 @@ impl GoCore {
 
     /// Sets the `genesis.json` for the gocore instance.
     ///
-    /// If this is set, gocore will be initialized with `gocore init` and the `--datadir` option will be
-    /// set to the same value as `data_dir`.
+    /// If this is set, gocore will be initialized with `gocore init` and the `--datadir` option
+    /// will be set to the same value as `data_dir`.
     ///
     /// This is destructive and will overwrite any existing data in the data directory.
     pub fn genesis(mut self, genesis: Genesis) -> Self {
@@ -538,14 +538,14 @@ impl GoCore {
 
             // gocore 1.9.23 uses "server started" while 1.9.18 uses "endpoint opened"
             // the unauthenticated api is used for regular non-engine API requests
-            if line.contains("HTTP endpoint opened")
-                || (line.contains("HTTP server started") && !line.contains("auth=true"))
+            if line.contains("HTTP endpoint opened") ||
+                (line.contains("HTTP server started") && !line.contains("auth=true"))
             {
                 http_started = true;
             }
 
             if p2p_started && http_started {
-                break;
+                break
             }
         }
 
