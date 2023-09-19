@@ -1,9 +1,3 @@
-/// Utilities for launching a ganache-cli testnet instance
-#[cfg(not(target_arch = "wasm32"))]
-mod ganache;
-#[cfg(not(target_arch = "wasm32"))]
-pub use ganache::{Ganache, GanacheInstance};
-
 /// Utilities for launching a go-ethereum dev-mode instance
 #[cfg(not(target_arch = "wasm32"))]
 mod gocore;

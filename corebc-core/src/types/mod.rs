@@ -14,8 +14,6 @@ pub use ethabi::ethereum_types::{
 
 pub mod transaction;
 pub use transaction::{
-    eip1559::Eip1559TransactionRequest,
-    eip2930::Eip2930TransactionRequest,
     request::TransactionRequest,
     response::{Transaction, TransactionReceipt},
 };

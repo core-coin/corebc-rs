@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     types::{Address, Bytes, H256, U256, U64},
-    utils::{from_int_or_hex, from_int_or_hex_opt, from_u64_or_hex_opt, from_unformatted_hex_map},
+    utils::{from_int_or_hex, from_u64_or_hex_opt, from_unformatted_hex_map},
 };
 use serde::{Deserialize, Serialize};
 
@@ -58,10 +58,6 @@ pub struct Genesis {
     /// The block parent hash
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub parent_hash: Option<H256>,
-
-    /// The base fee
-    #[serde(skip_serializing_if = "Option::is_none", default)]
-    pub base_fee_per_gas: Option<U256>,
 }
 
 impl Genesis {
@@ -73,23 +69,8 @@ impl Genesis {
         // set up a clique config with an instant sealing period and short (8 block) epoch
         let clique_config = CliqueConfig { period: Some(0), epoch: Some(8) };
 
-        let config = NetworkConfig {
-            network_id,
-            eip155_block: Some(0),
-            eip150_block: Some(0),
-            eip158_block: Some(0),
-
-            homestead_block: Some(0),
-            byzantium_block: Some(0),
-            constantinople_block: Some(0),
-            petersburg_block: Some(0),
-            istanbul_block: Some(0),
-            muir_glacier_block: Some(0),
-            berlin_block: Some(0),
-            london_block: Some(0),
-            clique: Some(clique_config),
-            ..Default::default()
-        };
+        let config =
+            NetworkConfig { network_id, clique: Some(clique_config), ..Default::default() };
 
         // fund account
         let mut alloc = HashMap::new();
@@ -153,89 +134,6 @@ pub struct NetworkConfig {
     /// The network's network ID.
     #[serde(default = "one")]
     pub network_id: u64,
-
-    /// The homestead switch block (None = no fork, 0 = already homestead).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub homestead_block: Option<u64>,
-
-    /// The DAO fork switch block (None = no fork).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub dao_fork_block: Option<u64>,
-
-    /// Whether or not the node supports the DAO hard-fork.
-    pub dao_fork_support: bool,
-
-    /// The EIP-150 hard fork block (None = no fork).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub eip150_block: Option<u64>,
-
-    /// The EIP-150 hard fork hash.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub eip150_hash: Option<H256>,
-
-    /// The EIP-155 hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub eip155_block: Option<u64>,
-
-    /// The EIP-158 hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub eip158_block: Option<u64>,
-
-    /// The Byzantium hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub byzantium_block: Option<u64>,
-
-    /// The Constantinople hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub constantinople_block: Option<u64>,
-
-    /// The Petersburg hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub petersburg_block: Option<u64>,
-
-    /// The Istanbul hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub istanbul_block: Option<u64>,
-
-    /// The Muir Glacier hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub muir_glacier_block: Option<u64>,
-
-    /// The Berlin hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub berlin_block: Option<u64>,
-
-    /// The London hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub london_block: Option<u64>,
-
-    /// The Arrow Glacier hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub arrow_glacier_block: Option<u64>,
-
-    /// The Gray Glacier hard fork block.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub gray_glacier_block: Option<u64>,
-
-    /// Virtual fork after the merge to use as a network splitter.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub merge_netsplit_block: Option<u64>,
-
-    /// Shanghai switch time.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub shanghai_time: Option<u64>,
-
-    /// Cancun switch time.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub cancun_time: Option<u64>,
-
-    /// Total difficulty reached that triggers the merge consensus upgrade.
-    #[serde(skip_serializing_if = "Option::is_none", deserialize_with = "from_int_or_hex_opt")]
-    pub terminal_total_difficulty: Option<U256>,
-
-    /// A flag specifying that the network already passed the terminal total difficulty. Its
-    /// purpose is to disable legacy sync without having seen the TTD locally.
-    pub terminal_total_difficulty_passed: bool,
 
     /// Ethash parameters.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -866,14 +764,6 @@ mod tests {
             config: NetworkConfig {
                 ethash: Some(EthashConfig{}),
                 network_id: 10,
-                homestead_block: Some(0),
-                eip150_block: Some(0),
-                eip155_block: Some(0),
-                eip158_block: Some(0),
-                byzantium_block: Some(0),
-                constantinople_block: Some(0),
-                petersburg_block: Some(0),
-                istanbul_block: Some(0),
                 ..Default::default()
             },
             ..Default::default()

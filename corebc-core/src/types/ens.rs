@@ -6,7 +6,7 @@ use std::{cmp::Ordering, str::FromStr};
 /// ENS name or Ethereum Address. Not RLP encoded/serialized if it's a name.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum NameOrAddress {
-    /// An ENS Name (format does not get checked)
+    /// An CNS Name (format does not get checked)
     Name(String),
     /// An Ethereum Address
     Address(Address),
@@ -33,7 +33,7 @@ impl Encodable for NameOrAddress {
 impl Decodable for NameOrAddress {
     fn decode(rlp: &rlp::Rlp) -> Result<Self, rlp::DecoderError> {
         if !rlp.is_data() {
-            return Err(rlp::DecoderError::RlpExpectedToBeData)
+            return Err(rlp::DecoderError::RlpExpectedToBeData);
         }
 
         // the data needs to be 22 bytes long - ICAN Address

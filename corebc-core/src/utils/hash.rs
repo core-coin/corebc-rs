@@ -3,17 +3,10 @@
 use ethabi::ethereum_types::H256;
 use tiny_keccak::{Hasher, Sha3};
 
-/// Hash a message according to [EIP-191] (version `0x01`).
-///
 /// The final message is a UTF-8 string, encoded as follows:
-/// `"\x19Ethereum Signed Message:\n" + message.length + message`
-///
-/// This message is then hashed using [Keccak-256](keccak256).
-///
-/// [EIP-191]: https://eips.ethereum.org/EIPS/eip-191
-/// CORETODO: Change the prefix.
+/// `"\x19Core Signed Message:\n" + message.length + message`
 pub fn hash_message<T: AsRef<[u8]>>(message: T) -> H256 {
-    const PREFIX: &str = "\x19Ethereum Signed Message:\n";
+    const PREFIX: &str = "\x19Core Signed Message:\n";
 
     let message = message.as_ref();
     let len = message.len();
@@ -27,7 +20,7 @@ pub fn hash_message<T: AsRef<[u8]>>(message: T) -> H256 {
     H256(sha3(&eth_message))
 }
 
-/// Compute the Keccak-256 hash of input bytes.
+/// Compute the Sha3-256 hash of input bytes.
 ///
 /// Note that strings are interpreted as UTF-8 bytes,
 // TODO: Add Solidity Keccak256 packing support
