@@ -117,7 +117,7 @@ impl GoCoreInstance {
             // gocore ids are trunated
             let truncated_id = hex::encode(&id.0[..8]);
             if line.contains("Adding p2p peer") && line.contains(&truncated_id) {
-                return Ok(())
+                return Ok(());
             }
         }
         Err(GoCoreInstanceError::Timeout("Timed out waiting for gocore to add a peer".into()))
@@ -194,7 +194,6 @@ impl Default for PrivateNetOptions {
 pub struct GoCore {
     program: Option<PathBuf>,
     port: Option<u16>,
-    authrpc_port: Option<u16>,
     ipc_path: Option<PathBuf>,
     data_dir: Option<PathBuf>,
     network_id: Option<u64>,
@@ -338,12 +337,6 @@ impl GoCore {
         self
     }
 
-    /// Sets the port for authenticated RPC connections.
-    pub fn authrpc_port(mut self, port: u16) -> Self {
-        self.authrpc_port = Some(port);
-        self
-    }
-
     /// Consumes the builder and spawns `gocore`.
     ///
     /// # Panics
@@ -386,10 +379,6 @@ impl GoCore {
         if is_clique {
             self.inner_disable_discovery();
         }
-
-        // Set the port for authenticated APIs
-        let authrpc_port = self.authrpc_port.unwrap_or_else(&mut unused_port);
-        cmd.arg("--authrpc.port").arg(authrpc_port.to_string());
 
         // use gocore init to initialize the datadir if the genesis exists
         if is_clique {
@@ -538,14 +527,14 @@ impl GoCore {
 
             // gocore 1.9.23 uses "server started" while 1.9.18 uses "endpoint opened"
             // the unauthenticated api is used for regular non-engine API requests
-            if line.contains("HTTP endpoint opened") ||
-                (line.contains("HTTP server started") && !line.contains("auth=true"))
+            if line.contains("HTTP endpoint opened")
+                || (line.contains("HTTP server started") && !line.contains("auth=true"))
             {
                 http_started = true;
             }
 
             if p2p_started && http_started {
-                break
+                break;
             }
         }
 
