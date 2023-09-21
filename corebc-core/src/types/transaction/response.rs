@@ -1,5 +1,5 @@
 //! Transaction types
-use super::{decode_signature, decode_to, rlp_opt};
+use super::{decode_signature, decode_to, eip2718::TypedTransaction, rlp_opt};
 use crate::{
     types::{
         transaction::extract_network_id, Address, Bloom, Bytes, Log, Signature, SignatureError,
@@ -118,14 +118,9 @@ impl Transaction {
 
     /// Recover the sender of the tx from signature
     pub fn recover_from(&self) -> Result<Address, SignatureError> {
+        let typed_tx: TypedTransaction = self.into();
         let signature = Signature { r: self.r, s: self.s, v: self.v.as_u64() };
-        signature.recover(self.sighash())
-    }
-
-    /// Hashes the transaction's data. Does not double-RLP encode
-    pub fn sighash(&self) -> H256 {
-        let encoded = self.rlp();
-        sha3(encoded).into()
+        signature.recover(typed_tx.sighash())
     }
 
     /// Recover the sender of the tx from signature and set the from field
