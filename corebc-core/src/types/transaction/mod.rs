@@ -39,7 +39,7 @@ pub(crate) fn extract_network_id(v: u64) -> Option<crate::types::U64> {
     // https://eips.ethereum.org/EIPS/eip-155
     // if networkid is available, v = {0, 1} + NETWORK_ID * 2 + 35
     if v >= 35 {
-        return Some(crate::types::U64::from((v - 35) >> 1));
+        return Some(crate::types::U64::from((v - 35) >> 1))
     }
     None
 }
@@ -73,7 +73,7 @@ fn decode_to(
             if to.is_data() {
                 None
             } else {
-                return Err(rlp::DecoderError::RlpExpectedToBeData);
+                return Err(rlp::DecoderError::RlpExpectedToBeData)
             }
         } else {
             Some(to.as_val()?)

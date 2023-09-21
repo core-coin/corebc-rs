@@ -117,7 +117,7 @@ impl GoCoreInstance {
             // gocore ids are trunated
             let truncated_id = hex::encode(&id.0[..8]);
             if line.contains("Adding p2p peer") && line.contains(&truncated_id) {
-                return Ok(());
+                return Ok(())
             }
         }
         Err(GoCoreInstanceError::Timeout("Timed out waiting for gocore to add a peer".into()))
@@ -527,14 +527,14 @@ impl GoCore {
 
             // gocore 1.9.23 uses "server started" while 1.9.18 uses "endpoint opened"
             // the unauthenticated api is used for regular non-engine API requests
-            if line.contains("HTTP endpoint opened")
-                || (line.contains("HTTP server started") && !line.contains("auth=true"))
+            if line.contains("HTTP endpoint opened") ||
+                (line.contains("HTTP server started") && !line.contains("auth=true"))
             {
                 http_started = true;
             }
 
             if p2p_started && http_started {
-                break;
+                break
             }
         }
 
