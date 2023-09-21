@@ -201,6 +201,9 @@ impl TransactionRequest {
         txn.energy = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
 
+        txn.network_id = Some(rlp.at(*offset)?.as_val()?);
+        *offset += 1;
+
         txn.to = decode_to(rlp, offset)?.map(NameOrAddress::Address);
         txn.value = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
