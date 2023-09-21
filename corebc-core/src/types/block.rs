@@ -22,7 +22,6 @@ pub struct Block<TX> {
     #[serde(default, rename = "parentHash")]
     pub parent_hash: H256,
     /// Hash of the uncles
-    #[cfg(not(feature = "celo"))]
     #[serde(default, rename = "sha3Uncles")]
     pub uncles_hash: H256,
     /// Miner/author's address. None if pending.
@@ -40,12 +39,11 @@ pub struct Block<TX> {
     /// Block number. None if pending.
     pub number: Option<U64>,
     /// Gas Used
-    #[serde(default, rename = "gasUsed")]
-    pub gas_used: U256,
+    #[serde(default, rename = "energyUsed")]
+    pub energy_used: U256,
     /// Gas Limit
-    #[cfg(not(feature = "celo"))]
-    #[serde(default, rename = "gasLimit")]
-    pub gas_limit: U256,
+    #[serde(default, rename = "energyLimit")]
+    pub energy_limit: U256,
     /// Extra data
     #[serde(default, rename = "extraData")]
     pub extra_data: Bytes,
@@ -56,7 +54,6 @@ pub struct Block<TX> {
     #[serde(default)]
     pub timestamp: U256,
     /// Difficulty
-    #[cfg(not(feature = "celo"))]
     #[serde(default)]
     pub difficulty: U256,
     /// Total difficulty
@@ -66,7 +63,6 @@ pub struct Block<TX> {
     #[serde(default, rename = "sealFields", deserialize_with = "deserialize_null_default")]
     pub seal_fields: Vec<Bytes>,
     /// Uncles' hashes
-    #[cfg(not(feature = "celo"))]
     #[serde(default)]
     pub uncles: Vec<H256>,
     /// Transactions
@@ -76,30 +72,9 @@ pub struct Block<TX> {
     pub size: Option<U256>,
     /// Mix Hash
     #[serde(rename = "mixHash")]
-    #[cfg(not(feature = "celo"))]
     pub mix_hash: Option<H256>,
     /// Nonce
-    #[cfg(not(feature = "celo"))]
     pub nonce: Option<crate::types::H64>,
-    /// Base fee per unit of gas (if past London)
-    #[serde(rename = "baseFeePerGas")]
-    pub base_fee_per_gas: Option<U256>,
-
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    /// The block's randomness
-    pub randomness: Randomness,
-
-    /// BLS signatures with a SNARK-friendly hash function
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(rename = "epochSnarkData", default)]
-    pub epoch_snark_data: Option<EpochSnarkData>,
-
-    /// Captures unknown fields such as additional fields used by L2s
-    #[cfg(not(feature = "celo"))]
-    #[serde(flatten)]
-    pub other: crate::types::OtherFields,
 }
 
 fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
@@ -123,53 +98,7 @@ pub enum TimeError {
     TimestampOverflow,
 }
 
-// ref <https://eips.ethereum.org/EIPS/eip-1559>
-#[cfg(not(feature = "celo"))]
-pub const ELASTICITY_MULTIPLIER: U256 = U256([2u64, 0, 0, 0]);
-// max base fee delta is 12.5%
-#[cfg(not(feature = "celo"))]
-pub const BASE_FEE_MAX_CHANGE_DENOMINATOR: U256 = U256([8u64, 0, 0, 0]);
-
 impl<TX> Block<TX> {
-    /// The target gas usage as per EIP-1559
-    #[cfg(not(feature = "celo"))]
-    pub fn gas_target(&self) -> U256 {
-        self.gas_limit / ELASTICITY_MULTIPLIER
-    }
-
-    /// The next block's base fee, it is a function of parent block's base fee and gas usage.
-    /// Reference: <https://eips.ethereum.org/EIPS/eip-1559>
-    #[cfg(not(feature = "celo"))]
-    pub fn next_block_base_fee(&self) -> Option<U256> {
-        use core::cmp::Ordering;
-
-        let target_usage = self.gas_target();
-        let base_fee_per_gas = self.base_fee_per_gas?;
-
-        match self.gas_used.cmp(&target_usage) {
-            Ordering::Greater => {
-                let gas_used_delta = self.gas_used - self.gas_target();
-                let base_fee_per_gas_delta = U256::max(
-                    base_fee_per_gas * gas_used_delta /
-                        target_usage /
-                        BASE_FEE_MAX_CHANGE_DENOMINATOR,
-                    U256::from(1u32),
-                );
-                let expected_base_fee_per_gas = base_fee_per_gas + base_fee_per_gas_delta;
-                Some(expected_base_fee_per_gas)
-            }
-            Ordering::Less => {
-                let gas_used_delta = self.gas_target() - self.gas_used;
-                let base_fee_per_gas_delta = base_fee_per_gas * gas_used_delta /
-                    target_usage /
-                    BASE_FEE_MAX_CHANGE_DENOMINATOR;
-                let expected_base_fee_per_gas = base_fee_per_gas - base_fee_per_gas_delta;
-                Some(expected_base_fee_per_gas)
-            }
-            Ordering::Equal => self.base_fee_per_gas,
-        }
-    }
-
     /// Parse [`Self::timestamp`] into a [`DateTime<Utc>`].
     ///
     /// # Errors
@@ -194,7 +123,6 @@ impl<TX> Block<TX> {
 impl Block<TxHash> {
     /// Converts this block that only holds transaction hashes into a full block with `Transaction`
     pub fn into_full_block(self, transactions: Vec<Transaction>) -> Block<Transaction> {
-        #[cfg(not(feature = "celo"))]
         {
             let Block {
                 hash,
@@ -205,8 +133,8 @@ impl Block<TxHash> {
                 transactions_root,
                 receipts_root,
                 number,
-                gas_used,
-                gas_limit,
+                energy_used,
+                energy_limit,
                 extra_data,
                 logs_bloom,
                 timestamp,
@@ -217,8 +145,6 @@ impl Block<TxHash> {
                 size,
                 mix_hash,
                 nonce,
-                base_fee_per_gas,
-                other,
                 ..
             } = self;
             Block {
@@ -230,8 +156,8 @@ impl Block<TxHash> {
                 transactions_root,
                 receipts_root,
                 number,
-                gas_used,
-                gas_limit,
+                energy_used,
+                energy_limit,
                 extra_data,
                 logs_bloom,
                 timestamp,
@@ -242,53 +168,6 @@ impl Block<TxHash> {
                 size,
                 mix_hash,
                 nonce,
-                base_fee_per_gas,
-                transactions,
-                other,
-            }
-        }
-
-        #[cfg(feature = "celo")]
-        {
-            let Block {
-                hash,
-                parent_hash,
-                author,
-                state_root,
-                transactions_root,
-                receipts_root,
-                number,
-                gas_used,
-                extra_data,
-                logs_bloom,
-                timestamp,
-                total_difficulty,
-                seal_fields,
-                size,
-                base_fee_per_gas,
-                randomness,
-                epoch_snark_data,
-                ..
-            } = self;
-
-            Block {
-                hash,
-                parent_hash,
-                author,
-                state_root,
-                transactions_root,
-                receipts_root,
-                number,
-                gas_used,
-                extra_data,
-                logs_bloom,
-                timestamp,
-                total_difficulty,
-                seal_fields,
-                size,
-                base_fee_per_gas,
-                randomness,
-                epoch_snark_data,
                 transactions,
             }
         }
@@ -297,7 +176,6 @@ impl Block<TxHash> {
 
 impl From<Block<Transaction>> for Block<TxHash> {
     fn from(full: Block<Transaction>) -> Self {
-        #[cfg(not(feature = "celo"))]
         {
             let Block {
                 hash,
@@ -308,8 +186,8 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 transactions_root,
                 receipts_root,
                 number,
-                gas_used,
-                gas_limit,
+                energy_used,
+                energy_limit,
                 extra_data,
                 logs_bloom,
                 timestamp,
@@ -321,8 +199,6 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 size,
                 mix_hash,
                 nonce,
-                base_fee_per_gas,
-                other,
             } = full;
             Block {
                 hash,
@@ -333,8 +209,8 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 transactions_root,
                 receipts_root,
                 number,
-                gas_used,
-                gas_limit,
+                energy_used,
+                energy_limit,
                 extra_data,
                 logs_bloom,
                 timestamp,
@@ -345,78 +221,10 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 size,
                 mix_hash,
                 nonce,
-                base_fee_per_gas,
-                transactions: transactions.iter().map(|tx| tx.hash).collect(),
-                other,
-            }
-        }
-
-        #[cfg(feature = "celo")]
-        {
-            let Block {
-                hash,
-                parent_hash,
-                author,
-                state_root,
-                transactions_root,
-                receipts_root,
-                number,
-                gas_used,
-                extra_data,
-                logs_bloom,
-                timestamp,
-                total_difficulty,
-                seal_fields,
-                transactions,
-                size,
-                base_fee_per_gas,
-                randomness,
-                epoch_snark_data,
-            } = full;
-
-            Block {
-                hash,
-                parent_hash,
-                author,
-                state_root,
-                transactions_root,
-                receipts_root,
-                number,
-                gas_used,
-                extra_data,
-                logs_bloom,
-                timestamp,
-                total_difficulty,
-                seal_fields,
-                size,
-                base_fee_per_gas,
-                randomness,
-                epoch_snark_data,
                 transactions: transactions.iter().map(|tx| tx.hash).collect(),
             }
         }
     }
-}
-
-/// Commit-reveal data for generating randomness in the
-/// [Celo protocol](https://docs.celo.org/celo-codebase/protocol/identity/randomness)
-#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
-#[cfg(feature = "celo")]
-pub struct Randomness {
-    /// The committed randomness for that block
-    pub committed: Bytes,
-    /// The revealed randomness for that block
-    pub revealed: Bytes,
-}
-
-/// SNARK-friendly epoch block signature and bitmap
-#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
-#[cfg(feature = "celo")]
-pub struct EpochSnarkData {
-    /// The bitmap showing which validators signed on the epoch block
-    pub bitmap: Bytes,
-    /// Signature using a SNARK-friendly hash
-    pub signature: Bytes,
 }
 
 /// A [block hash](H256) or [block number](BlockNumber).
@@ -666,7 +474,6 @@ impl fmt::Display for BlockNumber {
 }
 
 #[cfg(test)]
-#[cfg(not(feature = "celo"))]
 mod tests {
     use super::*;
     use crate::types::{Transaction, TxHash};
@@ -770,94 +577,24 @@ mod tests {
 
     #[test]
     fn deserialize_blk_no_txs() {
-        let block = r#"{"number":"0x3","hash":"0xda53da08ef6a3cbde84c33e51c04f68c3853b6a3731f10baa2324968eee63972","parentHash":"0x689c70c080ca22bc0e681694fa803c1aba16a69c8b6368fed5311d279eb9de90","mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000","nonce":"0x0000000000000000","sha3Uncles":"0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347","logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","transactionsRoot":"0x7270c1c4440180f2bd5215809ee3d545df042b67329499e1ab97eb759d31610d","stateRoot":"0x29f32984517a7d25607da485b23cefabfd443751422ca7e603395e1de9bc8a4b","receiptsRoot":"0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2","miner":"0x00000000000000000000000000000000000000000000","difficulty":"0x0","totalDifficulty":"0x0","extraData":"0x","size":"0x3e8","gasLimit":"0x6691b7","gasUsed":"0x5208","timestamp":"0x5ecedbb9","transactions":["0xc3c5f700243de37ae986082fd2af88d2a7c2752a0c0f7b9d6ac47c729d45e067"],"uncles":[]}"#;
+        let block = r#"{"number":"0x3","hash":"0xda53da08ef6a3cbde84c33e51c04f68c3853b6a3731f10baa2324968eee63972","parentHash":"0x689c70c080ca22bc0e681694fa803c1aba16a69c8b6368fed5311d279eb9de90","mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000","nonce":"0x0000000000000000","sha3Uncles":"0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347","logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","transactionsRoot":"0x7270c1c4440180f2bd5215809ee3d545df042b67329499e1ab97eb759d31610d","stateRoot":"0x29f32984517a7d25607da485b23cefabfd443751422ca7e603395e1de9bc8a4b","receiptsRoot":"0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2","miner":"0x00000000000000000000000000000000000000000000","difficulty":"0x0","totalDifficulty":"0x0","extraData":"0x","size":"0x3e8","energyLimit":"0x6691b7","energyUsed":"0x5208","timestamp":"0x5ecedbb9","transactions":["0xc3c5f700243de37ae986082fd2af88d2a7c2752a0c0f7b9d6ac47c729d45e067"],"uncles":[]}"#;
         let _block: Block<TxHash> = serde_json::from_str(block).unwrap();
     }
 
     #[test]
     fn deserialize_blk_with_txs() {
-        let block = r#"{"number":"0x3","hash":"0xda53da08ef6a3cbde84c33e51c04f68c3853b6a3731f10baa2324968eee63972","parentHash":"0x689c70c080ca22bc0e681694fa803c1aba16a69c8b6368fed5311d279eb9de90","mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000","nonce":"0x0000000000000000","sha3Uncles":"0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347","logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","transactionsRoot":"0x7270c1c4440180f2bd5215809ee3d545df042b67329499e1ab97eb759d31610d","stateRoot":"0x29f32984517a7d25607da485b23cefabfd443751422ca7e603395e1de9bc8a4b","receiptsRoot":"0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2","miner":"0x00000000000000000000000000000000000000000000","difficulty":"0x0","totalDifficulty":"0x0","extraData":"0x","size":"0x3e8","gasLimit":"0x6691b7","gasUsed":"0x5208","timestamp":"0x5ecedbb9","transactions":[{"hash":"0xc3c5f700243de37ae986082fd2af88d2a7c2752a0c0f7b9d6ac47c729d45e067","nonce":"0x2","blockHash":"0xda53da08ef6a3cbde84c33e51c04f68c3853b6a3731f10baa2324968eee63972","blockNumber":"0x3","transactionIndex":"0x0","from":"0xfdcedc3bfca10ecb0890337fbdd1977aba848000007a","to":"0xdca8ce283150ab773bcbeb8d38289bdb5661d0000e1e","value":"0x0","gas":"0x15f90","gasPrice":"0x4a817c800","input":"0x","v":"0x25","r":"0x19f2694eb9113656dbea0b925e2e7ceb43df83e601c4116aee9c0dd99130be88","s":"0x73e5764b324a4f7679d890a198ba658ba1c8cd36983ff9797e10b1b89dbb448e"}],"uncles":[]}"#;
+        let block = r#"{"number":"0x3","hash":"0xda53da08ef6a3cbde84c33e51c04f68c3853b6a3731f10baa2324968eee63972","parentHash":"0x689c70c080ca22bc0e681694fa803c1aba16a69c8b6368fed5311d279eb9de90","mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000","nonce":"0x0000000000000000","sha3Uncles":"0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347","logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","transactionsRoot":"0x7270c1c4440180f2bd5215809ee3d545df042b67329499e1ab97eb759d31610d","stateRoot":"0x29f32984517a7d25607da485b23cefabfd443751422ca7e603395e1de9bc8a4b","receiptsRoot":"0x056b23fbba480696b65fe5a59b8f2148a1299103c4f57df839233af2cf4ca2d2","miner":"0x00000000000000000000000000000000000000000000","difficulty":"0x0","totalDifficulty":"0x0","extraData":"0x","size":"0x3e8","energyLimit":"0x6691b7","energyUsed":"0x5208","timestamp":"0x5ecedbb9","transactions":[{"hash":"0xc3c5f700243de37ae986082fd2af88d2a7c2752a0c0f7b9d6ac47c729d45e067","nonce":"0x2","blockHash":"0xda53da08ef6a3cbde84c33e51c04f68c3853b6a3731f10baa2324968eee63972","blockNumber":"0x3","transactionIndex":"0x0","from":"0xfdcedc3bfca10ecb0890337fbdd1977aba848000007a","to":"0xdca8ce283150ab773bcbeb8d38289bdb5661d0000e1e","value":"0x0","energy":"0x15f90","energyPrice":"0x4a817c800","input":"0x","v":"0x25","r":"0x19f2694eb9113656dbea0b925e2e7ceb43df83e601c4116aee9c0dd99130be88","s":"0x73e5764b324a4f7679d890a198ba658ba1c8cd36983ff9797e10b1b89dbb448e"}],"uncles":[]}"#;
         let _block: Block<Transaction> = serde_json::from_str(block).unwrap();
-    }
-
-    #[test]
-    // <https://github.com/tomusdrw/rust-web3/commit/3a32ee962c0f2f8d50a5e25be9f2dfec7ae0750d>
-    fn post_london_block() {
-        let json = serde_json::json!(
-        {
-            "baseFeePerGas": "0x7",
-            "miner": "0x00000000000000000000000000000000000000000001",
-            "number": "0x1b4",
-            "hash": "0x0e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331",
-            "parentHash": "0x9646252be9520f6e71339a8df9c55e4d7619deeb018d2a3f2d21fc165dde5eb5",
-            "mixHash": "0x1010101010101010101010101010101010101010101010101010101010101010",
-            "nonce": "0x0000000000000000",
-            "sealFields": [
-              "0xe04d296d2460cfb8472af2c5fd05b5a214109c25688d3704aed5484f9a7792f2",
-              "0x0000000000000042"
-            ],
-            "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-            "logsBloom":  "0x0e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d15273310e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d15273310e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d15273310e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d15273310e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d15273310e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d15273310e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d15273310e670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331",
-            "transactionsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-            "receiptsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-            "stateRoot": "0xd5855eb08b3387c0af375e9cdb6acfc05eb8f519e419b874b6ff2ffda7ed1dff",
-            "difficulty": "0x27f07",
-            "totalDifficulty": "0x27f07",
-            "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000",
-            "size": "0x27f07",
-            "gasLimit": "0x9f759",
-            "minGasPrice": "0x9f759",
-            "gasUsed": "0x9f759",
-            "timestamp": "0x54e34e8e",
-            "transactions": [],
-            "uncles": []
-          }
-        );
-
-        let block: Block<()> = serde_json::from_value(json).unwrap();
-        assert_eq!(block.base_fee_per_gas, Some(U256::from(7)));
-    }
-
-    #[test]
-    fn test_next_block_base_fee() {
-        // <https://etherscan.io/block/14402566>
-        let block_14402566: Block<TxHash> = Block {
-            number: Some(U64::from(14402566u64)),
-            base_fee_per_gas: Some(U256::from(36_803_013_756u128)),
-            gas_limit: U256::from(30_087_887u128),
-            gas_used: U256::from(2_023_848u128),
-            ..Default::default()
-        };
-
-        assert_eq!(block_14402566.base_fee_per_gas, Some(U256::from(36_803_013_756u128)));
-        assert_eq!(block_14402566.gas_target(), U256::from(15_043_943u128));
-        // next block decreasing base fee https://etherscan.io/block/14402567
-        assert_eq!(block_14402566.next_block_base_fee(), Some(U256::from(32_821_521_542u128)));
-
-        // https://etherscan.io/block/14402712
-        let block_14402712: Block<TxHash> = Block {
-            number: Some(U64::from(14402712u64)),
-            base_fee_per_gas: Some(U256::from(24_870_031_149u128)),
-            gas_limit: U256::from(30_000_000u128),
-            gas_used: U256::from(29_999_374u128),
-            ..Default::default()
-        };
-
-        assert_eq!(block_14402712.base_fee_per_gas, Some(U256::from(24_870_031_149u128)));
-        assert_eq!(block_14402712.gas_target(), U256::from(15_000_000u128));
-        // next block increasing base fee https://etherscan.io/block/14402713
-        assert_eq!(block_14402712.next_block_base_fee(), Some(U256::from(27_978_655_303u128)));
     }
 
     #[test]
     fn pending_block() {
         let json = serde_json::json!(
         {
-          "baseFeePerGas": "0x3a460775a",
           "difficulty": "0x329b1f81605a4a",
           "extraData": "0xd983010a0d846765746889676f312e31362e3130856c696e7578",
-          "gasLimit": "0x1c950d9",
-          "gasUsed": "0x1386f81",
+          "energyLimit": "0x1c950d9",
+          "energyUsed": "0x1386f81",
           "hash": null,
           "logsBloom": "0x5a3fc3425505bf83b1ebe6ffead1bbfdfcd6f9cfbd1e5fb7fbc9c96b1bbc2f2f6bfef959b511e4f0c7d3fbc60194fbff8bcff8e7b8f6ba9a9a956fe36473ed4deec3f1bc67f7dabe48f71afb377bdaa47f8f9bb1cd56930c7dfcbfddf283f9697fb1db7f3bedfa3e4dfd9fae4fb59df8ac5d9c369bff14efcee59997df8bb16d47d22f0bfbafb29fbfff6e1e41bca61e37e7bdfde1fe27b9fd3a7adfcb74fe98e6dbcc5f5bb3bd4d4bb6ccd29fd3bd446c7f38dcaf7ff78fb3f3aa668cbffe56291d7fbbebd2549fdfd9f223b3ba61dee9e92ebeb5dc967f711d039ff1cb3c3a8fb3b7cbdb29e6d1e79e6b95c596dfe2be36fd65a4f6fdeebe7efbe6e38037d7",
           "miner": null,
@@ -901,8 +638,8 @@ mod tests {
           "mixHash": "0x4fffe9ae21f1c9e15207b1f472d5bbdd68c9595d461666602f2be20daf5e7843",
           "extraData": "0x476574682f4c5649562f76312e302e302f6c696e75782f676f312e342e32",
           "size": "0x0",
-          "gasLimit": "0x1388",
-          "gasUsed": "0x0",
+          "energyLimit": "0x1388",
+          "energyUsed": "0x0",
           "timestamp": "0x55ba467c",
           "transactions": [],
           "uncles": []

@@ -1,8 +1,5 @@
 //! Transaction types
-use super::{
-    decode_signature, decode_to, eip2718::TypedTransaction, eip2930::AccessList, normalize_v,
-    rlp_opt, rlp_opt_list,
-};
+use super::{decode_signature, decode_to, rlp_opt};
 use crate::{
     types::{
         transaction::extract_network_id, Address, Bloom, Bytes, Log, Signature, SignatureError,
@@ -46,12 +43,12 @@ pub struct Transaction {
     /// Transferred value
     pub value: U256,
 
-    /// Gas Price, null for Type 2 transactions
-    #[serde(rename = "gasPrice")]
-    pub gas_price: Option<U256>,
+    /// energy Price
+    #[serde(rename = "energyPrice")]
+    pub energy_price: U256,
 
-    /// Gas amount
-    pub gas: U256,
+    /// Energy amount
+    pub energy: U256,
 
     /// Input data
     pub input: Bytes,
@@ -65,73 +62,11 @@ pub struct Transaction {
     /// ECDSA signature s
     pub s: U256,
 
-    /////////////////  Celo-specific transaction fields /////////////////
-    /// The currency fees are paid in (None for native currency)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none", rename = "feeCurrency")]
-    pub fee_currency: Option<Address>,
-
-    /// Gateway fee recipient (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none", rename = "gatewayFeeRecipient")]
-    pub gateway_fee_recipient: Option<Address>,
-
-    /// Gateway fee amount (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none", rename = "gatewayFee")]
-    pub gateway_fee: Option<U256>,
-
-    // EIP2718
-    /// Transaction type, Some(2) for EIP-1559 transaction,
-    /// Some(1) for AccessList transaction, None for Legacy
-    #[serde(rename = "type", default, skip_serializing_if = "Option::is_none")]
-    pub transaction_type: Option<U64>,
-
-    // EIP2930
-    #[serde(rename = "accessList", default, skip_serializing_if = "Option::is_none")]
-    pub access_list: Option<AccessList>,
-
-    #[serde(rename = "maxPriorityFeePerGas", default, skip_serializing_if = "Option::is_none")]
-    /// Represents the maximum tx fee that will go to the miner as part of the user's
-    /// fee payment. It serves 3 purposes:
-    /// 1. Compensates miners for the uncle/ommer risk + fixed costs of including transaction in a
-    /// block; 2. Allows users with high opportunity costs to pay a premium to miners;
-    /// 3. In times where demand exceeds the available block space (i.e. 100% full, 30mm gas),
-    /// this component allows first price auctions (i.e. the pre-1559 fee model) to happen on the
-    /// priority fee.
-    ///
-    /// More context [here](https://hackmd.io/@q8X_WM2nTfu6nuvAzqXiTQ/1559-wallets)
-    pub max_priority_fee_per_gas: Option<U256>,
-
-    #[serde(rename = "maxFeePerGas", default, skip_serializing_if = "Option::is_none")]
-    /// Represents the maximum amount that a user is willing to pay for their tx (inclusive of
-    /// baseFeePerGas and maxPriorityFeePerGas). The difference between maxFeePerGas and
-    /// baseFeePerGas + maxPriorityFeePerGas is “refunded” to the user.
-    pub max_fee_per_gas: Option<U256>,
-
     #[serde(rename = "networkId", default, skip_serializing_if = "Option::is_none")]
     pub network_id: Option<U256>,
-
-    /// Captures unknown fields such as additional fields used by L2s
-    #[cfg(not(feature = "celo"))]
-    #[serde(flatten)]
-    pub other: crate::types::OtherFields,
 }
 
 impl Transaction {
-    // modifies the RLP stream with the Celo-specific information
-    // This is duplicated from TransactionRequest. Is there a good way to get rid
-    // of this code duplication?
-    #[cfg(feature = "celo")]
-    fn inject_celo_metadata(&self, rlp: &mut RlpStream) {
-        rlp_opt(rlp, &self.fee_currency);
-        rlp_opt(rlp, &self.gateway_fee_recipient);
-        rlp_opt(rlp, &self.gateway_fee);
-    }
-
     pub fn hash(&self) -> H256 {
         sha3(self.rlp().as_ref()).into()
     }
@@ -140,154 +75,21 @@ impl Transaction {
         let mut rlp = RlpStream::new();
         rlp.begin_unbounded_list();
 
-        match self.transaction_type {
-            // EIP-2930 (0x01)
-            Some(x) if x == U64::from(1) => {
-                rlp_opt(&mut rlp, &self.network_id);
-                rlp.append(&self.nonce);
-                rlp_opt(&mut rlp, &self.gas_price);
-                rlp.append(&self.gas);
+        rlp.append(&self.nonce);
+        rlp.append(&self.energy_price);
+        rlp.append(&self.energy);
 
-                #[cfg(feature = "celo")]
-                self.inject_celo_metadata(&mut rlp);
-
-                rlp_opt(&mut rlp, &self.to);
-                rlp.append(&self.value);
-                rlp.append(&self.input.as_ref());
-                rlp_opt_list(&mut rlp, &self.access_list);
-                if let Some(network_id) = self.network_id {
-                    rlp.append(&normalize_v(self.v.as_u64(), U64::from(network_id.as_u64())));
-                }
-            }
-            // EIP-1559 (0x02)
-            Some(x) if x == U64::from(2) => {
-                rlp_opt(&mut rlp, &self.network_id);
-                rlp.append(&self.nonce);
-                rlp_opt(&mut rlp, &self.max_priority_fee_per_gas);
-                rlp_opt(&mut rlp, &self.max_fee_per_gas);
-                rlp.append(&self.gas);
-                rlp_opt(&mut rlp, &self.to);
-                rlp.append(&self.value);
-                rlp.append(&self.input.as_ref());
-                rlp_opt_list(&mut rlp, &self.access_list);
-                if let Some(network_id) = self.network_id {
-                    rlp.append(&normalize_v(self.v.as_u64(), U64::from(network_id.as_u64())));
-                }
-            }
-            // Legacy (0x00)
-            _ => {
-                rlp.append(&self.nonce);
-                rlp_opt(&mut rlp, &self.gas_price);
-                rlp.append(&self.gas);
-
-                #[cfg(feature = "celo")]
-                self.inject_celo_metadata(&mut rlp);
-
-                rlp_opt(&mut rlp, &self.to);
-                rlp.append(&self.value);
-                rlp.append(&self.input.as_ref());
-                rlp.append(&self.v);
-            }
-        }
-
+        rlp_opt(&mut rlp, &self.to);
+        rlp.append(&self.value);
+        rlp.append(&self.input.as_ref());
+        rlp.append(&self.v);
         rlp.append(&self.r);
         rlp.append(&self.s);
 
         rlp.finalize_unbounded_list();
 
         let rlp_bytes: Bytes = rlp.out().freeze().into();
-        let mut encoded = vec![];
-        match self.transaction_type {
-            Some(x) if x == U64::from(1) => {
-                encoded.extend_from_slice(&[0x1]);
-                encoded.extend_from_slice(rlp_bytes.as_ref());
-                encoded.into()
-            }
-            Some(x) if x == U64::from(2) => {
-                encoded.extend_from_slice(&[0x2]);
-                encoded.extend_from_slice(rlp_bytes.as_ref());
-                encoded.into()
-            }
-            _ => rlp_bytes,
-        }
-    }
-
-    /// Decodes the Celo-specific metadata starting at the RLP offset passed.
-    /// Increments the offset for each element parsed.
-    #[cfg(feature = "celo")]
-    #[inline]
-    fn decode_celo_metadata(
-        &mut self,
-        rlp: &rlp::Rlp,
-        offset: &mut usize,
-    ) -> Result<(), DecoderError> {
-        self.fee_currency = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.gateway_fee_recipient = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.gateway_fee = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        Ok(())
-    }
-
-    /// Decodes fields of the type 2 transaction response starting at the RLP offset passed.
-    /// Increments the offset for each element parsed.
-    #[inline]
-    fn decode_base_eip1559(
-        &mut self,
-        rlp: &rlp::Rlp,
-        offset: &mut usize,
-    ) -> Result<(), DecoderError> {
-        self.network_id = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.nonce = rlp.val_at(*offset)?;
-        *offset += 1;
-        self.max_priority_fee_per_gas = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.max_fee_per_gas = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.gas = rlp.val_at(*offset)?;
-        *offset += 1;
-        self.to = decode_to(rlp, offset)?;
-        self.value = rlp.val_at(*offset)?;
-        *offset += 1;
-        let input = rlp::Rlp::new(rlp.at(*offset)?.as_raw()).data()?;
-        self.input = Bytes::from(input.to_vec());
-        *offset += 1;
-        self.access_list = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        Ok(())
-    }
-
-    /// Decodes fields of the type 1 transaction response based on the RLP offset passed.
-    /// Increments the offset for each element parsed.
-    fn decode_base_eip2930(
-        &mut self,
-        rlp: &rlp::Rlp,
-        offset: &mut usize,
-    ) -> Result<(), DecoderError> {
-        self.network_id = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.nonce = rlp.val_at(*offset)?;
-        *offset += 1;
-        self.gas_price = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-        self.gas = rlp.val_at(*offset)?;
-        *offset += 1;
-
-        #[cfg(feature = "celo")]
-        self.decode_celo_metadata(rlp, offset)?;
-
-        self.to = decode_to(rlp, offset)?;
-        self.value = rlp.val_at(*offset)?;
-        *offset += 1;
-        let input = rlp::Rlp::new(rlp.at(*offset)?.as_raw()).data()?;
-        self.input = Bytes::from(input.to_vec());
-        *offset += 1;
-        self.access_list = Some(rlp.val_at(*offset)?);
-        *offset += 1;
-
-        Ok(())
+        rlp_bytes
     }
 
     /// Decodes a legacy transaction starting at the RLP offset passed.
@@ -300,13 +102,10 @@ impl Transaction {
     ) -> Result<(), DecoderError> {
         self.nonce = rlp.val_at(*offset)?;
         *offset += 1;
-        self.gas_price = Some(rlp.val_at(*offset)?);
+        self.energy_price = rlp.val_at(*offset)?;
         *offset += 1;
-        self.gas = rlp.val_at(*offset)?;
+        self.energy = rlp.val_at(*offset)?;
         *offset += 1;
-
-        #[cfg(feature = "celo")]
-        self.decode_celo_metadata(rlp, offset)?;
 
         self.to = decode_to(rlp, offset)?;
         self.value = rlp.val_at(*offset)?;
@@ -320,8 +119,13 @@ impl Transaction {
     /// Recover the sender of the tx from signature
     pub fn recover_from(&self) -> Result<Address, SignatureError> {
         let signature = Signature { r: self.r, s: self.s, v: self.v.as_u64() };
-        let typed_tx: TypedTransaction = self.into();
-        signature.recover(typed_tx.sighash())
+        signature.recover(self.sighash())
+    }
+
+    /// Hashes the transaction's data. Does not double-RLP encode
+    pub fn sighash(&self) -> H256 {
+        let encoded = self.rlp();
+        sha3(encoded).into()
     }
 
     /// Recover the sender of the tx from signature and set the from field
@@ -340,46 +144,16 @@ impl Decodable for Transaction {
         let mut offset = 0;
 
         // only untyped legacy transactions are lists
-        if rlp.is_list() {
-            // Legacy (0x00)
-            // use the original rlp
-            txn.decode_base_legacy(rlp, &mut offset)?;
-            let sig = decode_signature(rlp, &mut offset)?;
-            txn.r = sig.r;
-            txn.s = sig.s;
-            txn.v = sig.v.into();
-            // extract network id if legacy
-            txn.network_id = extract_network_id(sig.v).map(|id| id.as_u64().into());
-        } else {
-            // if it is not enveloped then we need to use rlp.as_raw instead of rlp.data
-            let first_byte = rlp.as_raw()[0];
-            let (first, data) = if first_byte <= 0x7f {
-                (first_byte, rlp.as_raw())
-            } else {
-                let data = rlp.data()?;
-                let first = *data.first().ok_or(DecoderError::Custom("empty slice"))?;
-                (first, data)
-            };
-
-            let bytes = data.get(1..).ok_or(DecoderError::Custom("no tx body"))?;
-            let rest = rlp::Rlp::new(bytes);
-            match first {
-                0x01 => {
-                    txn.decode_base_eip2930(&rest, &mut offset)?;
-                    txn.transaction_type = Some(1u64.into());
-                }
-                0x02 => {
-                    txn.decode_base_eip1559(&rest, &mut offset)?;
-                    txn.transaction_type = Some(2u64.into());
-                }
-                _ => return Err(DecoderError::Custom("invalid tx type")),
-            }
-
-            let odd_y_parity: bool = rest.val_at(offset)?;
-            txn.v = (odd_y_parity as u8).into();
-            txn.r = rest.val_at(offset + 1)?;
-            txn.s = rest.val_at(offset + 2)?;
-        }
+        // Legacy (0x00)
+        // use the original rlp
+        txn.decode_base_legacy(rlp, &mut offset)?;
+        let sig = decode_signature(rlp, &mut offset)?;
+        txn.r = sig.r;
+        txn.s = sig.s;
+        txn.v = sig.v.into();
+        // extract network id if legacy
+        // CORE: Cryptochange
+        txn.network_id = extract_network_id(sig.v).map(|id| id.as_u64().into());
 
         Ok(txn)
     }
@@ -404,14 +178,14 @@ pub struct TransactionReceipt {
     pub from: Address,
     // address of the receiver. null when its a contract creation transaction.
     pub to: Option<Address>,
-    /// Cumulative gas used within the block after this was executed.
-    #[serde(rename = "cumulativeGasUsed")]
-    pub cumulative_gas_used: U256,
-    /// Gas used by this transaction alone.
+    /// Cumulative energy used within the block after this was executed.
+    #[serde(rename = "cumulativeEnergyUsed")]
+    pub cumulative_energy_used: U256,
+    /// Energy used by this transaction alone.
     ///
-    /// Gas used is `None` if the the client is running in light client mode.
-    #[serde(rename = "gasUsed")]
-    pub gas_used: Option<U256>,
+    /// Energy used is `None` if the the client is running in light client mode.
+    #[serde(rename = "energyUsed")]
+    pub energy_used: Option<U256>,
     /// Contract address created, or `None` if not a deployment.
     #[serde(rename = "contractAddress")]
     pub contract_address: Option<Address>,
@@ -425,25 +199,13 @@ pub struct TransactionReceipt {
     /// Logs bloom
     #[serde(rename = "logsBloom")]
     pub logs_bloom: Bloom,
-    /// Transaction type, Some(1) for AccessList transaction, None for Legacy
-    #[serde(rename = "type", default, skip_serializing_if = "Option::is_none")]
-    pub transaction_type: Option<U64>,
-    /// The price paid post-execution by the transaction (i.e. base fee + priority fee).
-    /// Both fields in 1559-style transactions are *maximums* (max fee + max priority fee), the
-    /// amount that's actually paid by users can only be determined post-execution
-    #[serde(rename = "effectiveGasPrice", default, skip_serializing_if = "Option::is_none")]
-    pub effective_gas_price: Option<U256>,
-    /// Captures unknown fields such as additional fields used by L2s
-    #[cfg(not(feature = "celo"))]
-    #[serde(flatten)]
-    pub other: crate::types::OtherFields,
 }
 
 impl rlp::Encodable for TransactionReceipt {
     fn rlp_append(&self, s: &mut RlpStream) {
         s.begin_list(4);
         rlp_opt(s, &self.status);
-        s.append(&self.cumulative_gas_used);
+        s.append(&self.cumulative_energy_used);
         s.append(&self.logs_bloom);
         s.append_list(&self.logs);
     }
@@ -472,7 +234,6 @@ impl PartialOrd<Self> for TransactionReceipt {
 }
 
 #[cfg(test)]
-#[cfg(not(feature = "celo"))]
 mod tests {
     use rlp::{Encodable, Rlp};
 
@@ -486,8 +247,8 @@ mod tests {
     "blockHash":"0x1d59ff54b1eb26b013ce3cb5fc9dab3705b415a67127a003c3e61eb445bb8df2",
     "blockNumber":"0x5daf3b",
     "from":"0x0000a7d9ddbe1f17865597fbd27ec712455208b6b76d",
-    "gas":"0xc350",
-    "gasPrice":"0x4a817c800",
+    "energy":"0xc350",
+    "energyPrice":"0x4a817c800",
     "hash":"0x88df016429689c079f3b2f6ad39fa052532c56795b733da78a91ebe6a713944b",
     "input":"0x68656c6c6f21",
     "nonce":"0x15",
@@ -511,8 +272,8 @@ mod tests {
             "from":"0x00001b67b03cdccfae10a2d80e52d3d026dbe2960ad0",
             "to":"0x0000986ee0c8b91a58e490ee59718cca41056cf55f24",
             "value":"0x2710",
-            "gas":"0x5208",
-            "gasPrice":"0x186a0",
+            "energy":"0x5208",
+            "energyPrice":"0x186a0",
             "input":"0x",
             "v":"0x25",
             "r":"0x75188beb2f601bb8cf52ef89f92a6ba2bb7edcf8e3ccde90548cc99cbea30b1e",
@@ -522,50 +283,9 @@ mod tests {
         .unwrap();
     }
 
-    // CORETODO: London hardfork was after
-    // #[test]
-    // fn decode_london_receipt() {
-    //     let receipt: TransactionReceipt =
-    // serde_json::from_value(serde_json::json!({"blockHash":"0x55ae43d3511e327dc532855510d110676d340aa1bbba369b4b98896d86559586","blockNumber":"0xa3d322","contractAddress":null,"cumulativeGasUsed":"0x207a5b","effectiveGasPrice":"0x3b9aca07","from":"0x0000541d6a0e9ca9e7a083e41e2e178eef9f22d7492e","gasUsed":"0x6a40","logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","status":"0x1","to":"0x00008210357f377e901f18e45294e86a2a32215cc3c9","transactionHash":"0x824384376c5972498c6fcafe71fd8cad1689f64e7d5e270d025a898638c0c34d","transactionIndex":"0xd", "type":"0x2"})).unwrap();
-    //     assert_eq!(receipt.transaction_type.unwrap().as_u64(), 2);
-    //     assert_eq!(receipt.effective_gas_price.unwrap().as_u64(), 0x3b9aca07);
-    // }
-
-    // #[test]
-    // fn decode_london_tx() {
-    //     let tx: Transaction =
-    // serde_json::from_value(serde_json::json!({"accessList":[{"address":"
-    // 0x8ba1f109551bd432803012645ac136ddd64dba72","storageKeys":["
-    // 0x0000000000000000000000000000000000000000000000000000000000000000","
-    // 0x0000000000000000000000000000000000000000000000000000000000000042"]}],"blockHash":"
-    // 0x55ae43d3511e327dc532855510d110676d340aa1bbba369b4b98896d86559586","blockNumber":"0xa3d322",
-    // "networkId":"0x3","from":"0x541d6a0e9ca9e7a083e41e2e178eef9f22d7492e","gas":"0x6a40","
-    // gasPrice" :"0x3b9aca07","hash":"
-    // 0x824384376c5972498c6fcafe71fd8cad1689f64e7d5e270d025a898638c0c34d"," input":"0x","
-    // maxFeePerGas":"0x3b9aca0e","maxPriorityFeePerGas":"0x3b9aca00","nonce":"0x2","r"
-    // :"0xf13b5088108f783f4b6048d4be456971118aabfb88be96bb541d734b6c2b20dc","s":"
-    // 0x13fb7eb25a7d5df42a176cd4c6a086e19163ed7cd8ffba015f939d24f66bc17a","to":"
-    // 0x8210357f377e901f18e45294e86a2a32215cc3c9","transactionIndex":"0xd","type":"0x2","v":"0x1","
-    // value":"0x7b"})).unwrap();     assert_eq!(tx.transaction_type.unwrap().as_u64(), 2);
-    //     let lst = AccessList(vec![AccessListItem {
-    //         address: "0x8ba1f109551bd432803012645ac136ddd64dba72".parse().unwrap(),
-    //         storage_keys: vec![
-    //             "0x0000000000000000000000000000000000000000000000000000000000000000"
-    //                 .parse()
-    //                 .unwrap(),
-    //             "0x0000000000000000000000000000000000000000000000000000000000000042"
-    //                 .parse()
-    //                 .unwrap(),
-    //         ],
-    //     }]);
-    //     assert_eq!(tx.access_list.unwrap(), lst);
-    //     assert_eq!(tx.max_fee_per_gas.unwrap().as_u64(), 0x3b9aca0e);
-    //     assert_eq!(tx.max_priority_fee_per_gas.unwrap().as_u64(), 0x3b9aca00);
-    // }
-
     #[test]
     fn tx_roundtrip() {
-        let json = serde_json::json!({"accessList":[{"address":"0x00008ba1f109551bd432803012645ac136ddd64dba72","storageKeys":["0x0000000000000000000000000000000000000000000000000000000000000000","0x0000000000000000000000000000000000000000000000000000000000000042"]}],"blockHash":"0x55ae43d3511e327dc532855510d110676d340aa1bbba369b4b98896d86559586","blockNumber":"0xa3d322","networkId":"0x3","from":"0x0000541d6a0e9ca9e7a083e41e2e178eef9f22d7492e","gas":"0x6a40","gasPrice":"0x3b9aca07","hash":"0x824384376c5972498c6fcafe71fd8cad1689f64e7d5e270d025a898638c0c34d","input":"0x","maxFeePerGas":"0x3b9aca0e","maxPriorityFeePerGas":"0x3b9aca00","nonce":"0x0","r":"0xf13b5088108f783f4b6048d4be456971118aabfb88be96bb541d734b6c2b20dc","s":"0x13fb7eb25a7d5df42a176cd4c6a086e19163ed7cd8ffba015f939d24f66bc17a","to":"0x00008210357f377e901f18e45294e86a2a32215cc3c9","transactionIndex":"0xd","type":"0x2","v":"0x1","value":"0x7b"});
+        let json = serde_json::json!({"blockHash":"0x55ae43d3511e327dc532855510d110676d340aa1bbba369b4b98896d86559586","blockNumber":"0xa3d322","networkId":"0x3","from":"0x0000541d6a0e9ca9e7a083e41e2e178eef9f22d7492e","energy":"0x6a40","energyPrice":"0x3b9aca07","hash":"0x824384376c5972498c6fcafe71fd8cad1689f64e7d5e270d025a898638c0c34d","input":"0x","nonce":"0x0","r":"0xf13b5088108f783f4b6048d4be456971118aabfb88be96bb541d734b6c2b20dc","s":"0x13fb7eb25a7d5df42a176cd4c6a086e19163ed7cd8ffba015f939d24f66bc17a","to":"0x00008210357f377e901f18e45294e86a2a32215cc3c9","transactionIndex":"0xd","v":"0x1","value":"0x7b"});
         let tx: Transaction = serde_json::from_value(json.clone()).unwrap();
         assert_eq!(tx.nonce, 0u64.into());
 
@@ -573,108 +293,14 @@ mod tests {
         assert_eq!(encoded, json);
     }
 
-    // CORETODO: London was after Istanbul
-    // #[test]
-    // fn rlp_london_tx() {
-    //     let tx = Transaction {
-    //         block_hash: None,
-    //         block_number: None,
-    //         from: Address::from_str("0000057f8d0f6fb2703197363f75c002f766f1c4287a").unwrap(),
-    //         gas: U256::from_str_radix("0x6d22", 16).unwrap(),
-    //         gas_price: Some(U256::from_str_radix("0x1344ead983", 16).unwrap()),
-    //         hash: H256::from_str(
-    //             "781d57642f4e3277fe01d370bd45ba1361b475bea6a35f26814e02a0a2b26549",
-    //         )
-    //         .unwrap(),
-    //         max_fee_per_gas: Some(U256::from_str_radix("0x1344ead983", 16).unwrap()),
-    //         max_priority_fee_per_gas: Some(U256::from_str_radix("0x1344ead983", 16).unwrap()),
-    //         input: Bytes::from(hex::decode("d0e30db0").unwrap()),
-    //         nonce: U256::from(479),
-    //         to: Some(Address::from_str("0000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2").unwrap()),
-    //         transaction_index: None,
-    //         value: U256::from_str_radix("0x2b40d6d551c8970c", 16).unwrap(),
-    //         transaction_type: Some(U64::from(0x2)),
-    //         access_list: Some(AccessList::from(vec![])),
-    //         network_id: Some(U256::from(1)),
-    //         v: U64::from(0x1),
-    //         r: U256::from_str_radix(
-    //             "0x5616cdaec839ca14d209b59eafb706e623169dc9d0fa58fbf13931cef5b5e3b0",
-    //             16,
-    //         )
-    //         .unwrap(),
-    //         s: U256::from_str_radix(
-    //             "0x3e708f8044bd158d29c2e250b6a98ea637c3bc460beeea63a8f00f7cebac432a",
-    //             16,
-    //         )
-    //         .unwrap(),
-    //         other: Default::default(),
-    //     };
-    //     println!("0x{}", hex::encode(&tx.rlp()));
-    //     assert_eq!(
-    //         tx.rlp(),
-    //         Bytes::from(
-    //
-    // hex::decode("
-    // 02f87a018201df851344ead983851344ead983826d2294c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2882b40d6d551c8970c84d0e30db0c001a05616cdaec839ca14d209b59eafb706e623169dc9d0fa58fbf13931cef5b5e3b0a03e708f8044bd158d29c2e250b6a98ea637c3bc460beeea63a8f00f7cebac432a"
-    // ).unwrap()         )
-    //     );
-    // }
-
-    // CORETODO: London was after istanbul
-    // #[test]
-    // fn rlp_london_no_access_list() {
-    //     let tx = Transaction {
-    //         block_hash: None,
-    //         block_number: None,
-    //         from: Address::from_str("057f8d0f6fb2703197363f75c002f766f1c4287a").unwrap(),
-    //         gas: U256::from_str_radix("0x6d22", 16).unwrap(),
-    //         gas_price: Some(U256::from_str_radix("0x1344ead983", 16).unwrap()),
-    //         hash: H256::from_str(
-    //             "781d57642f4e3277fe01d370bd45ba1361b475bea6a35f26814e02a0a2b26549",
-    //         )
-    //         .unwrap(),
-    //         max_fee_per_gas: Some(U256::from_str_radix("0x1344ead983", 16).unwrap()),
-    //         max_priority_fee_per_gas: Some(U256::from_str_radix("0x1344ead983", 16).unwrap()),
-    //         input: Bytes::from(hex::decode("d0e30db0").unwrap()),
-    //         nonce: U256::from(479),
-    //         to: Some(Address::from_str("c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2").unwrap()),
-    //         transaction_index: None,
-    //         value: U256::from_str_radix("0x2b40d6d551c8970c", 16).unwrap(),
-    //         transaction_type: Some(U64::from(0x2)),
-    //         access_list: None,
-    //         network_id: Some(U256::from(1)),
-    //         v: U64::from(0x1),
-    //         r: U256::from_str_radix(
-    //             "0x5616cdaec839ca14d209b59eafb706e623169dc9d0fa58fbf13931cef5b5e3b0",
-    //             16,
-    //         )
-    //         .unwrap(),
-    //         s: U256::from_str_radix(
-    //             "0x3e708f8044bd158d29c2e250b6a98ea637c3bc460beeea63a8f00f7cebac432a",
-    //             16,
-    //         )
-    //         .unwrap(),
-    //         other: Default::default(),
-    //     };
-    //     println!("0x{}", hex::encode(&tx.rlp()));
-    //     assert_eq!(
-    //         tx.rlp(),
-    //         Bytes::from(
-    //
-    // hex::decode("
-    // 02f87a018201df851344ead983851344ead983826d2294c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2882b40d6d551c8970c84d0e30db0c001a05616cdaec839ca14d209b59eafb706e623169dc9d0fa58fbf13931cef5b5e3b0a03e708f8044bd158d29c2e250b6a98ea637c3bc460beeea63a8f00f7cebac432a"
-    // ).unwrap()         )
-    //     );
-    // }
-
     #[test]
     fn rlp_legacy_tx() {
         let tx = Transaction {
             block_hash: None,
             block_number: None,
             from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
-            gas: U256::from_str_radix("0x10e2b", 16).unwrap(),
-            gas_price: Some(U256::from_str_radix("0x12ec276caf", 16).unwrap()),
+            energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
+            energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
             hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
             input: Bytes::from(
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
@@ -683,15 +309,10 @@ mod tests {
             to: Some(Address::from_str("0000dac17f958d2ee523a2206206994597c13d831ec7").unwrap()),
             transaction_index: None,
             value: U256::zero(),
-            transaction_type: Some(U64::zero()),
             v: U64::from(0x25),
             r: U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141", 16).unwrap(),
             s: U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274", 16).unwrap(),
             network_id: Some(U256::from(1)),
-            access_list: None,
-            max_fee_per_gas: None,
-            max_priority_fee_per_gas: None,
-            other: Default::default()
         };
 
         assert_eq!(
@@ -702,129 +323,14 @@ mod tests {
         );
     }
 
-    // CORETODO: London After Istanbul
-    // #[test]
-    // fn rlp_london_devin() {
-    //     let tx = Transaction {
-    //         hash: H256::from_str(
-    //             "5e2fc091e15119c97722e9b63d5d32b043d077d834f377b91f80d32872c78109",
-    //         )
-    //         .unwrap(),
-    //         nonce: 65.into(),
-    //         block_hash: Some(
-    //
-    // H256::from_str("f43869e67c02c57d1f9a07bb897b54bec1cfa1feb704d91a2ee087566de5df2c")
-    //                 .unwrap(),
-    //         ),
-    //         block_number: Some(6203173.into()),
-    //         transaction_index: Some(10.into()),
-    //         from: Address::from_str("e66b278fa9fbb181522f6916ec2f6d66ab846e04").unwrap(),
-    //         to: Some(Address::from_str("11d7c2ab0d4aa26b7d8502f6a7ef6844908495c2").unwrap()),
-    //         value: 0.into(),
-    //         gas_price: Some(1500000007.into()),
-    //         gas: 106703.into(),
-    //         input: hex::decode("e5225381").unwrap().into(),
-    //         v: 1.into(),
-    //         r: U256::from_str_radix(
-    //             "12010114865104992543118914714169554862963471200433926679648874237672573604889",
-    //             10,
-    //         )
-    //         .unwrap(),
-    //         s: U256::from_str_radix(
-    //             "22830728216401371437656932733690354795366167672037272747970692473382669718804",
-    //             10,
-    //         )
-    //         .unwrap(),
-    //         transaction_type: Some(2.into()),
-    //         access_list: Some(AccessList::default()),
-    //         max_priority_fee_per_gas: Some(1500000000.into()),
-    //         max_fee_per_gas: Some(1500000009.into()),
-    //         network_id: Some(5.into()),
-    //         other: Default::default(),
-    //     };
-    //     assert_eq!(
-    //         tx.rlp(),
-    //         Bytes::from(
-    //
-    // hex::decode("
-    // 02f86f05418459682f008459682f098301a0cf9411d7c2ab0d4aa26b7d8502f6a7ef6844908495c28084e5225381c001a01a8d7bef47f6155cbdf13d57107fc577fd52880fa2862b1a50d47641f8839419a03279bbf73fde76de83440d04b9d97f3809fec8617d3557ee40ac3e0edc391514"
-    // ).unwrap()         )
-    //     );
-    // }
-
-    // <https://goerli.etherscan.io/tx/0x5e2fc091e15119c97722e9b63d5d32b043d077d834f377b91f80d32872c78109>
-    // CORETODO: London After Istanbul
-    // #[test]
-    // fn decode_rlp_london_devin() {
-    //     let tx = Transaction {
-    //         hash: H256::from_str(
-    //             "5e2fc091e15119c97722e9b63d5d32b043d077d834f377b91f80d32872c78109",
-    //         )
-    //         .unwrap(),
-    //         nonce: 65.into(),
-    //         block_hash: Some(
-    //
-    // H256::from_str("f43869e67c02c57d1f9a07bb897b54bec1cfa1feb704d91a2ee087566de5df2c")
-    //                 .unwrap(),
-    //         ),
-    //         block_number: Some(6203173.into()),
-    //         transaction_index: Some(10.into()),
-    //         from: Address::from_str("e66b278fa9fbb181522f6916ec2f6d66ab846e04").unwrap(),
-    //         to: Some(Address::from_str("11d7c2ab0d4aa26b7d8502f6a7ef6844908495c2").unwrap()),
-    //         value: 0.into(),
-    //         gas_price: Some(1500000007.into()),
-    //         gas: 106703.into(),
-    //         input: hex::decode("e5225381").unwrap().into(),
-    //         v: 1.into(),
-    //         r: U256::from_str_radix(
-    //             "12010114865104992543118914714169554862963471200433926679648874237672573604889",
-    //             10,
-    //         )
-    //         .unwrap(),
-    //         s: U256::from_str_radix(
-    //             "22830728216401371437656932733690354795366167672037272747970692473382669718804",
-    //             10,
-    //         )
-    //         .unwrap(),
-    //         transaction_type: Some(2.into()),
-    //         access_list: Some(AccessList::default()),
-    //         max_priority_fee_per_gas: Some(1500000000.into()),
-    //         max_fee_per_gas: Some(1500000009.into()),
-    //         network_id: Some(5.into()),
-    //         other: Default::default(),
-    //     };
-
-    //     let tx_bytes =
-    // hex::decode("
-    // 02f86f05418459682f008459682f098301a0cf9411d7c2ab0d4aa26b7d8502f6a7ef6844908495c28084e5225381c001a01a8d7bef47f6155cbdf13d57107fc577fd52880fa2862b1a50d47641f8839419a03279bbf73fde76de83440d04b9d97f3809fec8617d3557ee40ac3e0edc391514"
-    // ).unwrap();
-
-    //     // the `Transaction` a valid rlp input,
-    //     // but EIP-1559 prepends a version byte, so we need to encode the data first to get a
-    //     // valid rlp and then rlp decode impl of `Transaction` will remove and check the
-    //     // version byte
-
-    //     let rlp_bytes = rlp::encode(&tx_bytes);
-    //     let decoded_transaction = Transaction::decode(&rlp::Rlp::new(&rlp_bytes)).unwrap();
-
-    //     assert_eq!(
-    //         decoded_transaction.hash(),
-    //         "0x5e2fc091e15119c97722e9b63d5d32b043d077d834f377b91f80d32872c78109".parse().unwrap()
-    //     );
-    //     assert_eq!(decoded_transaction.hash(), tx.hash());
-
-    //     let from = decoded_transaction.recover_from().unwrap();
-    //     assert_eq!(from, "0xe66b278fa9fbb181522f6916ec2f6d66ab846e04".parse().unwrap());
-    // }
-
     #[test]
     fn decode_rlp_legacy() {
         let tx = Transaction {
             block_hash: None,
             block_number: None,
             from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
-            gas: U256::from_str_radix("0x10e2b", 16).unwrap(),
-            gas_price: Some(U256::from_str_radix("0x12ec276caf", 16).unwrap()),
+            energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
+            energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
             hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
             input: Bytes::from(
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
@@ -833,15 +339,10 @@ mod tests {
             to: Some(Address::from_str("0000dac17f958d2ee523a2206206994597c13d831ec7").unwrap()),
             transaction_index: None,
             value: U256::zero(),
-            transaction_type: Some(U64::zero()),
             v: U64::from(0x25),
             r: U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141", 16).unwrap(),
             s: U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274", 16).unwrap(),
             network_id: Some(U256::from(1)),
-            access_list: None,
-            max_fee_per_gas: None,
-            max_priority_fee_per_gas: None,
-            other: Default::default()
         };
         println!("{}", tx.rlp());
 
@@ -856,7 +357,7 @@ mod tests {
     fn recover_from() {
         let tx = Transaction {
             hash: H256::from_str(
-                "7e4823cfb836f84e8cef3040c69e23558a7434b01b9006759af26a5f9d53977c",
+                "3a4e3aa4e85771e92fceec0195b13db70c0c52442733c74d41af13c907692849",
             )
             .unwrap(),
             nonce: 65.into(),
@@ -869,8 +370,8 @@ mod tests {
             from: Address::from_str("0000e66b278fa9fbb181522f6916ec2f6d66ab846e04").unwrap(),
             to: Some(Address::from_str("000011d7c2ab0d4aa26b7d8502f6a7ef6844908495c2").unwrap()),
             value: 0.into(),
-            gas_price: Some(1500000007.into()),
-            gas: 106703.into(),
+            energy_price: 1500000007.into(),
+            energy: 106703.into(),
             input: hex::decode("e5225381").unwrap().into(),
             v: 1.into(),
             r: U256::from_str_radix(
@@ -883,12 +384,7 @@ mod tests {
                 10,
             )
             .unwrap(),
-            transaction_type: Some(2.into()),
-            access_list: Some(AccessList::default()),
-            max_priority_fee_per_gas: Some(1500000000.into()),
-            max_fee_per_gas: Some(1500000009.into()),
-            network_id: Some(5.into()),
-            other: Default::default(),
+            network_id: None,
         };
 
         assert_eq!(tx.hash, tx.hash());
@@ -904,9 +400,9 @@ mod tests {
         "blockHash": "0xf6084155ff2022773b22df3217d16e9df53cbc42689b27ca4789e06b6339beb2",
         "blockNumber": "0x52a975",
         "contractAddress": null,
-        "cumulativeGasUsed": "0x797db0",
+        "cumulativeEnergyUsed": "0x797db0",
         "from": "0x0000d907941c8b3b966546fc408b8c942eb10a4f98df",
-        "gasUsed": "0x1308c",
+        "energyUsed": "0x1308c",
         "logs": [
             {
                 "blockHash": "0xf6084155ff2022773b22df3217d16e9df53cbc42689b27ca4789e06b6339beb2",
@@ -956,10 +452,9 @@ mod tests {
     "blockHash": "0xa11871d61e0e703ae33b358a6a9653c43e4216f277d4a1c7377b76b4d5b4cbf1",
     "blockNumber": "0xe3c1d8",
     "contractAddress": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
-    "cumulativeGasUsed": "0x1246047",
-    "effectiveGasPrice": "0xa02ffee00",
+    "cumulativeEnergyUsed": "0x1246047",
     "from": "0x00000968995a48162a23af60d3ca25cddfa143cd8891",
-    "gasUsed": "0x1b9229",
+    "energyUsed": "0x1b9229",
     "logs": [
       {
         "address": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
@@ -991,8 +486,7 @@ mod tests {
     "logsBloom": "0x00000000000000800000000040000000000000000000000000000000000000000000008000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
     "status": "0x1",
     "to": null,
-    "transactionIndex": "0xdf",
-    "type": "0x2"
+    "transactionIndex": "0xdf"
 }
 "#,
         )
@@ -1055,8 +549,8 @@ mod tests {
             block_hash: None,
             block_number: None,
             from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
-            gas: U256::from_str_radix("0x10e2b", 16).unwrap(),
-            gas_price: Some(U256::from_str_radix("0x12ec276caf", 16).unwrap()),
+            energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
+            energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
             hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
             input: Bytes::from(
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()

@@ -14,8 +14,6 @@ use crate::{
 #[cfg(not(target_arch = "wasm32"))]
 use crate::{HttpRateLimitRetryPolicy, RetryClient};
 
-#[cfg(feature = "celo")]
-pub use crate::CeloMiddleware;
 pub use crate::Middleware;
 
 use async_trait::async_trait;
@@ -1481,7 +1479,6 @@ mod tests {
 
     // CORETODO: This test is impossible without modifying anvil in the first place
     // #[tokio::test]
-    // #[cfg_attr(feature = "celo", ignore)]
     // async fn test_new_block_filter() {
     //     let num_blocks = 3;
     //     let geth = Anvil::new().block_time(2u64).spawn();
@@ -1582,7 +1579,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg_attr(feature = "celo", ignore)]
     async fn fee_history() {
         let provider = Provider::<Http>::try_from(
             "https://goerli.infura.io/v3/fd8b88b56aa84f6da87b60f5441d6778",

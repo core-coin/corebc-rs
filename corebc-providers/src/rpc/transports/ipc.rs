@@ -541,7 +541,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn subscription() {
         use corebc_core::types::{Block, TxHash};
 

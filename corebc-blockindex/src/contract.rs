@@ -292,7 +292,7 @@ impl Client {
     /// let abi = client.contract_abi(address).await?;
     /// # Ok(()) }
     /// ```
-    pub async fn contract_abi(&self, address: Address) -> Result<Abi> {
+    pub async fn contract_abi(&self, _address: Address) -> Result<Abi> {
         //TODO:error2215 implement when blockindex wiil be ready
         Ok(Abi { ..Default::default() })
     }
@@ -308,7 +308,7 @@ impl Client {
     /// assert_eq!(metadata.items[0].contract_name, "DAO");
     /// # Ok(()) }
     /// ```
-    pub async fn contract_source_code(&self, address: Address) -> Result<ContractMetadata> {
+    pub async fn contract_source_code(&self, _address: Address) -> Result<ContractMetadata> {
         //TODO:error2215 implement when blockindex wiil be ready
         Ok(ContractMetadata { items: vec![] })
     }

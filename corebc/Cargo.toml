@@ -2,7 +2,7 @@
 name = "corebc"
 authors = ["Georgios Konstantopoulos <me@gakonst.com>"]
 readme = "../README.md"
-description = "A complete Ethereum and Celo Rust library"
+description = "A complete Ethereum and Rust library"
 
 version.workspace = true
 edition.workspace = true
@@ -26,14 +26,6 @@ all-features = true
 [features]
 default = ["abigen", "rustls"]
 
-celo = [
-    "corebc-core/celo",
-    "corebc-providers/celo",
-    "corebc-signers/celo",
-    "corebc-contract/celo",
-    "corebc-middleware/celo",
-    "legacy",
-]
 
 legacy = ["corebc-core/legacy", "corebc-contract/legacy"]
 

@@ -68,7 +68,6 @@ hex-literal.workspace = true
 rand.workspace = true
 
 [features]
-celo = ["legacy"] # celo support extends the transaction format with extra fields
 legacy = []
 macros = ["syn", "cargo_metadata", "once_cell"]
 

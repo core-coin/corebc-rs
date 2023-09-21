@@ -223,7 +223,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn signs_tx() {
         use crate::TypedTransaction;
         use corebc_core::types::{TransactionRequest, U64};
@@ -252,7 +251,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn signs_tx_empty_network_id() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;
@@ -287,7 +285,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(not(feature = "celo"))]
     fn signs_tx_empty_network_id_sync() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;

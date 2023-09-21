@@ -33,14 +33,14 @@ pub struct TransactionRequest {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub to: Option<NameOrAddress>,
 
-    /// Supplied gas (None for sensible default)
+    /// Supplied energy (None for sensible default)
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub gas: Option<U256>,
+    pub energy: Option<U256>,
 
-    /// Gas price (None for sensible default)
-    #[serde(rename = "gasPrice")]
+    /// energy price (None for sensible default)
+    #[serde(rename = "energyPrice")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub gas_price: Option<U256>,
+    pub energy_price: Option<U256>,
 
     /// Transferred value (None for no transfer)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -59,25 +59,6 @@ pub struct TransactionRequest {
     #[serde(skip_serializing)]
     #[serde(default, rename = "networkId")]
     pub network_id: Option<U64>,
-
-    /////////////////  Celo-specific transaction fields /////////////////
-    /// The currency fees are paid in (None for native currency)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub fee_currency: Option<Address>,
-
-    /// Gateway fee recipient (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub gateway_fee_recipient: Option<Address>,
-
-    /// Gateway fee amount (None for no gateway fee paid)
-    #[cfg(feature = "celo")]
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub gateway_fee: Option<U256>,
 }
 
 impl TransactionRequest {
@@ -107,17 +88,17 @@ impl TransactionRequest {
         self
     }
 
-    /// Sets the `gas` field in the transaction to the provided value
+    /// Sets the `energy` field in the transaction to the provided value
     #[must_use]
-    pub fn gas<T: Into<U256>>(mut self, gas: T) -> Self {
-        self.gas = Some(gas.into());
+    pub fn energy<T: Into<U256>>(mut self, energy: T) -> Self {
+        self.energy = Some(energy.into());
         self
     }
 
-    /// Sets the `gas_price` field in the transaction to the provided value
+    /// Sets the `energy_price` field in the transaction to the provided value
     #[must_use]
-    pub fn gas_price<T: Into<U256>>(mut self, gas_price: T) -> Self {
-        self.gas_price = Some(gas_price.into());
+    pub fn energy_price<T: Into<U256>>(mut self, energy_price: T) -> Self {
+        self.energy_price = Some(energy_price.into());
         self
     }
 
@@ -198,11 +179,8 @@ impl TransactionRequest {
 
     pub(crate) fn rlp_base(&self, rlp: &mut RlpStream) {
         rlp_opt(rlp, &self.nonce);
-        rlp_opt(rlp, &self.gas_price);
-        rlp_opt(rlp, &self.gas);
-
-        #[cfg(feature = "celo")]
-        self.inject_celo_metadata(rlp);
+        rlp_opt(rlp, &self.energy_price);
+        rlp_opt(rlp, &self.energy);
 
         rlp_opt(rlp, &self.to.as_ref());
         rlp_opt(rlp, &self.value);
@@ -218,20 +196,10 @@ impl TransactionRequest {
         let mut txn = TransactionRequest::new();
         txn.nonce = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
-        txn.gas_price = Some(rlp.at(*offset)?.as_val()?);
+        txn.energy_price = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
-        txn.gas = Some(rlp.at(*offset)?.as_val()?);
+        txn.energy = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
-
-        #[cfg(feature = "celo")]
-        {
-            txn.fee_currency = Some(rlp.at(*offset)?.as_val()?);
-            *offset += 1;
-            txn.gateway_fee_recipient = Some(rlp.at(*offset)?.as_val()?);
-            *offset += 1;
-            txn.gateway_fee = Some(rlp.at(*offset)?.as_val()?);
-            *offset += 1;
-        }
 
         txn.to = decode_to(rlp, offset)?.map(NameOrAddress::Address);
         txn.value = Some(rlp.at(*offset)?.as_val()?);
@@ -295,62 +263,17 @@ impl From<&Transaction> for TransactionRequest {
         TransactionRequest {
             from: Some(tx.from),
             to: tx.to.map(NameOrAddress::Address),
-            gas: Some(tx.gas),
-            gas_price: tx.gas_price,
+            energy: Some(tx.energy),
+            energy_price: Some(tx.energy_price),
             value: Some(tx.value),
             data: Some(Bytes(tx.input.0.clone())),
             nonce: Some(tx.nonce),
             network_id: tx.network_id.map(|x| U64::from(x.as_u64())),
-
-            #[cfg(feature = "celo")]
-            fee_currency: tx.fee_currency,
-
-            #[cfg(feature = "celo")]
-            gateway_fee_recipient: tx.gateway_fee_recipient,
-
-            #[cfg(feature = "celo")]
-            gateway_fee: tx.gateway_fee,
         }
     }
 }
 
-// Separate impl block for the celo-specific fields
-#[cfg(feature = "celo")]
-impl TransactionRequest {
-    // modifies the RLP stream with the Celo-specific information
-    fn inject_celo_metadata(&self, rlp: &mut RlpStream) {
-        rlp_opt(rlp, &self.fee_currency);
-        rlp_opt(rlp, &self.gateway_fee_recipient);
-        rlp_opt(rlp, &self.gateway_fee);
-    }
-
-    /// Sets the `fee_currency` field in the transaction to the provided value
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[must_use]
-    pub fn fee_currency<T: Into<Address>>(mut self, fee_currency: T) -> Self {
-        self.fee_currency = Some(fee_currency.into());
-        self
-    }
-
-    /// Sets the `gateway_fee` field in the transaction to the provided value
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[must_use]
-    pub fn gateway_fee<T: Into<U256>>(mut self, gateway_fee: T) -> Self {
-        self.gateway_fee = Some(gateway_fee.into());
-        self
-    }
-
-    /// Sets the `gateway_fee_recipient` field in the transaction to the provided value
-    #[cfg_attr(docsrs, doc(cfg(feature = "celo")))]
-    #[must_use]
-    pub fn gateway_fee_recipient<T: Into<Address>>(mut self, gateway_fee_recipient: T) -> Self {
-        self.gateway_fee_recipient = Some(gateway_fee_recipient.into());
-        self
-    }
-}
-
 #[cfg(test)]
-#[cfg(not(feature = "celo"))]
 mod tests {
     use super::*;
     use crate::types::Bytes;
@@ -361,8 +284,8 @@ mod tests {
     fn encode_decode_rlp() {
         let tx = TransactionRequest::new()
             .nonce(3)
-            .gas_price(1)
-            .gas(25000)
+            .energy_price(1)
+            .energy(25000)
             .to("0000b94f5374fce5edbc8e2a8697c15331677e6ebf0b".parse::<Address>().unwrap())
             .value(10)
             .data(vec![0x55, 0x44])
@@ -385,8 +308,8 @@ mod tests {
             .nonce(0)
             .to("0000095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
             .value(0)
-            .gas(0)
-            .gas_price(0);
+            .energy(0)
+            .energy_price(0);
         let expected_sighash = "ec08902c56d6df8797a282763e4871a2b69dbb210b5390e7babbf1cebe59a23d";
         let got_sighash = hex::encode(tx.sighash().as_bytes());
         assert_eq!(expected_sighash, got_sighash);
@@ -395,8 +318,8 @@ mod tests {
     fn decode_unsigned_transaction() {
         let _res: TransactionRequest = serde_json::from_str(
             r#"{
-    "gas":"0xc350",
-    "gasPrice":"0x4a817c800",
+    "energy":"0xc350",
+    "energyPrice":"0x4a817c800",
     "hash":"0x88df016429689c079f3b2f6ad39fa052532c56795b733da78a91ebe6a713944b",
     "input":"0x68656c6c6f21",
     "nonce":"0x15",
@@ -417,8 +340,8 @@ mod tests {
     //         .from("0000fab2b4b677a4e104759d378ea25504862150256e".parse::<Address>().unwrap())
     //         .to("0000d1f23226fb4d2b7d2f3bcdd99381b038de705a64".parse::<Address>().unwrap())
     //         .value(0)
-    //         .gas_price(1940000007)
-    //         .gas(21000);
+    //         .energy_price(1940000007)
+    //         .energy(21000);
 
     //     let expected_rlp =
     // hex::decode("
@@ -438,8 +361,8 @@ mod tests {
         // `from` field because the `from` field is only obtained via signature recovery
         let expected_tx = TransactionRequest::new()
             .to(Address::from_str("0x0000c7696b27830dd8aa4823a1cba8440c27c36adec4").unwrap())
-            .gas(3_000_000)
-            .gas_price(20_000_000_000u64)
+            .energy(3_000_000)
+            .energy_price(20_000_000_000u64)
             .value(0)
             .nonce(6306u64)
             .data(
@@ -462,8 +385,8 @@ mod tests {
             .nonce(9)
             .to("35353535353535353535353535353535353535353535".parse::<Address>().unwrap())
             .value(1000000000000000000u64)
-            .gas_price(20000000000u64)
-            .gas(21000)
+            .energy_price(20000000000u64)
+            .energy(21000)
             .network_id(1);
 
         let expected_rlp = hex::decode("ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").unwrap();
@@ -482,8 +405,8 @@ mod tests {
             .nonce(9)
             .to("35353535353535353535353535353535353535353535".parse::<Address>().unwrap())
             .value(1000000000000000000u64)
-            .gas_price(20000000000u64)
-            .gas(21000)
+            .energy_price(20000000000u64)
+            .energy(21000)
             .network_id(1);
 
         let expected_hex = hex::decode("ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").unwrap();

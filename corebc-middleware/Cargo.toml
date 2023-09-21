@@ -64,6 +64,5 @@ tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
 
 [features]
 default = ["rustls"]
-celo = ["corebc-core/celo", "corebc-providers/celo", "corebc-signers/celo", "corebc-contract/celo"]
 openssl = ["reqwest/native-tls"]
 rustls = ["reqwest/rustls-tls"]

@@ -32,7 +32,7 @@ pub fn encode_packed(tokens: &[Token]) -> Result<Vec<u8>, EncodePackedError> {
 fn max_encoded_length(token: &Token) -> usize {
     match token {
         Int(_) | Uint(_) | FixedBytes(_) => 32,
-        Address(_) => 20,
+        Address(_) => 22,
         Bool(_) => 1,
         // account for padding
         Array(vec) | FixedArray(vec) | Tuple(vec) => {

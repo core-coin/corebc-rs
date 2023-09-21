@@ -938,25 +938,3 @@ pub trait Middleware: Sync + Send + Debug {
         self.inner().create_access_list(tx, block).await.map_err(MiddlewareError::from_err)
     }
 }
-
-#[cfg(feature = "celo")]
-#[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
-#[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-/// Celo-specific extension trait
-pub trait CeloMiddleware: Middleware {
-    /// Get validator BLS public keys
-    async fn get_validators_bls_public_keys<T: Into<BlockId> + Send + Sync>(
-        &self,
-        block_id: T,
-    ) -> Result<Vec<String>, ProviderError> {
-        self.provider()
-            .get_validators_bls_public_keys(block_id)
-            .await
-            .map_err(MiddlewareError::from_err)
-    }
-}
-
-#[cfg(feature = "celo")]
-#[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
-#[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<T> CeloMiddleware for T where T: Middleware {}

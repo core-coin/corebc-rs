@@ -28,8 +28,6 @@ pub use stream::{
 };
 
 mod middleware;
-#[cfg(feature = "celo")]
-pub use middleware::CeloMiddleware;
 pub use middleware::Middleware;
 
 #[allow(deprecated)]

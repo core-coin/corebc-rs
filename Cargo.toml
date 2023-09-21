@@ -7,7 +7,7 @@ documentation = "https://docs.rs/ethers"
 repository = "https://github.com/gakonst/ethers-rs"
 homepage = "https://github.com/gakonst/ethers-rs"
 categories = ["cryptography::cryptocurrencies"]
-keywords = ["crypto", "ethers", "ethereum", "web3", "celo"]
+keywords = ["crypto", "ethers", "ethereum", "web3"]
 exclude = [
     ".github/",
     "bin/",

@@ -1,4 +1,3 @@
-#[cfg(not(feature = "celo"))]
 mod eth_tests {
     use corebc_core::types::{BlockId, H256};
     use corebc_providers::{Middleware, DEVIN};
