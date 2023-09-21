@@ -1,5 +1,5 @@
 //! Transaction types
-use super::{decode_signature, decode_to, normalize_v, rlp_opt, rlp_opt_list};
+use super::{decode_signature, decode_to, rlp_opt};
 use crate::{
     types::{
         transaction::extract_network_id, Address, Bloom, Bytes, Log, Signature, SignatureError,
