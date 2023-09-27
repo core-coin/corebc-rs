@@ -2,11 +2,11 @@
 
 Crates to modify
 
-- [ ] corebc-core
+- [x] corebc-core
   - [x] ICAN Addresses
   - [ ] ED448
   - [x] Sha3
-- [x] corebc-providers
+- [ ] corebc-providers
 - [ ] corebc-contract
 - [ ] corebc-blockindex
 - [ ] corebc-middleware

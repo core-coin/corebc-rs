@@ -23,7 +23,7 @@ use url::Url;
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// let provider = Http::from_str("http://localhost:8545")?;
-/// let block_number: U64 = provider.request("eth_blockNumber", ()).await?;
+/// let block_number: U64 = provider.request("xcb_blockNumber", ()).await?;
 /// # Ok(())
 /// # }
 /// ```
@@ -104,7 +104,7 @@ impl JsonRpcClient for Provider {
                     err: serde::de::Error::custom("unexpected notification over HTTP transport"),
                     text: String::from_utf8_lossy(&body).to_string(),
                 };
-                return Err(err)
+                return Err(err);
             }
             Err(err) => {
                 return Err(ClientError::SerdeJson {

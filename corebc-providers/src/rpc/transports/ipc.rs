@@ -351,7 +351,7 @@ impl Shared {
             let read = reader.read_buf(&mut buf).await?;
             if read == 0 {
                 // eof, socket was closed
-                return Err(IpcError::ServerExit)
+                return Err(IpcError::ServerExit);
             }
 
             // parse the received bytes into 0-n jsonrpc messages
@@ -427,7 +427,7 @@ impl Shared {
             Some(tx) => tx,
             None => {
                 tracing::warn!(%id, "no pending request exists for the response ID");
-                return
+                return;
             }
         };
 
@@ -448,7 +448,7 @@ impl Shared {
                     id = ?params.subscription,
                     "no subscription exists for the notification ID"
                 );
-                return
+                return;
             }
         };
 
@@ -534,9 +534,9 @@ mod tests {
     async fn request() {
         let (ipc, _geth) = connect().await;
 
-        let block_num: U256 = ipc.request("eth_blockNumber", ()).await.unwrap();
+        let block_num: U256 = ipc.request("xcb_blockNumber", ()).await.unwrap();
         tokio::time::sleep(Duration::from_secs(2)).await;
-        let block_num2: U256 = ipc.request("eth_blockNumber", ()).await.unwrap();
+        let block_num2: U256 = ipc.request("xcb_blockNumber", ()).await.unwrap();
         assert!(block_num2 > block_num);
     }
 
@@ -548,7 +548,7 @@ mod tests {
 
         // Subscribing requires sending the sub request and then subscribing to
         // the returned sub_id
-        let sub_id: U256 = ipc.request("eth_subscribe", ["newHeads"]).await.unwrap();
+        let sub_id: U256 = ipc.request("xcb_subscribe", ["newHeads"]).await.unwrap();
         let stream = ipc.subscribe(sub_id).unwrap();
 
         let blocks: Vec<u64> = stream
