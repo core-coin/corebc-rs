@@ -27,7 +27,6 @@ all-features = true
 default = ["abigen", "rustls"]
 
 
-legacy = ["corebc-core/legacy", "corebc-contract/legacy"]
 
 # individual features per sub-crate
 ## providers
