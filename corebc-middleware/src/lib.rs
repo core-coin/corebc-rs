@@ -9,7 +9,7 @@ pub mod gas_escalator;
 
 /// The gas oracle middleware is used to get the gas price from a list of gas oracles
 /// instead of using eth_gasPrice. For usage examples, refer to the
-/// [`GasOracle`](crate::gas_oracle::GasOracle) trait.
+/// [`EneryOracle`](crate::gas_oracle::EneryOracle) trait.
 pub mod gas_oracle;
 
 /// The [Nonce Manager](crate::NonceManagerMiddleware) is used to locally calculate nonces instead

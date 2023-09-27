@@ -5,7 +5,7 @@ use corebc_core::{
 use corebc_middleware::{
     builder::MiddlewareBuilder,
     gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    gas_oracle::{GasNow, GasOracleMiddleware},
+    gas_oracle::{EneryOracleMiddleware, GasNow},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
@@ -22,7 +22,7 @@ async fn build_raw_middleware_stack() {
 
     let provider = provider
         .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
-        .wrap_into(|p| GasOracleMiddleware::new(p, GasNow::new()))
+        .wrap_into(|p| EneryOracleMiddleware::new(p, GasNow::new()))
         .wrap_into(|p| SignerMiddleware::new(p, signer))
         .wrap_into(|p| NonceManagerMiddleware::new(p, address));
 

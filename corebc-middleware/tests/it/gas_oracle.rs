@@ -1,24 +1,20 @@
 use async_trait::async_trait;
 use corebc_core::{types::*, utils::Anvil};
 use corebc_middleware::gas_oracle::{
-    BlockNative, Etherchain, GasNow, GasOracle, GasOracleError, ProviderOracle, Result,
+    BlockNative, EneryOracle, EneryOracleError, Etherchain, GasNow, ProviderOracle, Result,
 };
 use corebc_providers::{Http, Middleware, Provider};
 
 #[derive(Debug)]
-struct FakeGasOracle {
+struct FakeEneryOracle {
     gas_price: U256,
 }
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl GasOracle for FakeGasOracle {
+impl EneryOracle for FakeEneryOracle {
     async fn fetch(&self) -> Result<U256> {
         Ok(self.gas_price)
-    }
-
-    async fn estimate_eip1559_fees(&self) -> Result<(U256, U256)> {
-        Err(GasOracleError::Eip1559EstimationNotSupported)
     }
 }
 
@@ -34,11 +30,11 @@ impl GasOracle for FakeGasOracle {
 
 //     // assign a gas oracle to use
 //     let expected_gas_price = U256::from(1234567890_u64);
-//     let gas_oracle = FakeGasOracle { gas_price: expected_gas_price };
+//     let gas_oracle = FakeEneryOracle { gas_price: expected_gas_price };
 //     let gas_price = gas_oracle.fetch().await.unwrap();
 //     assert_eq!(gas_price, expected_gas_price);
 
-//     let provider = GasOracleMiddleware::new(provider, gas_oracle);
+//     let provider = EneryOracleMiddleware::new(provider, gas_oracle);
 
 //     // broadcast a transaction
 //     let tx = TransactionRequest::new().from(from).to(Address::zero()).value(10000);

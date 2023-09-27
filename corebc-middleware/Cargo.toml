@@ -41,7 +41,7 @@ tracing.workspace = true
 tracing-futures.workspace = true
 instant.workspace = true
 
-# for gas oracles
+# for energy oracles
 reqwest.workspace = true
 url.workspace = true
 

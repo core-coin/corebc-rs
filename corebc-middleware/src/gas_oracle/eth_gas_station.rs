@@ -1,6 +1,6 @@
 #![allow(deprecated)]
 
-use super::{GasCategory, GasOracle, GasOracleError, Result, GWEI_TO_WEI_U256};
+use super::{EneryOracle, EneryOracleError, GasCategory, Result, GWEI_TO_WEI_U256};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use reqwest::Client;
@@ -11,7 +11,7 @@ use url::Url;
 const URL: &str = "https://ethgasstation.info/api/ethgasAPI.json";
 
 /// A client over HTTP for the [EthGasStation](https://ethgasstation.info) gas tracker API
-/// that implements the `GasOracle` trait.
+/// that implements the `EneryOracle` trait.
 #[derive(Clone, Debug)]
 #[deprecated = "ETHGasStation is shutting down: https://twitter.com/ETHGasStation/status/1597341610777317376"]
 #[must_use]
@@ -84,16 +84,12 @@ impl Default for EthGasStation {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl GasOracle for EthGasStation {
+impl EneryOracle for EthGasStation {
     async fn fetch(&self) -> Result<U256> {
         let res = self.query().await?;
         let gas_price = res.gas_from_category(self.gas_category);
         // gas_price is in `gwei * 10`
         Ok(U256::from(gas_price) * GWEI_TO_WEI_U256 / U256::from(10_u64))
-    }
-
-    async fn estimate_eip1559_fees(&self) -> Result<(U256, U256)> {
-        Err(GasOracleError::Eip1559EstimationNotSupported)
     }
 }
 

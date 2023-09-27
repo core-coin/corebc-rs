@@ -261,18 +261,6 @@ where
             tx.set_network_id(network_id);
         }
 
-        // If a network_id is matched to a known network that doesn't support EIP-1559,
-        // automatically change transaction to be Legacy type.
-        if let Some(network_id) = tx.network_id() {
-            let network = Network::try_from(network_id.as_u64());
-            if network.unwrap_or_default().is_legacy() {
-                if let TypedTransaction::Eip1559(inner) = tx {
-                    let tx_req: TransactionRequest = inner.clone().into();
-                    *tx = TypedTransaction::Legacy(tx_req);
-                }
-            }
-        }
-
         let nonce = maybe(tx.nonce().cloned(), self.get_transaction_count(from, block)).await?;
         tx.set_nonce(nonce);
         self.inner()
@@ -301,7 +289,7 @@ where
                 .inner
                 .send_transaction(tx, block)
                 .await
-                .map_err(SignerMiddlewareError::MiddlewareError)
+                .map_err(SignerMiddlewareError::MiddlewareError);
         }
 
         // if we have a nonce manager set, we should try handling the result in
@@ -377,9 +365,9 @@ mod tests {
                 "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000.into()),
-            gas: Some(2_000_000.into()),
+            energy: Some(2_000_000.into()),
             nonce: Some(0.into()),
-            gas_price: Some(21_000_000_000u128.into()),
+            energy_price: Some(21_000_000_000u128.into()),
             data: None,
             network_id: None,
         }
@@ -422,9 +410,9 @@ mod tests {
                 "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000.into()),
-            gas: Some(2_000_000.into()),
+            energy: Some(2_000_000.into()),
             nonce: Some(U256::zero()),
-            gas_price: Some(21_000_000_000u128.into()),
+            energy_price: Some(21_000_000_000u128.into()),
             data: None,
             network_id: None,
         }
@@ -535,84 +523,5 @@ mod tests {
     //     let hash = *client.send_transaction(request_from_other, None).await.unwrap();
     //     let tx = client.get_transaction(hash).await.unwrap().unwrap();
     //     assert_eq!(tx.from, acc);
-    // }
-
-    // CORETODO: Needs Anvil
-    // #[tokio::test]
-    // async fn converts_tx_to_legacy_to_match_network() {
-    //     let eip1559 = Eip1559TransactionRequest {
-    //         from: None,
-    //         to: Some(
-    //
-    // "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
-    //         ),
-    //         value: Some(1_000_000_000.into()),
-    //         gas: Some(2_000_000.into()),
-    //         nonce: Some(U256::zero()),
-    //         access_list: Default::default(),
-    //         max_priority_fee_per_gas: None,
-    //         data: None,
-    //         network_id: None,
-    //         max_fee_per_gas: None,
-    //     };
-    //     let mut tx = TypedTransaction::Eip1559(eip1559);
-
-    //     let network_id = 10u64; // optimism does not support EIP-1559
-
-    //     // Signer middlewares now rely on a working provider which it can query the network id
-    //     // from, so we make sure Anvil is started with the network id that the expected tx
-    //     // was signed with
-
-    //     let anvil =
-    //         Anvil::new().args(vec!["--chain-id".to_string(), network_id.to_string()]).spawn();
-    //     let provider = Provider::try_from(anvil.endpoint()).unwrap();
-    //     let key = "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
-    //         .parse::<LocalWallet>()
-    //         .unwrap()
-    //         .with_network_id(network_id);
-    //     let client = SignerMiddleware::new(provider, key);
-    //     client.fill_transaction(&mut tx, None).await.unwrap();
-
-    //     assert!(tx.as_eip1559_ref().is_none());
-    //     assert_eq!(tx, TypedTransaction::Legacy(tx.as_legacy_ref().unwrap().clone()));
-    // }
-
-    // CORETODO: Needs anvil
-    // #[tokio::test]
-    // async fn does_not_convert_to_legacy_for_eip1559_network() {
-    //     let eip1559 = Eip1559TransactionRequest {
-    //         from: None,
-    //         to: Some(
-    //
-    // "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
-    //         ),
-    //         value: Some(1_000_000_000.into()),
-    //         gas: Some(2_000_000.into()),
-    //         nonce: Some(U256::zero()),
-    //         access_list: Default::default(),
-    //         max_priority_fee_per_gas: None,
-    //         data: None,
-    //         network_id: None,
-    //         max_fee_per_gas: None,
-    //     };
-    //     let mut tx = TypedTransaction::Eip1559(eip1559);
-
-    //     let network_id = 1u64; // eth main supports EIP-1559
-
-    //     // Signer middlewares now rely on a working provider which it can query the network id
-    // from,     // so we make sure Anvil is started with the network id that the expected tx was
-    // signed     // with
-    //     let anvil = Anvil::new().args(vec!["--network-id".to_string(),
-    // network_id.to_string()]).spawn();     let provider =
-    // Provider::try_from(anvil.endpoint()).unwrap();     let key =
-    // "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318"
-    //         .parse::<LocalWallet>()
-    //         .unwrap()
-    //         .with_network_id(network_id);
-    //     let client = SignerMiddleware::new(provider, key);
-    //     client.fill_transaction(&mut tx, None).await.unwrap();
-
-    //     assert!(tx.as_legacy_ref().is_none());
-    //     assert_eq!(tx, TypedTransaction::Eip1559(tx.as_eip1559_ref().unwrap().clone()));
     // }
 }

@@ -120,7 +120,7 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 /// use corebc_providers::{Provider, Http};
 /// use corebc_middleware::{
 ///     gas_escalator::{GeometricGasPrice, Frequency, GasEscalatorMiddleware},
-///     gas_oracle::{GasNow, GasCategory, GasOracleMiddleware},
+///     gas_oracle::{GasNow, GasCategory, EneryOracleMiddleware},
 /// };
 /// use std::{convert::TryFrom, time::Duration, sync::Arc};
 ///
@@ -135,7 +135,7 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 ///
 /// // ... proceed to wrap it in other middleware
 /// let gas_oracle = GasNow::new().category(GasCategory::SafeLow);
-/// let provider = GasOracleMiddleware::new(provider, gas_oracle);
+/// let provider = EneryOracleMiddleware::new(provider, gas_oracle);
 /// ```
 pub struct GasEscalatorMiddleware<M> {
     pub(crate) inner: Arc<GasEscalatorMiddlewareInternal<M>>,

@@ -28,35 +28,6 @@
 // }
 
 // #[tokio::test]
-// async fn typed_txs() {
-//     let (provider, anvil) = spawn_anvil();
-//     let wallet = get_wallet(&anvil, 0);
-//     let address = wallet.address();
-//     let provider = provider.with_signer(wallet);
-
-//     let nonce = provider.get_transaction_count(address, None).await.unwrap();
-//     let bn = Some(BlockNumber::Pending.into());
-//     let gas_price = provider.get_gas_price().await.unwrap() * 125 / 100;
-
-//     let tx =
-// TransactionRequest::new().from(address).to(address).nonce(nonce).gas_price(gas_price);
-//     let tx1 = provider.send_transaction(tx.clone(), bn).await.unwrap();
-
-//     let tx = tx.from(address).to(address).nonce(nonce + 1).with_access_list(vec![]);
-//     let tx2 = provider.send_transaction(tx, bn).await.unwrap();
-
-//     let tx = Eip1559TransactionRequest::new()
-//         .from(address)
-//         .to(address)
-//         .nonce(nonce + 2)
-//         .max_fee_per_gas(gas_price)
-//         .max_priority_fee_per_gas(gas_price);
-//     let tx3 = provider.send_transaction(tx, bn).await.unwrap();
-
-//     futures_util::join!(check_tx(tx1, 0), check_tx(tx2, 1), check_tx(tx3, 2));
-// }
-
-// #[tokio::test]
 // async fn send_transaction_handles_tx_from_field() {
 //     // launch anvil
 //     let (provider, anvil) = spawn_anvil_ws().await;

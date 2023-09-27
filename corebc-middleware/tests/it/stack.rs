@@ -1,7 +1,7 @@
 use corebc_core::{rand::thread_rng, types::Network};
 use corebc_middleware::{
     gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    gas_oracle::{GasCategory, GasNow, GasOracleMiddleware},
+    gas_oracle::{EneryOracleMiddleware, GasCategory, GasNow},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
@@ -18,7 +18,7 @@ async fn mock_with_middleware() {
     let address = signer.address();
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
     let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
-    let provider = GasOracleMiddleware::new(provider, gas_oracle);
+    let provider = EneryOracleMiddleware::new(provider, gas_oracle);
     let provider = SignerMiddleware::new(provider, signer);
     let provider = NonceManagerMiddleware::new(provider, address);
 
@@ -66,7 +66,7 @@ async fn mock_with_middleware() {
 //     let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
 
 //     // The gas price middleware MUST be below the signing middleware for things to work
-//     let provider = GasOracleMiddleware::new(provider, gas_oracle);
+//     let provider = EneryOracleMiddleware::new(provider, gas_oracle);
 
 //     // The signing middleware signs txs
 //     use std::sync::Arc;

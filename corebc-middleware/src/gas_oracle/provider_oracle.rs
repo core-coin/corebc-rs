@@ -1,4 +1,4 @@
-use super::{GasOracle, GasOracleError, Result};
+use super::{EneryOracle, EneryOracleError, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use corebc_providers::Middleware;
@@ -20,7 +20,7 @@ impl<M: Middleware> ProviderOracle<M> {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<M: Middleware> GasOracle for ProviderOracle<M>
+impl<M: Middleware> EneryOracle for ProviderOracle<M>
 where
     M::Error: 'static,
 {
@@ -28,14 +28,6 @@ where
         self.provider
             .get_gas_price()
             .await
-            .map_err(|err| GasOracleError::ProviderError(Box::new(err)))
-    }
-
-    async fn estimate_eip1559_fees(&self) -> Result<(U256, U256)> {
-        // TODO: Allow configuring different estimation functions.
-        self.provider
-            .estimate_eip1559_fees(None)
-            .await
-            .map_err(|err| GasOracleError::ProviderError(Box::new(err)))
+            .map_err(|err| EneryOracleError::ProviderError(Box::new(err)))
     }
 }

@@ -1,4 +1,4 @@
-use super::{from_gwei_f64, GasCategory, GasOracle, GasOracleError, Result, GWEI_TO_WEI_U256};
+use super::{from_gwei_f64, EneryOracle, EneryOracleError, GasCategory, Result, GWEI_TO_WEI_U256};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use reqwest::{header::AUTHORIZATION, Client};
@@ -9,7 +9,7 @@ use url::Url;
 const URL: &str = "https://api.blocknative.com/gasprices/blockprices";
 
 /// A client over HTTP for the [BlockNative](https://www.blocknative.com/gas-estimator) gas tracker API
-/// that implements the `GasOracle` trait.
+/// that implements the `EneryOracle` trait.
 #[derive(Clone, Debug)]
 #[must_use]
 pub struct BlockNative {
@@ -62,11 +62,11 @@ impl Response {
         let price = self
             .block_prices
             .first()
-            .ok_or(GasOracleError::InvalidResponse)?
+            .ok_or(EneryOracleError::InvalidResponse)?
             .estimated_prices
             .iter()
             .find(|p| p.confidence == confidence)
-            .ok_or(GasOracleError::GasCategoryNotSupported)?;
+            .ok_or(EneryOracleError::GasCategoryNotSupported)?;
         Ok(*price)
     }
 }
@@ -79,17 +79,10 @@ impl Default for BlockNative {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl GasOracle for BlockNative {
+impl EneryOracle for BlockNative {
     async fn fetch(&self) -> Result<U256> {
         let estimate = self.query().await?.estimate_from_category(&self.gas_category)?;
         Ok(U256::from(estimate.price) * GWEI_TO_WEI_U256)
-    }
-
-    async fn estimate_eip1559_fees(&self) -> Result<(U256, U256)> {
-        let estimate = self.query().await?.estimate_from_category(&self.gas_category)?;
-        let max = from_gwei_f64(estimate.max_fee_per_gas);
-        let prio = from_gwei_f64(estimate.max_priority_fee_per_gas);
-        Ok((max, prio))
     }
 }
 
@@ -112,7 +105,7 @@ impl BlockNative {
     }
 
     /// Perform a request to the gas price API and deserialize the response.
-    pub async fn query(&self) -> Result<Response, GasOracleError> {
+    pub async fn query(&self) -> Result<Response, EneryOracleError> {
         let mut request = self.client.get(self.url.clone());
         if let Some(api_key) = self.api_key.as_ref() {
             request = request.header(AUTHORIZATION, api_key);

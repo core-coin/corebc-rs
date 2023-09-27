@@ -1,4 +1,4 @@
-use super::{from_gwei_f64, GasCategory, GasOracle, GasOracleError, Result};
+use super::{from_gwei_f64, EneryOracle, EneryOracleError, GasCategory, Result};
 use async_trait::async_trait;
 use corebc_core::types::{Network, U256};
 use reqwest::Client;
@@ -8,7 +8,7 @@ use url::Url;
 const MAINNET_URL: &str = "https://gasstation-mainnet.matic.network/v2";
 
 /// The [Polygon](https://docs.polygon.technology/docs/develop/tools/polygon-gas-station/) gas station API
-/// Queries over HTTP and implements the `GasOracle` trait.
+/// Queries over HTTP and implements the `EneryOracle` trait.
 #[derive(Clone, Debug)]
 #[must_use]
 pub struct Polygon {
@@ -56,21 +56,13 @@ impl Default for Polygon {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl GasOracle for Polygon {
+impl EneryOracle for Polygon {
     async fn fetch(&self) -> Result<U256> {
         let response = self.query().await?;
         let base = response.estimated_base_fee;
         let prio = response.estimate_from_category(self.gas_category).max_priority_fee;
         let fee = base + prio;
         Ok(from_gwei_f64(fee))
-    }
-
-    async fn estimate_eip1559_fees(&self) -> Result<(U256, U256)> {
-        let response = self.query().await?;
-        let estimate = response.estimate_from_category(self.gas_category);
-        let max = from_gwei_f64(estimate.max_fee);
-        let prio = from_gwei_f64(estimate.max_priority_fee);
-        Ok((max, prio))
     }
 }
 
@@ -83,7 +75,7 @@ impl Polygon {
         // TODO: Sniff network from network id.
         let url = match network {
             Network::Devin => MAINNET_URL,
-            _ => return Err(GasOracleError::UnsupportedNetwork),
+            _ => return Err(EneryOracleError::UnsupportedNetwork),
         };
         Ok(Self { client, url: Url::parse(url).unwrap(), gas_category: GasCategory::Standard })
     }
