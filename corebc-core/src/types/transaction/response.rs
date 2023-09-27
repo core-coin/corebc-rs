@@ -79,6 +79,8 @@ impl Transaction {
         rlp.append(&self.energy_price);
         rlp.append(&self.energy);
 
+        rlp.append(&self.network_id);
+
         rlp_opt(&mut rlp, &self.to);
         rlp.append(&self.value);
         rlp.append(&self.input.as_ref());
@@ -105,6 +107,9 @@ impl Transaction {
         self.energy_price = rlp.val_at(*offset)?;
         *offset += 1;
         self.energy = rlp.val_at(*offset)?;
+        *offset += 1;
+
+        self.network_id = rlp.val_at(*offset)?;
         *offset += 1;
 
         self.to = decode_to(rlp, offset)?;

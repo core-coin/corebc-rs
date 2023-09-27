@@ -143,11 +143,9 @@ impl TransactionRequest {
     pub fn rlp(&self) -> Bytes {
         let mut rlp = RlpStream::new();
         if let Some(network_id) = self.network_id {
-            rlp.begin_list(NUM_TX_FIELDS);
+            rlp.begin_list(NUM_TX_FIELDS - 2);
             self.rlp_base(&mut rlp);
             rlp.append(&network_id);
-            rlp.append(&0u8);
-            rlp.append(&0u8);
         } else {
             rlp.begin_list(NUM_TX_FIELDS - 3);
             self.rlp_base(&mut rlp);
@@ -199,6 +197,9 @@ impl TransactionRequest {
         txn.energy_price = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
         txn.energy = Some(rlp.at(*offset)?.as_val()?);
+        *offset += 1;
+
+        txn.network_id = Some(rlp.at(*offset)?.as_val()?);
         *offset += 1;
 
         txn.to = decode_to(rlp, offset)?.map(NameOrAddress::Address);
