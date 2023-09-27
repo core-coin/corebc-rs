@@ -46,5 +46,5 @@ pub async fn deploy<M: Middleware>(client: Arc<M>, abi: Abi, bytecode: Bytes) ->
     let factory = ContractFactory::new(abi, bytecode, client);
     let deployer = factory.deploy("initial value".to_string()).unwrap();
     deployer.call().await.unwrap();
-    deployer.legacy().send().await.unwrap()
+    deployer.send().await.unwrap()
 }

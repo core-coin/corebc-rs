@@ -141,7 +141,7 @@
 // //     let contract_call =
 // //         contract.connect(client2.clone()).method::<_, H256>("setValue",
 // // "hi".to_owned()).unwrap();     let calldata = contract_call.calldata().unwrap();
-// //     let _gas_estimate = contract_call.estimate_gas().await.unwrap();
+// //     let _energy_estimate = contract_call.estimate_energy().await.unwrap();
 // //     let contract_call = contract_call.legacy();
 // //     let pending_tx = contract_call.send().await.unwrap();
 // //     let tx = client.get_transaction(*pending_tx).await.unwrap().unwrap();

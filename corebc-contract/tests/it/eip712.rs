@@ -7,7 +7,7 @@ use corebc_core::{
         },
         Address, H176, U256,
     },
-    utils::{parse_ether, sha3},
+    utils::{parse_core, sha3},
 };
 
 #[test]
@@ -149,7 +149,7 @@ fn uniswap_v2_permit_hash() {
     let permit = Permit {
         owner: "0x0000617072Cb2a1897192A9d301AC53fC541d35c4d9D".parse().unwrap(),
         spender: "0x00002819c144D5946404C0516B6f817a960dB37D4929".parse().unwrap(),
-        value: parse_ether(10).unwrap(),
+        value: parse_core(10).unwrap(),
         nonce: U256::from(1),
         deadline: U256::from(3133728498_u32),
     };

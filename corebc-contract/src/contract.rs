@@ -11,9 +11,6 @@ use corebc_core::{
 use corebc_providers::Middleware;
 use std::{borrow::Borrow, fmt::Debug, marker::PhantomData, sync::Arc};
 
-#[cfg(not(feature = "legacy"))]
-use corebc_core::types::Eip1559TransactionRequest;
-#[cfg(feature = "legacy")]
 use corebc_core::types::TransactionRequest;
 
 /// `Contract` is a [`ContractInstance`] object with an `Arc` middleware.
@@ -46,7 +43,7 @@ pub type Contract<M> = ContractInstance<std::sync::Arc<M>, M>;
 /// (EOA) either directly or indirectly (i.e. called from another contract), and are
 /// required to be mined before the effects are present. Therefore, the duration
 /// required for these operations can vary widely, and depend on the transaction
-/// gas price, network congestion and miner priority heuristics.
+/// energy price, network congestion and miner priority heuristics.
 ///
 /// The Contract API provides simple way to connect to a Contract and call its methods,
 /// as functions on a Rust struct, handling all the binary protocol conversion,
@@ -325,14 +322,7 @@ where
     ) -> Result<FunctionCall<B, M, D>, AbiError> {
         let data = encode_function_data(function, args)?;
 
-        #[cfg(feature = "legacy")]
         let tx = TransactionRequest {
-            to: Some(self.address.into()),
-            data: Some(data),
-            ..Default::default()
-        };
-        #[cfg(not(feature = "legacy"))]
-        let tx = Eip1559TransactionRequest {
             to: Some(self.address.into()),
             data: Some(data),
             ..Default::default()

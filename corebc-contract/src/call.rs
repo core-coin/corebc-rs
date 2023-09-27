@@ -185,7 +185,7 @@ pub struct FunctionCall<B, M, D> {
     pub tx: TypedTransaction,
     /// The ABI of the function being called
     pub function: Function,
-    /// Optional block number to be used when calculating the transaction's gas and nonce
+    /// Optional block number to be used when calculating the transaction's energy and nonce
     pub block: Option<BlockId>,
     pub(crate) client: B,
     pub(crate) datatype: PhantomData<D>,
@@ -219,29 +219,17 @@ where
         self
     }
 
-    /// Uses a Legacy transaction instead of an EIP-1559 one to execute the call
-    pub fn legacy(mut self) -> Self {
-        self.tx = match self.tx {
-            TypedTransaction::Eip1559(inner) => {
-                let tx: TransactionRequest = inner.into();
-                TypedTransaction::Legacy(tx)
-            }
-            other => other,
-        };
+    /// Sets the `energy` field in the transaction to the provided value
+    pub fn energy<T: Into<U256>>(mut self, energy: T) -> Self {
+        self.tx.set_energy(energy);
         self
     }
 
-    /// Sets the `gas` field in the transaction to the provided value
-    pub fn gas<T: Into<U256>>(mut self, gas: T) -> Self {
-        self.tx.set_gas(gas);
-        self
-    }
-
-    /// Sets the `gas_price` field in the transaction to the provided value
+    /// Sets the `energy_price` field in the transaction to the provided value
     /// If the internal transaction is an EIP-1559 one, then it sets both
-    /// `max_fee_per_gas` and `max_priority_fee_per_gas` to the same value
-    pub fn gas_price<T: Into<U256>>(mut self, gas_price: T) -> Self {
-        self.tx.set_gas_price(gas_price);
+    /// `max_fee_per_energy` and `max_priority_fee_per_energy` to the same value
+    pub fn energy_price<T: Into<U256>>(mut self, energy_price: T) -> Self {
+        self.tx.set_energy_price(energy_price);
         self
     }
 
@@ -269,11 +257,11 @@ where
         self.tx.data().cloned()
     }
 
-    /// Returns the estimated gas cost for the underlying transaction to be executed
-    pub async fn estimate_gas(&self) -> Result<U256, ContractError<M>> {
+    /// Returns the estimated energy cost for the underlying transaction to be executed
+    pub async fn estimate_energy(&self) -> Result<U256, ContractError<M>> {
         self.client
             .borrow()
-            .estimate_gas(&self.tx, self.block)
+            .estimate_energy(&self.tx, self.block)
             .await
             .map_err(ContractError::from_middleware_error)
     }
