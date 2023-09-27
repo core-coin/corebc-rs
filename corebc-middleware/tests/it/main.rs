@@ -8,9 +8,9 @@ use std::time::Duration;
 
 mod builder;
 
-mod gas_escalator;
+mod energy_escalator;
 
-mod gas_oracle;
+mod energy_oracle;
 
 mod signer;
 

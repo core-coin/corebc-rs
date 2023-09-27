@@ -23,12 +23,12 @@ use corebc_signers::Signer;
 ///     let signer = key.parse::<LocalWallet>().unwrap();
 ///     let address = signer.address();
 ///     let escalator = GeometricGasPrice::new(1.125, 60_u64, None::<u64>);
-///     let gas_oracle = GasNow::new();
+///     let energy_oracle = GasNow::new();
 ///
 ///     let provider = Provider::<Http>::try_from("http://localhost:8545")
 ///         .unwrap()
 ///         .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
-///         .gas_oracle(gas_oracle)
+///         .energy_oracle(energy_oracle)
 ///         .with_signer(signer)
 ///         .nonce_manager(address); // Outermost layer
 /// }
@@ -77,14 +77,14 @@ pub trait MiddlewareBuilder: Middleware + Sized + 'static {
         NonceManagerMiddleware::new(self, address)
     }
 
-    /// Wraps `self` inside a [`EneryOracleMiddleware`](crate::gas_oracle::EneryOracleMiddleware).
+    /// Wraps `self` inside a [`EneryOracleMiddleware`](crate::energy_oracle::EneryOracleMiddleware).
     ///
-    /// [`EneryOracle`](crate::gas_oracle::EneryOracle)
-    fn gas_oracle<G>(self, gas_oracle: G) -> EneryOracleMiddleware<Self, G>
+    /// [`EneryOracle`](crate::energy_oracle::EneryOracle)
+    fn energy_oracle<G>(self, energy_oracle: G) -> EneryOracleMiddleware<Self, G>
     where
         G: EneryOracle,
     {
-        EneryOracleMiddleware::new(self, gas_oracle)
+        EneryOracleMiddleware::new(self, energy_oracle)
     }
 }
 

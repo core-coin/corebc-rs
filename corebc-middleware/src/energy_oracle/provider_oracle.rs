@@ -26,7 +26,7 @@ where
 {
     async fn fetch(&self) -> Result<U256> {
         self.provider
-            .get_gas_price()
+            .get_energy_price()
             .await
             .map_err(|err| EneryOracleError::ProviderError(Box::new(err)))
     }

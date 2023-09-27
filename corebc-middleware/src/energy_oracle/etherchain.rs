@@ -51,8 +51,8 @@ impl Default for Etherchain {
 impl EneryOracle for Etherchain {
     async fn fetch(&self) -> Result<U256> {
         let res = self.query().await?;
-        let gas_price = res.gas_from_category(self.gas_category);
-        Ok(from_gwei_f64(gas_price))
+        let energy_price = res.gas_from_category(self.gas_category);
+        Ok(from_gwei_f64(energy_price))
     }
 }
 

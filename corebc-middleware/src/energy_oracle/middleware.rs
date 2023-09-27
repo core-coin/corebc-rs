@@ -8,7 +8,7 @@ use thiserror::Error;
 #[derive(Debug)]
 pub struct EneryOracleMiddleware<M, G> {
     inner: M,
-    gas_oracle: G,
+    energy_oracle: G,
 }
 
 impl<M, G> EneryOracleMiddleware<M, G>
@@ -16,8 +16,8 @@ where
     M: Middleware,
     G: EneryOracle,
 {
-    pub fn new(inner: M, gas_oracle: G) -> Self {
-        Self { inner, gas_oracle }
+    pub fn new(inner: M, energy_oracle: G) -> Self {
+        Self { inner, energy_oracle }
     }
 }
 
@@ -28,9 +28,6 @@ pub enum MiddlewareError<M: Middleware> {
 
     #[error("{0}")]
     MiddlewareError(M::Error),
-
-    #[error("This gas price oracle only works with Legacy and EIP2930 transactions.")]
-    UnsupportedTxType,
 }
 
 impl<M: Middleware> METrait for MiddlewareError<M> {
@@ -72,8 +69,8 @@ where
     ) -> Result<(), Self::Error> {
         match tx {
             TypedTransaction::Legacy(ref mut tx) => {
-                if tx.gas_price.is_none() {
-                    tx.gas_price = Some(self.get_gas_price().await?);
+                if tx.energy_price.is_none() {
+                    tx.energy_price = Some(self.get_energy_price().await?);
                 }
             }
         };
@@ -81,8 +78,8 @@ where
         self.inner().fill_transaction(tx, block).await.map_err(METrait::from_err)
     }
 
-    async fn get_gas_price(&self) -> Result<U256, Self::Error> {
-        Ok(self.gas_oracle.fetch().await?)
+    async fn get_energy_price(&self) -> Result<U256, Self::Error> {
+        Ok(self.energy_oracle.fetch().await?)
     }
 
     async fn send_transaction<T: Into<TypedTransaction> + Send + Sync>(

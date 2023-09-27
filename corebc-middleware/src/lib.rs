@@ -2,15 +2,15 @@
 #![deny(unsafe_code, rustdoc::broken_intra_doc_links)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-/// The [Gas Escalator middleware](crate::gas_escalator::GasEscalatorMiddleware)
+/// The [Gas Escalator middleware](crate::energy_escalator::GasEscalatorMiddleware)
 /// is used to re-broadcast transactions with an increasing gas price to guarantee
 /// their timely inclusion.
-pub mod gas_escalator;
+pub mod energy_escalator;
 
 /// The gas oracle middleware is used to get the gas price from a list of gas oracles
 /// instead of using eth_gasPrice. For usage examples, refer to the
-/// [`EneryOracle`](crate::gas_oracle::EneryOracle) trait.
-pub mod gas_oracle;
+/// [`EneryOracle`](crate::energy_oracle::EneryOracle) trait.
+pub mod energy_oracle;
 
 /// The [Nonce Manager](crate::NonceManagerMiddleware) is used to locally calculate nonces instead
 /// of using eth_getTransactionCount

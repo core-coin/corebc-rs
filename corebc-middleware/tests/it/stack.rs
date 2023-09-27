@@ -1,7 +1,7 @@
 use corebc_core::{rand::thread_rng, types::Network};
 use corebc_middleware::{
-    gas_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    gas_oracle::{EneryOracleMiddleware, GasCategory, GasNow},
+    energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
+    energy_oracle::{EneryOracleMiddleware, GasCategory},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
@@ -13,12 +13,10 @@ async fn mock_with_middleware() {
     let (provider, mock) = Provider::mocked();
 
     // add a bunch of middlewares
-    let gas_oracle = GasNow::new().category(GasCategory::SafeLow);
     let signer = LocalWallet::new(&mut thread_rng(), Network::Mainnet);
     let address = signer.address();
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
     let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
-    let provider = EneryOracleMiddleware::new(provider, gas_oracle);
     let provider = SignerMiddleware::new(provider, signer);
     let provider = NonceManagerMiddleware::new(provider, address);
 
@@ -50,7 +48,6 @@ async fn mock_with_middleware() {
 // #[tokio::test]
 // async fn can_stack_middlewares() {
 //     let anvil = Anvil::new().block_time(5u64).spawn();
-//     let gas_oracle = GasNow::new().category(GasCategory::SafeLow);
 //     let signer: LocalWallet = anvil.keys()[0].clone().into();
 //     let address = signer.address();
 
@@ -66,7 +63,6 @@ async fn mock_with_middleware() {
 //     let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
 
 //     // The gas price middleware MUST be below the signing middleware for things to work
-//     let provider = EneryOracleMiddleware::new(provider, gas_oracle);
 
 //     // The signing middleware signs txs
 //     use std::sync::Arc;
@@ -81,8 +77,8 @@ async fn mock_with_middleware() {
 //     for _ in 0..10 {
 //         let pending = provider.send_transaction(tx.clone(), None).await.unwrap();
 //         let hash = *pending;
-//         let gas_price = provider.get_transaction(hash).await.unwrap().unwrap().gas_price;
-//         dbg!(gas_price);
+//         let energy_price = provider.get_transaction(hash).await.unwrap().unwrap().energy_price;
+//         dbg!(energy_price);
 //         pending_txs.push(pending);
 //     }
 

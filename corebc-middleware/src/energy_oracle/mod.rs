@@ -1,10 +1,3 @@
-pub mod blocknative;
-pub use blocknative::BlockNative;
-
-pub mod eth_gas_station;
-#[allow(deprecated)]
-pub use eth_gas_station::EthGasStation;
-
 pub mod etherchain;
 pub use etherchain::Etherchain;
 
@@ -16,9 +9,6 @@ pub use median::Median;
 
 pub mod cache;
 pub use cache::Cache;
-
-pub mod gas_now;
-pub use gas_now::GasNow;
 
 pub mod provider_oracle;
 pub use provider_oracle::ProviderOracle;
@@ -90,12 +80,12 @@ pub enum EneryOracleError {
 ///
 /// ```no_run
 /// use corebc_core::types::U256;
-/// use corebc_middleware::gas_oracle::{GasCategory, GasNow, EneryOracle};
+/// use corebc_middleware::energy_oracle::{GasCategory, GasNow, EneryOracle};
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// let oracle = GasNow::default().category(GasCategory::SafeLow);
-/// let gas_price = oracle.fetch().await?;
-/// assert!(gas_price > U256::zero());
+/// let energy_price = oracle.fetch().await?;
+/// assert!(energy_price > U256::zero());
 /// # Ok(())
 /// # }
 /// ```
@@ -110,12 +100,12 @@ pub trait EneryOracle: Send + Sync + Debug {
     ///
     /// ```no_run
     /// use corebc_core::types::U256;
-    /// use corebc_middleware::gas_oracle::{GasCategory, GasNow, EneryOracle};
+    /// use corebc_middleware::energy_oracle::{GasCategory, GasNow, EneryOracle};
     ///
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// let oracle = GasNow::default().category(GasCategory::SafeLow);
-    /// let gas_price = oracle.fetch().await?;
-    /// assert!(gas_price > U256::zero());
+    /// let energy_price = oracle.fetch().await?;
+    /// assert!(energy_price > U256::zero());
     /// # Ok(())
     /// # }
     /// ```
