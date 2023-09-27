@@ -8,13 +8,14 @@ use corebc_core::{
 use std::convert::TryInto;
 
 /// ENS registry address (`0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e`)
-pub const ENS_ADDRESS: Address = H176([
+/// CORETODO: Here should be the real cns address
+pub const CNS_ADDRESS: Address = H176([
     // cannot set type aliases as constructors
     0, 0, 0, 0, 0, 0, 0, 12, 46, 7, 78, 198, 154, 13, 251, 41, 151, 186, 108, 125, 46, 30,
 ]);
 
 // Selectors
-const ENS_REVERSE_REGISTRAR_DOMAIN: &str = "addr.reverse";
+const CNS_REVERSE_REGISTRAR_DOMAIN: &str = "addr.reverse";
 
 /// resolver(bytes32)
 const RESOLVER: Selector = [1, 120, 184, 191];
@@ -72,13 +73,13 @@ pub fn resolve<T: Into<NameOrAddress>>(
 
 /// Returns the reverse-registrar name of an address.
 pub fn reverse_address(addr: Address) -> String {
-    format!("{addr:?}.{ENS_REVERSE_REGISTRAR_DOMAIN}")[2..].to_string()
+    format!("{addr:?}.{CNS_REVERSE_REGISTRAR_DOMAIN}")[2..].to_string()
 }
 
 /// Returns the ENS namehash as specified in [EIP-137](https://eips.ethereum.org/EIPS/eip-137)
 pub fn namehash(name: &str) -> H256 {
     if name.is_empty() {
-        return H256::zero()
+        return H256::zero();
     }
 
     // iterate in reverse

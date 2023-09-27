@@ -76,7 +76,7 @@ where
     /// # Example
     ///
     /// ```
-    /// 
+    ///
     /// # async fn demo() {
     /// use corebc_providers::{Http, RetryClient, HttpRateLimitRetryPolicy};
     /// use std::time::Duration;
@@ -293,7 +293,7 @@ where
                 match resp {
                     Ok(ret) => {
                         self.requests_enqueued.fetch_sub(1, Ordering::SeqCst);
-                        return Ok(ret)
+                        return Ok(ret);
                     }
                     Err(err_) => err = err_,
                 }
@@ -304,7 +304,7 @@ where
                 rate_limit_retry_number += 1;
                 if rate_limit_retry_number > self.rate_limit_retries {
                     trace!("request timed out after {} retries", self.rate_limit_retries);
-                    return Err(RetryClientError::TimeoutError)
+                    return Err(RetryClientError::TimeoutError);
                 }
 
                 let current_queued_requests = self.requests_enqueued.load(Ordering::SeqCst) as u64;
@@ -317,9 +317,9 @@ where
 
                 // requests are usually weighted and can vary from 10 CU to several 100 CU, cheaper
                 // requests are more common some example alchemy weights:
-                // - `eth_getStorageAt`: 17
-                // - `eth_getBlockByNumber`: 16
-                // - `eth_newFilter`: 20
+                // - `xcb_getStorageAt`: 17
+                // - `xcb_getBlockByNumber`: 16
+                // - `xcb_newFilter`: 20
                 //
                 // (coming from forking mode) assuming here that storage request will be the driver
                 // for Rate limits we choose `17` as the average cost of any request
@@ -344,12 +344,12 @@ where
                 if timeout_retries < self.timeout_retries && maybe_connectivity(&err) {
                     timeout_retries += 1;
                     trace!(err = ?err, "retrying due to spurious network");
-                    continue
+                    continue;
                 }
 
                 trace!(err = ?err, "should not retry");
                 self.requests_enqueued.fetch_sub(1, Ordering::SeqCst);
-                return Err(RetryClientError::ProviderError(err))
+                return Err(RetryClientError::ProviderError(err));
             }
         }
     }
@@ -369,17 +369,17 @@ impl RetryPolicy<ClientError> for HttpRateLimitRetryPolicy {
             let JsonRpcError { code, message, .. } = err;
             // alchemy throws it this way
             if *code == 429 {
-                return true
+                return true;
             }
 
             // This is an infura error code for `exceeded project rate limit`
             if *code == -32005 {
-                return true
+                return true;
             }
 
             // alternative alchemy error for specific IPs
             if *code == -32016 && message.contains("rate limit") {
-                return true
+                return true;
             }
 
             match message.as_str() {
@@ -405,7 +405,7 @@ impl RetryPolicy<ClientError> for HttpRateLimitRetryPolicy {
                 }
 
                 if let Ok(resp) = serde_json::from_str::<Resp>(text) {
-                    return should_retry_json_rpc_error(&resp.error)
+                    return should_retry_json_rpc_error(&resp.error);
                 }
                 false
             }
@@ -421,10 +421,10 @@ impl RetryPolicy<ClientError> for HttpRateLimitRetryPolicy {
             let backoff_seconds = &data["rate"]["backoff_seconds"];
             // infura rate limit error
             if let Some(seconds) = backoff_seconds.as_u64() {
-                return Some(Duration::from_secs(seconds))
+                return Some(Duration::from_secs(seconds));
             }
             if let Some(seconds) = backoff_seconds.as_f64() {
-                return Some(Duration::from_secs(seconds as u64 + 1))
+                return Some(Duration::from_secs(seconds as u64 + 1));
             }
         }
 
@@ -462,19 +462,19 @@ fn compute_unit_offset_in_secs(
 fn maybe_connectivity(err: &ProviderError) -> bool {
     if let ProviderError::HTTPError(reqwest_err) = err {
         if reqwest_err.is_timeout() {
-            return true
+            return true;
         }
 
         #[cfg(not(target_arch = "wasm32"))]
         if reqwest_err.is_connect() {
-            return true
+            return true;
         }
 
         // Error HTTP codes (5xx) are considered connectivity issues and will prompt retry
         if let Some(status) = reqwest_err.status() {
             let code = status.as_u16();
             if (500..600).contains(&code) {
-                return true
+                return true;
             }
         }
     }

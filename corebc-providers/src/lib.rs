@@ -45,25 +45,26 @@ pub mod test_provider {
     // List of infura keys to rotate through so we don't get rate limited
     const INFURA_KEYS: &[&str] = &["15e8aaed6f894d63a0f6a0206c006cdd"];
 
-    pub static MAINNET: Lazy<TestProvider> =
-        Lazy::new(|| TestProvider::new(INFURA_KEYS, "mainnet"));
-    pub static DEVIN: Lazy<TestProvider> = Lazy::new(|| TestProvider::new(INFURA_KEYS, "goerli"));
+    pub static MAINNET: Lazy<TestProvider> = Lazy::new(|| TestProvider::new("mainnet"));
+    pub static DEVIN: Lazy<TestProvider> = Lazy::new(|| TestProvider::new("devin"));
 
     #[derive(Debug)]
     pub struct TestProvider {
         network: String,
-        keys: Mutex<Cycle<Iter<'static, &'static str>>>,
     }
 
     impl TestProvider {
-        pub fn new(keys: &'static [&'static str], network: impl Into<String>) -> Self {
-            Self { keys: keys.iter().cycle().into(), network: network.into() }
+        pub fn new(network: impl Into<String>) -> Self {
+            Self { network: network.into() }
         }
 
         pub fn url(&self) -> String {
-            let Self { network, keys } = self;
-            let key = keys.lock().unwrap().next().unwrap();
-            format!("https://{network}.infura.io/v3/{key}")
+            let Self { network } = self;
+            match network.as_str() {
+                "devin" => String::from("https://xcbapi.corecoin.cc/"),
+                "mainnet" => String::from("https://xcbapi.coreblockchain.net/"),
+                _ => panic!("Invalid Network. Only devin and mainnet are availible"),
+            }
         }
 
         pub fn provider(&self) -> Provider<Http> {
@@ -72,12 +73,7 @@ pub mod test_provider {
 
         #[cfg(feature = "ws")]
         pub async fn ws(&self) -> Provider<crate::Ws> {
-            let url = format!(
-                "wss://{}.infura.io/ws/v3/{}",
-                self.network,
-                self.keys.lock().unwrap().next().unwrap()
-            );
-            Provider::connect(url.as_str()).await.unwrap()
+            Provider::connect("wss://xcbapi.coreblockchain.net").await.unwrap()
         }
     }
 }

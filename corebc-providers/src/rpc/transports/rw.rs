@@ -9,8 +9,8 @@ use thiserror::Error;
 /// A client containing two clients.
 ///
 /// One is used for _read_ operations
-/// One is used for _write_ operations that consume gas `["eth_sendTransaction",
-/// "eth_sendRawTransaction"]`
+/// One is used for _write_ operations that consume gas `["xcb_sendTransaction",
+/// "xcb_sendRawTransaction"]`
 ///
 /// **Note**: if the method is unknown this client falls back to the _read_ client
 // # Example
@@ -133,7 +133,7 @@ where
         R: DeserializeOwned + Send,
     {
         match method {
-            "eth_sendTransaction" | "eth_sendRawTransaction" => {
+            "xcb_sendTransaction" | "xcb_sendRawTransaction" => {
                 self.w.request(method, params).await.map_err(RwClientError::Write)
             }
             _ => self.r.request(method, params).await.map_err(RwClientError::Read),
