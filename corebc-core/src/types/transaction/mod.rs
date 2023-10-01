@@ -18,6 +18,7 @@ pub(super) fn rlp_opt<T: rlp::Encodable>(rlp: &mut rlp::RlpStream, opt: &Option<
     }
 }
 
+#[allow(unused)]
 pub(super) fn rlp_opt_list<T: rlp::Encodable>(rlp: &mut rlp::RlpStream, opt: &Option<T>) {
     if let Some(inner) = opt {
         rlp.append(inner);
@@ -27,6 +28,7 @@ pub(super) fn rlp_opt_list<T: rlp::Encodable>(rlp: &mut rlp::RlpStream, opt: &Op
     }
 }
 
+#[allow(unused)]
 /// normalizes the signature back to 0/1
 pub(crate) fn normalize_v(v: u64, network_id: crate::types::U64) -> u64 {
     if v > 1 {
@@ -41,7 +43,7 @@ pub(crate) fn extract_network_id(v: u64) -> Option<crate::types::U64> {
     // https://eips.ethereum.org/EIPS/eip-155
     // if networkid is available, v = {0, 1} + NETWORK_ID * 2 + 35
     if v >= 35 {
-        return Some(crate::types::U64::from((v - 35) >> 1));
+        return Some(crate::types::U64::from((v - 35) >> 1))
     }
     None
 }
@@ -75,7 +77,7 @@ fn decode_to(
             if to.is_data() {
                 None
             } else {
-                return Err(rlp::DecoderError::RlpExpectedToBeData);
+                return Err(rlp::DecoderError::RlpExpectedToBeData)
             }
         } else {
             Some(to.as_val()?)

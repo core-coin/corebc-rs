@@ -1,10 +1,8 @@
 use corebc_core::types::{
-    transaction::eip2718::TypedTransaction, Address, BlockId, Bytes, Network, Signature,
-    TransactionRequest, U256,
+    transaction::eip2718::TypedTransaction, Address, BlockId, Bytes, Signature, U256,
 };
 use corebc_providers::{maybe, Middleware, MiddlewareError, PendingTransaction};
 use corebc_signers::Signer;
-use std::convert::TryFrom;
 
 use async_trait::async_trait;
 use thiserror::Error;
@@ -289,7 +287,7 @@ where
                 .inner
                 .send_transaction(tx, block)
                 .await
-                .map_err(SignerMiddlewareError::MiddlewareError);
+                .map_err(SignerMiddlewareError::MiddlewareError)
         }
 
         // if we have a nonce manager set, we should try handling the result in
@@ -351,7 +349,8 @@ mod tests {
     //     let tx = TransactionRequest {
     //         from: None,
     //         to: Some(
-    //             "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+    //             
+    // "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
     //         ),
     //         value: Some(1_000_000_000.into()),
     //         energy: Some(2_000_000.into()),
@@ -363,9 +362,9 @@ mod tests {
     //     .into();
     //     let network_id = 1u64;
 
-    //     // Signer middlewares now rely on a working provider which it can query the network id from,
-    //     // so we make sure Anvil is started with the network id that the expected tx was signed
-    //     // with
+    //     // Signer middlewares now rely on a working provider which it can query the network id
+    // from,     // so we make sure Anvil is started with the network id that the expected tx
+    // was signed     // with
     //     let anvil =
     //         Anvil::new().args(vec!["--chain-id".to_string(), network_id.to_string()]).spawn();
     //     let provider = Provider::try_from(anvil.endpoint()).unwrap();
@@ -383,8 +382,10 @@ mod tests {
     //             .unwrap()
     //     );
 
-    //     let expected_rlp = Bytes::from(hex::decode("f86b808504e3b29200831e8480960000f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008025a0f9fa41caed9b9b79fb6c34e54d43a9da5725d92c1d53f5b0a9078eddb63118aea01da56f076c9fe3f40488b7a3627829760f86a1fc931396bea1e7284d6d61315c").unwrap());
-    //     assert_eq!(tx, expected_rlp);
+    //     let expected_rlp =
+    // Bytes::from(hex::decode("
+    // f86b808504e3b29200831e8480960000f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca008025a0f9fa41caed9b9b79fb6c34e54d43a9da5725d92c1d53f5b0a9078eddb63118aea01da56f076c9fe3f40488b7a3627829760f86a1fc931396bea1e7284d6d61315c"
+    // ).unwrap());     assert_eq!(tx, expected_rlp);
     // }
 
     // CORETODO: Needs Anvil
@@ -397,7 +398,8 @@ mod tests {
     //     let tx = TransactionRequest {
     //         from: None,
     //         to: Some(
-    //             "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+    //             
+    // "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
     //         ),
     //         value: Some(1_000_000_000.into()),
     //         energy: Some(2_000_000.into()),
@@ -409,9 +411,9 @@ mod tests {
     //     .into();
     //     let network_id = 1337u64;
 
-    //     // Signer middlewares now rely on a working provider which it can query the network id from,
-    //     // so we make sure Anvil is started with the network id that the expected tx was signed
-    //     // with
+    //     // Signer middlewares now rely on a working provider which it can query the network id
+    // from,     // so we make sure Anvil is started with the network id that the expected tx
+    // was signed     // with
     //     let anvil =
     //         Anvil::new().args(vec!["--chain-id".to_string(), network_id.to_string()]).spawn();
     //     let provider = Provider::try_from(anvil.endpoint()).unwrap();
@@ -423,8 +425,10 @@ mod tests {
 
     //     let tx = client.sign_transaction(tx).await.unwrap();
 
-    //     let expected_rlp = Bytes::from(hex::decode("f86d808504e3b29200831e8480960000f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca0080820a95a08e5140d537e01ce53ffe46f8b573bf44af35ff1a873dcc0fca2109c77270a84ba0376029800db10847a100ab4cb91d8c838aa889931498dba2b05b41cf034fa736").unwrap());
-    //     assert_eq!(tx, expected_rlp);
+    //     let expected_rlp =
+    // Bytes::from(hex::decode("
+    // f86d808504e3b29200831e8480960000f0109fc8df283027b6285cc889f5aa624eac1f55843b9aca0080820a95a08e5140d537e01ce53ffe46f8b573bf44af35ff1a873dcc0fca2109c77270a84ba0376029800db10847a100ab4cb91d8c838aa889931498dba2b05b41cf034fa736"
+    // ).unwrap());     assert_eq!(tx, expected_rlp);
     // }
 
     // CORETODO: Needs ANvil

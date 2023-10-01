@@ -512,14 +512,14 @@ impl crate::RpcError for IpcError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use corebc_core::utils::{Geth, GethInstance};
+    use corebc_core::utils::{GoCore, GoCoreInstance};
     use std::time::Duration;
     use tempfile::NamedTempFile;
 
-    async fn connect() -> (Ipc, GethInstance) {
+    async fn connect() -> (Ipc, GoCoreInstance) {
         let temp_file = NamedTempFile::new().unwrap();
         let path = temp_file.into_temp_path().to_path_buf();
-        let geth = Geth::new().block_time(1u64).ipc_path(&path).spawn();
+        let geth = GoCore::new().block_time(1u64).ipc_path(&path).spawn();
 
         // [Windows named pipes](https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipes)
         // are located at `\\<machine_address>\pipe\<pipe_name>`.

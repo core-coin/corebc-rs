@@ -5,10 +5,7 @@ use crate::{error::ContractRevert, EthError};
 use super::base::{decode_function_data, AbiError};
 use corebc_core::{
     abi::{AbiDecode, AbiEncode, Detokenize, Function, InvalidOutputType, Tokenizable},
-    types::{
-        transaction::eip2718::TypedTransaction, Address, BlockId, Bytes, Selector,
-        TransactionRequest, U256,
-    },
+    types::{transaction::eip2718::TypedTransaction, Address, BlockId, Bytes, Selector, U256},
     utils::id,
 };
 use corebc_providers::{

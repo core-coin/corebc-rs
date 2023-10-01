@@ -16,9 +16,9 @@ mod tests {
 
     #[test]
     fn test_serialize_noop_trace() {
-        let mut opts = GethDebugTracingCallOptions::default();
+        let mut opts = GoCoreDebugTracingCallOptions::default();
         opts.tracing_options.tracer =
-            Some(GethDebugTracerType::BuiltInTracer(GethDebugBuiltInTracerType::NoopTracer));
+            Some(GoCoreDebugTracerType::BuiltInTracer(GoCoreDebugBuiltInTracerType::NoopTracer));
 
         assert_eq!(serde_json::to_string(&opts).unwrap(), r#"{"tracer":"noopTracer"}"#);
     }

@@ -4,7 +4,7 @@ use corebc::{
     middleware::SignerMiddleware,
     providers::{Http, Provider},
     signers::{LocalWallet, Signer},
-    solc::{Artifact, Project, ProjectPathsConfig},
+    ylem::{Artifact, Project, ProjectPathsConfig},
 };
 use eyre::Result;
 use std::{path::PathBuf, sync::Arc, time::Duration};

@@ -34,10 +34,10 @@ pub type YubiWallet = Wallet<yubihsm::ecdsa::Signer<corebc_core::k256::Secp256k1
 #[cfg(all(feature = "yubihsm", not(target_arch = "wasm32")))]
 pub use yubihsm;
 
-#[cfg(feature = "aws")]
-mod aws;
-#[cfg(feature = "aws")]
-pub use aws::{AwsSigner, AwsSignerError};
+// #[cfg(feature = "aws")]
+// mod aws;
+// #[cfg(feature = "aws")]
+// pub use aws::{AwsSigner, AwsSignerError};
 
 use async_trait::async_trait;
 use corebc_core::types::{

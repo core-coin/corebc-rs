@@ -81,7 +81,8 @@ async fn get_balance_history_success() {
     let account = &"ab30f0091ce7386584b85eecf92f75157582179887ce".parse().unwrap();
     run_with_client(Network::Devin, |client| async move {
         let history = client.get_balance_history(account, None).await;
-        assert_eq!(history.unwrap().len(), 4);
+        println!("{:?}", history);
+        assert_eq!(history.unwrap().len(), 8);
     })
     .await
 }

@@ -203,7 +203,7 @@ impl TypedTransaction {
     pub fn decode_signed(rlp: &rlp::Rlp) -> Result<(Self, Signature), TypedTransactionError> {
         if rlp.is_list() {
             let decoded_request = TransactionRequest::decode_signed_rlp(rlp)?;
-            return Ok((Self::Legacy(decoded_request.0), decoded_request.1));
+            return Ok((Self::Legacy(decoded_request.0), decoded_request.1))
         }
 
         Err(rlp::DecoderError::Custom("invalid tx type").into())

@@ -61,14 +61,16 @@ mod tests {
 
     #[test]
     fn test_serialize_call_trace() {
-        let mut opts = GethDebugTracingCallOptions::default();
+        let mut opts = GoCoreDebugTracingCallOptions::default();
         opts.tracing_options.disable_storage = Some(false);
         opts.tracing_options.tracer =
-            Some(GethDebugTracerType::BuiltInTracer(GethDebugBuiltInTracerType::CallTracer));
-        opts.tracing_options.tracer_config =
-            Some(GethDebugTracerConfig::BuiltInTracer(GethDebugBuiltInTracerConfig::CallTracer(
-                CallConfig { only_top_call: Some(true), with_log: Some(true) },
-            )));
+            Some(GoCoreDebugTracerType::BuiltInTracer(GoCoreDebugBuiltInTracerType::CallTracer));
+        opts.tracing_options.tracer_config = Some(GoCoreDebugTracerConfig::BuiltInTracer(
+            GoCoreDebugBuiltInTracerConfig::CallTracer(CallConfig {
+                only_top_call: Some(true),
+                with_log: Some(true),
+            }),
+        ));
 
         assert_eq!(
             serde_json::to_string(&opts).unwrap(),

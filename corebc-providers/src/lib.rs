@@ -40,10 +40,7 @@ pub mod test_provider {
     use super::*;
     use crate::Http;
     use once_cell::sync::Lazy;
-    use std::{convert::TryFrom, iter::Cycle, slice::Iter, sync::Mutex};
-
-    // List of infura keys to rotate through so we don't get rate limited
-    const INFURA_KEYS: &[&str] = &["15e8aaed6f894d63a0f6a0206c006cdd"];
+    use std::convert::TryFrom;
 
     pub static MAINNET: Lazy<TestProvider> = Lazy::new(|| TestProvider::new("mainnet"));
     pub static DEVIN: Lazy<TestProvider> = Lazy::new(|| TestProvider::new("devin"));

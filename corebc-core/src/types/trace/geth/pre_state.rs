@@ -61,12 +61,15 @@ mod tests {
 
     #[test]
     fn test_serialize_pre_state_trace() {
-        let mut opts = GethDebugTracingCallOptions::default();
+        let mut opts = GoCoreDebugTracingCallOptions::default();
         opts.tracing_options.disable_storage = Some(false);
-        opts.tracing_options.tracer =
-            Some(GethDebugTracerType::BuiltInTracer(GethDebugBuiltInTracerType::PreStateTracer));
-        opts.tracing_options.tracer_config = Some(GethDebugTracerConfig::BuiltInTracer(
-            GethDebugBuiltInTracerConfig::PreStateTracer(PreStateConfig { diff_mode: Some(true) }),
+        opts.tracing_options.tracer = Some(GoCoreDebugTracerType::BuiltInTracer(
+            GoCoreDebugBuiltInTracerType::PreStateTracer,
+        ));
+        opts.tracing_options.tracer_config = Some(GoCoreDebugTracerConfig::BuiltInTracer(
+            GoCoreDebugBuiltInTracerConfig::PreStateTracer(PreStateConfig {
+                diff_mode: Some(true),
+            }),
         ));
 
         assert_eq!(

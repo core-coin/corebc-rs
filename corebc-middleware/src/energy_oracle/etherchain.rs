@@ -1,4 +1,4 @@
-use super::{from_gwei_f64, EneryOracle, EneryOracleError, GasCategory, Result};
+use super::{from_gwei_f64, EneryOracle, GasCategory, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use reqwest::Client;

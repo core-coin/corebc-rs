@@ -181,10 +181,7 @@ where
             .await
             .map_err(MiddlewareError::from_err)?;
 
-        let tx = match tx {
-            TypedTransaction::Legacy(inner) => inner,
-            _ => return Err(GasEscalatorError::UnsupportedTxType),
-        };
+        let TypedTransaction::Legacy(tx) = tx;
 
         // insert the tx in the pending txs
         let mut lock = self.txs.lock().await;

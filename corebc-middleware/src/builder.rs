@@ -77,7 +77,8 @@ pub trait MiddlewareBuilder: Middleware + Sized + 'static {
         NonceManagerMiddleware::new(self, address)
     }
 
-    /// Wraps `self` inside a [`EneryOracleMiddleware`](crate::energy_oracle::EneryOracleMiddleware).
+    /// Wraps `self` inside a
+    /// [`EneryOracleMiddleware`](crate::energy_oracle::EneryOracleMiddleware).
     ///
     /// [`EneryOracle`](crate::energy_oracle::EneryOracle)
     fn energy_oracle<G>(self, energy_oracle: G) -> EneryOracleMiddleware<Self, G>
