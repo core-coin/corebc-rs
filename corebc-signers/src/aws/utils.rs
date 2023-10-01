@@ -60,8 +60,7 @@
 //     // false for uncompressed
 //     let uncompressed_pub_key = key.to_encoded_point(false);
 //     let public_key = uncompressed_pub_key.to_bytes();
-//     debug_assert_eq!(public_key[0], 0x04);
-//     let hash = sha3(&public_key[1..]);
+//     let hash = sha3(&public_key[..]);
 
 //     let mut bytes = [0u8; 20];
 //     bytes.copy_from_slice(&hash[12..]);
