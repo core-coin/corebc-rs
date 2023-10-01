@@ -120,7 +120,7 @@ impl Signature {
         println!("{:?}", result);
         // Add logic to throw error in case of false
 
-        let hash = crate::utils::sha3(&pub_bytes[1..]);
+        let hash = crate::utils::sha3(&pub_bytes[..]);
 
         let mut bytes = [0u8; 20];
         bytes.copy_from_slice(&hash[12..]);
