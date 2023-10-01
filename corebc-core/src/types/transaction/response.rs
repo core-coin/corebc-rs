@@ -54,9 +54,10 @@ pub struct Transaction {
     pub input: Bytes,
 
     /// Signature
+    #[serde(rename = "signature")]
     pub sig: U1368,
 
-    #[serde(rename = "networkId", default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub network_id: Option<U256>,
 }
 
