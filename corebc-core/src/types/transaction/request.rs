@@ -131,9 +131,10 @@ impl TransactionRequest {
     }
 
     /// Hashes the transaction's data with the provided network id
+    /// CORETODO: set the workflow for None
     pub fn sighash(&self) -> H256 {
         match self.network_id {
-            Some(_) => sha3(self.rlp().as_ref()).into(),
+            Some(_) => sha3(self.rlp_sighash().as_ref()).into(),
             None => sha3(self.rlp_unsigned().as_ref()).into(),
         }
     }
@@ -142,13 +143,23 @@ impl TransactionRequest {
     /// signing. Assumes the networkid exists.
     pub fn rlp(&self) -> Bytes {
         let mut rlp = RlpStream::new();
+        rlp.begin_list(NUM_TX_FIELDS - 2);
+        self.rlp_base(&mut rlp);
+        rlp.out().freeze().into()
+    }
+
+    // Encodes rlp without network_id as the last field (for sighash only)
+    pub fn rlp_sighash(&self) -> Bytes {
+        let mut rlp = RlpStream::new();
         if let Some(network_id) = self.network_id {
             rlp.begin_list(NUM_TX_FIELDS - 2);
-            self.rlp_base(&mut rlp);
+            self.rlp_base_sighash(&mut rlp);
             rlp.append(&network_id);
         } else {
+            // CORETODO: Doublecheck what to do with this part
+            // If it is called from self.sighash this part is unavailable, but it could be called from eip2718 .sighash()
             rlp.begin_list(NUM_TX_FIELDS - 3);
-            self.rlp_base(&mut rlp);
+            self.rlp_base_sighash(&mut rlp);
         }
         rlp.out().freeze().into()
     }
@@ -156,7 +167,7 @@ impl TransactionRequest {
     /// Gets the unsigned transaction's RLP encoding
     pub fn rlp_unsigned(&self) -> Bytes {
         let mut rlp = RlpStream::new();
-        rlp.begin_list(NUM_TX_FIELDS - 3);
+        rlp.begin_list(NUM_TX_FIELDS - 2);
         self.rlp_base(&mut rlp);
         rlp.out().freeze().into()
     }
@@ -164,7 +175,7 @@ impl TransactionRequest {
     /// Produces the RLP encoding of the transaction with the provided signature
     pub fn rlp_signed(&self, signature: &Signature) -> Bytes {
         let mut rlp = RlpStream::new();
-        rlp.begin_list(NUM_TX_FIELDS);
+        rlp.begin_list(NUM_TX_FIELDS + 1);
 
         self.rlp_base(&mut rlp);
 
@@ -180,10 +191,24 @@ impl TransactionRequest {
         rlp_opt(rlp, &self.energy_price);
         rlp_opt(rlp, &self.energy);
 
+        rlp_opt(rlp, &self.network_id);
+
         rlp_opt(rlp, &self.to.as_ref());
         rlp_opt(rlp, &self.value);
         rlp_opt(rlp, &self.data.as_ref().map(|d| d.as_ref()));
     }
+
+    // Rlp encoding without network_id should be used only for encoding sighash
+    pub(crate) fn rlp_base_sighash(&self, rlp: &mut RlpStream) {
+        rlp_opt(rlp, &self.nonce);
+        rlp_opt(rlp, &self.energy_price);
+        rlp_opt(rlp, &self.energy);
+
+        rlp_opt(rlp, &self.to.as_ref());
+        rlp_opt(rlp, &self.value);
+        rlp_opt(rlp, &self.data.as_ref().map(|d| d.as_ref()));
+    }
+
 
     /// Decodes the unsigned rlp, returning the transaction request and incrementing the counter
     /// passed as we are traversing the rlp list.

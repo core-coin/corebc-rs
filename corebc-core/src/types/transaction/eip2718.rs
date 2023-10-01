@@ -178,9 +178,22 @@ impl TypedTransaction {
         encoded.into()
     }
 
+    // Calls inner rlp_sighash to get rlp with network_id as the last field
+    // CORETODO: is it possible to have Legacy(inner) without network_id?
+    pub fn rlp_sighash(&self) -> Bytes {
+        let mut encoded = vec![];
+        match self {
+            Legacy(inner) => {
+                encoded.extend_from_slice(inner.rlp_sighash().as_ref());
+            }
+        };
+
+        encoded.into()
+    }
+
     /// Hashes the transaction's data. Does not double-RLP encode
     pub fn sighash(&self) -> H256 {
-        let encoded = self.rlp();
+        let encoded = self.rlp_sighash();
         sha3(encoded).into()
     }
 
