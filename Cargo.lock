@@ -1291,9 +1291,9 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 
 [[package]]
 name = "errno"
-version = "0.3.3"
+version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "136526188508e25c6fef639d7927dfb3e0e3084488bf202267829cf7fc23dbdd"
+checksum = "add4f07d43996f76ef320709726a556a9d4f965d9410d8d0271132d2f8293480"
 dependencies = [
  "errno-dragonfly",
  "libc",
@@ -2269,7 +2269,7 @@ checksum = "9cdc71e17332e86d2e1d38c1f99edcb6288ee11b815fb1a4b049eaa2114d369b"
 [[package]]
 name = "libgoldilocks"
 version = "0.1.0"
-source = "git+https://github.com/todesstille/ed448-rs#ab3b1292a1ce730cad1014dd776653a0cacd13e6"
+source = "git+https://github.com/todesstille/ed448-rs#dd6c36c4daccd1a9b42220a87b78b8b94c0514a7"
 dependencies = [
  "hex",
  "rand",

@@ -5,8 +5,7 @@ use crate::{
 };
 use elliptic_curve::{consts::U32, sec1::ToEncodedPoint};
 use ethabi::ethereum_types::H160;
-use libgoldilocks::{errors::LibgoldilockErrors, goldilocks::ed448_verify};
-use generic_array::GenericArray;
+use libgoldilocks::{errors::LibgoldilockErrors, goldilocks::ed448_verify_with_error};
 use open_fastrlp::Decodable;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, fmt, str::FromStr};
@@ -116,9 +115,7 @@ impl Signature {
         println!("{:?}", sig_bytes);
         println!("{:?}", pub_bytes);
         
-        let result = ed448_verify(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
-        println!("{:?}", result);
-        // Add logic to throw error in case of false
+        ed448_verify_with_error(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
 
         let hash = crate::utils::sha3(&pub_bytes[..]);
 
