@@ -180,9 +180,7 @@ impl TransactionRequest {
         self.rlp_base(&mut rlp);
 
         // append the signature
-        rlp.append(&signature.v);
-        rlp.append(&signature.r);
-        rlp.append(&signature.s);
+        rlp.append(&signature.sig);
         rlp.out().freeze().into()
     }
 
@@ -262,15 +260,10 @@ impl TransactionRequest {
         let mut offset = 0;
         let mut txn = Self::decode_unsigned_rlp_base(rlp, &mut offset)?;
 
-        let v = rlp.at(offset)?.as_val()?;
-        // populate networkid from v in case the signature follows EIP155
-        txn.network_id = extract_network_id(v);
-        offset += 1;
-        let r = rlp.at(offset)?.as_val()?;
-        offset += 1;
-        let s = rlp.at(offset)?.as_val()?;
+        let sig = rlp.at(offset)?.as_val()?;
 
-        let sig = Signature { r, s, v };
+        let sig = Signature { sig };
+        
         txn.from = Some(sig.recover(txn.sighash())?);
 
         Ok((txn, sig))

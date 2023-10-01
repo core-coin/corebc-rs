@@ -5,7 +5,7 @@ use crate::wallet::mnemonic::MnemonicBuilderError;
 use coins_bip32::Bip32Error;
 use coins_bip39::MnemonicError;
 use corebc_core::{
-    k256::ecdsa::{self, SigningKey},
+    libgoldilocks::{SigningKey, errors::LibgoldilockErrors},
     rand::{CryptoRng, Rng},
     types::Network,
     utils::secret_key_to_address,
@@ -34,7 +34,7 @@ pub enum WalletError {
     EthKeystoreError(#[from] KeystoreError),
     /// Error propagated from k256's ECDSA module
     #[error(transparent)]
-    EcdsaError(#[from] ecdsa::Error),
+    ED448Error(#[from] LibgoldilockErrors),
     /// Error propagated from the hex crate.
     #[error(transparent)]
     HexError(#[from] hex::FromHexError),
@@ -122,10 +122,10 @@ impl From<SigningKey> for Wallet<SigningKey> {
     }
 }
 
-use corebc_core::k256::SecretKey as K256SecretKey;
+use corebc_core::libgoldilocks::SecretKey as Ed448SecretKey;
 
-impl From<K256SecretKey> for Wallet<SigningKey> {
-    fn from(key: K256SecretKey) -> Self {
+impl From<Ed448SecretKey> for Wallet<SigningKey> {
+    fn from(key: Ed448SecretKey) -> Self {
         let network = Network::Mainnet;
         let signer = key.into();
         let address = secret_key_to_address(&signer, &network);
