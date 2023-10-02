@@ -7,8 +7,8 @@
 // };
 // use elliptic_curve::sec1::{FromEncodedPoint, ToEncodedPoint};
 // use yubihsm::{
-//     asymmetric::Algorithm::EcK256, ecdsa::Signer as YubiSigner, object, object::Label, Capability,
-//     Client, Connector, Credentials, Domain,
+//     asymmetric::Algorithm::EcK256, ecdsa::Signer as YubiSigner, object, object::Label,
+// Capability,     Client, Connector, Credentials, Domain,
 // };
 
 // impl Wallet<YubiSigner<Secp256k1>> {
@@ -26,13 +26,9 @@
 //         id: object::Id,
 //         label: Label,
 //         domain: Domain,
-//     ) -> Self {
-//         let client = Client::open(connector, credentials, true).unwrap();
-//         let id = client
-//             .generate_asymmetric_key(id, label, domain, Capability::SIGN_ECDSA, EcK256)
-//             .unwrap();
-//         let signer = YubiSigner::create(client, id).unwrap();
-//         signer.into()
+//     ) -> Self { let client = Client::open(connector, credentials, true).unwrap(); let id = client
+//       .generate_asymmetric_key(id, label, domain, Capability::SIGN_ECDSA, EcK256) .unwrap(); let
+//       signer = YubiSigner::create(client, id).unwrap(); signer.into()
 //     }
 
 //     /// Uploads the provided keypair on the yubi at the provided id
@@ -43,13 +39,9 @@
 //         label: Label,
 //         domain: Domain,
 //         key: impl Into<Vec<u8>>,
-//     ) -> Self {
-//         let client = Client::open(connector, credentials, true).unwrap();
-//         let id = client
-//             .put_asymmetric_key(id, label, domain, Capability::SIGN_ECDSA, EcK256, key)
-//             .unwrap();
-//         let signer = YubiSigner::create(client, id).unwrap();
-//         signer.into()
+//     ) -> Self { let client = Client::open(connector, credentials, true).unwrap(); let id = client
+//       .put_asymmetric_key(id, label, domain, Capability::SIGN_ECDSA, EcK256, key) .unwrap(); let
+//       signer = YubiSigner::create(client, id).unwrap(); signer.into()
 //     }
 // }
 

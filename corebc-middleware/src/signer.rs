@@ -349,7 +349,7 @@ mod tests {
     //     let tx = TransactionRequest {
     //         from: None,
     //         to: Some(
-    //             
+    //
     // "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
     //         ),
     //         value: Some(1_000_000_000.into()),
@@ -398,7 +398,7 @@ mod tests {
     //     let tx = TransactionRequest {
     //         from: None,
     //         to: Some(
-    //             
+    //
     // "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
     //         ),
     //         value: Some(1_000_000_000.into()),
