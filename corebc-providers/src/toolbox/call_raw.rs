@@ -1,4 +1,4 @@
-//! Overrides for the `eth_call` rpc method
+//! Overrides for the `xcb_call` rpc method
 
 use crate::{utils::PinBoxFut, JsonRpcClient, Provider, ProviderError};
 use corebc_core::{
@@ -19,7 +19,7 @@ use std::{
 
 pub use spoof::{balance, code, nonce, state, storage};
 
-/// Provides methods for overriding parameters to the `eth_call` rpc method
+/// Provides methods for overriding parameters to the `xcb_call` rpc method
 pub trait RawCall<'a> {
     /// Sets the block number to execute against
     fn block(self, id: BlockId) -> Self;
@@ -36,10 +36,10 @@ pub trait RawCall<'a> {
     }
 }
 
-/// A builder which implements [`RawCall`] methods for overriding `eth_call` parameters.
+/// A builder which implements [`RawCall`] methods for overriding `xcb_call` parameters.
 ///
 /// `CallBuilder` also implements [`std::future::Future`], so `.await`ing a `CallBuilder` will
-/// resolve to the result of executing the `eth_call`.
+/// resolve to the result of executing the `xcb_call`.
 #[must_use = "call_raw::CallBuilder does nothing unless you `.await` or poll it"]
 pub enum CallBuilder<'a, P> {
     /// The primary builder which exposes [`RawCall`] methods.
@@ -117,7 +117,7 @@ impl<'a, P: JsonRpcClient> Future for CallBuilder<'a, P> {
     }
 }
 
-/// Holds the inputs to the `eth_call` rpc method along with the rpc provider.
+/// Holds the inputs to the `xcb_call` rpc method along with the rpc provider.
 /// This type is constructed by [`CallBuilder::new`].
 #[derive(Clone, Debug)]
 pub struct Caller<'a, P> {
@@ -132,14 +132,14 @@ impl<'a, P> Caller<'a, P> {
     }
 }
 impl<'a, P: JsonRpcClient> Caller<'a, P> {
-    /// Executes an `eth_call` rpc request with the overriden parameters. Returns a future that
+    /// Executes an `xcb_call` rpc request with the overriden parameters. Returns a future that
     /// resolves to the result of the request.
     fn execute(&self) -> impl Future<Output = Result<Bytes, ProviderError>> + 'a {
-        self.provider.request("eth_call", utils::serialize(&self.input))
+        self.provider.request("xcb_call", utils::serialize(&self.input))
     }
 }
 
-/// The input parameters to the `eth_call` rpc method
+/// The input parameters to the `xcb_call` rpc method
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct CallInput<'a> {
     tx: &'a TypedTransaction,
@@ -230,7 +230,7 @@ where
     }
 }
 
-/// Provides types and methods for constructing an `eth_call`
+/// Provides types and methods for constructing an `xcb_call`
 /// [state override set](https://geth.ethereum.org/docs/rpc/ns-eth#3-object---state-override-set)
 pub mod spoof {
     use super::*;
@@ -493,7 +493,7 @@ mod tests {
     use super::*;
     use crate::Provider;
 
-    // Deserializes eth_call parameters as owned data for testing serialization
+    // Deserializes xcb_call parameters as owned data for testing serialization
     #[derive(Debug, Deserialize)]
     struct CallInputOwned(
         TypedTransaction,
@@ -567,7 +567,7 @@ mod tests {
 
     //     // assert that overriding the sender's balance works
     //     let state = spoof::balance(adr1, pay_amt * 2);
-    //     provider.call_raw(&tx).state(&state).await.expect("eth_call success");
+    //     provider.call_raw(&tx).state(&state).await.expect("xcb_call success");
 
     //     // bytecode that returns the result of the SELFBALANCE opcode
     //     const RETURN_BALANCE: &str = "0x4760005260206000f3";

@@ -227,7 +227,7 @@ pub(super) struct ActiveSub {
 
 impl ActiveSub {
     pub(super) fn to_request(&self, id: u64) -> Request<'static, Box<RawValue>> {
-        Request::new(id, "eth_subscribe", self.params.clone())
+        Request::new(id, "xcb_subscribe", self.params.clone())
     }
 
     pub(super) fn serialize_raw(&self, id: u64) -> Result<Box<RawValue>, serde_json::Error> {

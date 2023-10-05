@@ -1,9 +1,6 @@
 use async_trait::async_trait;
 use auto_impl::auto_impl;
-use corebc_core::types::{
-    transaction::{eip2718::TypedTransaction, eip2930::AccessListWithGasUsed},
-    *,
-};
+use corebc_core::types::{transaction::eip2718::TypedTransaction, *};
 use futures_util::future::join_all;
 use serde::{de::DeserializeOwned, Serialize};
 use std::fmt::Debug;
@@ -75,9 +72,9 @@ use crate::{
 ///
 ///     /// Overrides the default `estimate_gas` method to log that it was called,
 ///     /// before forwarding the call to the next layer.
-///     async fn estimate_gas(&self, tx: &TypedTransaction, block: Option<BlockId>) -> Result<U256, Self::Error> {
-///         println!("Estimating gas...");
-///         self.inner().estimate_gas(tx, block).await.map_err(MiddlewareError::from_err)
+///     async fn estimate_energy(&self, tx: &TypedTransaction, block: Option<BlockId>) -> Result<U256, Self::Error> {
+///         println!("Estimating energy...");
+///         self.inner().estimate_energy(tx, block).await.map_err(MiddlewareError::from_err)
 ///     }
 /// }
 /// ```
@@ -123,8 +120,7 @@ pub trait Middleware: Sync + Send + Debug {
     /// This function is defined on providers to behave as follows:
     /// 1. populate the `from` field with the default sender
     /// 2. resolve any ENS names in the tx `to` field
-    /// 3. Estimate gas usage
-    /// 4. Poll and set legacy or 1559 gas prices
+    /// 3. Estimate energy usage
     /// 5. Set the network_id with the provider's, if not already set
     ///
     /// It does NOT set the nonce by default.
@@ -133,8 +129,8 @@ pub trait Middleware: Sync + Send + Debug {
     /// to the inner implementation AND/OR modify the values provided by the
     /// default implementation _after_ delegating.
     ///
-    /// E.g. a middleware wanting to double gas prices should consider doing so
-    /// _after_ delegating and allowing the default implementation to poll gas.
+    /// E.g. a middleware wanting to double energy prices should consider doing so
+    /// _after_ delegating and allowing the default implementation to poll energy.
     async fn fill_transaction(
         &self,
         tx: &mut TypedTransaction,
@@ -149,7 +145,7 @@ pub trait Middleware: Sync + Send + Debug {
     }
 
     /// Sends the transaction to the entire Ethereum network and returns the
-    /// transaction's hash. This will consume gas from the account that signed
+    /// transaction's hash. This will consume energy from the account that signed
     /// the transaction. This call will fail if no signer is available, and the
     /// RPC node does  not have an unlocked accounts
     async fn send_transaction<T: Into<TypedTransaction> + Send + Sync>(
@@ -162,8 +158,8 @@ pub trait Middleware: Sync + Send + Debug {
 
     /// Send a transaction with a simple escalation policy.
     ///
-    /// `policy` should be a boxed function that maps `original_gas_price`
-    /// and `number_of_previous_escalations` -> `new_gas_price`.
+    /// `policy` should be a boxed function that maps `original_energy_price`
+    /// and `number_of_previous_escalations` -> `new_energy_price`.
     ///
     /// e.g. `Box::new(|start, escalation_index| start * 1250.pow(escalations) /
     /// 1000.pow(escalations))`
@@ -183,12 +179,12 @@ pub trait Middleware: Sync + Send + Debug {
             original.set_nonce(nonce);
         }
 
-        let gas_price = original.gas_price().expect("filled");
+        let energy_price = original.energy_price().expect("filled");
         let sign_futs: Vec<_> = (0..escalations)
             .map(|i| {
-                let new_price = policy(gas_price, i);
+                let new_price = policy(energy_price, i);
                 let mut r = original.clone();
-                r.set_gas_price(new_price);
+                r.set_energy_price(new_price);
                 r
             })
             .map(|req| async move {
@@ -334,16 +330,16 @@ pub trait Middleware: Sync + Send + Debug {
         self.inner().get_transaction_count(from, block).await.map_err(MiddlewareError::from_err)
     }
 
-    /// Sends a transaction to a single Ethereum node and return the estimated amount of gas
+    /// Sends a transaction to a single Ethereum node and return the estimated amount of energy
     /// required (as a U256) to send it This is free, but only an estimate. Providing too little
-    /// gas will result in a transaction being rejected (while still consuming all provided
-    /// gas).
-    async fn estimate_gas(
+    /// energy will result in a transaction being rejected (while still consuming all provided
+    /// energy).
+    async fn estimate_energy(
         &self,
         tx: &TypedTransaction,
         block: Option<BlockId>,
     ) -> Result<U256, Self::Error> {
-        self.inner().estimate_gas(tx, block).await.map_err(MiddlewareError::from_err)
+        self.inner().estimate_energy(tx, block).await.map_err(MiddlewareError::from_err)
     }
 
     /// Sends the read-only (constant) transaction to a single Ethereum node and return the result
@@ -403,7 +399,7 @@ pub trait Middleware: Sync + Send + Debug {
 
     /// Returns all receipts for a block.
     ///
-    /// Note that this uses the `eth_getBlockReceipts` RPC, which is
+    /// Note that this uses the `xcb_getBlockReceipts` RPC, which is
     /// non-standard and currently supported by Erigon.
     async fn get_block_receipts<T: Into<BlockNumber> + Send + Sync>(
         &self,
@@ -412,18 +408,9 @@ pub trait Middleware: Sync + Send + Debug {
         self.inner().get_block_receipts(block).await.map_err(MiddlewareError::from_err)
     }
 
-    /// Gets the current gas price as estimated by the node
-    async fn get_gas_price(&self) -> Result<U256, Self::Error> {
-        self.inner().get_gas_price().await.map_err(MiddlewareError::from_err)
-    }
-
-    /// Gets a heuristic recommendation of max fee per gas and max priority fee per gas for
-    /// EIP-1559 compatible transactions.
-    async fn estimate_eip1559_fees(
-        &self,
-        estimator: Option<fn(U256, Vec<Vec<U256>>) -> (U256, U256)>,
-    ) -> Result<(U256, U256), Self::Error> {
-        self.inner().estimate_eip1559_fees(estimator).await.map_err(MiddlewareError::from_err)
+    /// Gets the current energy price as estimated by the node
+    async fn get_energy_price(&self) -> Result<U256, Self::Error> {
+        self.inner().get_energy_price().await.map_err(MiddlewareError::from_err)
     }
 
     /// Gets the accounts on the node
@@ -432,7 +419,7 @@ pub trait Middleware: Sync + Send + Debug {
     }
 
     /// Send the raw RLP encoded transaction to the entire Ethereum network and returns the
-    /// transaction's hash This will consume gas from the account that signed the transaction.
+    /// transaction's hash This will consume energy from the account that signed the transaction.
     async fn send_raw_transaction<'a>(
         &'a self,
         tx: Bytes,
@@ -441,7 +428,7 @@ pub trait Middleware: Sync + Send + Debug {
     }
 
     /// This returns true if either the middleware stack contains a `SignerMiddleware`, or the
-    /// JSON-RPC provider has an unlocked key that can sign using the `eth_sign` call. If none of
+    /// JSON-RPC provider has an unlocked key that can sign using the `xcb_sign` call. If none of
     /// the above conditions are met, then the middleware stack is not capable of signing data.
     async fn is_signer(&self) -> bool {
         self.inner().is_signer().await
@@ -530,9 +517,9 @@ pub trait Middleware: Sync + Send + Debug {
     ///
     /// This method must be called with one of the following return types, depending on the filter
     /// type:
-    /// - `eth_newBlockFilter`: [`H256`], returns block hashes
-    /// - `eth_newPendingTransactionFilter`: [`H256`], returns transaction hashes
-    /// - `eth_newFilter`: [`Log`], returns raw logs
+    /// - `xcb_newBlockFilter`: [`H256`], returns block hashes
+    /// - `xcb_newPendingTransactionFilter`: [`H256`], returns transaction hashes
+    /// - `xcb_newFilter`: [`Log`], returns raw logs
     ///
     /// If one of these types is not used, decoding will fail and the method will
     /// return an error.
@@ -687,7 +674,7 @@ pub trait Middleware: Sync + Send + Debug {
         self.inner().stop_mining().await.map_err(MiddlewareError::from_err)
     }
 
-    // Mempool inspection for Geth's API
+    // Mempool inspection for Gocore's API
 
     /// Returns the details of all transactions currently pending for inclusion in the next
     /// block(s), as well as the ones that are being scheduled for future execution only.
@@ -710,15 +697,15 @@ pub trait Middleware: Sync + Send + Debug {
         self.inner().txpool_status().await.map_err(MiddlewareError::from_err)
     }
 
-    // Geth `trace` support
+    // GoCore `trace` support
 
     /// After replaying any previous transactions in the same block,
     /// Replays a transaction, returning the traces configured with passed options
     async fn debug_trace_transaction(
         &self,
         tx_hash: TxHash,
-        trace_options: GethDebugTracingOptions,
-    ) -> Result<GethTrace, Self::Error> {
+        trace_options: GoCoreDebugTracingOptions,
+    ) -> Result<GoCoreTrace, Self::Error> {
         self.inner()
             .debug_trace_transaction(tx_hash, trace_options)
             .await
@@ -730,8 +717,8 @@ pub trait Middleware: Sync + Send + Debug {
         &self,
         req: T,
         block: Option<BlockId>,
-        trace_options: GethDebugTracingCallOptions,
-    ) -> Result<GethTrace, Self::Error> {
+        trace_options: GoCoreDebugTracingCallOptions,
+    ) -> Result<GoCoreTrace, Self::Error> {
         self.inner()
             .debug_trace_call(req, block, trace_options)
             .await
@@ -760,7 +747,7 @@ pub trait Middleware: Sync + Send + Debug {
         self.inner().trace_call_many(req, block).await.map_err(MiddlewareError::from_err)
     }
 
-    /// Traces a call to `eth_sendRawTransaction` without making the call, returning the traces
+    /// Traces a call to `xcb_sendRawTransaction` without making the call, returning the traces
     async fn trace_raw_transaction(
         &self,
         data: Bytes,
@@ -905,58 +892,4 @@ pub trait Middleware: Sync + Send + Debug {
     {
         self.inner().subscribe_logs(filter).await.map_err(MiddlewareError::from_err)
     }
-
-    /// Query the node for a [`FeeHistory`] object. This objct contains
-    /// information about the EIP-1559 base fee in past blocks, as well as gas
-    /// utilization within those blocks.
-    ///
-    /// See the
-    /// [EIP-1559 documentation](https://eips.ethereum.org/EIPS/eip-1559) for
-    /// details
-    async fn fee_history<T: Into<U256> + serde::Serialize + Send + Sync>(
-        &self,
-        block_count: T,
-        last_block: BlockNumber,
-        reward_percentiles: &[f64],
-    ) -> Result<FeeHistory, Self::Error> {
-        self.inner()
-            .fee_history(block_count, last_block, reward_percentiles)
-            .await
-            .map_err(MiddlewareError::from_err)
-    }
-
-    /// Querty the node for an EIP-2930 Access List.
-    ///
-    /// See the
-    /// [EIP-2930 documentation](https://eips.ethereum.org/EIPS/eip-2930) for
-    /// details
-    async fn create_access_list(
-        &self,
-        tx: &TypedTransaction,
-        block: Option<BlockId>,
-    ) -> Result<AccessListWithGasUsed, Self::Error> {
-        self.inner().create_access_list(tx, block).await.map_err(MiddlewareError::from_err)
-    }
 }
-
-#[cfg(feature = "celo")]
-#[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
-#[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-/// Celo-specific extension trait
-pub trait CeloMiddleware: Middleware {
-    /// Get validator BLS public keys
-    async fn get_validators_bls_public_keys<T: Into<BlockId> + Send + Sync>(
-        &self,
-        block_id: T,
-    ) -> Result<Vec<String>, ProviderError> {
-        self.provider()
-            .get_validators_bls_public_keys(block_id)
-            .await
-            .map_err(MiddlewareError::from_err)
-    }
-}
-
-#[cfg(feature = "celo")]
-#[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
-#[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<T> CeloMiddleware for T where T: Middleware {}

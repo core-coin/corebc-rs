@@ -33,7 +33,7 @@ type WatcherFuture<'a> = Pin<Box<dyn futures_util::stream::Stream<Item = ()> + S
 pub trait GasEscalator: Send + Sync + std::fmt::Debug {
     /// Given the initial gas price and the time elapsed since the transaction's
     /// first broadcast, it returns the new gas price
-    fn get_gas_price(&self, initial_price: U256, time_elapsed: u64) -> U256;
+    fn get_energy_price(&self, initial_price: U256, time_elapsed: u64) -> U256;
 }
 
 #[derive(Error, Debug)]
@@ -43,7 +43,7 @@ pub enum GasEscalatorError<M: Middleware> {
     /// Thrown when an internal middleware errors
     MiddlewareError(M::Error),
 
-    #[error("Gas escalation is only supported for EIP2930 or Legacy transactions")]
+    #[error("Gas escalation is only supported for Legacy transactions")]
     UnsupportedTxType,
 }
 
@@ -119,8 +119,8 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 /// ```no_run
 /// use corebc_providers::{Provider, Http};
 /// use corebc_middleware::{
-///     gas_escalator::{GeometricGasPrice, Frequency, GasEscalatorMiddleware},
-///     gas_oracle::{GasNow, GasCategory, GasOracleMiddleware},
+///     energy_escalator::{GeometricGasPrice, Frequency, GasEscalatorMiddleware},
+///     energy_oracle::{GasNow, GasCategory, EneryOracleMiddleware},
 /// };
 /// use std::{convert::TryFrom, time::Duration, sync::Arc};
 ///
@@ -134,8 +134,8 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 /// };
 ///
 /// // ... proceed to wrap it in other middleware
-/// let gas_oracle = GasNow::new().category(GasCategory::SafeLow);
-/// let provider = GasOracleMiddleware::new(provider, gas_oracle);
+/// let energy_oracle = GasNow::new().category(GasCategory::SafeLow);
+/// let provider = EneryOracleMiddleware::new(provider, energy_oracle);
 /// ```
 pub struct GasEscalatorMiddleware<M> {
     pub(crate) inner: Arc<GasEscalatorMiddlewareInternal<M>>,
@@ -181,11 +181,7 @@ where
             .await
             .map_err(MiddlewareError::from_err)?;
 
-        let tx = match tx {
-            TypedTransaction::Legacy(inner) => inner,
-            TypedTransaction::Eip2930(inner) => inner.tx,
-            _ => return Err(GasEscalatorError::UnsupportedTxType),
-        };
+        let TypedTransaction::Legacy(tx) = tx;
 
         // insert the tx in the pending txs
         let mut lock = self.txs.lock().await;
@@ -301,18 +297,18 @@ impl<M, E> EscalationTask<M, E> {
                     tracing::trace!(tx_hash = ?tx_hash, "checking if exists");
 
                     if receipt.is_none() {
-                        let old_gas_price = replacement_tx.gas_price.expect("gas price must be set");
+                        let old_energy_price = replacement_tx.energy_price.expect("gas price must be set");
                         // Get the new gas price based on how much time passed since the
                         // tx was last broadcast
-                        let new_gas_price = self
+                        let new_energy_price = self
                             .escalator
-                            .get_gas_price(old_gas_price, now.duration_since(time).as_secs());
+                            .get_energy_price(old_energy_price, now.duration_since(time).as_secs());
 
-                        let new_txhash = if new_gas_price == old_gas_price {
+                        let new_txhash = if new_energy_price == old_energy_price {
                              tx_hash
                         } else {
                             // bump the gas price
-                            replacement_tx.gas_price = Some(new_gas_price);
+                            replacement_tx.energy_price = Some(new_energy_price);
 
                             // the tx hash will be different so we need to update it
                             match self.inner.send_transaction(replacement_tx.clone(), priority).await {
@@ -321,8 +317,8 @@ impl<M, E> EscalationTask<M, E> {
                                     tracing::trace!(
                                         old_tx_hash = ?tx_hash,
                                         new_tx_hash = ?new_tx_hash,
-                                        old_gas_price = ?old_gas_price,
-                                        new_gas_price = ?new_gas_price,
+                                        old_energy_price = ?old_energy_price,
+                                        new_energy_price = ?new_energy_price,
                                         "escalated"
                                     );
                                     new_tx_hash

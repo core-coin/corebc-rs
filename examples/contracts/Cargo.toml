@@ -8,9 +8,6 @@ license.workspace = true
 rust-version.workspace = true
 edition.workspace = true
 
-[features]
-default = ["legacy"]
-legacy = ["corebc/legacy"]
 
 [dev-dependencies]
 corebc = { workspace = true, features = ["abigen", "rustls", "ws"] }

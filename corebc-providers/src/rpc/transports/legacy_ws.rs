@@ -531,14 +531,13 @@ mod tests {
         let anvil = Anvil::new().block_time(1u64).spawn();
         let ws = Ws::connect(anvil.ws_endpoint()).await.unwrap();
 
-        let block_num: U256 = ws.request("eth_blockNumber", ()).await.unwrap();
+        let block_num: U256 = ws.request("xcb_blockNumber", ()).await.unwrap();
         tokio::time::sleep(std::time::Duration::from_secs(3)).await;
-        let block_num2: U256 = ws.request("eth_blockNumber", ()).await.unwrap();
+        let block_num2: U256 = ws.request("xcb_blockNumber", ()).await.unwrap();
         assert!(block_num2 > block_num);
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn subscription() {
         use corebc_core::types::{Block, TxHash};
 
@@ -547,7 +546,7 @@ mod tests {
 
         // Subscribing requires sending the sub request and then subscribing to
         // the returned sub_id
-        let sub_id: U256 = ws.request("eth_subscribe", ["newHeads"]).await.unwrap();
+        let sub_id: U256 = ws.request("xcb_subscribe", ["newHeads"]).await.unwrap();
         let stream = ws.subscribe(sub_id).unwrap();
 
         let blocks: Vec<u64> = stream

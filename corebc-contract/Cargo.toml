@@ -53,8 +53,6 @@ default = ["abigen"]
 abigen-offline = ["corebc-contract-abigen", "corebc-contract-derive"]
 abigen = ["abigen-offline", "corebc-contract-abigen/online"]
 
-celo = ["legacy", "corebc-core/celo", "corebc-providers/celo"]
-legacy = []
 
 rustls = ["corebc-contract-abigen/rustls"]
 openssl = ["corebc-contract-abigen/openssl"]

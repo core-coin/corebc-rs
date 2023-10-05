@@ -36,7 +36,7 @@ use thiserror::Error;
 ///     .build();
 /// // the weight at which a quorum is reached,
 /// assert_eq!(provider.quorum_weight(), 4 / 2); // majority >=50%
-/// let block_number: U64 = provider.request("eth_blockNumber", ()).await?;
+/// let block_number: U64 = provider.request("xcb_blockNumber", ()).await?;
 ///
 /// # Ok(())
 /// # }
@@ -168,7 +168,7 @@ impl<T: JsonRpcClientWrapper> QuorumProvider<T> {
     /// This is the minimum of all provider's block numbers
     async fn get_minimum_block_number(&self) -> Result<U64, ProviderError> {
         let mut numbers = join_all(self.providers.iter().map(|provider| async move {
-            let block = provider.inner.request("eth_blockNumber", QuorumParams::Zst).await?;
+            let block = provider.inner.request("xcb_blockNumber", QuorumParams::Zst).await?;
             serde_json::from_value::<U64>(block).map_err(ProviderError::from)
         }))
         .await
@@ -191,11 +191,11 @@ impl<T: JsonRpcClientWrapper> QuorumProvider<T> {
             return
         };
         match method {
-            "eth_call" |
-            "eth_createAccessList" |
-            "eth_getStorageAt" |
-            "eth_getCode" |
-            "eth_getProof" |
+            "xcb_call" |
+            "xcb_createAccessList" |
+            "xcb_getStorageAt" |
+            "xcb_getCode" |
+            "xcb_getProof" |
             "trace_call" |
             "trace_block" => {
                 // calls that include the block number in the params at the last index of json array
@@ -626,7 +626,7 @@ mod tests {
 
         // count the number of providers that returned a value
         let requested =
-            mocked.iter().filter(|mock| mock.assert_request("eth_blockNumber", ()).is_ok()).count();
+            mocked.iter().filter(|mock| mock.assert_request("xcb_blockNumber", ()).is_ok()).count();
 
         match q {
             Quorum::All => {

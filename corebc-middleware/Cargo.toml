@@ -41,7 +41,7 @@ tracing.workspace = true
 tracing-futures.workspace = true
 instant.workspace = true
 
-# for gas oracles
+# for energy oracles
 reqwest.workspace = true
 url.workspace = true
 
@@ -64,6 +64,5 @@ tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
 
 [features]
 default = ["rustls"]
-celo = ["corebc-core/celo", "corebc-providers/celo", "corebc-signers/celo", "corebc-contract/celo"]
 openssl = ["reqwest/native-tls"]
 rustls = ["reqwest/rustls-tls"]

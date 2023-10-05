@@ -512,14 +512,14 @@ impl crate::RpcError for IpcError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use corebc_core::utils::{Geth, GethInstance};
+    use corebc_core::utils::{GoCore, GoCoreInstance};
     use std::time::Duration;
     use tempfile::NamedTempFile;
 
-    async fn connect() -> (Ipc, GethInstance) {
+    async fn connect() -> (Ipc, GoCoreInstance) {
         let temp_file = NamedTempFile::new().unwrap();
         let path = temp_file.into_temp_path().to_path_buf();
-        let geth = Geth::new().block_time(1u64).ipc_path(&path).spawn();
+        let geth = GoCore::new().block_time(1u64).ipc_path(&path).spawn();
 
         // [Windows named pipes](https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipes)
         // are located at `\\<machine_address>\pipe\<pipe_name>`.
@@ -534,14 +534,13 @@ mod tests {
     async fn request() {
         let (ipc, _geth) = connect().await;
 
-        let block_num: U256 = ipc.request("eth_blockNumber", ()).await.unwrap();
+        let block_num: U256 = ipc.request("xcb_blockNumber", ()).await.unwrap();
         tokio::time::sleep(Duration::from_secs(2)).await;
-        let block_num2: U256 = ipc.request("eth_blockNumber", ()).await.unwrap();
+        let block_num2: U256 = ipc.request("xcb_blockNumber", ()).await.unwrap();
         assert!(block_num2 > block_num);
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn subscription() {
         use corebc_core::types::{Block, TxHash};
 
@@ -549,7 +548,7 @@ mod tests {
 
         // Subscribing requires sending the sub request and then subscribing to
         // the returned sub_id
-        let sub_id: U256 = ipc.request("eth_subscribe", ["newHeads"]).await.unwrap();
+        let sub_id: U256 = ipc.request("xcb_subscribe", ["newHeads"]).await.unwrap();
         let stream = ipc.subscribe(sub_id).unwrap();
 
         let blocks: Vec<u64> = stream

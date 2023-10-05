@@ -28,7 +28,7 @@ pub trait PubsubClient: JsonRpcClient {
 
 #[must_use = "subscriptions do nothing unless you stream them"]
 #[pin_project(PinnedDrop)]
-/// Streams data from an installed filter via `eth_subscribe`
+/// Streams data from an installed filter via `xcb_subscribe`
 pub struct SubscriptionStream<'a, P: PubsubClient, R: DeserializeOwned> {
     /// The subscription's installed id on the ethereum node
     pub id: U256,

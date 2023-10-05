@@ -28,7 +28,7 @@ enum FilterWatcherState<'a, R> {
 }
 
 #[must_use = "filters do nothing unless you stream them"]
-/// Streams data from an installed filter via `eth_getFilterChanges`
+/// Streams data from an installed filter via `xcb_getFilterChanges`
 #[pin_project]
 pub struct FilterWatcher<'a, P, R> {
     /// The filter's installed id on the ethereum node

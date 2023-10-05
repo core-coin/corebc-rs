@@ -104,7 +104,7 @@ mod tests {
 
     // <https://github.com/gakonst/ethers-rs/issues/1623>
     #[test]
-    fn deserialize_sync_geth() {
+    fn deserialize_sync_gocore() {
         let s = r#"{
         "currentBlock": "0xeaa2b4",
         "healedBytecodeBytes": "0xaad91fe",

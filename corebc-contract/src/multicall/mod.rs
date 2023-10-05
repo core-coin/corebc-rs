@@ -448,9 +448,9 @@
 //     }
 
 //     /// Appends a `call` to the list of calls of the Multicall instance for querying the current
-//     /// block gas limit.
-//     pub fn add_get_current_block_gas_limit(&mut self) -> &mut Self {
-//         let call = self.contract.get_current_block_gas_limit();
+//     /// block energy limit.
+//     pub fn add_get_current_block_energy_limit(&mut self) -> &mut Self {
+//         let call = self.contract.get_current_block_energy_limit();
 //         self.add_call(call, false)
 //     }
 
@@ -731,7 +731,7 @@
 //     /// returning the pending transaction.
 //     ///
 //     /// Note: this method will broadcast a transaction from an account, meaning it must have
-//     /// sufficient funds for gas and transaction value.
+//     /// sufficient funds for energy and transaction value.
 //     ///
 //     /// # Errors
 //     ///

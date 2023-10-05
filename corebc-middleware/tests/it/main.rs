@@ -8,20 +8,16 @@ use std::time::Duration;
 
 mod builder;
 
-mod gas_escalator;
+mod energy_escalator;
 
-mod gas_oracle;
+mod energy_oracle;
 
-#[cfg(not(feature = "celo"))]
 mod signer;
 
-#[cfg(not(feature = "celo"))]
 mod nonce_manager;
 
-#[cfg(not(feature = "celo"))]
 mod stack;
 
-#[cfg(not(feature = "celo"))]
 mod transformer;
 
 /// Spawns Anvil and instantiates an Http provider.

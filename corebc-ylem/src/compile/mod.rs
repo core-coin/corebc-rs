@@ -281,7 +281,7 @@ impl Ylem {
     /// # Ok(())
     /// # }
     /// ```
-    #[cfg(all(not(target_arch = "wasm32"), all(feature = "yvm-ylem")))]
+    #[cfg(all(not(target_arch = "wasm32"), feature = "yvm-ylem"))]
     pub fn find_or_install_yvm_version(version: impl AsRef<str>) -> Result<Self> {
         let version = version.as_ref();
         if let Some(ylem) = Ylem::find_yvm_installed_version(version)? {

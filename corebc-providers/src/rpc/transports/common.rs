@@ -37,7 +37,7 @@ fn spelunk_revert(value: &Value) -> Option<Bytes> {
 }
 
 impl JsonRpcError {
-    /// Determine if the error output of the `eth_call` RPC request is a revert
+    /// Determine if the error output of the `xcb_call` RPC request is a revert
     ///
     /// Note that this may return false positives if called on an error from
     /// other RPC requests
@@ -317,10 +317,10 @@ mod tests {
 
     #[test]
     fn ser_request() {
-        let request: Request<()> = Request::new(0, "eth_networkId", ());
+        let request: Request<()> = Request::new(0, "xcb_networkId", ());
         assert_eq!(
             &serde_json::to_string(&request).unwrap(),
-            r#"{"id":0,"jsonrpc":"2.0","method":"eth_networkId"}"#
+            r#"{"id":0,"jsonrpc":"2.0","method":"xcb_networkId"}"#
         );
 
         let request: Request<()> = Request::new(300, "method_name", ());

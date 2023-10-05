@@ -1,4 +1,4 @@
-use super::{GasOracle, Result};
+use super::{EneryOracle, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use futures_locks::RwLock;
@@ -6,11 +6,10 @@ use instant::{Duration, Instant};
 use std::{fmt::Debug, future::Future};
 
 #[derive(Debug)]
-pub struct Cache<T: GasOracle> {
+pub struct Cache<T: EneryOracle> {
     inner: T,
     validity: Duration,
     fee: Cached<U256>,
-    eip1559: Cached<(U256, U256)>,
 }
 
 #[derive(Default, Debug)]
@@ -18,19 +17,15 @@ struct Cached<T: Clone>(RwLock<Option<(Instant, T)>>);
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<T: GasOracle> GasOracle for Cache<T> {
+impl<T: EneryOracle> EneryOracle for Cache<T> {
     async fn fetch(&self) -> Result<U256> {
         self.fee.get(self.validity, || self.inner.fetch()).await
     }
-
-    async fn estimate_eip1559_fees(&self) -> Result<(U256, U256)> {
-        self.eip1559.get(self.validity, || self.inner.estimate_eip1559_fees()).await
-    }
 }
 
-impl<T: GasOracle> Cache<T> {
+impl<T: EneryOracle> Cache<T> {
     pub fn new(validity: Duration, inner: T) -> Self {
-        Self { inner, validity, fee: Cached::default(), eip1559: Cached::default() }
+        Self { inner, validity, fee: Cached::default() }
     }
 }
 

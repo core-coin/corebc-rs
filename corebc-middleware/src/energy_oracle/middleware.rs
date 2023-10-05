@@ -1,4 +1,4 @@
-use super::{GasOracle, GasOracleError};
+use super::{EneryOracle, EneryOracleError};
 use async_trait::async_trait;
 use corebc_core::types::{transaction::eip2718::TypedTransaction, *};
 use corebc_providers::{Middleware, MiddlewareError as METrait, PendingTransaction};
@@ -6,31 +6,28 @@ use thiserror::Error;
 
 /// Middleware used for fetching gas prices over an API instead of `eth_gasPrice`.
 #[derive(Debug)]
-pub struct GasOracleMiddleware<M, G> {
+pub struct EneryOracleMiddleware<M, G> {
     inner: M,
-    gas_oracle: G,
+    energy_oracle: G,
 }
 
-impl<M, G> GasOracleMiddleware<M, G>
+impl<M, G> EneryOracleMiddleware<M, G>
 where
     M: Middleware,
-    G: GasOracle,
+    G: EneryOracle,
 {
-    pub fn new(inner: M, gas_oracle: G) -> Self {
-        Self { inner, gas_oracle }
+    pub fn new(inner: M, energy_oracle: G) -> Self {
+        Self { inner, energy_oracle }
     }
 }
 
 #[derive(Debug, Error)]
 pub enum MiddlewareError<M: Middleware> {
     #[error(transparent)]
-    GasOracleError(#[from] GasOracleError),
+    EneryOracleError(#[from] EneryOracleError),
 
     #[error("{0}")]
     MiddlewareError(M::Error),
-
-    #[error("This gas price oracle only works with Legacy and EIP2930 transactions.")]
-    UnsupportedTxType,
 }
 
 impl<M: Middleware> METrait for MiddlewareError<M> {
@@ -50,10 +47,10 @@ impl<M: Middleware> METrait for MiddlewareError<M> {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<M, G> Middleware for GasOracleMiddleware<M, G>
+impl<M, G> Middleware for EneryOracleMiddleware<M, G>
 where
     M: Middleware,
-    G: GasOracle,
+    G: EneryOracle,
 {
     type Error = MiddlewareError<M>;
     type Provider = M::Provider;
@@ -72,25 +69,8 @@ where
     ) -> Result<(), Self::Error> {
         match tx {
             TypedTransaction::Legacy(ref mut tx) => {
-                if tx.gas_price.is_none() {
-                    tx.gas_price = Some(self.get_gas_price().await?);
-                }
-            }
-            TypedTransaction::Eip2930(ref mut inner) => {
-                if inner.tx.gas_price.is_none() {
-                    inner.tx.gas_price = Some(self.get_gas_price().await?);
-                }
-            }
-            TypedTransaction::Eip1559(ref mut inner) => {
-                if inner.max_priority_fee_per_gas.is_none() || inner.max_fee_per_gas.is_none() {
-                    let (max_fee_per_gas, max_priority_fee_per_gas) =
-                        self.estimate_eip1559_fees(None).await?;
-                    if inner.max_priority_fee_per_gas.is_none() {
-                        inner.max_priority_fee_per_gas = Some(max_priority_fee_per_gas);
-                    }
-                    if inner.max_fee_per_gas.is_none() {
-                        inner.max_fee_per_gas = Some(max_fee_per_gas);
-                    }
+                if tx.energy_price.is_none() {
+                    tx.energy_price = Some(self.get_energy_price().await?);
                 }
             }
         };
@@ -98,15 +78,8 @@ where
         self.inner().fill_transaction(tx, block).await.map_err(METrait::from_err)
     }
 
-    async fn get_gas_price(&self) -> Result<U256, Self::Error> {
-        Ok(self.gas_oracle.fetch().await?)
-    }
-
-    async fn estimate_eip1559_fees(
-        &self,
-        _: Option<fn(U256, Vec<Vec<U256>>) -> (U256, U256)>,
-    ) -> Result<(U256, U256), Self::Error> {
-        Ok(self.gas_oracle.estimate_eip1559_fees().await?)
+    async fn get_energy_price(&self) -> Result<U256, Self::Error> {
+        Ok(self.energy_oracle.fetch().await?)
     }
 
     async fn send_transaction<T: Into<TypedTransaction> + Send + Sync>(

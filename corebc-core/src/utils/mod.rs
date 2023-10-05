@@ -1,14 +1,8 @@
-/// Utilities for launching a ganache-cli testnet instance
-#[cfg(not(target_arch = "wasm32"))]
-mod ganache;
-#[cfg(not(target_arch = "wasm32"))]
-pub use ganache::{Ganache, GanacheInstance};
-
 /// Utilities for launching a go-ethereum dev-mode instance
 #[cfg(not(target_arch = "wasm32"))]
-mod geth;
+mod gocore;
 #[cfg(not(target_arch = "wasm32"))]
-pub use geth::{Geth, GethInstance};
+pub use gocore::{GoCore, GoCoreInstance};
 
 /// Utilities for working with a `genesis.json` and other network config structs.
 mod genesis;
@@ -19,9 +13,6 @@ pub use genesis::{CliqueConfig, EthashConfig, Genesis, GenesisAccount, NetworkCo
 mod anvil;
 #[cfg(not(target_arch = "wasm32"))]
 pub use anvil::{Anvil, AnvilInstance};
-
-/// Moonbeam utils
-pub mod moonbeam;
 
 mod hash;
 pub use hash::{hash_message, id, serialize, sha3};
@@ -78,8 +69,8 @@ pub enum ConversionError {
     ParseI256Error(#[from] ParseI256Error),
 }
 
-/// 1 Ether = 1e18 Wei == 0x0de0b6b3a7640000 Wei
-pub const WEI_IN_ETHER: U256 = U256([0x0de0b6b3a7640000, 0x0, 0x0, 0x0]);
+/// 1 core = 1e18 Wei == 0x0de0b6b3a7640000 Wei
+pub const WEI_IN_CORE: U256 = U256([0x0de0b6b3a7640000, 0x0, 0x0, 0x0]);
 
 /// The number of blocks from the past for which the fee rewards are fetched for fee estimation.
 pub const EIP1559_FEE_ESTIMATION_PAST_BLOCKS: u64 = 10;
@@ -139,11 +130,11 @@ construct_format_units_from! {
 }
 
 /// Format the output for the user which prefer to see values
-/// in ether (instead of wei)
+/// in core (instead of wei)
 ///
 /// Divides the input by 1e18
-pub fn format_ether<T: Into<U256>>(amount: T) -> U256 {
-    amount.into() / WEI_IN_ETHER
+pub fn format_core<T: Into<U256>>(amount: T) -> U256 {
+    amount.into() / WEI_IN_CORE
 }
 
 /// Divides the provided amount with 10^{units} provided.
@@ -151,13 +142,13 @@ pub fn format_ether<T: Into<U256>>(amount: T) -> U256 {
 /// ```
 /// use corebc_core::{types::U256, utils::format_units};
 ///
-/// let eth = format_units(1395633240123456000_u128, "ether").unwrap();
+/// let eth = format_units(1395633240123456000_u128, "core").unwrap();
 /// assert_eq!(eth.parse::<f64>().unwrap(), 1.395633240123456);
 ///
-/// let eth = format_units(U256::from_dec_str("1395633240123456000").unwrap(), "ether").unwrap();
+/// let eth = format_units(U256::from_dec_str("1395633240123456000").unwrap(), "core").unwrap();
 /// assert_eq!(eth.parse::<f64>().unwrap(), 1.395633240123456);
 ///
-/// let eth = format_units(U256::from_dec_str("1395633240123456789").unwrap(), "ether").unwrap();
+/// let eth = format_units(U256::from_dec_str("1395633240123456789").unwrap(), "core").unwrap();
 /// assert_eq!(eth, "1.395633240123456789");
 ///
 /// let eth = format_units(i64::MIN, "gwei").unwrap();
@@ -204,18 +195,18 @@ where
     }
 }
 
-/// Converts the input to a U256 and converts from Ether to Wei.
+/// Converts the input to a U256 and converts from Core to Wei.
 ///
 /// ```
-/// use corebc_core::{types::U256, utils::{parse_ether, WEI_IN_ETHER}};
+/// use corebc_core::{types::U256, utils::{parse_core, WEI_IN_CORE}};
 ///
-/// let eth = U256::from(WEI_IN_ETHER);
-/// assert_eq!(eth, parse_ether(1u8).unwrap());
-/// assert_eq!(eth, parse_ether(1usize).unwrap());
-/// assert_eq!(eth, parse_ether("1").unwrap());
+/// let eth = U256::from(WEI_IN_CORE);
+/// assert_eq!(eth, parse_core(1u8).unwrap());
+/// assert_eq!(eth, parse_core(1usize).unwrap());
+/// assert_eq!(eth, parse_core("1").unwrap());
 /// ```
-pub fn parse_ether<S: ToString>(eth: S) -> Result<U256, ConversionError> {
-    Ok(parse_units(eth, "ether")?.into())
+pub fn parse_core<S: ToString>(core: S) -> Result<U256, ConversionError> {
+    Ok(parse_units(core, "core")?.into())
 }
 
 /// Multiplies the provided amount with 10^{units} provided.
@@ -225,7 +216,7 @@ pub fn parse_ether<S: ToString>(eth: S) -> Result<U256, ConversionError> {
 /// let amount_in_eth = U256::from_dec_str("15230001000000000000").unwrap();
 /// let amount_in_gwei = U256::from_dec_str("15230001000").unwrap();
 /// let amount_in_wei = U256::from_dec_str("15230001000").unwrap();
-/// assert_eq!(amount_in_eth, parse_units("15.230001000000000000", "ether").unwrap().into());
+/// assert_eq!(amount_in_eth, parse_units("15.230001000000000000", "core").unwrap().into());
 /// assert_eq!(amount_in_gwei, parse_units("15.230001000000000000", "gwei").unwrap().into());
 /// assert_eq!(amount_in_wei, parse_units("15230001000", "wei").unwrap().into());
 /// ```
@@ -285,7 +276,7 @@ where
     }
 }
 
-/// The address for an Ethereum contract is deterministically computed from the
+/// The address for an Core contract is deterministically computed from the
 /// address of its creator (sender) and how many transactions the creator has
 /// sent (nonce). The sender and nonce are RLP encoded and then hashed with Keccak-256.
 pub fn get_contract_address(
@@ -307,7 +298,7 @@ pub fn get_contract_address(
     to_ican(&addr, network)
 }
 
-/// The H160 address for an Ethereum contract is deterministically computed from the
+/// The H160 address for an Core contract is deterministically computed from the
 /// address of its creator (sender) and how many transactions the creator has
 /// sent (nonce). The sender and nonce are RLP encoded and then hashed with Keccak-256.
 pub fn get_contract_h160_address(sender: impl Into<Address>, nonce: impl Into<U256>) -> H160 {
@@ -725,37 +716,34 @@ mod tests {
     use hex_literal::hex;
 
     #[test]
-    fn wei_in_ether() {
-        assert_eq!(WEI_IN_ETHER.as_u64(), 1e18 as u64);
+    fn wei_in_core() {
+        assert_eq!(WEI_IN_CORE.as_u64(), 1e18 as u64);
     }
 
     #[test]
     fn test_format_units_unsigned() {
-        let gwei_in_ether = format_units(WEI_IN_ETHER, 9).unwrap();
-        assert_eq!(gwei_in_ether.parse::<f64>().unwrap() as u64, 1e9 as u64);
+        let gwei_in_core = format_units(WEI_IN_CORE, 9).unwrap();
+        assert_eq!(gwei_in_core.parse::<f64>().unwrap() as u64, 1e9 as u64);
 
-        let eth = format_units(WEI_IN_ETHER, "ether").unwrap();
+        let eth = format_units(WEI_IN_CORE, "core").unwrap();
         assert_eq!(eth.parse::<f64>().unwrap() as u64, 1);
 
-        let eth = format_units(1395633240123456000_u128, "ether").unwrap();
+        let eth = format_units(1395633240123456000_u128, "core").unwrap();
         assert_eq!(eth.parse::<f64>().unwrap(), 1.395633240123456);
 
-        let eth =
-            format_units(U256::from_dec_str("1395633240123456000").unwrap(), "ether").unwrap();
+        let eth = format_units(U256::from_dec_str("1395633240123456000").unwrap(), "core").unwrap();
         assert_eq!(eth.parse::<f64>().unwrap(), 1.395633240123456);
 
-        let eth =
-            format_units(U256::from_dec_str("1395633240123456789").unwrap(), "ether").unwrap();
+        let eth = format_units(U256::from_dec_str("1395633240123456789").unwrap(), "core").unwrap();
         assert_eq!(eth, "1.395633240123456789");
 
-        let eth =
-            format_units(U256::from_dec_str("1005633240123456789").unwrap(), "ether").unwrap();
+        let eth = format_units(U256::from_dec_str("1005633240123456789").unwrap(), "core").unwrap();
         assert_eq!(eth, "1.005633240123456789");
 
         let eth = format_units(u8::MAX, 4).unwrap();
         assert_eq!(eth, "0.0255");
 
-        let eth = format_units(u16::MAX, "ether").unwrap();
+        let eth = format_units(u16::MAX, "core").unwrap();
         assert_eq!(eth, "0.000000000000065535");
 
         // Note: This covers usize on 32 bit systems.
@@ -782,15 +770,14 @@ mod tests {
     #[test]
     fn test_format_units_signed() {
         let eth =
-            format_units(I256::from_dec_str("-1395633240123456000").unwrap(), "ether").unwrap();
+            format_units(I256::from_dec_str("-1395633240123456000").unwrap(), "core").unwrap();
         assert_eq!(eth.parse::<f64>().unwrap(), -1.395633240123456);
 
         let eth =
-            format_units(I256::from_dec_str("-1395633240123456789").unwrap(), "ether").unwrap();
+            format_units(I256::from_dec_str("-1395633240123456789").unwrap(), "core").unwrap();
         assert_eq!(eth, "-1.395633240123456789");
 
-        let eth =
-            format_units(I256::from_dec_str("1005633240123456789").unwrap(), "ether").unwrap();
+        let eth = format_units(I256::from_dec_str("1005633240123456789").unwrap(), "core").unwrap();
         assert_eq!(eth, "1.005633240123456789");
 
         let eth = format_units(i8::MIN, 4).unwrap();
@@ -801,7 +788,7 @@ mod tests {
         assert_eq!(eth, "0.0127");
         assert_eq!(eth.parse::<f64>().unwrap(), 0.0127);
 
-        let eth = format_units(i16::MIN, "ether").unwrap();
+        let eth = format_units(i16::MIN, "core").unwrap();
         assert_eq!(eth, "-0.000000000000032768");
 
         // Note: This covers isize on 32 bit systems.
@@ -842,16 +829,16 @@ mod tests {
         let token: U256 = parse_units(1163.56926418, 8).unwrap().into();
         assert_eq!(token.as_u64(), 116356926418);
 
-        let eth_dec_float: U256 = parse_units(1.39563324, "ether").unwrap().into();
+        let eth_dec_float: U256 = parse_units(1.39563324, "core").unwrap().into();
         assert_eq!(eth_dec_float, U256::from_dec_str("1395633240000000000").unwrap());
 
-        let eth_dec_string: U256 = parse_units("1.39563324", "ether").unwrap().into();
+        let eth_dec_string: U256 = parse_units("1.39563324", "core").unwrap().into();
         assert_eq!(eth_dec_string, U256::from_dec_str("1395633240000000000").unwrap());
 
-        let eth: U256 = parse_units(1, "ether").unwrap().into();
-        assert_eq!(eth, WEI_IN_ETHER);
+        let eth: U256 = parse_units(1, "core").unwrap().into();
+        assert_eq!(eth, WEI_IN_CORE);
 
-        let val: U256 = parse_units("2.3", "ether").unwrap().into();
+        let val: U256 = parse_units("2.3", "core").unwrap().into();
         assert_eq!(val, U256::from_dec_str("2300000000000000000").unwrap());
 
         let n: U256 = parse_units(".2", 2).unwrap().into();
@@ -894,16 +881,16 @@ mod tests {
         let token: I256 = parse_units(-1163.56926418, 8).unwrap().into();
         assert_eq!(token.as_i64(), -116356926418);
 
-        let eth_dec_float: I256 = parse_units(-1.39563324, "ether").unwrap().into();
+        let eth_dec_float: I256 = parse_units(-1.39563324, "core").unwrap().into();
         assert_eq!(eth_dec_float, I256::from_dec_str("-1395633240000000000").unwrap());
 
-        let eth_dec_string: I256 = parse_units("-1.39563324", "ether").unwrap().into();
+        let eth_dec_string: I256 = parse_units("-1.39563324", "core").unwrap().into();
         assert_eq!(eth_dec_string, I256::from_dec_str("-1395633240000000000").unwrap());
 
-        let eth: I256 = parse_units(-1, "ether").unwrap().into();
-        assert_eq!(eth, I256::from_raw(WEI_IN_ETHER) * I256::minus_one());
+        let eth: I256 = parse_units(-1, "core").unwrap().into();
+        assert_eq!(eth, I256::from_raw(WEI_IN_CORE) * I256::minus_one());
 
-        let val: I256 = parse_units("-2.3", "ether").unwrap().into();
+        let val: I256 = parse_units("-2.3", "core").unwrap().into();
         assert_eq!(val, I256::from_dec_str("-2300000000000000000").unwrap());
 
         let n: I256 = parse_units("-.2", 2).unwrap().into();

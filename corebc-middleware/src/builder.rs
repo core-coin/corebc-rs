@@ -1,5 +1,5 @@
 use crate::{
-    gas_oracle::{GasOracle, GasOracleMiddleware},
+    energy_oracle::{EneryOracle, EneryOracleMiddleware},
     NonceManagerMiddleware, SignerMiddleware,
 };
 use corebc_core::types::Address;
@@ -16,19 +16,19 @@ use corebc_signers::Signer;
 /// use std::sync::Arc;
 /// use std::convert::TryFrom;
 /// use corebc_signers::{LocalWallet, Signer};
-/// use corebc_middleware::{*, gas_escalator::*, gas_oracle::*};
+/// use corebc_middleware::{*, energy_escalator::*, energy_oracle::*};
 ///
 /// fn builder_example() {
 ///     let key = "fdb33e2105f08abe41a8ee3b758726a31abdd57b7a443f470f23efce853af169";
 ///     let signer = key.parse::<LocalWallet>().unwrap();
 ///     let address = signer.address();
 ///     let escalator = GeometricGasPrice::new(1.125, 60_u64, None::<u64>);
-///     let gas_oracle = GasNow::new();
+///     let energy_oracle = GasNow::new();
 ///
 ///     let provider = Provider::<Http>::try_from("http://localhost:8545")
 ///         .unwrap()
 ///         .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
-///         .gas_oracle(gas_oracle)
+///         .energy_oracle(energy_oracle)
 ///         .with_signer(signer)
 ///         .nonce_manager(address); // Outermost layer
 /// }
@@ -43,7 +43,7 @@ use corebc_signers::Signer;
 ///         .unwrap()
 ///         .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
 ///         .wrap_into(|p| SignerMiddleware::new(p, signer))
-///         .wrap_into(|p| GasOracleMiddleware::new(p, GasNow::new()))
+///         .wrap_into(|p| EneryOracleMiddleware::new(p, GasNow::new()))
 ///         .wrap_into(|p| NonceManagerMiddleware::new(p, address)); // Outermost layer
 /// }
 /// ```
@@ -77,14 +77,15 @@ pub trait MiddlewareBuilder: Middleware + Sized + 'static {
         NonceManagerMiddleware::new(self, address)
     }
 
-    /// Wraps `self` inside a [`GasOracleMiddleware`](crate::gas_oracle::GasOracleMiddleware).
+    /// Wraps `self` inside a
+    /// [`EneryOracleMiddleware`](crate::energy_oracle::EneryOracleMiddleware).
     ///
-    /// [`GasOracle`](crate::gas_oracle::GasOracle)
-    fn gas_oracle<G>(self, gas_oracle: G) -> GasOracleMiddleware<Self, G>
+    /// [`EneryOracle`](crate::energy_oracle::EneryOracle)
+    fn energy_oracle<G>(self, energy_oracle: G) -> EneryOracleMiddleware<Self, G>
     where
-        G: GasOracle,
+        G: EneryOracle,
     {
-        GasOracleMiddleware::new(self, gas_oracle)
+        EneryOracleMiddleware::new(self, energy_oracle)
     }
 }
 

@@ -317,9 +317,9 @@ where
 
                 // requests are usually weighted and can vary from 10 CU to several 100 CU, cheaper
                 // requests are more common some example alchemy weights:
-                // - `eth_getStorageAt`: 17
-                // - `eth_getBlockByNumber`: 16
-                // - `eth_newFilter`: 20
+                // - `xcb_getStorageAt`: 17
+                // - `xcb_getBlockByNumber`: 16
+                // - `xcb_newFilter`: 20
                 //
                 // (coming from forking mode) assuming here that storage request will be the driver
                 // for Rate limits we choose `17` as the average cost of any request

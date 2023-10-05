@@ -12,9 +12,6 @@ use corebc_providers::{
     Middleware,
 };
 
-#[cfg(not(feature = "legacy"))]
-use corebc_core::types::Eip1559TransactionRequest;
-
 use std::{borrow::Borrow, marker::PhantomData, sync::Arc};
 
 /// `ContractDeployer` is a [`ContractDeploymentTx`] object with an
@@ -85,12 +82,6 @@ where
         self
     }
 
-    /// Uses a Legacy transaction instead of an EIP-1559 one to do the deployment
-    pub fn legacy(mut self) -> Self {
-        self.deployer = self.deployer.legacy();
-        self
-    }
-
     /// Sets the `from` field in the deploy transaction to the provided value
     pub fn from<T: Into<Address>>(mut self, from: T) -> Self {
         self.deployer.tx.set_from(from.into());
@@ -103,15 +94,15 @@ where
         self
     }
 
-    /// Sets the `gas` field in the deploy transaction to the provided value
-    pub fn gas<T: Into<U256>>(mut self, gas: T) -> Self {
-        self.deployer.tx.set_gas(gas.into());
+    /// Sets the `energy` field in the deploy transaction to the provided value
+    pub fn energy<T: Into<U256>>(mut self, energy: T) -> Self {
+        self.deployer.tx.set_energy(energy.into());
         self
     }
 
-    /// Sets the `gas_price` field in the deploy transaction to the provided value
-    pub fn gas_price<T: Into<U256>>(mut self, gas_price: T) -> Self {
-        self.deployer.tx.set_gas_price(gas_price.into());
+    /// Sets the `energy_price` field in the deploy transaction to the provided value
+    pub fn energy_price<T: Into<U256>>(mut self, energy_price: T) -> Self {
+        self.deployer.tx.set_energy_price(energy_price.into());
         self
     }
 
@@ -226,18 +217,6 @@ where
     /// Set the block at which requests are made
     pub fn block<T: Into<BlockNumber>>(mut self, block: T) -> Self {
         self.block = block.into();
-        self
-    }
-
-    /// Uses a Legacy transaction instead of an EIP-1559 one to do the deployment
-    pub fn legacy(mut self) -> Self {
-        self.tx = match self.tx {
-            TypedTransaction::Eip1559(inner) => {
-                let tx: TransactionRequest = inner.into();
-                TypedTransaction::Legacy(tx)
-            }
-            other => other,
-        };
         self
     }
 
@@ -402,10 +381,7 @@ where
         // create the tx object. Since we're deploying a contract, `to` is `None`
         // We default to EIP-1559 transactions, but the sender can convert it back
         // to a legacy one
-        #[cfg(feature = "legacy")]
         let tx = TransactionRequest { to: None, data: Some(data), ..Default::default() };
-        #[cfg(not(feature = "legacy"))]
-        let tx = Eip1559TransactionRequest { to: None, data: Some(data), ..Default::default() };
         let tx = tx.into();
 
         Ok(Deployer {

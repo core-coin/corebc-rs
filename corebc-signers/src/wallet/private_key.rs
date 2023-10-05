@@ -223,7 +223,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn signs_tx() {
         use crate::TypedTransaction;
         use corebc_core::types::{TransactionRequest, U64};
@@ -235,9 +234,9 @@ mod tests {
                 "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000.into()),
-            gas: Some(2_000_000.into()),
+            energy: Some(2_000_000.into()),
             nonce: Some(0.into()),
-            gas_price: Some(21_000_000_000u128.into()),
+            energy_price: Some(21_000_000_000u128.into()),
             data: None,
             network_id: Some(U64::one()),
         }
@@ -252,7 +251,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(not(feature = "celo"))]
     async fn signs_tx_empty_network_id() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;
@@ -264,9 +262,9 @@ mod tests {
                 "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000.into()),
-            gas: Some(2_000_000.into()),
+            energy: Some(2_000_000.into()),
             nonce: Some(0.into()),
-            gas_price: Some(21_000_000_000u128.into()),
+            energy_price: Some(21_000_000_000u128.into()),
             data: None,
             network_id: None,
         }
@@ -287,7 +285,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(not(feature = "celo"))]
     fn signs_tx_empty_network_id_sync() {
         use crate::TypedTransaction;
         use corebc_core::types::TransactionRequest;
@@ -301,9 +298,9 @@ mod tests {
                 "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000u64.into()),
-            gas: Some(2_000_000u64.into()),
+            energy: Some(2_000_000u64.into()),
             nonce: Some(0u64.into()),
-            gas_price: Some(21_000_000_000u128.into()),
+            energy_price: Some(21_000_000_000u128.into()),
             data: None,
             network_id: None,
         }

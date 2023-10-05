@@ -34,7 +34,7 @@ impl GeometricGasPrice {
 }
 
 impl GasEscalator for GeometricGasPrice {
-    fn get_gas_price(&self, initial_price: U256, time_elapsed: u64) -> U256 {
+    fn get_energy_price(&self, initial_price: U256, time_elapsed: u64) -> U256 {
         let mut result = initial_price.as_u64() as f64;
 
         if time_elapsed >= self.every_secs {
@@ -58,34 +58,34 @@ mod tests {
     use super::*;
 
     #[test]
-    fn gas_price_increases_with_time() {
+    fn energy_price_increases_with_time() {
         let oracle = GeometricGasPrice::new(1.125, 10u64, None::<u64>);
         let initial_price = U256::from(100);
 
-        assert_eq!(oracle.get_gas_price(initial_price, 0), 100.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 1), 100.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 10), 113.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 15), 113.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 20), 127.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 30), 143.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 50), 181.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 100), 325.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 0), 100.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 1), 100.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 10), 113.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 15), 113.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 20), 127.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 30), 143.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 50), 181.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 100), 325.into());
     }
 
     #[test]
-    fn gas_price_should_obey_max_value() {
+    fn energy_price_should_obey_max_value() {
         let oracle = GeometricGasPrice::new(1.125, 60u64, Some(2500));
         let initial_price = U256::from(1000);
 
-        assert_eq!(oracle.get_gas_price(initial_price, 0), 1000.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 1), 1000.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 59), 1000.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 60), 1125.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 119), 1125.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 120), 1266.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 1200), 2500.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 3000), 2500.into());
-        assert_eq!(oracle.get_gas_price(initial_price, 1000000), 2500.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 0), 1000.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 1), 1000.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 59), 1000.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 60), 1125.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 119), 1125.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 120), 1266.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 1200), 2500.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 3000), 2500.into());
+        assert_eq!(oracle.get_energy_price(initial_price, 1000000), 2500.into());
     }
 
     #[test]
@@ -99,11 +99,11 @@ mod tests {
             println!(
                 "gas price after {} seconds is {}",
                 seconds,
-                oracle.get_gas_price(initial_price, *seconds).as_u64() as f64 / GWEI
+                oracle.get_energy_price(initial_price, *seconds).as_u64() as f64 / GWEI
             );
         }
 
-        let normalized = |time| oracle.get_gas_price(initial_price, time).as_u64() as f64 / GWEI;
+        let normalized = |time| oracle.get_energy_price(initial_price, time).as_u64() as f64 / GWEI;
 
         assert_eq!(normalized(0), 100.0);
         assert_eq!(normalized(1), 100.0);

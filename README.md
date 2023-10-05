@@ -2,15 +2,15 @@
 
 Crates to modify
 
-- [ ] corebc-core
+- [x] corebc-core
   - [x] ICAN Addresses
   - [ ] ED448
   - [x] Sha3
 - [x] corebc-providers
-- [ ] corebc-contract
+- [x] corebc-contract
 - [ ] corebc-blockindex
-- [ ] corebc-middleware
-- [ ] corebc-signers
-- [ ] corebc-solc
+- [x] corebc-middleware
+- [x] corebc-signers
+- [x] corebc-ylem
 - [ ] corebc
 - [ ] examples

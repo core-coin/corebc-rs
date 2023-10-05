@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 /// @title Multicall3
 /// @notice Aggregate results from multiple function calls
 /// @dev Multicall & Multicall2 backwards-compatible
-/// @dev Aggregate methods are marked `payable` to save 24 gas per call
+/// @dev Aggregate methods are marked `payable` to save 24 energy per call
 /// @author Michael Elliot <mike@makerdao.com>
 /// @author Joshua Levine <joshua@makerdao.com>
 /// @author Nick Johnson <arachnid@notdot.net>
@@ -39,11 +39,9 @@ contract Multicall3 {
     /// @param calls An array of Call structs
     /// @return blockNumber The block number where the calls were executed
     /// @return returnData An array of bytes containing the responses
-    function aggregate(Call[] calldata calls)
-        public
-        payable
-        returns (uint256 blockNumber, bytes[] memory returnData)
-    {
+    function aggregate(
+        Call[] calldata calls
+    ) public payable returns (uint256 blockNumber, bytes[] memory returnData) {
         blockNumber = block.number;
         uint256 length = calls.length;
         returnData = new bytes[](length);
@@ -64,19 +62,21 @@ contract Multicall3 {
     /// @param requireSuccess If true, require all calls to succeed
     /// @param calls An array of Call structs
     /// @return returnData An array of Result structs
-    function tryAggregate(bool requireSuccess, Call[] calldata calls)
-        public
-        payable
-        returns (Result[] memory returnData)
-    {
+    function tryAggregate(
+        bool requireSuccess,
+        Call[] calldata calls
+    ) public payable returns (Result[] memory returnData) {
         uint256 length = calls.length;
         returnData = new Result[](length);
         Call calldata call;
         for (uint256 i = 0; i < length; ) {
             Result memory result = returnData[i];
             call = calls[i];
-            (result.success, result.returnData) = call.target.call(call.callData);
-            if (requireSuccess) require(result.success, "Multicall3: call failed");
+            (result.success, result.returnData) = call.target.call(
+                call.callData
+            );
+            if (requireSuccess)
+                require(result.success, "Multicall3: call failed");
             unchecked {
                 ++i;
             }
@@ -89,7 +89,10 @@ contract Multicall3 {
     /// @return blockNumber The block number where the calls were executed
     /// @return blockHash The hash of the block where the calls were executed
     /// @return returnData An array of Result structs
-    function tryBlockAndAggregate(bool requireSuccess, Call[] calldata calls)
+    function tryBlockAndAggregate(
+        bool requireSuccess,
+        Call[] calldata calls
+    )
         public
         payable
         returns (
@@ -109,7 +112,9 @@ contract Multicall3 {
     /// @return blockNumber The block number where the calls were executed
     /// @return blockHash The hash of the block where the calls were executed
     /// @return returnData An array of Result structs
-    function blockAndAggregate(Call[] calldata calls)
+    function blockAndAggregate(
+        Call[] calldata calls
+    )
         public
         payable
         returns (
@@ -118,36 +123,51 @@ contract Multicall3 {
             Result[] memory returnData
         )
     {
-        (blockNumber, blockHash, returnData) = tryBlockAndAggregate(true, calls);
+        (blockNumber, blockHash, returnData) = tryBlockAndAggregate(
+            true,
+            calls
+        );
     }
 
     /// @notice Aggregate calls, ensuring each returns success if required
     /// @param calls An array of Call3 structs
     /// @return returnData An array of Result structs
-    function aggregate3(Call3[] calldata calls)
-        public
-        payable
-        returns (Result[] memory returnData)
-    {
+    function aggregate3(
+        Call3[] calldata calls
+    ) public payable returns (Result[] memory returnData) {
         uint256 length = calls.length;
         returnData = new Result[](length);
         Call3 calldata calli;
         for (uint256 i = 0; i < length; ) {
             Result memory result = returnData[i];
             calli = calls[i];
-            (result.success, result.returnData) = calli.target.call(calli.callData);
+            (result.success, result.returnData) = calli.target.call(
+                calli.callData
+            );
             assembly {
                 // Revert if the call fails and failure is not allowed
                 // `allowFailure := calldataload(add(calli, 0x20))` and `success := mload(result)`
                 if iszero(or(calldataload(add(calli, 0x20)), mload(result))) {
                     // set "Error(string)" signature: bytes32(bytes4(keccak256("Error(string)")))
-                    mstore(0x00, 0x08c379a000000000000000000000000000000000000000000000000000000000)
+                    mstore(
+                        0x00,
+                        0x08c379a000000000000000000000000000000000000000000000000000000000
+                    )
                     // set data offset
-                    mstore(0x04, 0x0000000000000000000000000000000000000000000000000000000000000020)
+                    mstore(
+                        0x04,
+                        0x0000000000000000000000000000000000000000000000000000000000000020
+                    )
                     // set length of revert string
-                    mstore(0x24, 0x0000000000000000000000000000000000000000000000000000000000000017)
+                    mstore(
+                        0x24,
+                        0x0000000000000000000000000000000000000000000000000000000000000017
+                    )
                     // set revert string: bytes32(abi.encodePacked("Multicall3: call failed"))
-                    mstore(0x44, 0x4d756c746963616c6c333a2063616c6c206661696c6564000000000000000000)
+                    mstore(
+                        0x44,
+                        0x4d756c746963616c6c333a2063616c6c206661696c6564000000000000000000
+                    )
                     revert(0x00, 0x64)
                 }
             }
@@ -161,11 +181,9 @@ contract Multicall3 {
     /// @notice Reverts if msg.value is less than the sum of the call values
     /// @param calls An array of Call3Value structs
     /// @return returnData An array of Result structs
-    function aggregate3Value(Call3Value[] calldata calls)
-        public
-        payable
-        returns (Result[] memory returnData)
-    {
+    function aggregate3Value(
+        Call3Value[] calldata calls
+    ) public payable returns (Result[] memory returnData) {
         uint256 valAccumulator;
         uint256 length = calls.length;
         returnData = new Result[](length);
@@ -179,19 +197,33 @@ contract Multicall3 {
             unchecked {
                 valAccumulator += val;
             }
-            (result.success, result.returnData) = calli.target.call{ value: val }(calli.callData);
+            (result.success, result.returnData) = calli.target.call{value: val}(
+                calli.callData
+            );
             assembly {
                 // Revert if the call fails and failure is not allowed
                 // `allowFailure := calldataload(add(calli, 0x20))` and `success := mload(result)`
                 if iszero(or(calldataload(add(calli, 0x20)), mload(result))) {
                     // set "Error(string)" signature: bytes32(bytes4(keccak256("Error(string)")))
-                    mstore(0x00, 0x08c379a000000000000000000000000000000000000000000000000000000000)
+                    mstore(
+                        0x00,
+                        0x08c379a000000000000000000000000000000000000000000000000000000000
+                    )
                     // set data offset
-                    mstore(0x04, 0x0000000000000000000000000000000000000000000000000000000000000020)
+                    mstore(
+                        0x04,
+                        0x0000000000000000000000000000000000000000000000000000000000000020
+                    )
                     // set length of revert string
-                    mstore(0x24, 0x0000000000000000000000000000000000000000000000000000000000000017)
+                    mstore(
+                        0x24,
+                        0x0000000000000000000000000000000000000000000000000000000000000017
+                    )
                     // set revert string: bytes32(abi.encodePacked("Multicall3: call failed"))
-                    mstore(0x44, 0x4d756c746963616c6c333a2063616c6c206661696c6564000000000000000000)
+                    mstore(
+                        0x44,
+                        0x4d756c746963616c6c333a2063616c6c206661696c6564000000000000000000
+                    )
                     revert(0x00, 0x84)
                 }
             }
@@ -205,7 +237,9 @@ contract Multicall3 {
 
     /// @notice Returns the block hash for the given block number
     /// @param blockNumber The block number
-    function getBlockHash(uint256 blockNumber) public view returns (bytes32 blockHash) {
+    function getBlockHash(
+        uint256 blockNumber
+    ) public view returns (bytes32 blockHash) {
         blockHash = blockhash(blockNumber);
     }
 
@@ -220,7 +254,11 @@ contract Multicall3 {
     }
 
     /// @notice Returns the block difficulty
-    function getCurrentBlockDifficulty() public view returns (uint256 difficulty) {
+    function getCurrentBlockDifficulty()
+        public
+        view
+        returns (uint256 difficulty)
+    {
         difficulty = block.difficulty;
     }
 
@@ -230,7 +268,11 @@ contract Multicall3 {
     }
 
     /// @notice Returns the block timestamp
-    function getCurrentBlockTimestamp() public view returns (uint256 timestamp) {
+    function getCurrentBlockTimestamp()
+        public
+        view
+        returns (uint256 timestamp)
+    {
         timestamp = block.timestamp;
     }
 

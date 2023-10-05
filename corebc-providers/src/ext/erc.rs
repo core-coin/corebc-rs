@@ -5,11 +5,11 @@ use serde::Deserialize;
 use std::str::FromStr;
 use url::Url;
 
-/// ownerOf(uint256 tokenId)
-pub const ERC721_OWNER_SELECTOR: Selector = [0x63, 0x52, 0x21, 0x1e];
+/// sha3(ownerOf(uint256 tokenId))
+pub const ERC721_OWNER_SELECTOR: Selector = [0x37, 0x53, 0xff, 0x5b];
 
-/// balanceOf(address owner, uint256 tokenId)
-pub const ERC1155_BALANCE_SELECTOR: Selector = [0x00, 0xfd, 0xd5, 0x8e];
+/// sha3(balanceOf(address owner, uint256 tokenId))
+pub const ERC1155_BALANCE_SELECTOR: Selector = [0xc5, 0x52, 0x45, 0x46];
 
 const IPFS_GATEWAY: &str = "https://ipfs.io/ipfs/";
 
@@ -80,10 +80,10 @@ impl ERCNFTType {
     /// Get the method selector
     pub const fn resolution_selector(&self) -> Selector {
         match self {
-            // tokenURI(uint256)
-            ERCNFTType::ERC721 => [0xc8, 0x7b, 0x56, 0xdd],
-            // url(uint256)
-            ERCNFTType::ERC1155 => [0x0e, 0x89, 0x34, 0x1c],
+            // sha3(tokenURI(uint256))
+            ERCNFTType::ERC721 => [0xa8, 0x9d, 0xa6, 0x37],
+            // sha3(url(uint256)0
+            ERCNFTType::ERC1155 => [0x0d, 0x7c, 0x4c, 0x12],
         }
     }
 }

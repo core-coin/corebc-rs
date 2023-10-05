@@ -15,29 +15,29 @@ pub type LocalWallet = Wallet<corebc_core::k256::ecdsa::SigningKey>;
 /// A wallet instantiated with a YubiHSM
 pub type YubiWallet = Wallet<yubihsm::ecdsa::Signer<corebc_core::k256::Secp256k1>>;
 
-#[cfg(all(feature = "ledger", not(target_arch = "wasm32")))]
-mod ledger;
-#[cfg(all(feature = "ledger", not(target_arch = "wasm32")))]
-pub use ledger::{
-    app::LedgerEthereum as Ledger,
-    types::{DerivationType as HDPath, LedgerError},
-};
+// #[cfg(all(feature = "ledger", not(target_arch = "wasm32")))]
+// mod ledger;
+// #[cfg(all(feature = "ledger", not(target_arch = "wasm32")))]
+// pub use ledger::{
+//     app::LedgerEthereum as Ledger,
+//     types::{DerivationType as HDPath, LedgerError},
+// };
 
-#[cfg(all(feature = "trezor", not(target_arch = "wasm32")))]
-mod trezor;
-#[cfg(all(feature = "trezor", not(target_arch = "wasm32")))]
-pub use trezor::{
-    app::TrezorEthereum as Trezor,
-    types::{DerivationType as TrezorHDPath, TrezorError},
-};
+// #[cfg(all(feature = "trezor", not(target_arch = "wasm32")))]
+// mod trezor;
+// #[cfg(all(feature = "trezor", not(target_arch = "wasm32")))]
+// pub use trezor::{
+//     app::TrezorEthereum as Trezor,
+//     types::{DerivationType as TrezorHDPath, TrezorError},
+// };
 
 #[cfg(all(feature = "yubihsm", not(target_arch = "wasm32")))]
 pub use yubihsm;
 
-#[cfg(feature = "aws")]
-mod aws;
-#[cfg(feature = "aws")]
-pub use aws::{AwsSigner, AwsSignerError};
+// #[cfg(feature = "aws")]
+// mod aws;
+// #[cfg(feature = "aws")]
+// pub use aws::{AwsSigner, AwsSignerError};
 
 use async_trait::async_trait;
 use corebc_core::types::{

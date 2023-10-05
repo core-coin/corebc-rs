@@ -1,7 +1,7 @@
 use super::ConversionError;
 use std::{convert::TryFrom, fmt, str::FromStr};
 
-/// Common Ethereum unit types.
+/// Common Core unit types.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Units {
     /// Wei is equivalent to 1 wei.
@@ -17,7 +17,7 @@ pub enum Units {
     /// Pwei is equivalent to 1e15 wei.
     Pwei,
     /// Ether is equivalent to 1e18 wei.
-    Ether,
+    Core,
     /// Other less frequent unit sizes, equivalent to 1e{0} wei.
     Other(u32),
 }
@@ -81,7 +81,7 @@ impl FromStr for Units {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(match s.to_lowercase().as_str() {
-            "eth" | "ether" => Units::Ether,
+            "xcb" | "core" => Units::Core,
             "pwei" | "milli" | "milliether" | "finney" => Units::Pwei,
             "twei" | "micro" | "microether" | "szabo" => Units::Twei,
             "gwei" | "nano" | "nanoether" | "shannon" => Units::Gwei,
@@ -120,7 +120,7 @@ impl Units {
             Units::Gwei => 9,
             Units::Twei => 12,
             Units::Pwei => 15,
-            Units::Ether => 18,
+            Units::Core => 18,
             Units::Other(inner) => *inner,
         }
     }
@@ -139,7 +139,7 @@ mod tests {
         assert_eq!(Gwei.as_num(), 9);
         assert_eq!(Twei.as_num(), 12);
         assert_eq!(Pwei.as_num(), 15);
-        assert_eq!(Ether.as_num(), 18);
+        assert_eq!(Core.as_num(), 18);
         assert_eq!(Other(10).as_num(), 10);
         assert_eq!(Other(20).as_num(), 20);
     }
@@ -152,7 +152,7 @@ mod tests {
         assert_eq!(Units::try_from("gwei").unwrap(), Gwei);
         assert_eq!(Units::try_from("twei").unwrap(), Twei);
         assert_eq!(Units::try_from("pwei").unwrap(), Pwei);
-        assert_eq!(Units::try_from("ether").unwrap(), Ether);
+        assert_eq!(Units::try_from("core").unwrap(), Core);
 
         assert_eq!(Units::try_from("wei".to_string()).unwrap(), Wei);
         assert_eq!(Units::try_from("kwei".to_string()).unwrap(), Kwei);
@@ -160,7 +160,7 @@ mod tests {
         assert_eq!(Units::try_from("gwei".to_string()).unwrap(), Gwei);
         assert_eq!(Units::try_from("twei".to_string()).unwrap(), Twei);
         assert_eq!(Units::try_from("pwei".to_string()).unwrap(), Pwei);
-        assert_eq!(Units::try_from("ether".to_string()).unwrap(), Ether);
+        assert_eq!(Units::try_from("core".to_string()).unwrap(), Core);
 
         assert_eq!(Units::try_from(&"wei".to_string()).unwrap(), Wei);
         assert_eq!(Units::try_from(&"kwei".to_string()).unwrap(), Kwei);
@@ -168,6 +168,6 @@ mod tests {
         assert_eq!(Units::try_from(&"gwei".to_string()).unwrap(), Gwei);
         assert_eq!(Units::try_from(&"twei".to_string()).unwrap(), Twei);
         assert_eq!(Units::try_from(&"pwei".to_string()).unwrap(), Pwei);
-        assert_eq!(Units::try_from(&"ether".to_string()).unwrap(), Ether);
+        assert_eq!(Units::try_from(&"core".to_string()).unwrap(), Core);
     }
 }

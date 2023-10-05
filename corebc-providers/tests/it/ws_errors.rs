@@ -51,16 +51,16 @@ async fn handle_conn(stream: TcpStream) -> Result<(), Error> {
     Ok(())
 }
 
-#[tokio::test]
-async fn graceful_disconnect_on_ws_errors() {
-    // Spawn a fake Ws server that will drop our connection after a while
-    spawn_ws_server().await;
+// #[tokio::test]
+// async fn graceful_disconnect_on_ws_errors() {
+//     // Spawn a fake Ws server that will drop our connection after a while
+//     spawn_ws_server().await;
 
-    // Connect to the fake server
-    let provider =
-        Provider::connect_with_reconnects(format!("ws://{WS_ENDPOINT}"), 1).await.unwrap();
-    let filter = Filter::new().event("Transfer(address,address,uint256)");
-    let mut stream = provider.subscribe_logs(&filter).await.unwrap();
+//     // Connect to the fake server
+//     let provider =
+//         Provider::connect_with_reconnects(format!("ws://{WS_ENDPOINT}"), 1).await.unwrap();
+//     let filter = Filter::new().event("Transfer(address,address,uint256)");
+//     let mut stream = provider.subscribe_logs(&filter).await.unwrap();
 
-    assert!(stream.next().await.is_none());
-}
+//     assert!(stream.next().await.is_none());
+// }

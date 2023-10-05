@@ -23,10 +23,7 @@ pub mod contract;
 pub mod output_selection;
 pub mod serde_helpers;
 use crate::{
-    artifacts::{
-        lowfidelity::NodeType,
-        output_selection::{ContractOutputSelection, OutputSelection},
-    },
+    artifacts::output_selection::{ContractOutputSelection, OutputSelection},
     filter::FilteredSources,
 };
 pub use bytecode::*;

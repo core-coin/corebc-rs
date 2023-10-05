@@ -72,7 +72,7 @@ impl SubscriptionManager {
                 // not being dispatched. This is fine, as worst case it will
                 // result in the server sending us notifications we ignore
                 let unsub_request = InFlight {
-                    method: "eth_unsubscribe".to_string(),
+                    method: "xcb_unsubscribe".to_string(),
                     params: SubId(server_id).serialize_raw().ok()?,
                     channel,
                 };
@@ -330,7 +330,7 @@ impl RequestManager {
 
         // Ordering matters here. We want this block above the unbounded send,
         // and after the serialization
-        if in_flight.method == "eth_subscribe" {
+        if in_flight.method == "xcb_subscribe" {
             self.subs.service_subscription_request(id, in_flight.params.clone())?;
         }
 

@@ -78,7 +78,6 @@ tempfile = "3.5.0"
 
 [features]
 default = ["ws", "rustls"]
-celo = ["corebc-core/celo"]
 
 ws = ["tokio-tungstenite", "futures-channel"]
 legacy-ws = ["ws"]

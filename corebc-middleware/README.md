@@ -9,7 +9,7 @@ For more information, please refer to the [book](https://gakonst.com/ethers-rs).
 -   [`Signer`](./signer/struct.SignerMiddleware.html): Signs transactions locally, with a private key or a hardware wallet.
 -   [`Nonce Manager`](./nonce_manager/struct.NonceManagerMiddleware.html): Manages nonces locally. Allows to sign multiple consecutive transactions without waiting for them to hit the mempool.
 -   [`Gas Escalator`](./gas_escalator/struct.GasEscalatorMiddleware.html): Bumps transactions gas price in the background to avoid getting them stuck in the memory pool. A [`GasEscalatorMiddleware`](crate::gas_escalator::GasEscalatorMiddleware) supports different escalation strategies (see [GasEscalator](crate::gas_escalator::GasEscalator)) and bump frequencies (see [Frequency](crate::gas_escalator::Frequency)).
--   [`Gas Oracle`](./gas_oracle/struct.GasOracleMiddleware.html): Allows getting
+-   [`Gas Oracle`](./energy_oracle/struct.GasOracleMiddleware.html): Allows getting
     your gas price estimates from places other than `eth_gasPrice`, including REST based gas stations (i.e. Etherscan, ETH Gas Station etc.).
 -   [`Transformer`](./transformer/trait.Transformer.html): Allows intercepting and
     transforming a transaction to be broadcasted via a proxy wallet, e.g.
@@ -24,14 +24,14 @@ The following example shows how to build a composed [`Middleware`](corebc_provid
 ```rust
 # use corebc_providers::{Middleware, Provider, Http};
 # use corebc_signers::{LocalWallet, Signer};
-# use corebc_middleware::{gas_oracle::GasNow, MiddlewareBuilder};
+# use corebc_middleware::{energy_oracle::GasNow, MiddlewareBuilder};
 let key = "fdb33e2105f08abe41a8ee3b758726a31abdd57b7a443f470f23efce853af169";
 let signer = key.parse::<LocalWallet>()?;
 let address = signer.address();
-let gas_oracle = GasNow::new();
+let energy_oracle = GasNow::new();
 
 let provider = Provider::<Http>::try_from("http://localhost:8545")?
-    .gas_oracle(gas_oracle)
+    .energy_oracle(energy_oracle)
     .with_signer(signer)
     .nonce_manager(address); // Outermost layer
 # Ok::<_, Box<dyn std::error::Error>>(())
@@ -43,7 +43,7 @@ The [wrap_into](crate::MiddlewareBuilder::wrap_into) function can be used to wra
 # use corebc_providers::{Middleware, Provider, Http};
 # use std::convert::TryFrom;
 # use corebc_signers::{LocalWallet, Signer};
-# use corebc_middleware::{*,gas_escalator::*,gas_oracle::*};
+# use corebc_middleware::{*,gas_escalator::*,energy_oracle::*};
 let key = "fdb33e2105f08abe41a8ee3b758726a31abdd57b7a443f470f23efce853af169";
 let signer = key.parse::<LocalWallet>()?;
 let address = signer.address();
@@ -64,7 +64,7 @@ A [`Middleware`](corebc_providers::Middleware) stack can be also constructed man
 # use corebc_signers::{LocalWallet, Signer};
 # use corebc_middleware::{
 #     gas_escalator::{GasEscalatorMiddleware, GeometricGasPrice, Frequency},
-#     gas_oracle::{GasOracleMiddleware, GasCategory, GasNow},
+#     energy_oracle::{GasOracleMiddleware, GasCategory, GasNow},
 #     signer::SignerMiddleware,
 #     nonce_manager::NonceManagerMiddleware,
 # };
@@ -82,8 +82,8 @@ let address = signer.address();
 let provider = SignerMiddleware::new(provider, signer);
 
 // Use GasNow as the gas oracle
-let gas_oracle = GasNow::new();
-let provider = GasOracleMiddleware::new(provider, gas_oracle);
+let energy_oracle = GasNow::new();
+let provider = GasOracleMiddleware::new(provider, energy_oracle);
 
 // Manage nonces locally
 let provider = NonceManagerMiddleware::new(provider, address);
