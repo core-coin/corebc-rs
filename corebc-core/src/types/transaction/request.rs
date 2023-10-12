@@ -175,7 +175,7 @@ impl TransactionRequest {
     /// Produces the RLP encoding of the transaction with the provided signature
     pub fn rlp_signed(&self, signature: &Signature) -> Bytes {
         let mut rlp = RlpStream::new();
-        rlp.begin_list(NUM_TX_FIELDS + 1);
+        rlp.begin_list(NUM_TX_FIELDS - 1);
 
         self.rlp_base(&mut rlp);
 
