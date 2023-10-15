@@ -374,7 +374,7 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
     }
 
     async fn get_energy_price(&self) -> Result<U256, ProviderError> {
-        self.request("xcb_gasPrice", ()).await
+        self.request("xcb_energyPrice", ()).await
     }
 
     async fn get_accounts(&self) -> Result<Vec<Address>, ProviderError> {
@@ -446,7 +446,7 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
         } else {
             vec![tx]
         };
-        self.request("xcb_estimateGas", params).await
+        self.request("xcb_estimateEnergy", params).await
     }
 
     async fn send_transaction<T: Into<TypedTransaction> + Send + Sync>(
@@ -501,7 +501,7 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
         _tx: &TypedTransaction,
         _from: Address,
     ) -> Result<Signature, Self::Error> {
-        Err(ProviderError::SignerUnavailable).map_err(MiddlewareError::from_err)
+        Err(MiddlewareError::from_err(ProviderError::SignerUnavailable))
     }
 
     ////// Contract state
