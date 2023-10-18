@@ -77,13 +77,13 @@ impl Signature {
 
 impl Signature {
     /// Verifies that signature on `message` was produced by `address`
-    pub fn verify<M, A>(&self, message: M, address: A) -> Result<(), SignatureError>
+    pub fn verify<M, A>(&self, message: M, network: &Network, address: A) -> Result<(), SignatureError>
     where
         M: Into<RecoveryMessage>,
         A: Into<Address>,
     {
         let address = address.into();
-        let recovered = self.recover(message)?;
+        let recovered = self.recover(message, network)?;
         if recovered != address {
             return Err(SignatureError::VerificationError(address, recovered))
         }
@@ -95,7 +95,7 @@ impl Signature {
     ///
     /// Recovery signature data uses 'Electrum' notation, this means the `v`
     /// value is expected to be either `27` or `28`.
-    pub fn recover<M>(&self, message: M) -> Result<Address, SignatureError>
+    pub fn recover<M>(&self, message: M, network: &Network) -> Result<Address, SignatureError>
     where
         M: Into<RecoveryMessage>,
     {
@@ -123,7 +123,7 @@ impl Signature {
         bytes.copy_from_slice(&hash[12..]);
         let addr = H160::from(bytes);
         // CORETODO: Change the networktype logic
-        Ok(to_ican(&addr, &Network::Mainnet))
+        Ok(to_ican(&addr, network))
     }
 
     /// Copies and serializes `self` into a new `Vec` with the recovery id included

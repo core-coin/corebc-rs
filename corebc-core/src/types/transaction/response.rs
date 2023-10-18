@@ -3,7 +3,7 @@ use super::{decode_signature, decode_to, eip2718::TypedTransaction, rlp_opt};
 use crate::{
     types::{
         Address, Bloom, Bytes, Log, Signature, SignatureError,
-        H256, U256, U64, U1368,
+        H256, U256, U64, U1368, Network,
     },
     utils::sha3,
 };
@@ -118,7 +118,9 @@ impl Transaction {
     pub fn recover_from(&self) -> Result<Address, SignatureError> {
         let signature = Signature { sig: self.sig };
         let typed_tx: TypedTransaction = self.into();
-        signature.recover(typed_tx.sighash())
+        // CORETODO: Please find a way to unwrap it more naturally
+        let network = Network::try_from(typed_tx.network_id().unwrap()).unwrap();
+        signature.recover(typed_tx.sighash(), &network)
     }
 
     /// Recover the sender of the tx from signature and set the from field

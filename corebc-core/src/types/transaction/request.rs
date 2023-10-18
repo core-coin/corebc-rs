@@ -2,7 +2,7 @@
 use super::{decode_to, extract_network_id, rlp_opt, NUM_TX_FIELDS};
 use crate::{
     types::{
-        Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64,
+        Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64, Network,
     },
     utils::sha3,
 };
@@ -263,8 +263,10 @@ impl TransactionRequest {
         let sig = rlp.at(offset)?.as_val()?;
 
         let sig = Signature { sig };
-        
-        txn.from = Some(sig.recover(txn.sighash())?);
+
+        // CORETODO: Please find a way to unwrap it more naturally
+        let network = Network::try_from(txn.network_id.unwrap()).unwrap();
+        txn.from = Some(sig.recover(txn.sighash(), &network)?);
 
         Ok((txn, sig))
     }
