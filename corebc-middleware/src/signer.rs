@@ -385,6 +385,8 @@ mod tests {
 //         .unwrap()
 //         .with_network_id(network_id);
 
+//         println!("{:?}", key);
+
 //         let client = SignerMiddleware::new(provider, key);
 
 //         // let address_to = "cb81a111da2c7ec8cee4baa791504379a6230fd1c7af".parse::<Address>()?;
@@ -394,7 +396,6 @@ mod tests {
 //         .to(address_to)
 //         .value(U256::from(utils::parse_units("1", "wei")?));
 
-//         // println!("{:?}", client);
 //         let receipt = client.send_transaction(tx, None).await?.await?;
 //         Ok(())
 // }

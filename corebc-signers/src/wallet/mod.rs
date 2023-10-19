@@ -12,9 +12,9 @@ use corebc_core::{
     libgoldilocks::{PrehashSigner, Signature as RecoverableSignature},
     types::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},
-        Address, Signature, H256, U1368,
+        Address, Network, Signature, H160, H256, U1368,
     },
-    utils::hash_message,
+    utils::{hash_message, to_ican},
 };
 
 use async_trait::async_trait;
@@ -118,8 +118,16 @@ impl<D: Sync + Send + PrehashSigner<RecoverableSignature>> Signer for Wallet<D> 
     }
 
     /// Sets the wallet's network_id, used in conjunction with EIP-155 signing
+    // CORETODO: Move setting of network_id to the point of wallet creation
     fn with_network_id<T: Into<u64>>(mut self, network_id: T) -> Self {
         self.network_id = network_id.into();
+        let network = Network::try_from(self.network_id).unwrap();
+
+        let mut bytes = [0u8; 20];
+        bytes.copy_from_slice(&self.address[2..]);
+        let addr = H160::from(bytes);
+        self.address = to_ican(&addr, &network);
+    
         self
     }
 }
