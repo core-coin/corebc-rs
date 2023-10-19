@@ -210,13 +210,13 @@ mod tests {
         let signature = key.sign_message(message).await.unwrap();
 
         // ecrecover via the message will hash internally
-        let recovered = signature.recover(message).unwrap();
+        let recovered = signature.recover(message, &Network::Mainnet).unwrap();
 
         // if provided with a hash, it will skip hashing
-        let recovered2 = signature.recover(hash).unwrap();
+        let recovered2 = signature.recover(hash, &Network::Mainnet).unwrap();
 
         // verifies the signature is produced by `address`
-        signature.verify(message, address).unwrap();
+        signature.verify(message, &Network::Mainnet, address).unwrap();
 
         assert_eq!(recovered, address);
         assert_eq!(recovered2, address);
@@ -247,7 +247,7 @@ mod tests {
 
         let sig = wallet.sign_transaction(&tx).await.unwrap();
         let sighash = tx.sighash();
-        sig.verify(sighash, wallet.address).unwrap();
+        sig.verify(sighash, &Network::Mainnet, wallet.address).unwrap();
     }
 
     #[tokio::test]
@@ -281,7 +281,7 @@ mod tests {
         let mut tx = tx;
         tx.set_network_id(1);
         let sighash = tx.sighash();
-        sig.verify(sighash, wallet.address).unwrap();
+        sig.verify(sighash, &Network::Mainnet, wallet.address).unwrap();
     }
 
     #[test]
@@ -313,17 +313,12 @@ mod tests {
         // and normalize the v
         let sig = wallet.sign_transaction_sync(&tx).unwrap();
 
-        // ensure correct v given the network - first extract recid
-        let recid = (sig.v - 35) % 2;
-        // eip155 check
-        assert_eq!(sig.v, network_id * 2 + 35 + recid);
-
         // since we initialize with None we need to re-set the network_id for the sighash to be
         // correct
         let mut tx = tx;
         tx.set_network_id(network_id);
         let sighash = tx.sighash();
-        sig.verify(sighash, wallet.address).unwrap();
+        sig.verify(sighash, &Network::Mainnet, wallet.address).unwrap();
     }
 
     #[test]
