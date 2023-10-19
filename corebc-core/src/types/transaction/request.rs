@@ -157,7 +157,8 @@ impl TransactionRequest {
             rlp.append(&network_id);
         } else {
             // CORETODO: Doublecheck what to do with this part
-            // If it is called from self.sighash this part is unavailable, but it could be called from eip2718 .sighash()
+            // If it is called from self.sighash this part is unavailable, but it could be called
+            // from eip2718 .sighash()
             rlp.begin_list(NUM_TX_FIELDS - 3);
             self.rlp_base_sighash(&mut rlp);
         }
@@ -206,7 +207,6 @@ impl TransactionRequest {
         rlp_opt(rlp, &self.value);
         rlp_opt(rlp, &self.data.as_ref().map(|d| d.as_ref()));
     }
-
 
     /// Decodes the unsigned rlp, returning the transaction request and incrementing the counter
     /// passed as we are traversing the rlp list.

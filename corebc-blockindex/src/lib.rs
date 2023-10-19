@@ -19,6 +19,7 @@ pub mod errors;
 pub mod source_tree;
 pub mod transaction;
 pub mod utils;
+pub mod verify;
 
 pub(crate) type Result<T, E = BlockindexError> = std::result::Result<T, E>;
 
