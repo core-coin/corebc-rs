@@ -1,5 +1,5 @@
 //! Transaction types
-use super::{decode_to, extract_network_id, rlp_opt, NUM_TX_FIELDS};
+use super::{decode_to, rlp_opt, NUM_TX_FIELDS};
 use crate::{
     types::{
         Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64, Network,

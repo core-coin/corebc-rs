@@ -1,9 +1,8 @@
 // Code adapted from: https://github.com/tomusdrw/rust-web3/blob/master/src/api/accounts.rs
 use crate::{
-    types::{Address, Network, H256, U256, U1368},
+    types::{Address, Network, H256, U1368},
     utils::{hash_message, to_ican},
 };
-use elliptic_curve::{consts::U32, sec1::ToEncodedPoint};
 use ethabi::ethereum_types::H160;
 use libgoldilocks::{errors::LibgoldilockErrors, goldilocks::ed448_verify_with_error};
 use open_fastrlp::Decodable;
@@ -109,11 +108,8 @@ impl Signature {
         self.sig.to_big_endian(&mut sig_pub_bytes);
         let mut sig_bytes = [0u8; 114];
         let mut pub_bytes = [0u8; 57];
-        println!("{:?}", pub_bytes);
         sig_bytes.copy_from_slice(&sig_pub_bytes[5..119]);
         pub_bytes.copy_from_slice(&sig_pub_bytes[119..176]);
-        println!("{:?}", sig_bytes);
-        println!("{:?}", pub_bytes);
         
         ed448_verify_with_error(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
 
@@ -183,7 +179,6 @@ impl FromStr for Signature {
 
 impl From<&Signature> for [u8; 171] {
     fn from(src: &Signature) -> [u8; 171] {
-        let mut sig = [0u8; 171];
         let mut sig = [0u8; 171];
         src.sig.to_big_endian(&mut sig);
 

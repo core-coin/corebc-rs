@@ -1351,20 +1351,20 @@ mod tests {
 
     // #[tokio::test]
     // async fn test_provider() {
-    //     // let provider = Provider::<Http>::try_from("https://xcbapi.coreblockchain.net/")
-    //     let provider = Provider::<Http>::try_from("https://xcbapi.corecoin.cc/")
+    //     let provider = Provider::<Http>::try_from("https://xcbapi.coreblockchain.net/")
+    //     // let provider = Provider::<Http>::try_from("https://xcbapi.corecoin.cc/")
     //         .unwrap()
     //         .interval(Duration::from_millis(1000));
 
     //     let mut block_number = provider.get_block_number().await.unwrap();
-    //     // block_number = U64::from(6038332);
-    //     block_number = U64::from(179040);
+    //     block_number = U64::from(6038332);
+    //     // block_number = U64::from(179040);
     //     let current_block = provider.get_block(block_number).await.unwrap().unwrap();
     //     println!("{:?}", current_block.transactions[0]);
     //     let tx = provider.get_transaction(current_block.transactions[0]).await.unwrap().unwrap();
     //     println!("{:?}", tx);
-    //     println!("{:?}", tx.hash());
-    //     println!("{:?}", tx.recover_from());
+    //     println!("{:?}", tx.from);
+    //     println!("{:?}", tx.recover_from().unwrap());
     // }
 
     #[test]

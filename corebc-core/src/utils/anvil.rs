@@ -2,7 +2,6 @@ use crate::{
     types::{Address, Network},
     utils::{secret_key_to_address, unused_ports},
 };
-use generic_array::GenericArray;
 use libgoldilocks::{SecretKey as LibgoldilocksSecretKey, SigningKey};
 use std::{
     io::{BufRead, BufReader},

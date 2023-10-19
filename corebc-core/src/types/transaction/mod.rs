@@ -38,17 +38,6 @@ pub(crate) fn normalize_v(v: u64, network_id: crate::types::U64) -> u64 {
     }
 }
 
-/// extracts the networkid from the signature v value based on EIP-155
-// CORETODO: We dont implement this, remove
-pub(crate) fn extract_network_id(v: u64) -> Option<crate::types::U64> {
-    // https://eips.ethereum.org/EIPS/eip-155
-    // if networkid is available, v = {0, 1} + NETWORK_ID * 2 + 35
-    if v >= 35 {
-        return Some(crate::types::U64::from((v - 35) >> 1))
-    }
-    None
-}
-
 /// Decodes the signature portion of the RLP encoding based on the RLP offset passed.
 /// Increments the offset for each element parsed.
 #[inline]

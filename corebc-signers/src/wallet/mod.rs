@@ -7,7 +7,7 @@ pub use private_key::WalletError;
 #[cfg(all(feature = "yubihsm", not(target_arch = "wasm32")))]
 mod yubi;
 
-use crate::{to_eip155_v, Signer};
+use crate::Signer;
 use corebc_core::{
     libgoldilocks::{PrehashSigner, Signature as RecoverableSignature},
     types::{
@@ -67,7 +67,7 @@ pub struct Wallet<D: PrehashSigner<RecoverableSignature>> {
     pub(crate) network_id: u64,
 }
 
-impl<D: PrehashSigner<(RecoverableSignature)>> Wallet<D> {
+impl<D: PrehashSigner<RecoverableSignature>> Wallet<D> {
     /// Construct a new wallet with an external Signer
     pub fn new_with_signer(signer: D, address: Address, network_id: u64) -> Self {
         Wallet { signer, address, network_id }
@@ -76,7 +76,7 @@ impl<D: PrehashSigner<(RecoverableSignature)>> Wallet<D> {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<D: Sync + Send + PrehashSigner<(RecoverableSignature)>> Signer for Wallet<D> {
+impl<D: Sync + Send + PrehashSigner<RecoverableSignature>> Signer for Wallet<D> {
     type Error = WalletError;
 
     async fn sign_message<S: Send + Sync + AsRef<[u8]>>(
@@ -124,7 +124,7 @@ impl<D: Sync + Send + PrehashSigner<(RecoverableSignature)>> Signer for Wallet<D
     }
 }
 
-impl<D: PrehashSigner<(RecoverableSignature)>> Wallet<D> {
+impl<D: PrehashSigner<RecoverableSignature>> Wallet<D> {
     /// Synchronously signs the provided transaction, normalizing the signature `v` value with
     /// EIP-155 using the transaction's `network_id`, or the signer's `network_id` if the
     /// transaction does not specify one.
@@ -135,7 +135,7 @@ impl<D: PrehashSigner<(RecoverableSignature)>> Wallet<D> {
         tx.set_network_id(network_id);
 
         let sighash = tx.sighash();
-        let mut sig = self.sign_hash(sighash)?;
+        let sig = self.sign_hash(sighash)?;
 
         Ok(sig)
     }
@@ -156,7 +156,7 @@ impl<D: PrehashSigner<(RecoverableSignature)>> Wallet<D> {
 }
 
 // do not log the signer
-impl<D: PrehashSigner<(RecoverableSignature)>> fmt::Debug for Wallet<D> {
+impl<D: PrehashSigner<RecoverableSignature>> fmt::Debug for Wallet<D> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Wallet")
             .field("address", &self.address)
