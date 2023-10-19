@@ -29,7 +29,7 @@ pub use hex;
 
 use crate::types::{Address, Bytes, Network, ParseI256Error, H160, H256, I256, U256, U64};
 use ethabi::ethereum_types::FromDecStrErr;
-use k256::ecdsa::SigningKey;
+use libgoldilocks::SigningKey;
 use std::{
     collections::HashMap,
     convert::{TryFrom, TryInto},
@@ -425,10 +425,8 @@ fn construct_ican_address(prefix: &str, checksum: &u64, addr: &H160) -> Address 
 /// CORETODO: FIX ASAP ICAN ADDRESSES
 pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Address {
     let public_key = secret_key.verifying_key();
-    let public_key = public_key.to_encoded_point(/* compress = */ false);
     let public_key = public_key.as_bytes();
-    debug_assert_eq!(public_key[0], 0x04);
-    let hash = sha3(&public_key[1..]);
+    let hash = sha3(&public_key[..]);
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
@@ -440,10 +438,8 @@ pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Addr
 /// CORETODO: FIX ASAP ICAN ADDRESSES
 pub fn secret_key_to_h160_address(secret_key: &SigningKey) -> H160 {
     let public_key = secret_key.verifying_key();
-    let public_key = public_key.to_encoded_point(/* compress = */ false);
     let public_key = public_key.as_bytes();
-    debug_assert_eq!(public_key[0], 0x04);
-    let hash = sha3(&public_key[1..]);
+    let hash = sha3(&public_key[..]);
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);

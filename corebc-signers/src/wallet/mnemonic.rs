@@ -5,7 +5,7 @@ use crate::{Wallet, WalletError};
 use coins_bip32::path::DerivationPath;
 use coins_bip39::{Mnemonic, Wordlist};
 use corebc_core::{
-    k256::ecdsa::SigningKey,
+    libgoldilocks::SigningKey,
     types::PathOrString,
     utils::{secret_key_to_address, to_checksum},
 };

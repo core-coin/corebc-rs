@@ -9,7 +9,7 @@ pub use wallet::{MnemonicBuilder, Wallet, WalletError};
 pub use coins_bip39;
 
 /// A wallet instantiated with a locally stored private key
-pub type LocalWallet = Wallet<corebc_core::k256::ecdsa::SigningKey>;
+pub type LocalWallet = Wallet<corebc_core::libgoldilocks::SigningKey>;
 
 #[cfg(all(feature = "yubihsm", not(target_arch = "wasm32")))]
 /// A wallet instantiated with a YubiHSM

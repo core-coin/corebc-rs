@@ -2,7 +2,7 @@
 use super::{decode_to, extract_network_id, rlp_opt, NUM_TX_FIELDS};
 use crate::{
     types::{
-        Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64,
+        Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64, Network,
     },
     utils::sha3,
 };
@@ -176,14 +176,12 @@ impl TransactionRequest {
     /// Produces the RLP encoding of the transaction with the provided signature
     pub fn rlp_signed(&self, signature: &Signature) -> Bytes {
         let mut rlp = RlpStream::new();
-        rlp.begin_list(NUM_TX_FIELDS + 1);
+        rlp.begin_list(NUM_TX_FIELDS - 1);
 
         self.rlp_base(&mut rlp);
 
         // append the signature
-        rlp.append(&signature.v);
-        rlp.append(&signature.r);
-        rlp.append(&signature.s);
+        rlp.append(&signature.sig);
         rlp.out().freeze().into()
     }
 
@@ -262,16 +260,13 @@ impl TransactionRequest {
         let mut offset = 0;
         let mut txn = Self::decode_unsigned_rlp_base(rlp, &mut offset)?;
 
-        let v = rlp.at(offset)?.as_val()?;
-        // populate networkid from v in case the signature follows EIP155
-        txn.network_id = extract_network_id(v);
-        offset += 1;
-        let r = rlp.at(offset)?.as_val()?;
-        offset += 1;
-        let s = rlp.at(offset)?.as_val()?;
+        let sig = rlp.at(offset)?.as_val()?;
 
-        let sig = Signature { r, s, v };
-        txn.from = Some(sig.recover(txn.sighash())?);
+        let sig = Signature { sig };
+
+        // CORETODO: Please find a way to unwrap it more naturally
+        let network = Network::try_from(txn.network_id.unwrap()).unwrap();
+        txn.from = Some(sig.recover(txn.sighash(), &network)?);
 
         Ok((txn, sig))
     }

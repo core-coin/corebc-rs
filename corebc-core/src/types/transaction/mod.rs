@@ -39,6 +39,7 @@ pub(crate) fn normalize_v(v: u64, network_id: crate::types::U64) -> u64 {
 }
 
 /// extracts the networkid from the signature v value based on EIP-155
+// CORETODO: We dont implement this, remove
 pub(crate) fn extract_network_id(v: u64) -> Option<crate::types::U64> {
     // https://eips.ethereum.org/EIPS/eip-155
     // if networkid is available, v = {0, 1} + NETWORK_ID * 2 + 35
@@ -56,11 +57,9 @@ fn decode_signature(
     offset: &mut usize,
 ) -> Result<super::Signature, rlp::DecoderError> {
     let sig = super::Signature {
-        v: rlp.val_at(*offset)?,
-        r: rlp.val_at(*offset + 1)?,
-        s: rlp.val_at(*offset + 2)?,
+        sig: rlp.val_at(*offset)?
     };
-    *offset += 3;
+    *offset += 1;
     Ok(sig)
 }
 
