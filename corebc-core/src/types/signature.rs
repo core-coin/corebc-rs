@@ -58,25 +58,30 @@ impl fmt::Display for Signature {
     }
 }
 
-#[cfg(feature = "eip712")]
-impl Signature {
-    /// Recovers the ethereum address which was used to sign a given EIP712
-    /// typed data payload.
-    ///
-    /// Recovery signature data uses 'Electrum' notation, this means the `v`
-    /// value is expected to be either `27` or `28`.
-    pub fn recover_typed_data<T>(&self, payload: T) -> Result<Address, SignatureError>
-    where
-        T: super::transaction::eip712::Eip712,
-    {
-        let encoded = payload.encode_eip712().map_err(|_| SignatureError::RecoveryError)?;
-        self.recover(encoded)
-    }
-}
+// #[cfg(feature = "eip712")]
+// impl Signature {
+//     /// Recovers the ethereum address which was used to sign a given EIP712
+//     /// typed data payload.
+//     ///
+//     /// Recovery signature data uses 'Electrum' notation, this means the `v`
+//     /// value is expected to be either `27` or `28`.
+//     pub fn recover_typed_data<T>(&self, payload: T) -> Result<Address, SignatureError>
+//     where
+//         T: super::transaction::eip712::Eip712,
+//     {
+//         let encoded = payload.encode_eip712().map_err(|_| SignatureError::RecoveryError)?;
+//         self.recover(encoded)
+//     }
+// }
 
 impl Signature {
     /// Verifies that signature on `message` was produced by `address`
-    pub fn verify<M, A>(&self, message: M, network: &Network, address: A) -> Result<(), SignatureError>
+    pub fn verify<M, A>(
+        &self,
+        message: M,
+        network: &Network,
+        address: A,
+    ) -> Result<(), SignatureError>
     where
         M: Into<RecoveryMessage>,
         A: Into<Address>,
@@ -84,7 +89,7 @@ impl Signature {
         let address = address.into();
         let recovered = self.recover(message, network)?;
         if recovered != address {
-            return Err(SignatureError::VerificationError(address, recovered))
+            return Err(SignatureError::VerificationError(address, recovered));
         }
 
         Ok(())
@@ -110,7 +115,7 @@ impl Signature {
         let mut pub_bytes = [0u8; 57];
         sig_bytes.copy_from_slice(&sig_pub_bytes[5..119]);
         pub_bytes.copy_from_slice(&sig_pub_bytes[119..176]);
-        
+
         ed448_verify_with_error(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
 
         let hash = crate::utils::sha3(&pub_bytes[..]);
@@ -131,7 +136,7 @@ impl Signature {
     /// Decodes a signature from RLP bytes, assuming no RLP header
     pub(crate) fn decode_signature(buf: &mut &[u8]) -> Result<Self, open_fastrlp::DecodeError> {
         let sig = U1368::decode(buf)?;
-        Ok(Self { sig: sig })
+        Ok(Self { sig })
     }
 }
 
@@ -156,12 +161,12 @@ impl<'a> TryFrom<&'a [u8]> for Signature {
     /// Parses a raw signature which is expected to be 65 bytes long where
     /// the first 32 bytes is the `r` value, the second 32 bytes the `s` value
     /// and the final byte is the `v` value in 'Electrum' notation.
-    fn try_from(bytes: &'a [u8]) -> Result<Self, Self::Error> {
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         if bytes.len() != 171 {
-            return Err(SignatureError::InvalidLength(bytes.len()))
+            return Err(SignatureError::InvalidLength(bytes.len()));
         }
 
-        let sig = U1368::from_big_endian(&bytes[..]);
+        let sig = U1368::from_big_endian(bytes);
 
         Ok(Signature { sig })
     }
