@@ -62,40 +62,71 @@ macro_rules! impl_into_numeric {
     )+};
 }
 
-macro_rules! impl_try_from_numeric {
+macro_rules! impl_from_numeric {
     ($($native:ty)+ ; $($primitive:ty)*) => {
         $(
-            impl TryFrom<$native> for Network {
-                type Error = ParseNetworkError;
-
-                fn try_from(value: $native) -> Result<Self, Self::Error> {
+            impl From<$native> for Network {
+                fn from(value: $native) -> Self {
                     match value as u64 {
-                        1 => Ok(Network::Mainnet),
-                        3 => Ok(Network::Devin),
-                        n => Ok(Network::Private(n)),
+                        1 => Network::Mainnet,
+                        3 => Network::Devin,
+                        n => Network::Private(n),
                     }
                 }
             }
         )+
 
         $(
-            impl TryFrom<$primitive> for Network {
-                type Error = ParseNetworkError;
-
-                fn try_from(value: $primitive) -> Result<Self, Self::Error> {
+            impl From<$primitive> for Network {
+                fn from(value: $primitive) -> Self {
                     if value.bits() > 64 {
-                        return Err(ParseNetworkError { number: value.low_u64() })
+                        panic!("{:?}",  ParseNetworkError { number: value.low_u64() });
                     }
                     match value.low_u64() {
-                        1 => Ok(Network::Mainnet),
-                        3 => Ok(Network::Devin),
-                        n => Ok(Network::Private(n)),
+                        1 => Network::Mainnet,
+                        3 => Network::Devin,
+                        n => Network::Private(n),
                     }
                 }
             }
         )*
     };
 }
+
+// macro_rules! impl_try_from_numeric {
+//     ($($native:ty)+ ; $($primitive:ty)*) => {
+//         $(
+//             impl TryFrom<$native> for Network {
+//                 type Error = ParseNetworkError;
+
+//                 fn try_from(value: $native) -> Result<Self, Self::Error> {
+//                     match value as u64 {
+//                         1 => Ok(Network::Mainnet),
+//                         3 => Ok(Network::Devin),
+//                         n => Ok(Network::Private(n)),
+//                     }
+//                 }
+//             }
+//         )+
+
+//         $(
+//             impl TryFrom<$primitive> for Network {
+//                 type Error = ParseNetworkError;
+
+//                 fn try_from(value: $primitive) -> Result<Self, Self::Error> {
+//                     if value.bits() > 64 {
+//                         return Err(ParseNetworkError { number: value.low_u64() })
+//                     }
+//                     match value.low_u64() {
+//                         1 => Ok(Network::Mainnet),
+//                         3 => Ok(Network::Devin),
+//                         n => Ok(Network::Private(n)),
+//                     }
+//                 }
+//             }
+//         )*
+//     };
+// }
 
 impl From<Network> for u64 {
     fn from(network: Network) -> Self {
@@ -129,7 +160,7 @@ impl TryFrom<&str> for Network {
     }
 }
 
-impl_try_from_numeric!(u8 u16 u32 u64 usize; U128 U256 U512);
+impl_from_numeric!(u8 u16 u32 u64 usize; U128 U256 U512);
 
 impl fmt::Display for Network {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -168,7 +199,7 @@ impl From<String> for Network {
             unknown => {
                 if let ["private", id_str] = unknown.split('-').collect::<Vec<_>>().as_slice() {
                     if let Ok(id) = id_str.parse::<u64>() {
-                        return Network::Private(id)
+                        return Network::Private(id);
                     }
                 }
                 panic!("Unknown network: {}", unknown);
