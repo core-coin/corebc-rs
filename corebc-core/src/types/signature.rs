@@ -89,7 +89,7 @@ impl Signature {
         let address = address.into();
         let recovered = self.recover(message, network)?;
         if recovered != address {
-            return Err(SignatureError::VerificationError(address, recovered));
+            return Err(SignatureError::VerificationError(address, recovered))
         }
 
         Ok(())
@@ -163,7 +163,7 @@ impl<'a> TryFrom<&'a [u8]> for Signature {
     /// and the final byte is the `v` value in 'Electrum' notation.
     fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
         if bytes.len() != 171 {
-            return Err(SignatureError::InvalidLength(bytes.len()));
+            return Err(SignatureError::InvalidLength(bytes.len()))
         }
 
         let sig = U1368::from_big_endian(bytes);

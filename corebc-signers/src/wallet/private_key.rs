@@ -5,7 +5,7 @@ use crate::wallet::mnemonic::MnemonicBuilderError;
 use coins_bip32::Bip32Error;
 use coins_bip39::MnemonicError;
 use corebc_core::{
-    libgoldilocks::{SigningKey, errors::LibgoldilockErrors},
+    libgoldilocks::{errors::LibgoldilockErrors, SigningKey},
     rand::{CryptoRng, Rng},
     types::Network,
     utils::secret_key_to_address,
