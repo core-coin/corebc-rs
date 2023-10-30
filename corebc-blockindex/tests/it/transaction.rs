@@ -7,9 +7,9 @@ use serial_test::serial;
 async fn get_transaction_success() {
     run_with_client(Network::Devin, |client| async move {
         let hash: H256 =
-            "0x9a0516515962331000ab0910b969b94cc63e3254ee36664595085af07815fa31".parse().unwrap();
+            "0x9f41d62f5d0b680c1b1a21328c2e0359b65d08f65e2ddf4068920e6b459f6f76".parse().unwrap();
         let tx = client.get_transaction(hash.clone()).await.unwrap();
-        assert_eq!(tx.block_height, 4483929);
+        assert_eq!(tx.block_height, 289617);
     })
     .await
 }

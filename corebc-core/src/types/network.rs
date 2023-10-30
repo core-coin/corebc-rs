@@ -199,7 +199,7 @@ impl From<String> for Network {
             unknown => {
                 if let ["private", id_str] = unknown.split('-').collect::<Vec<_>>().as_slice() {
                     if let Ok(id) = id_str.parse::<u64>() {
-                        return Network::Private(id);
+                        return Network::Private(id)
                     }
                 }
                 panic!("Unknown network: {}", unknown);

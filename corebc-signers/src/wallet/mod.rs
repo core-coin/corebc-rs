@@ -127,7 +127,7 @@ impl<D: Sync + Send + PrehashSigner<RecoverableSignature>> Signer for Wallet<D> 
         bytes.copy_from_slice(&self.address[2..]);
         let addr = H160::from(bytes);
         self.address = to_ican(&addr, &network);
-    
+
         self
     }
 }

@@ -45,9 +45,7 @@ fn decode_signature(
     rlp: &rlp::Rlp,
     offset: &mut usize,
 ) -> Result<super::Signature, rlp::DecoderError> {
-    let sig = super::Signature {
-        sig: rlp.val_at(*offset)?
-    };
+    let sig = super::Signature { sig: rlp.val_at(*offset)? };
     *offset += 1;
     Ok(sig)
 }

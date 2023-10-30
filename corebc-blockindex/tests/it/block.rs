@@ -6,10 +6,10 @@ use serial_test::serial;
 #[serial]
 async fn get_block_by_number() {
     run_with_client(Network::Devin, |client| async move {
-        let block = client.get_block(BlockQueryOption::ByNumber(4483929)).await;
+        let block = client.get_block(BlockQueryOption::ByNumber(289632)).await;
         assert_eq!(
             block.unwrap().hash,
-            "0x77a1a8214e05ba5e48f88a7a2f4cc25e65dde772aa23ad6efa03f95c8a4d35bb".parse().unwrap()
+            "0xa9b9902f750ebde2179c4cec87c53a50eaf3ce6e8834570b8935e9e063e88303".parse().unwrap()
         );
     })
     .await
@@ -21,10 +21,10 @@ async fn get_block_by_hash() {
     run_with_client(Network::Devin, |client| async move {
         let block = client
             .get_block(BlockQueryOption::ByHash(
-                "0x77a1a8214e05ba5e48f88a7a2f4cc25e65dde772aa23ad6efa03f95c8a4d35bb".to_string(),
+                "0xa9b9902f750ebde2179c4cec87c53a50eaf3ce6e8834570b8935e9e063e88303".to_string(),
             ))
             .await;
-        assert_eq!(block.unwrap().height, 4483929);
+        assert_eq!(block.unwrap().height, 289632);
     })
     .await
 }

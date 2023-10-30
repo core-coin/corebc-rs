@@ -2,8 +2,7 @@
 use super::{decode_signature, decode_to, eip2718::TypedTransaction, rlp_opt};
 use crate::{
     types::{
-        Address, Bloom, Bytes, Log, Signature, SignatureError,
-        H256, U256, U64, U1368, Network,
+        Address, Bloom, Bytes, Log, Network, Signature, SignatureError, H256, U1368, U256, U64,
     },
     utils::sha3,
 };
@@ -292,25 +291,32 @@ mod tests {
     //         from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
     //         energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
     //         energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
-    //         hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
+    //         hash:
+    // H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
     //         input: Bytes::from(
-    //             hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
-    //         ),
+    //             
+    // hex::decode("
+    // a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080"
+    // ).unwrap()         ),
     //         nonce: U256::zero(),
     //         to: Some(Address::from_str("0000dac17f958d2ee523a2206206994597c13d831ec7").unwrap()),
     //         transaction_index: None,
     //         value: U256::zero(),
     //         v: U64::from(0x25),
-    //         r: U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141", 16).unwrap(),
-    //         s: U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274", 16).unwrap(),
-    //         network_id: Some(U256::from(1)),
+    //         r:
+    // U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141",
+    // 16).unwrap(),         s:
+    // U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274",
+    // 16).unwrap(),         network_id: Some(U256::from(1)),
     //     };
 
     //     assert_eq!(
     //         tx.rlp(),
     //         Bytes::from(
-    //             hex::decode("f8ac808512ec276caf83010e2b960000dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf08025a0c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141a01dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274").unwrap()
-    //         )
+    //             
+    // hex::decode("
+    // f8ac808512ec276caf83010e2b960000dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf08025a0c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141a01dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274"
+    // ).unwrap()         )
     //     );
     // }
 
@@ -322,22 +328,30 @@ mod tests {
     //         from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
     //         energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
     //         energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
-    //         hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
+    //         hash:
+    // H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
     //         input: Bytes::from(
-    //             hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
-    //         ),
+    //             
+    // hex::decode("
+    // a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080"
+    // ).unwrap()         ),
     //         nonce: U256::zero(),
     //         to: Some(Address::from_str("0000dac17f958d2ee523a2206206994597c13d831ec7").unwrap()),
     //         transaction_index: None,
     //         value: U256::zero(),
     //         v: U64::from(0x25),
-    //         r: U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141", 16).unwrap(),
-    //         s: U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274", 16).unwrap(),
-    //         network_id: Some(U256::from(1)),
+    //         r:
+    // U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141",
+    // 16).unwrap(),         s:
+    // U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274",
+    // 16).unwrap(),         network_id: Some(U256::from(1)),
     //     };
     //     println!("{}", tx.rlp());
 
-    //     let rlp_bytes = hex::decode("f8ac808512ec276caf83010e2b960000dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf08025a0c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141a01dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274").unwrap();
+    //     let rlp_bytes =
+    // hex::decode("
+    // f8ac808512ec276caf83010e2b960000dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf08025a0c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141a01dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274"
+    // ).unwrap();
 
     //     let decoded_transaction = Transaction::decode(&rlp::Rlp::new(&rlp_bytes)).unwrap();
 
@@ -353,7 +367,8 @@ mod tests {
     //         .unwrap(),
     //         nonce: 65.into(),
     //         block_hash: Some(
-    //             H256::from_str("f43869e67c02c57d1f9a07bb897b54bec1cfa1feb704d91a2ee087566de5df2c")
+    //             
+    // H256::from_str("f43869e67c02c57d1f9a07bb897b54bec1cfa1feb704d91a2ee087566de5df2c")
     //                 .unwrap(),
     //         ),
     //         block_number: Some(6203173.into()),
