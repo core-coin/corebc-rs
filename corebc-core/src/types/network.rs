@@ -202,6 +202,9 @@ impl From<String> for Network {
                         return Network::Private(id)
                     }
                 }
+                if let Ok(id) = unknown.parse::<u64>() {
+                    return Network::Private(id)
+                }
                 panic!("Unknown network: {}", unknown);
             }
         }
@@ -358,5 +361,14 @@ mod tests {
             let network = Network::try_from(network_id).expect("cannot parse u64 as network_id");
             assert_eq!(u64::from(network), network_id);
         }
+    }
+
+    #[test]
+    fn parse_private_network() {
+        let mut private = Network::try_from("6").expect("cannot parse private network_id 6");
+        assert_eq!(private, Network::Private(6));
+
+        private = Network::try_from("private-4").expect("cannot parse private network_id 4");
+        assert_eq!(private, Network::Private(4));
     }
 }
