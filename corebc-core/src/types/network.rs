@@ -194,8 +194,8 @@ impl<'de> Deserialize<'de> for Network {
 impl From<String> for Network {
     fn from(s: String) -> Network {
         match s.as_str() {
-            "mainnet" => Network::Mainnet,
-            "devin" => Network::Devin,
+            "mainnet" | "1" => Network::Mainnet,
+            "devin" | "3" => Network::Devin,
             unknown => {
                 if let ["private", id_str] = unknown.split('-').collect::<Vec<_>>().as_slice() {
                     if let Ok(id) = id_str.parse::<u64>() {
