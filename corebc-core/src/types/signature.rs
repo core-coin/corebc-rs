@@ -249,27 +249,27 @@ impl From<H256> for RecoveryMessage {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn recover_web3_signature() {
-    //     // https://web3js.readthedocs.io/en/v1.2.2/web3-eth-accounts.html#sign
-    //     // CORETODO: To Fix this test we will need to create a library
-    //     let signature = Signature::from_str(
-    //         "b91467e570a6466aa9e9876cbcd013baba02900b8979d43fe208a4a4f339f5fd6007e74cd82e037b800186422fc2da167c747ef045e5d18a5f5d4300f8e1a0291c"
-    //     ).expect("could not parse signature");
-    //     assert_eq!(
-    //         signature.recover("Some data").unwrap(),
-    //         Address::from_str("00002c7536E3605D9C16a7a3D7b1898e529396a65c23").unwrap()
-    //     );
-    // }
+    #[test]
+    fn recover_web3_signature() {
+        // https://web3js.readthedocs.io/en/v1.2.2/web3-eth-accounts.html#sign
+        // CORETODO: To Fix this test we will need to create a library
+        let signature = Signature::from_str(
+            "0x611d178b128095022653965eb0ed3bc8bbea8e7891b5a121a102a5b29bb895770d204354dbbc67c5567186f92cdb58a601397dfe0022e0ce002c1333b6829c37c732fb909501f719df200ceaaa0e0a1533dc22e4c9c999406c071fee2858bc7c76c66d113ff1ac739564d465cd541b0d1e003761457fcdd53dba3dea5848c43aa54fe468284319f032945a3acb9bd4cd0fa7b7c901d978e9acd9eca43fa5b3c32b648c33dcc3f3169e8080"
+        ).expect("could not parse signature");
+        assert_eq!(
+            signature.recover("Some data", &Network::Devin).unwrap(),
+            Address::from_str("ab76fc37a3b370a1f22e2fe2f819c210895e098845ed").unwrap()
+        );
+    }
 
     #[test]
     fn signature_from_str() {
         let s1 = Signature::from_str(
-            "0xaa231fbe0ed2b5418e6ba7c19bee2522852955ec50996c02a2fe3e71d30ddaf1645baf4823fea7cb4fcc7150842493847cfb6a6d63ab93e8ee928ee3f61f503500"
+            "0xda7c602b1be1d7d2d1cef75c4c299cc60fa92ce91504b793df5e522de40a762142c143efc91d963c83981dccc1ba443a82430ee1b9800b61804d1b78e8eb7f642c6cea29daced23fd52087f0c3f8b58c15e252152eb36376aa8298ddfa672ed140ae1dcf2d6a0a352ce08249f4cea93c17009700d3af503d84bc4187ba8c1943ac5553f6d2a5ab68af25a43c4fd436f9a5a2e3c9ac711c90e9cb57bf84f73093906fc331e58647b974b300"
         ).expect("could not parse 0x-prefixed signature");
 
         let s2 = Signature::from_str(
-            "aa231fbe0ed2b5418e6ba7c19bee2522852955ec50996c02a2fe3e71d30ddaf1645baf4823fea7cb4fcc7150842493847cfb6a6d63ab93e8ee928ee3f61f503500"
+            "da7c602b1be1d7d2d1cef75c4c299cc60fa92ce91504b793df5e522de40a762142c143efc91d963c83981dccc1ba443a82430ee1b9800b61804d1b78e8eb7f642c6cea29daced23fd52087f0c3f8b58c15e252152eb36376aa8298ddfa672ed140ae1dcf2d6a0a352ce08249f4cea93c17009700d3af503d84bc4187ba8c1943ac5553f6d2a5ab68af25a43c4fd436f9a5a2e3c9ac711c90e9cb57bf84f73093906fc331e58647b974b300"
         ).expect("could not parse non-prefixed signature");
 
         assert_eq!(s1, s2);
