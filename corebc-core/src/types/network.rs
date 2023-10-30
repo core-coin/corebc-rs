@@ -364,11 +364,17 @@ mod tests {
     }
 
     #[test]
-    fn parse_private_network() {
+    fn parse_networks_as_number_strings() {
         let mut private = Network::try_from("6").expect("cannot parse private network_id 6");
         assert_eq!(private, Network::Private(6));
 
         private = Network::try_from("private-4").expect("cannot parse private network_id 4");
         assert_eq!(private, Network::Private(4));
+
+        let mainnet = Network::try_from("1").expect("cannot parse mainnet network_id");
+        assert_eq!(mainnet, Network::Mainnet);
+
+        let devin = Network::try_from("3").expect("cannot parse devin network_id");
+        assert_eq!(devin, Network::Devin);
     }
 }
