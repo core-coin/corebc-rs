@@ -186,14 +186,19 @@ impl<'de> Deserialize<'de> for Network {
     where
         D: Deserializer<'de>,
     {
+        println!("33: {}", 3); 
+
         let s = String::deserialize(deserializer)?;
+
+        println!("s22: {}", s); 
+
         Ok(Network::from(s))
     }
 }
 
 impl From<String> for Network {
     fn from(s: String) -> Network {
-        println!("s: {}", s);
+        println!("s: {}", s); 
         match s.as_str() {
             "mainnet" | "1" => Network::Mainnet,
             "devin" | "3" => Network::Devin,
