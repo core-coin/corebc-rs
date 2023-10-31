@@ -21,6 +21,8 @@ impl std::fmt::Display for ParseNetworkError {
 
 /// An Ethereum EIP-155 Network.
 #[derive(
+    Deserialize,
+    Serialize,
     Clone,
     Copy,
     Debug,
