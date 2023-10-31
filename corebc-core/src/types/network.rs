@@ -203,6 +203,7 @@ impl<'de> Deserialize<'de> for Network {
             where
                 E: de::Error,
             {
+                println!("visit_u64: {}", value);
                 Ok(Network::from(value))
             }
 
@@ -210,6 +211,7 @@ impl<'de> Deserialize<'de> for Network {
             where
                 E: de::Error,
             {
+                println!("visit_str: {}", value);
                 Ok(Network::from(value.to_string()))
             }
 
@@ -217,6 +219,7 @@ impl<'de> Deserialize<'de> for Network {
             where
                 E: de::Error,
             {
+                println!("visit_string: {}", value);
                 Ok(Network::from(value))
             }
         }
