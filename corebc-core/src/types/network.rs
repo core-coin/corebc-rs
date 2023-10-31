@@ -194,9 +194,8 @@ impl<'de> Deserialize<'de> for Network {
 
         println!("{}", s);
 
-        let network:Result<String, serde_json::Error> = serde_json::from_str(s.as_str()); 
-        if network.is_ok() {
-            return Ok(Network::from(network.unwrap()))
+        if let Ok(network) = Network::try_from(s.as_str()) {
+            return Ok(network)
         }
         println!("22222222 {}", s);
 
