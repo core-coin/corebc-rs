@@ -190,11 +190,13 @@ impl<'de> Deserialize<'de> for Network {
         D: Deserializer<'de>,
     {
         let s: Box<RawValue> = Deserialize::deserialize(deserializer)?;
+        println!("{}", s);
 
         let network:Result<String, serde_json::Error> = serde_json::from_str(s.clone().get()); 
         if network.is_ok() {
             return Ok(Network::from(network.unwrap()))
         }
+        println!("22222222 {}", s);
 
         let network:Result<u64, serde_json::Error> = serde_json::from_str(s.get()); 
         if network.is_ok() {
