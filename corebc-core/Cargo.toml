@@ -40,7 +40,7 @@ tiny-keccak = { version = "2.0.2", features = ["sha3"] }
 # misc
 chrono = { version = "0.4", default-features = false }
 serde.workspace = true
-serde_json = { workspace = true, features = ["arbitrary_precision", "raw_value"]}
+serde_json = { workspace = true, features = ["arbitrary_precision"]}
 thiserror.workspace = true
 bytes = { workspace = true, features = ["serde"] }
 hex.workspace = true
