@@ -21,8 +21,6 @@ impl std::fmt::Display for ParseNetworkError {
 
 /// An Ethereum EIP-155 Network.
 #[derive(
-    Deserialize,
-    Serialize,
     Clone,
     Copy,
     Debug,
@@ -195,6 +193,7 @@ impl<'de> Deserialize<'de> for Network {
 
 impl From<String> for Network {
     fn from(s: String) -> Network {
+        println!("s: {}", s);
         match s.as_str() {
             "mainnet" | "1" => Network::Mainnet,
             "devin" | "3" => Network::Devin,
