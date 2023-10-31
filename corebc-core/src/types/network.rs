@@ -1,9 +1,8 @@
 use super::{U128, U256, U512, U64};
 use serde::{
-    de::{Deserialize, Deserializer, self, Visitor},
+    de::{self, Deserialize, Deserializer, Visitor},
     ser::{Serialize, Serializer},
 };
-use serde_json::Deserializer as JsonDeserializer;
 use std::{convert::TryFrom, fmt, str::FromStr, time::Duration};
 use strum::{EnumCount, EnumIter, EnumVariantNames};
 
@@ -203,12 +202,8 @@ impl<'de> Deserialize<'de> for Network {
             where
                 E: de::Error,
             {
-                println!("visit_i64: {}", value);
                 if value <= 0 {
-                    return Err(de::Error::invalid_value(
-                        de::Unexpected::Signed(value),
-                        &self,
-                    ));
+                    return Err(de::Error::invalid_value(de::Unexpected::Signed(value), &self))
                 }
                 Ok(Network::from(value as u64))
             }
@@ -217,25 +212,14 @@ impl<'de> Deserialize<'de> for Network {
             where
                 E: de::Error,
             {
-                println!("visit_u64: {}", value);
                 Ok(Network::from(value))
             }
-
 
             fn visit_str<E>(self, value: &str) -> Result<Network, E>
             where
                 E: de::Error,
             {
-                println!("visit_str: {}", value);
                 Ok(Network::from(value.to_string()))
-            }
-
-            fn visit_string<E>(self, value: String) -> Result<Network, E>
-            where
-                E: de::Error,
-            {
-                println!("visit_string: {}", value);
-                Ok(Network::from(value))
             }
         }
 

@@ -358,7 +358,7 @@ mod tests {
     //     let tx: TypedTransaction = TransactionRequest {
     //         from: None,
     //         to: Some(
-    //             
+    //
     // "cb81a111da2c7ec8cee4baa791504379a6230fd1c7af".parse::<Address>().unwrap().into(),
     //         ),
     //         value: Some(1_000_000_000.into()),
