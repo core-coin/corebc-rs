@@ -187,6 +187,7 @@ impl<'de> Deserialize<'de> for Network {
         D: Deserializer<'de>,
     {
         println!("33: {}", 3); 
+        println!("3333: {}", deserializer); 
 
         let s = String::deserialize(deserializer)?;
 
