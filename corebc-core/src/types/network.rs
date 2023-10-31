@@ -1,5 +1,8 @@
 use super::{U128, U256, U512, U64};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{
+    Deserialize, Deserializer, Serialize, Serializer,
+};
+use serde_json::value::RawValue;
 use std::{convert::TryFrom, fmt, str::FromStr, time::Duration};
 use strum::{EnumCount, EnumIter, EnumVariantNames};
 
@@ -186,14 +189,19 @@ impl<'de> Deserialize<'de> for Network {
     where
         D: Deserializer<'de>,
     {
-        println!("33: {}", 3); 
-        println!("3333: {}", deserializer); 
+        let s: Box<RawValue> = Deserialize::deserialize(deserializer)?;
 
-        let s = String::deserialize(deserializer)?;
+        let network:Result<String, serde_json::Error> = serde_json::from_str(s.clone().get()); 
+        if network.is_ok() {
+            return Ok(Network::from(network.unwrap()))
+        }
 
-        println!("s22: {}", s); 
+        let network:Result<u64, serde_json::Error> = serde_json::from_str(s.get()); 
+        if network.is_ok() {
+            return Ok(Network::from(network.unwrap()))
+        }
 
-        Ok(Network::from(s))
+        Err(serde::de::Error::custom("invalid network"))
     }
 }
 
