@@ -26,6 +26,7 @@ impl std::fmt::Display for ParseNetworkError {
     Clone,
     Copy,
     Debug,
+    Deserialize,
     PartialEq,
     Eq,
     PartialOrd,
@@ -183,34 +184,8 @@ impl Serialize for Network {
     }
 }
 
-impl<'de> Deserialize<'de> for Network {
-    fn deserialize<D>(deserializer: D) -> Result<Network, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        println!("{}", 111);
-        let s: Box<String> = Deserialize::deserialize(deserializer)?;
-        println!("{}", 222);
-
-        println!("{}", s);
-
-        if let Ok(network) = Network::try_from(s.as_str()) {
-            return Ok(network)
-        }
-        println!("22222222 {}", s);
-
-        let network:Result<u64, serde_json::Error> = serde_json::from_str(s.as_str()); 
-        if network.is_ok() {
-            return Ok(Network::from(network.unwrap()))
-        }
-
-        Err(serde::de::Error::custom("invalid network"))
-    }
-}
-
 impl From<String> for Network {
     fn from(s: String) -> Network {
-        println!("s: {}", s); 
         match s.as_str() {
             "mainnet" | "1" => Network::Mainnet,
             "devin" | "3" => Network::Devin,
