@@ -1,7 +1,9 @@
 use super::{U128, U256, U512, U64};
 use serde::{
-    Deserialize, Deserializer, Serialize, Serializer
+    de::{Deserialize, Deserializer, self, Visitor},
+    ser::{Serialize, Serializer},
 };
+use serde_json::Deserializer as JsonDeserializer;
 use std::{convert::TryFrom, fmt, str::FromStr, time::Duration};
 use strum::{EnumCount, EnumIter, EnumVariantNames};
 
@@ -26,7 +28,6 @@ impl std::fmt::Display for ParseNetworkError {
     Clone,
     Copy,
     Debug,
-    Deserialize,
     PartialEq,
     Eq,
     PartialOrd,
@@ -181,6 +182,47 @@ impl Serialize for Network {
         S: Serializer,
     {
         s.serialize_str(format!("{}", self).as_str())
+    }
+}
+
+impl<'de> Deserialize<'de> for Network {
+    fn deserialize<D>(deserializer: D) -> Result<Network, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct NetworkVisitor;
+
+        impl<'de> Visitor<'de> for NetworkVisitor {
+            type Value = Network;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("network (mainnet, devin or private-<id>))")
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                Ok(Network::from(value))
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                Ok(Network::from(value.to_string()))
+            }
+
+            fn visit_string<E>(self, value: String) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                Ok(Network::from(value))
+            }
+        }
+
+        let r = Deserializer::deserialize_any(deserializer, NetworkVisitor)?;
+        Ok(r)
     }
 }
 
