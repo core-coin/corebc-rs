@@ -194,13 +194,16 @@ impl<'de> Deserialize<'de> for Network {
 impl From<String> for Network {
     fn from(s: String) -> Network {
         match s.as_str() {
-            "mainnet" => Network::Mainnet,
-            "devin" => Network::Devin,
+            "mainnet" | "1" => Network::Mainnet,
+            "devin" | "3" => Network::Devin,
             unknown => {
                 if let ["private", id_str] = unknown.split('-').collect::<Vec<_>>().as_slice() {
                     if let Ok(id) = id_str.parse::<u64>() {
                         return Network::Private(id)
                     }
+                }
+                if let Ok(id) = unknown.parse::<u64>() {
+                    return Network::Private(id)
                 }
                 panic!("Unknown network: {}", unknown);
             }
@@ -358,5 +361,20 @@ mod tests {
             let network = Network::try_from(network_id).expect("cannot parse u64 as network_id");
             assert_eq!(u64::from(network), network_id);
         }
+    }
+
+    #[test]
+    fn parse_networks_as_number_strings() {
+        let mut private = Network::try_from("6").expect("cannot parse private network_id 6");
+        assert_eq!(private, Network::Private(6));
+
+        private = Network::try_from("private-4").expect("cannot parse private network_id 4");
+        assert_eq!(private, Network::Private(4));
+
+        let mainnet = Network::try_from("1").expect("cannot parse mainnet network_id");
+        assert_eq!(mainnet, Network::Mainnet);
+
+        let devin = Network::try_from("3").expect("cannot parse devin network_id");
+        assert_eq!(devin, Network::Devin);
     }
 }
