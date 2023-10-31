@@ -199,6 +199,20 @@ impl<'de> Deserialize<'de> for Network {
                 formatter.write_str("network (mainnet, devin or private-<id>))")
             }
 
+            fn visit_i64<E>(self, value: i64) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                println!("visit_i64: {}", value);
+                if value <= 0 {
+                    return Err(de::Error::invalid_value(
+                        de::Unexpected::Signed(value),
+                        &self,
+                    ));
+                }
+                Ok(Network::from(value as u64))
+            }
+
             fn visit_u64<E>(self, value: u64) -> Result<Network, E>
             where
                 E: de::Error,
@@ -206,6 +220,7 @@ impl<'de> Deserialize<'de> for Network {
                 println!("visit_u64: {}", value);
                 Ok(Network::from(value))
             }
+
 
             fn visit_str<E>(self, value: &str) -> Result<Network, E>
             where
