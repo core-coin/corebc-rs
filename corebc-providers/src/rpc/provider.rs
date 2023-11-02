@@ -412,7 +412,7 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
     }
 
     async fn get_networkid(&self) -> Result<U256, ProviderError> {
-        self.request("xcb_chainId", ()).await
+        self.request("xcb_networkId", ()).await
     }
 
     async fn syncing(&self) -> Result<SyncingStatus, Self::Error> {
