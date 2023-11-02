@@ -1,5 +1,8 @@
 use super::{U128, U256, U512, U64};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{
+    de::{self, Deserialize, Deserializer, Visitor},
+    ser::{Serialize, Serializer},
+};
 use std::{convert::TryFrom, fmt, str::FromStr, time::Duration};
 use strum::{EnumCount, EnumIter, EnumVariantNames};
 
@@ -186,8 +189,42 @@ impl<'de> Deserialize<'de> for Network {
     where
         D: Deserializer<'de>,
     {
-        let s = String::deserialize(deserializer)?;
-        Ok(Network::from(s))
+        struct NetworkVisitor;
+
+        impl<'de> Visitor<'de> for NetworkVisitor {
+            type Value = Network;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("network (mainnet, devin or private-<id>))")
+            }
+
+            fn visit_i64<E>(self, value: i64) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                if value <= 0 {
+                    return Err(de::Error::invalid_value(de::Unexpected::Signed(value), &self))
+                }
+                Ok(Network::from(value as u64))
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                Ok(Network::from(value))
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                Ok(Network::from(value.to_string()))
+            }
+        }
+
+        let r = Deserializer::deserialize_any(deserializer, NetworkVisitor)?;
+        Ok(r)
     }
 }
 

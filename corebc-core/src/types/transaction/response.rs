@@ -294,7 +294,7 @@ mod tests {
     //         hash:
     // H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
     //         input: Bytes::from(
-    //             
+    //
     // hex::decode("
     // a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080"
     // ).unwrap()         ),
@@ -313,7 +313,7 @@ mod tests {
     //     assert_eq!(
     //         tx.rlp(),
     //         Bytes::from(
-    //             
+    //
     // hex::decode("
     // f8ac808512ec276caf83010e2b960000dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf08025a0c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141a01dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274"
     // ).unwrap()         )
@@ -331,7 +331,7 @@ mod tests {
     //         hash:
     // H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
     //         input: Bytes::from(
-    //             
+    //
     // hex::decode("
     // a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080"
     // ).unwrap()         ),
@@ -367,7 +367,7 @@ mod tests {
     //         .unwrap(),
     //         nonce: 65.into(),
     //         block_hash: Some(
-    //             
+    //
     // H256::from_str("f43869e67c02c57d1f9a07bb897b54bec1cfa1feb704d91a2ee087566de5df2c")
     //                 .unwrap(),
     //         ),
