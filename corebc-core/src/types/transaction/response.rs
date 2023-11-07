@@ -56,7 +56,7 @@ pub struct Transaction {
     #[serde(default, rename = "signature")]
     pub sig: H1368,
 
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, rename = "networkId", skip_serializing_if = "Option::is_none")]
     pub network_id: Option<U256>,
 }
 
@@ -274,9 +274,11 @@ mod tests {
 
     #[test]
     fn tx_roundtrip() {
-        let json = serde_json::json!({"blockHash":"0x55ae43d3511e327dc532855510d110676d340aa1bbba369b4b98896d86559586","blockNumber":"0xa3d322","networkId":"0x3","from":"0x0000541d6a0e9ca9e7a083e41e2e178eef9f22d7492e","energy":"0x6a40","energyPrice":"0x3b9aca07","hash":"0x824384376c5972498c6fcafe71fd8cad1689f64e7d5e270d025a898638c0c34d","input":"0x","nonce":"0x0","r":"0xf13b5088108f783f4b6048d4be456971118aabfb88be96bb541d734b6c2b20dc","s":"0x13fb7eb25a7d5df42a176cd4c6a086e19163ed7cd8ffba015f939d24f66bc17a","to":"0x00008210357f377e901f18e45294e86a2a32215cc3c9","transactionIndex":"0xd","v":"0x1","value":"0x7b"});
+        let json = serde_json::json!({"blockHash":"0x31ee73b1cf9ae3adc850c84aa22ed9ce9186f8b927ceeba48a04a56085b38664","blockNumber":"0x68cd2","networkId":"0x3","from":"0xab59796210a3fe3c24d433197af05ef54c33279ba80d","energy":"0xf4239","energyPrice":"0x3b9aca00","hash":"0x8305e1f16cd0355d3ba79d604a49d2c707fb87c8a4632814bff00a914b1a87fe","input":"0xca725b7e00000000000000000000000000000000000000000000000000277a879f176600","nonce":"0x11d7","signature": "0xd8dd78f3cb29f8cd26596756ee3df34b3cdb65e9273179e2cd9e2cd325b24e2dea7ab7b640e6569bc5a17028d7f440df0da309e3322d708e00a756221e41ae5538e710199dc2ad67477dfceece9153260e0ee72481e35b3da35d85491cd25bc7d875d48ce98141b65a79ee6598862038210072e307abe34426234c4dd7bee1880a46920fadcebcba5d16e440a2621ad211d0da6155d8be811768141cd9b303ed7c1a4a814c1ae79fb1a780","to":"0xab4184ac3f29bedfab8a76895b87564289cd5a962542","transactionIndex":"0x0","value":"0x0"});
+        println!("{:?}", json);
         let tx: Transaction = serde_json::from_value(json.clone()).unwrap();
-        assert_eq!(tx.nonce, 0u64.into());
+        println!("{:?}", tx);
+        assert_eq!(tx.nonce, 4567u64.into());
 
         let encoded = serde_json::to_value(tx).unwrap();
         assert_eq!(encoded, json);
