@@ -12,7 +12,7 @@ use corebc_core::{
     libgoldilocks::{PrehashSigner, Signature as RecoverableSignature},
     types::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},
-        Address, Network, Signature, H160, H256, U1368,
+        Address, Network, Signature, H160, H256, H1368,
     },
     utils::{hash_message, to_ican},
 };
@@ -152,7 +152,7 @@ impl<D: PrehashSigner<RecoverableSignature>> Wallet<D> {
     pub fn sign_hash(&self, hash: H256) -> Result<Signature, WalletError> {
         let recoverable_sig = self.signer.sign_prehash(hash.as_ref())?;
 
-        let sig = U1368::from_big_endian(recoverable_sig.as_slice());
+        let sig = H1368::from_slice(recoverable_sig.as_slice());
 
         Ok(Signature { sig })
     }
