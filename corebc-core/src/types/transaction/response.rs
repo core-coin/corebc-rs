@@ -2,7 +2,7 @@
 use super::{decode_signature, decode_to, eip2718::TypedTransaction, rlp_opt};
 use crate::{
     types::{
-        Address, Bloom, Bytes, Log, Network, Signature, SignatureError, H256, U1368, U256, U64,
+        Address, Bloom, Bytes, Log, Network, Signature, SignatureError, H256, H1368, U256, U64,
     },
     utils::sha3,
 };
@@ -54,7 +54,7 @@ pub struct Transaction {
 
     /// Signature
     #[serde(default, rename = "signature")]
-    pub sig: U1368,
+    pub sig: H1368,
 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub network_id: Option<U256>,

@@ -1,6 +1,6 @@
 // Code adapted from: https://github.com/tomusdrw/rust-web3/blob/master/src/api/accounts.rs
 use crate::{
-    types::{Address, Network, H256, U1368},
+    types::{Address, Network, H256, H1368},
     utils::{hash_message, to_ican},
 };
 use ethabi::ethereum_types::H160;
@@ -48,7 +48,7 @@ pub enum RecoveryMessage {
 /// An ECDSA signature
 pub struct Signature {
     /// Sig value
-    pub sig: U1368,
+    pub sig: H1368,
 }
 
 impl fmt::Display for Signature {
@@ -109,12 +109,11 @@ impl Signature {
             RecoveryMessage::Hash(hash) => hash,
         };
 
-        let mut sig_pub_bytes = [0u8; 176];
-        self.sig.to_big_endian(&mut sig_pub_bytes);
+        let mut sig_pub_bytes = self.sig.to_fixed_bytes();
         let mut sig_bytes = [0u8; 114];
         let mut pub_bytes = [0u8; 57];
-        sig_bytes.copy_from_slice(&sig_pub_bytes[5..119]);
-        pub_bytes.copy_from_slice(&sig_pub_bytes[119..176]);
+        sig_bytes.copy_from_slice(&sig_pub_bytes[0..114]);
+        pub_bytes.copy_from_slice(&sig_pub_bytes[114..171]);
 
         ed448_verify_with_error(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
 
@@ -135,7 +134,7 @@ impl Signature {
 
     /// Decodes a signature from RLP bytes, assuming no RLP header
     pub(crate) fn decode_signature(buf: &mut &[u8]) -> Result<Self, open_fastrlp::DecodeError> {
-        let sig = U1368::decode(buf)?;
+        let sig = H1368::decode(buf)?;
         Ok(Self { sig })
     }
 }
@@ -166,7 +165,7 @@ impl<'a> TryFrom<&'a [u8]> for Signature {
             return Err(SignatureError::InvalidLength(bytes.len()))
         }
 
-        let sig = U1368::from_big_endian(bytes);
+        let sig = H1368::from_slice(bytes);
 
         Ok(Signature { sig })
     }
@@ -184,8 +183,7 @@ impl FromStr for Signature {
 
 impl From<&Signature> for [u8; 171] {
     fn from(src: &Signature) -> [u8; 171] {
-        let mut sig = [0u8; 171];
-        src.sig.to_big_endian(&mut sig);
+        let sig = src.sig.to_fixed_bytes();
 
         sig
     }
