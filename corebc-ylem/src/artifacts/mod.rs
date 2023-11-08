@@ -1710,7 +1710,7 @@ pub struct GeneratedSource {
 }
 
 /// Byte offsets into the bytecode.
-/// Linking replaces the 20 bytes located there.
+/// Linking replaces the 22 bytes located there.
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Offsets {
     pub start: u32,
