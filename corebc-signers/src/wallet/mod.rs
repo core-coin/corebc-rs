@@ -12,7 +12,7 @@ use corebc_core::{
     libgoldilocks::{PrehashSigner, Signature as RecoverableSignature},
     types::{
         transaction::{eip2718::TypedTransaction, eip712::Eip712},
-        Address, Network, Signature, H160, H256, H1368,
+        Address, Network, Signature, H1368, H160, H256,
     },
     utils::{hash_message, to_ican},
 };

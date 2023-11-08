@@ -1,6 +1,6 @@
 // Code adapted from: https://github.com/tomusdrw/rust-web3/blob/master/src/api/accounts.rs
 use crate::{
-    types::{Address, Network, H256, H1368},
+    types::{Address, Network, H1368, H256},
     utils::{hash_message, to_ican},
 };
 use ethabi::ethereum_types::H160;

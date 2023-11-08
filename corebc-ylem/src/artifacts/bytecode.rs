@@ -77,24 +77,15 @@ impl CompactBytecode {
         let file = file.as_ref();
         let library = library.as_ref();
         if let Some((key, mut contracts)) = self.link_references.remove_entry(file) {
-            println!("111111111file: {:?}, library {:?}, address {:?}, contracts {:?}", file, library, address, contracts.clone());
             if contracts.remove(library).is_some() {
-                println!("'''''''''''''''''''''''''''''''");
                 self.object.link(file, library, address);
             }
-            println!("222222222222file: {:?}, library {:?}, address {:?}, contracts {:?}", file, library, address, contracts.clone());
             if !contracts.is_empty() {
-                println!("2222222'''''''''''''''''''''''''''''''");
-
                 self.link_references.insert(key, contracts.clone());
             }
-            println!("33333333333file: {:?}, library {:?}, address {:?}, contracts {:?}", file, library, address, contracts.clone());
             if self.link_references.is_empty() {
-                println!("33333333333'''''''''''''''''''''''''''''''");
                 return self.object.resolve().is_some()
             }
-            println!("file: {:?}, library {:?}, address {:?}, contracts {:?}", file, library, address, contracts.clone());
-
         }
         false
     }
