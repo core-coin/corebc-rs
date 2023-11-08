@@ -153,7 +153,6 @@ pub struct TxpoolStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn serde_txpool_content() {
         // Gathered from geth v1.10.23-stable-d901d853/linux-amd64/go1.18.5
@@ -162,137 +161,116 @@ mod tests {
         let txpool_content_json = r#"
 {
   "pending": {
-    "0x000000000000863b56a3c1f0f1be8bc4f8b7bd78f57a": {
-      "29": {
+    "cb15d3649d846a2bd426c0ceaca24fab50f7cba8f839": {
+      "3": {
         "blockHash": null,
         "blockNumber": null,
-        "from": "0x000000000000863b56a3c1f0f1be8bc4f8b7bd78f57a",
-        "energy": "0x2af9e",
-        "energyPrice": "0x218711a00",
-        "hash": "0xfbc6fd04ba1c4114f06574263f04099b4fb2da72acc6f9709f0a3d2361308344",
-        "input": "0x5ae401dc00000000000000000000000000000000000000000000000000000000636c757700000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000e404e45aaf000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000006b175474e89094c44da98b954eedeac495271d0f000000000000000000000000000000000000000000000000000000000000006400000000000000000000000000000000863b56a3c1f0f1be8bc4f8b7bd78f57a000000000000000000000000000000000000000000000000000000007781df4000000000000000000000000000000000000000000000006c240454bf9c87cd84000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-        "nonce": "0x1d",
-        "to": "0x000068b3465833fb72a70ecdf485e0e4c7bd8665fc45",
-        "transactionIndex": null,
-        "value": "0x0",
-        "networkId": "0x1",
-        "v": "0x0",
-        "r": "0xbb809ae71b03319ba2811ebd581c85665169143ffade86e07d2eb4cd03b544dc",
-        "s": "0x65a2aa7e0e70356f765205a611d580de8e84fa79086f117fd9ab4765f5cf1339"
+        "from": "cb15d3649d846a2bd426c0ceaca24fab50f7cba8f839",
+        "energy": "0xc350",
+        "energyPrice": "0xa",
+        "hash": "0x8b141d69ab3e18bf9775144ddc2e3ca55dfc3e8b5e67dfaea4401b4074da4041",
+        "input": "0x1123",
+        "nonce": "0x3",
+        "to": "cb08095e7baea6a6c7c4c2dfeb977efac326af552d87",
+        "value": "0xa",
+        "network_id": "0x1",
+        "signature": "0x4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
       }
     },
-    "0x0000000042429c09de5881f05a0c2a068222f4f5b091": {
-      "38": {
+    "cb56ec43cd027a23ccaf585f2a10456e78b64a9eacde": {
+      "3": {
         "blockHash": null,
         "blockNumber": null,
-        "from": "0x0000000042429c09de5881f05a0c2a068222f4f5b091",
-        "energy": "0x61a80",
-        "energyPrice": "0x2540be400",
-        "hash": "0x054ad1ccf5917139a9b1952f62048f742255a7c11100f593c4f18c1ed49b8dfd",
+        "from": "cb56ec43cd027a23ccaf585f2a10456e78b64a9eacde",
+        "energy": "0xc350",
+        "energyPrice": "0xa",
+        "hash": "0x9ae25e5faa89d8db6a515fa858f6d326ebb54d10c99a68485607900651671607",
         "input": "0x27dc297e800332e506f28f49a13c1edf087bdd6482d6cb3abdf2a4c455642aef1e98fc240000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000002d7b22444149223a313439332e37342c2254555344223a313438392e36362c2255534443223a313439322e34387d00000000000000000000000000000000000000",
-        "nonce": "0x26",
-        "to": "0x0000abd279febe00c93fb0c9e683c6919ec4f107241f",
-        "transactionIndex": null,
-        "value": "0x0",
-        "networkId": "0x1",
-        "v": "0x26",
-        "r": "0xaf46b2c0f067f7d1d63ac19daa349c0e1eb83f019ee00542ffa7095e05352e92",
-        "s": "0x21d6d24d58ec361379ffffe4cc17bec8ce2b9f5f9759a91afc9a54dfdfa519c2"
+        "nonce": "0x3",
+        "to": "cb08095e7baea6a6c7c4c2dfeb977efac326af552d87",
+        "value": "0xa",
+        "network_id": "0x1",
+        "signature": "0x0fbac47922e6e0649343400231a15e26f4f5ab1490fa5e243470de6ca26fd3583b7fa03170600a37b29d214fa618a32d6c2a121552f556578097176bf2ccb9dee0f37e8547d8f5981b6b998f99bf24c92e08b61ca5a7da5ab3da43986881356af9ad55e9b9481432cb1194a7c1302bc72500ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
       }
     },
-    "0x0000000fab888651fbceb55de230493562159ead0340": {
+    "cb8249fdd4e9115d8d03d9387db1299985af4e4b2b6d": {
       "12": {
         "blockHash": null,
         "blockNumber": null,
-        "from": "0x0000000fab888651fbceb55de230493562159ead0340",
-        "energy": "0x12fed",
-        "energyPrice": "0x1a13b8600",
-        "hash": "0xfae0cffdae6774abe11662a2cdbea019fce48fca87ba9ebf5e9e7c2454c01715",
+        "from": "cb8249fdd4e9115d8d03d9387db1299985af4e4b2b6d",
+        "energy": "0xc350",
+        "energyPrice": "0xa",
+        "hash": "0xe2e86517c0aa95989e438cf6f08ca060d755ce03a0aa4775c7a49fdf650e4ad1",
         "input": "0xa9059cbb00000000000000000000000050272a56ef9aff7238e8b40347da62e87c1f69e200000000000000000000000000000000000000000000000000000000428d3dfc",
         "nonce": "0xc",
-        "to": "0x00008e8d6ab093905c400d583efd37fbeeb1ee1c0c39",
-        "transactionIndex": null,
-        "value": "0x0",
-        "networkId": "0x1",
-        "v": "0x0",
-        "r": "0x7b717e689d1bd045ee7afd79b97219f2e36bd22a6a14e07023902194bca96fbf",
-        "s": "0x7b0ba462c98e7b0f95a53f047cf568ee0443839628dfe4ab294bfab88fa8e251"
+        "to": "cb08095e7baea6a6c7c4c2dfeb977efac326af552d87",
+        "value": "0xa",
+        "network_id": "0x1",
+        "signature": "0xd13e9f21f6e392e645b944913406b415a4fa81d75c0979b0a1e03a940369c7a749dfcf663a2b28c7170747e76d24c675e5ddab3dcd8f562a80b41bc8a37843b73cf133a3b6080811a6279894b1629640b8318f2f989efab5dcd643905a64916db94920ae1970e362920883d340ca39aa3600ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
       }
     }
   },
   "queued": {
-    "0x000000b846f07f5e7c61569437ca16f88a9dfa00f1bf": {
+    "cb8249fdd4e9115d8d03d9387db1299985af4e4b2b6d": {
       "143": {
         "blockHash": null,
         "blockNumber": null,
-        "from": "0x000000b846f07f5e7c61569437ca16f88a9dfa00f1bf",
-        "energy": "0x33c3b",
-        "energyPrice": "0x218711a00",
-        "hash": "0x68959706857f7a58d752ede0a5118a5f55f4ae40801f31377e1af201944720b2",
+        "from": "cb8249fdd4e9115d8d03d9387db1299985af4e4b2b6d",
+        "energy": "0x7a134",
+        "energyPrice": "0x65",
+        "hash": "0x3183b9de71cce6a7b8cc4e39d5939cecdefb2f8b45013d5fd61363764b4f890a",
         "input": "0x03a9ea6d00000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000f2ff840000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000041d0c4694374d7893d63605625687be2f01028a5b49eca00f72901e773ad8ba7906e58d43e114a28353efaf8abd6a2675de83a3a07af579b8b268e6b714376610d1c00000000000000000000000000000000000000000000000000000000000000",
         "nonce": "0x8f",
-        "to": "0x0000fbddadd80fe7bda00b901fbaf73803f2238ae655",
-        "transactionIndex": null,
-        "value": "0x1f58a57c1794eb",
-        "networkId": "0x1",
-        "v": "0x0",
-        "r": "0x77d149add2b1b84af9408af55661b05b21e2a436f9bfcaa844584905a0f8f1ac",
-        "s": "0x358d79063d702f0c3fb46ad0f6ce5db61f5fdb0b20359c8da2e72a11988db283"
+        "to": "cb08095e7baea6a6c7c4c2dfeb977efac326af552d87",
+        "value": "0x2fbc",
+        "network_id": "0x1",
+        "signature": "0xb441bdaf2704bcd492519fbc861107af419f4041e952a261fb8d2759fe9e4ff667fd1d9ac65b1919d47a6ce621126d065577e2215bcfad6400f3bfdfdd4016464ac9dc23d1a0f8ad8782d1bdb3a14c5d7db60b120d905b60f773445faad7013a6528217749cca089a6c7e30b3da10ee51600ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
       }
     },
-    "0x0000025276ec2de8ee570cfd4c1010319f14a6d9f0dd": {
+    "cb96cce45e424604ccc2ae6940db14ebf77b17706234": {
       "1": {
         "blockHash": null,
         "blockNumber": null,
-        "from": "0x0000025276ec2de8ee570cfd4c1010319f14a6d9f0dd",
-        "energy": "0x7918",
-        "energyPrice": "0x12e531724e",
-        "hash": "0x35109918ab6129a4d69480514ebec0ea08dc4a4de032fec59003ea66718828c4",
+        "from": "cb96cce45e424604ccc2ae6940db14ebf77b17706234",
+        "energy": "0x7a134",
+        "energyPrice": "0x65",
+        "hash": "0xcece43db04c01d9cd4354c0a59d6748324da6c4483aef0eb8af8ec6605d981a3",
         "input": "0x",
         "nonce": "0x1",
-        "to": "0x0000025276ec2de8ee570cfd4c1010319f14a6d9f0dd",
-        "transactionIndex": null,
-        "value": "0x0",
-        "networkId": "0x1",
-        "v": "0x0",
-        "r": "0x863ed0413a14f3f1695fd9728f1500a2b46e69d6f4c82408af15354cc5a667d6",
-        "s": "0x2d503050aa1c9ecbb6df9957459c296f2f6190bc07aa09047d541233100b1c7a"
+        "to": "cb08095e7baea6a6c7c4c2dfeb977efac326af552d87",
+        "value": "0x2fbc",
+        "network_id": "0x1",
+        "signature": "0x9dc03c7a1e40154fac1a2de81c332999f5683e0028d152f0f764effae4ac5b68ad05419156a45031314869781d0f0dc8a57d24a13a71592800ff90d00ed8c8256d5250c00d4f01b4aca2d19e40c7d2cbaa2c2c6dc8fcbcb153e4eda482f87e0bedb5fb9755ab514738dbc6d8f80ff9931200ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
       },
       "4": {
         "blockHash": null,
         "blockNumber": null,
-        "from": "0x0000025276ec2de8ee570cfd4c1010319f14a6d9f0dd",
-        "energy": "0x7530",
-        "energyPrice": "0x1919617600",
-        "hash": "0xa58e54464b2ca62a5e2d976604ed9a53b13f8823a170ee4c3ae0cd91cde2a6c5",
+        "from": "cb96cce45e424604ccc2ae6940db14ebf77b17706234",
+        "energy": "0x7a134",
+        "energyPrice": "0x65",
+        "hash": "0x7e703246d3ce598de0b94d0fdbbdbddf4ed2c5ed5dacfb8e273da39d9e9b1b09",
         "input": "0x",
         "nonce": "0x4",
-        "to": "0x0000025276ec2de8ee570cfd4c1010319f14a6d9f0dd",
-        "transactionIndex": null,
-        "value": "0x0",
-        "networkId": "0x1",
-        "v": "0x1",
-        "r": "0xb6a571191c4b5b667876295571c42c9411bbb4569eea1a6ad149572e4efc55a9",
-        "s": "0x248a72dab9b24568dd9cbe289c205eaba1a6b58b32b5a96c48554945d3fd0d86"
+        "to": "cb08095e7baea6a6c7c4c2dfeb977efac326af552d87",
+        "value": "0x2fbc",
+        "network_id": "0x1",
+        "signature": "0x19952ddfd9e866f914c37753821c93c6c215f3fc0db0eabfec688a525df86cdbe7417522315da4e81bb3dd458aaec014c8f55453c3d3001c001e666721f5eacb7e14435671e5cd4886de40e7c4e23c04438b56c8b2f86f15adde0238ad1ca6ad48505c5b86f04f3e71d66c54dd90077e0b00ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
       }
     },
-    "0x000002666081cfb787de3562efbbca5f0fe890e927f1": {
+    "cb16081eb6e0eba56e6a20e37530840e205d83c2b3ac": {
       "44": {
         "blockHash": null,
         "blockNumber": null,
-        "from": "0x000002666081cfb787de3562efbbca5f0fe890e927f1",
-        "energy": "0x16404",
-        "energyPrice": "0x4bad00695",
-        "hash": "0xf627e59d7a59eb650f4c9df222858572601a566263809fdacbb755ac2277a4a7",
+        "from": "cb16081eb6e0eba56e6a20e37530840e205d83c2b3ac",
+        "energy": "0x7a134",
+        "energyPrice": "0x65",
+        "hash": "0xe52e75d0e49e8ac110c50d15688f6d2dabdb67c1664680f1783d90565af4f97b",
         "input": "0x095ea7b300000000000000000000000029fbd00940df70cfc5dad3f2370686991e2bbf5cffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "nonce": "0x2c",
-        "to": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-        "transactionIndex": null,
-        "value": "0x0",
-        "networkId": "0x1",
-        "v": "0x1",
-        "r": "0xcfc88f55fc0779d12705acba58719cd7d0ed5b0c1a7c3c3682b56397ca493dd5",
-        "s": "0x7e7dc008058c543ebfdae67154c797639447db5e8006f8fc0585352d857c1b6c"
+        "to": "cb08095e7baea6a6c7c4c2dfeb977efac326af552d87",
+        "value": "0x2fbc",
+        "network_id": "0x1",
+        "signature": "0xb2e49c3a8de9edfa01e597bf00140f33b7dbf62450b082ecfe93b8740d99c3fc458a34f439d880438de1ea9b2fab4d02fd41d293987702ca00ca9d17f32c30f64da86bb674c03eaa66e6bf60324356c657b175c4eb6cf1fdcf62af649f589f948c214edd391e9b0e69578168a36b233b2400ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
       }
     }
   }

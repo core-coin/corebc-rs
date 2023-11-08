@@ -27,10 +27,6 @@ pub struct Transaction {
     #[serde(default, rename = "blockNumber")]
     pub block_number: Option<U64>,
 
-    /// Transaction Index. None when pending.
-    #[serde(default, rename = "transactionIndex")]
-    pub transaction_index: Option<U64>,
-
     /// Sender
     #[serde(default = "crate::types::Address::zero")]
     pub from: Address,
@@ -562,7 +558,6 @@ mod tests {
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
             ),
             nonce: U256::zero(),
-            transaction_index: None,
             value: U256::zero(),
             ..Default::default()
         };
