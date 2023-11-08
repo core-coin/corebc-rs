@@ -81,7 +81,7 @@ impl CompactBytecode {
                 self.object.link(file, library, address);
             }
             if !contracts.is_empty() {
-                self.link_references.insert(key, contracts);
+                self.link_references.insert(key, contracts.clone());
             }
             if self.link_references.is_empty() {
                 return self.object.resolve().is_some()
@@ -305,8 +305,8 @@ impl BytecodeObject {
             let fully_qualified_placeholder = utils::library_fully_qualified_placeholder(name);
 
             *unlinked = unlinked
-                .replace(&format!("__{fully_qualified_placeholder}__"), &hex_addr)
-                .replace(&format!("__{place_holder}__"), &hex_addr)
+                .replace(&format!("____{fully_qualified_placeholder}____"), &hex_addr)
+                .replace(&format!("____{place_holder}____"), &hex_addr)
         }
         self
     }
