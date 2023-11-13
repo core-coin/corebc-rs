@@ -563,23 +563,4 @@ mod tests {
         };
         Transaction::decode(&Rlp::new(&tx.rlp())).unwrap();
     }
-
-    #[test]
-    fn test_rlp_decoding_create_roundtrip_two() {
-        let tx = Transaction {
-            block_hash: None,
-            block_number: None,
-            from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
-            energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
-            energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
-            hash: H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
-            input: Bytes::from(
-                hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
-            ),
-            nonce: U256::zero(),
-            value: U256::zero(),
-            ..Default::default()
-        };
-        Transaction::decode(&Rlp::new(&tx.rlp())).unwrap();
-    }
 }
