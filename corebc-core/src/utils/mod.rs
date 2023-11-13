@@ -301,7 +301,7 @@ pub fn get_contract_address(
 /// The H160 address for an Core contract is deterministically computed from the
 /// address of its creator (sender) and how many transactions the creator has
 /// sent (nonce). The sender and nonce are RLP encoded and then hashed with Keccak-256.
-pub fn get_contract_h160_address(sender: impl Into<Address>, nonce: impl Into<U256>) -> H160 {
+pub fn get_contract_h160_address(sender: impl Into<H160>, nonce: impl Into<U256>) -> H160 {
     let mut stream = rlp::RlpStream::new();
     stream.begin_list(2);
     stream.append(&sender.into());
