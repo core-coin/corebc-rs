@@ -109,7 +109,7 @@ impl Signature {
             RecoveryMessage::Hash(hash) => hash,
         };
 
-        let mut sig_pub_bytes = self.sig.to_fixed_bytes();
+        let sig_pub_bytes = self.sig.to_fixed_bytes();
         let mut sig_bytes = [0u8; 114];
         let mut pub_bytes = [0u8; 57];
         sig_bytes.copy_from_slice(&sig_pub_bytes[0..114]);
