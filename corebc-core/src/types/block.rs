@@ -72,9 +72,6 @@ pub struct Block<TX> {
     pub size: Option<U256>,
     /// Nonce
     pub nonce: Option<crate::types::H64>,
-    /// Mix Hash
-    #[serde(rename = "mixHash")]
-    pub mix_hash: Option<H256>,
 }
 
 fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
@@ -144,7 +141,6 @@ impl Block<TxHash> {
                 uncles,
                 size,
                 nonce,
-                mix_hash,
                 ..
             } = self;
             Block {
@@ -156,7 +152,6 @@ impl Block<TxHash> {
                 transactions_root,
                 receipts_root,
                 number,
-                mix_hash,
                 energy_used,
                 energy_limit,
                 extra_data,
@@ -194,7 +189,6 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 difficulty,
                 total_difficulty,
                 seal_fields,
-                mix_hash,
                 uncles,
                 transactions,
                 size,
@@ -206,7 +200,6 @@ impl From<Block<Transaction>> for Block<TxHash> {
                 uncles_hash,
                 author,
                 state_root,
-                mix_hash,
                 transactions_root,
                 receipts_root,
                 number,
