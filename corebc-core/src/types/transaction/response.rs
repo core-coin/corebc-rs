@@ -270,7 +270,7 @@ mod tests {
 
     #[test]
     fn tx_roundtrip() {
-        let json = serde_json::json!({"blockHash":"0x31ee73b1cf9ae3adc850c84aa22ed9ce9186f8b927ceeba48a04a56085b38664","blockNumber":"0x68cd2","network_id":"0x3","from":"0xab59796210a3fe3c24d433197af05ef54c33279ba80d","energy":"0xf4239","energyPrice":"0x3b9aca00","hash":"0x8305e1f16cd0355d3ba79d604a49d2c707fb87c8a4632814bff00a914b1a87fe","input":"0xca725b7e00000000000000000000000000000000000000000000000000277a879f176600","nonce":"0x11d7","signature": "0xd8dd78f3cb29f8cd26596756ee3df34b3cdb65e9273179e2cd9e2cd325b24e2dea7ab7b640e6569bc5a17028d7f440df0da309e3322d708e00a756221e41ae5538e710199dc2ad67477dfceece9153260e0ee72481e35b3da35d85491cd25bc7d875d48ce98141b65a79ee6598862038210072e307abe34426234c4dd7bee1880a46920fadcebcba5d16e440a2621ad211d0da6155d8be811768141cd9b303ed7c1a4a814c1ae79fb1a780","to":"0xab4184ac3f29bedfab8a76895b87564289cd5a962542","transactionIndex":"0x0","value":"0x0"});
+        let json = serde_json::json!({"blockHash":"0x31ee73b1cf9ae3adc850c84aa22ed9ce9186f8b927ceeba48a04a56085b38664","blockNumber":"0x68cd2","network_id":"0x3","from":"ab59796210a3fe3c24d433197af05ef54c33279ba80d","energy":"0xf4239","energyPrice":"0x3b9aca00","hash":"0x8305e1f16cd0355d3ba79d604a49d2c707fb87c8a4632814bff00a914b1a87fe","input":"0xca725b7e00000000000000000000000000000000000000000000000000277a879f176600","nonce":"0x11d7","signature": "0xd8dd78f3cb29f8cd26596756ee3df34b3cdb65e9273179e2cd9e2cd325b24e2dea7ab7b640e6569bc5a17028d7f440df0da309e3322d708e00a756221e41ae5538e710199dc2ad67477dfceece9153260e0ee72481e35b3da35d85491cd25bc7d875d48ce98141b65a79ee6598862038210072e307abe34426234c4dd7bee1880a46920fadcebcba5d16e440a2621ad211d0da6155d8be811768141cd9b303ed7c1a4a814c1ae79fb1a780","to":"ab4184ac3f29bedfab8a76895b87564289cd5a962542","value":"0x0"});
         let tx: Transaction = serde_json::from_value(json.clone()).unwrap();
 
         assert_eq!(tx.nonce, 4567u64.into());
@@ -453,13 +453,13 @@ mod tests {
     "transactionHash": "0x611b173b0e0dfda94da7bfb6cb77c9f1c03e2f2149ba060e6bddfaa219942369",
     "blockHash": "0xa11871d61e0e703ae33b358a6a9653c43e4216f277d4a1c7377b76b4d5b4cbf1",
     "blockNumber": "0xe3c1d8",
-    "contractAddress": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
+    "contractAddress": "000008f6db30039218894067023a3593baf27d3f4a2b",
     "cumulativeEnergyUsed": "0x1246047",
-    "from": "0x00000968995a48162a23af60d3ca25cddfa143cd8891",
+    "from": "00000968995a48162a23af60d3ca25cddfa143cd8891",
     "energyUsed": "0x1b9229",
     "logs": [
       {
-        "address": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
+        "address": "000008f6db30039218894067023a3593baf27d3f4a2b",
         "topics": [
           "0x40c340f65e17194d14ddddb073d3c9f888e3cb52b5aae0c6c7706b4fbc905fac"
         ],
@@ -472,7 +472,7 @@ mod tests {
         "removed": false
       },
       {
-        "address": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
+        "address": "000008f6db30039218894067023a3593baf27d3f4a2b",
         "topics": [
           "0x40c340f65e17194d14ddddb073d3c9f888e3cb52b5aae0c6c7706b4fbc905fac"
         ],

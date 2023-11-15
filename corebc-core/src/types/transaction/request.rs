@@ -298,9 +298,7 @@ impl From<&Transaction> for TransactionRequest {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::Bytes;
     use rlp::{Decodable, Rlp};
-    use std::str::FromStr;
 
     #[test]
     fn encode_decode_rlp() {
@@ -324,15 +322,16 @@ mod tests {
     }
 
     #[test]
-    // test data from https://github.com/ethereum/go-ethereum/blob/b1e72f7ea998ad662166bcf23705ca59cf81e925/core/types/transaction_test.go#L40
+    // test data from https://github.com/core-coin/go-core/blob/41c152fffa96b6488feb1d7fa878addc30def5b3/core/types/transaction_test.go#L58
     fn empty_sighash_check() {
         let tx = TransactionRequest::new()
             .nonce(0)
-            .to("0000095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
+            .to("cb08095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
             .value(0)
             .energy(0)
-            .energy_price(0);
-        let expected_sighash = "ec08902c56d6df8797a282763e4871a2b69dbb210b5390e7babbf1cebe59a23d";
+            .energy_price(0)
+            .network_id(0);
+        let expected_sighash = "0064d7a2aa08686b4f36a2188352ba162ff2b5bdce72335f4a0e25a6c5f47af7";
         let got_sighash = hex::encode(tx.sighash().as_bytes());
         assert_eq!(expected_sighash, got_sighash);
     }
