@@ -156,8 +156,8 @@ pub enum ActionType {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize, Serialize)]
 pub struct CallResult {
     /// Gas used
-    #[serde(rename = "gasUsed")]
-    pub gas_used: U256,
+    #[serde(rename = "energyUsed")]
+    pub energy_used: U256,
     /// Output bytes
     pub output: Bytes,
 }
@@ -166,8 +166,8 @@ pub struct CallResult {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize, Serialize)]
 pub struct CreateResult {
     /// Gas used
-    #[serde(rename = "gasUsed")]
-    pub gas_used: U256,
+    #[serde(rename = "energyUsed")]
+    pub energy_used: U256,
     /// Code
     pub code: Bytes,
     /// Assigned address
@@ -184,7 +184,7 @@ pub struct Call {
     /// Transferred Value
     pub value: U256,
     /// Gas
-    pub gas: U256,
+    pub energy: U256,
     /// Input data
     pub input: Bytes,
     /// The type of the call.
@@ -221,7 +221,7 @@ pub struct Create {
     /// Value
     pub value: U256,
     /// Gas
-    pub gas: U256,
+    pub energy: U256,
     /// Initialization code
     pub init: Bytes,
 }
@@ -271,7 +271,7 @@ pub enum RewardType {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u8)]
 pub enum TraceError {
-    /// `OutOfGas` is returned when transaction execution runs out of gas.
+    /// `OutOfGas` is returned when transaction execution runs out of energy.
     OutOfGas = 0,
     /// `BadJumpDestination` is returned when execution tried to move
     /// to position that wasn't marked with JUMPDEST instruction
@@ -333,7 +333,7 @@ impl TraceError {
 impl fmt::Display for TraceError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let message = match *self {
-            TraceError::OutOfGas => "Out of gas",
+            TraceError::OutOfGas => "Out of energy",
             TraceError::BadJumpDestination => "Bad jump destination",
             TraceError::BadInstruction => "Bad instruction",
             TraceError::StackUnderflow => "Stack underflow",
@@ -393,7 +393,7 @@ mod tests {
         "action": {
             "callType": "call",
             "from": "0x0000d1220a0cf47c7b9be7a2e6ba89f429762e7b9adb",
-            "gas": "0x63ab9",
+            "energy": "0x63ab9",
             "input": "0xb9f256cd000000000000000000000000fb6916095ca1df60bb79ce92ce3ea74c37c5d3590000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000001a000000000000000000000000000000000000000000000000000000000000000e85468697320697320746865206f6666696369616c20457468657265756d20466f756e646174696f6e20546970204a61722e20466f722065766572792061626f76652061206365727461696e2076616c756520646f6e6174696f6e207765276c6c2063726561746520616e642073656e6420746f20796f752061206272616e64206e657720556e69636f726e20546f6b656e2028f09fa684292e20436865636b2074686520756e69636f726e2070726963652062656c6f77202831206574686572203d20313030302066696e6e6579292e205468616e6b7320666f722074686520737570706f72742100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
             "to": "0x0000fb6916095ca1df60bb79ce92ce3ea74c37c5d359",
             "value": "0x0"
@@ -401,7 +401,7 @@ mod tests {
         "blockHash": "0x6474a53a9ebf72d306a1406ec12ded12e210b6c3141b4373bfb3a3cea987dfb8",
         "blockNumber": 988775,
         "result": {
-            "gasUsed": "0x4b419",
+            "energyUsed": "0x4b419",
             "output": "0x0000000000000000000000000000000000000000000000000000000000000000"
         },
         "subtraces": 1,
@@ -414,14 +414,14 @@ mod tests {
     const EXAMPLE_TRACE_CREATE: &str = r#"{
         "action": {
             "from": "0x0000d1220a0cf47c7b9be7a2e6ba89f429762e7b9adb",
-            "gas": "0x63ab9",
+            "energy": "0x63ab9",
             "init": "0xb9f256cd000000000000000000000000fb6916095ca1df60bb79ce92ce3ea74c37c5d3590000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000001a000000000000000000000000000000000000000000000000000000000000000e85468697320697320746865206f6666696369616c20457468657265756d20466f756e646174696f6e20546970204a61722e20466f722065766572792061626f76652061206365727461696e2076616c756520646f6e6174696f6e207765276c6c2063726561746520616e642073656e6420746f20796f752061206272616e64206e657720556e69636f726e20546f6b656e2028f09fa684292e20436865636b2074686520756e69636f726e2070726963652062656c6f77202831206574686572203d20313030302066696e6e6579292e205468616e6b7320666f722074686520737570706f72742100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
             "value": "0x0"
         },
         "blockHash": "0x6474a53a9ebf72d306a1406ec12ded12e210b6c3141b4373bfb3a3cea987dfb8",
         "blockNumber": 988775,
         "result": {
-            "gasUsed": "0x4b419",
+            "energyUsed": "0x4b419",
             "output": "0x0000000000000000000000000000000000000000000000000000000000000000"
         },
         "subtraces": 1,
@@ -440,7 +440,7 @@ mod tests {
         "blockHash": "0x6474a53a9ebf72d306a1406ec12ded12e210b6c3141b4373bfb3a3cea987dfb8",
         "blockNumber": 988775,
         "result": {
-            "gasUsed": "0x4b419",
+            "energyUsed": "0x4b419",
             "output": "0x0000000000000000000000000000000000000000000000000000000000000000"
         },
         "subtraces": 1,
@@ -459,7 +459,7 @@ mod tests {
         "blockHash": "0x6474a53a9ebf72d306a1406ec12ded12e210b6c3141b4373bfb3a3cea987dfb8",
         "blockNumber": 988775,
         "result": {
-            "gasUsed": "0x4b419",
+            "energyUsed": "0x4b419",
             "output": "0x0000000000000000000000000000000000000000000000000000000000000000"
         },
         "subtraces": 1,

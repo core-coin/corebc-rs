@@ -46,13 +46,13 @@ r#"[{
 	  "action": {
 		"callType": "call",
 		"from": "0x0000a1e4380a3b1f749673e270229993ee55f35663b4",
-		"gas": "0x0",
+		"energy": "0x0",
 		"input": "0x",
 		"to": "0x00005df9b87991262f6ba471f09758cde1c0fc1de734",
 		"value": "0x7a69"
 	  },
 	  "result": {
-		"gasUsed": "0x0",
+		"energyUsed": "0x0",
 		"output": "0x"
 	  },
 	  "subtraces": 0,

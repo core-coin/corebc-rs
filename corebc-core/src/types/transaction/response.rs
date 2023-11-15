@@ -453,13 +453,13 @@ mod tests {
     "transactionHash": "0x611b173b0e0dfda94da7bfb6cb77c9f1c03e2f2149ba060e6bddfaa219942369",
     "blockHash": "0xa11871d61e0e703ae33b358a6a9653c43e4216f277d4a1c7377b76b4d5b4cbf1",
     "blockNumber": "0xe3c1d8",
-    "contractAddress": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
+    "contractAddress": "000008f6db30039218894067023a3593baf27d3f4a2b",
     "cumulativeEnergyUsed": "0x1246047",
-    "from": "0x00000968995a48162a23af60d3ca25cddfa143cd8891",
+    "from": "00000968995a48162a23af60d3ca25cddfa143cd8891",
     "energyUsed": "0x1b9229",
     "logs": [
       {
-        "address": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
+        "address": "000008f6db30039218894067023a3593baf27d3f4a2b",
         "topics": [
           "0x40c340f65e17194d14ddddb073d3c9f888e3cb52b5aae0c6c7706b4fbc905fac"
         ],
@@ -472,7 +472,7 @@ mod tests {
         "removed": false
       },
       {
-        "address": "0x000008f6db30039218894067023a3593baf27d3f4a2b",
+        "address": "000008f6db30039218894067023a3593baf27d3f4a2b",
         "topics": [
           "0x40c340f65e17194d14ddddb073d3c9f888e3cb52b5aae0c6c7706b4fbc905fac"
         ],

@@ -45,13 +45,13 @@ r#"{
             "action": {
                 "from": "0x000001f0eb5c4b0a9d8285b67195f5f10ce22971a102",
                 "callType": "call",
-                "gas": "0xa5f8",
+                "energy": "0xa5f8",
                 "input": "0x1a695230000000000000000000000000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
                 "to": "0x00000b95993a39a363d99280ac950f5e4536ab5c5566",
                 "value": "0x1550f7dca70000"
             },
             "result": {
-                "gasUsed": "0x1ddf",
+                "energyUsed": "0x1ddf",
                 "output": "0x"
             },
             "subtraces": 1,
@@ -62,13 +62,13 @@ r#"{
             "action": {
                 "from": "0x00000b95993a39a363d99280ac950f5e4536ab5c5566",
                 "callType": "call",
-                "gas": "0x8fc",
+                "energy": "0x8fc",
                 "input": "0x",
                 "to": "0x0000c227a75b32ed37d3f9d6341b9904d003dad3b1b3",
                 "value": "0x1550f7dca70000"
             },
             "result": {
-                "gasUsed": "0x0",
+                "energyUsed": "0x0",
                 "output": "0x"
             },
             "subtraces": 0,
