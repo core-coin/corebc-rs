@@ -11,7 +11,7 @@ use once_cell::sync::Lazy;
 use regex::{Match, Regex};
 use semver::Version;
 use serde::de::DeserializeOwned;
-use tiny_keccak::{Hasher, Keccak, Sha3};
+use tiny_keccak::{Hasher, Sha3};
 use walkdir::WalkDir;
 
 /// A regex that matches the import path and identifier of a solidity import
