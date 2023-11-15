@@ -9,9 +9,29 @@ use rlp::Decodable;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub enum TypedTransaction {
     Legacy(TransactionRequest),
+}
+
+impl Serialize for TypedTransaction {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer {
+        match self {
+            Self::Legacy(tx) => tx.serialize(serializer)
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for TypedTransaction {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de> {
+        let tx = TransactionRequest::deserialize(deserializer)?;
+        Ok(TypedTransaction::Legacy(tx))
+        
+    }
 }
 
 /// An error involving a typed transaction request.
