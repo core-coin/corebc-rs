@@ -69,11 +69,12 @@ impl Transaction {
         rlp.append(&self.energy_price);
         rlp.append(&self.energy);
 
-        rlp.append(&self.network_id);
-
+        rlp_opt(&mut rlp, &self.network_id);
         rlp_opt(&mut rlp, &self.to);
+
         rlp.append(&self.value);
         rlp.append(&self.input.as_ref());
+
         rlp.append(&self.sig);
 
         rlp.finalize_unbounded_list();
@@ -97,7 +98,7 @@ impl Transaction {
         self.energy = rlp.val_at(*offset)?;
         *offset += 1;
 
-        self.network_id = rlp.val_at(*offset)?;
+        self.network_id = Some(rlp.val_at(*offset)?);
         *offset += 1;
 
         self.to = decode_to(rlp, offset)?;
@@ -280,119 +281,84 @@ mod tests {
     }
 
     // CORETODO: REMOVE VRS AND FIX TESTS
-    // #[test]
-    // fn rlp_legacy_tx() {
-    //     let tx = Transaction {
-    //         block_hash: None,
-    //         block_number: None,
-    //         from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
-    //         energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
-    //         energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
-    //         hash:
-    // H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
-    //         input: Bytes::from(
-    //
-    // hex::decode("
-    // a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080"
-    // ).unwrap()         ),
-    //         nonce: U256::zero(),
-    //         to: Some(Address::from_str("0000dac17f958d2ee523a2206206994597c13d831ec7").unwrap()),
-    //         transaction_index: None,
-    //         value: U256::zero(),
-    //         v: U64::from(0x25),
-    //         r:
-    // U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141",
-    // 16).unwrap(),         s:
-    // U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274",
-    // 16).unwrap(),         network_id: Some(U256::from(1)),
-    //     };
+    #[test]
+    fn rlp_legacy_tx() {
+        let tx = Transaction {
+            block_hash: None,
+            block_number: None,
+            from: Address::from_str("cb15d3649d846a2bd426c0ceaca24fab50f7cba8f839").unwrap(),
+            energy: U256::from_dec_str("50000").unwrap(),
+            energy_price: U256::from_dec_str("10").unwrap(),
+            hash:
+                H256::from_str("8b141d69ab3e18bf9775144ddc2e3ca55dfc3e8b5e67dfaea4401b4074da4041").unwrap(),
+            input: Bytes::from(hex::decode("1123").unwrap()),
+            nonce: U256::from_dec_str("3").unwrap(),
+            to: Some(Address::from_str("cb08095e7baea6a6c7c4c2dfeb977efac326af552d87").unwrap()),
+            value: U256::from_dec_str("10").unwrap(),
+            sig: H1368::from_str("0x4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580").unwrap(),
+            network_id: Some(U256::from(1)),
+        };
 
-    //     assert_eq!(
-    //         tx.rlp(),
-    //         Bytes::from(
-    //
-    // hex::decode("
-    // f8ac808512ec276caf83010e2b960000dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf08025a0c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141a01dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274"
-    // ).unwrap()         )
-    //     );
-    // }
+        assert_eq!(
+            tx.rlp(),
+            Bytes::from(
+                hex::decode("f8ce030a82c3500196cb08095e7baea6a6c7c4c2dfeb977efac326af552d870a821123b8ab4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
+                ).unwrap()
+            )
+        );
+    }
 
-    // #[test]
-    // fn decode_rlp_legacy() {
-    //     let tx = Transaction {
-    //         block_hash: None,
-    //         block_number: None,
-    //         from: Address::from_str("0000c26ad91f4e7a0cad84c4b9315f420ca9217e315d").unwrap(),
-    //         energy: U256::from_str_radix("0x10e2b", 16).unwrap(),
-    //         energy_price: U256::from_str_radix("0x12ec276caf", 16).unwrap(),
-    //         hash:
-    // H256::from_str("929ff27a5c7833953df23103c4eb55ebdfb698678139d751c51932163877fada").unwrap(),
-    //         input: Bytes::from(
-    //
-    // hex::decode("
-    // a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080"
-    // ).unwrap()         ),
-    //         nonce: U256::zero(),
-    //         to: Some(Address::from_str("0000dac17f958d2ee523a2206206994597c13d831ec7").unwrap()),
-    //         transaction_index: None,
-    //         value: U256::zero(),
-    //         v: U64::from(0x25),
-    //         r:
-    // U256::from_str_radix("c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141",
-    // 16).unwrap(),         s:
-    // U256::from_str_radix("1dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274",
-    // 16).unwrap(),         network_id: Some(U256::from(1)),
-    //     };
-    //     println!("{}", tx.rlp());
+    #[test]
+    fn decode_rlp_legacy() {
+        let tx = Transaction {
+            block_hash: None,
+            block_number: None,
+            from: Address::from_str("cb15d3649d846a2bd426c0ceaca24fab50f7cba8f839").unwrap(),
+            energy: U256::from_dec_str("50000").unwrap(),
+            energy_price: U256::from_dec_str("10").unwrap(),
+            hash:
+                H256::from_str("8b141d69ab3e18bf9775144ddc2e3ca55dfc3e8b5e67dfaea4401b4074da4041").unwrap(),
+            input: Bytes::from(hex::decode("1123").unwrap()),
+            nonce: U256::from_dec_str("3").unwrap(),
+            to: Some(Address::from_str("cb08095e7baea6a6c7c4c2dfeb977efac326af552d87").unwrap()),
+            value: U256::from_dec_str("10").unwrap(),
+            sig: H1368::from_str("0x4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580").unwrap(),
+            network_id: Some(U256::from(1)),
+        };
 
-    //     let rlp_bytes =
-    // hex::decode("
-    // f8ac808512ec276caf83010e2b960000dac17f958d2ee523a2206206994597c13d831ec780b844a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf08025a0c81e70f9e49e0d3b854720143e86d172fecc9e76ef8a8666f2fdc017017c5141a01dd3410180f6a6ca3e25ad3058789cd0df3321ed76b5b4dbe0a2bb2dc28ae274"
-    // ).unwrap();
+        let rlp_bytes =
+            hex::decode("f8ce030a82c3500196cb08095e7baea6a6c7c4c2dfeb977efac326af552d870a821123b8ab4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
+            ).unwrap();
 
-    //     let decoded_transaction = Transaction::decode(&rlp::Rlp::new(&rlp_bytes)).unwrap();
+        let decoded_transaction = Transaction::decode(&rlp::Rlp::new(&rlp_bytes)).unwrap();
 
-    //     assert_eq!(decoded_transaction.hash(), tx.hash());
-    // }
+        assert_eq!(decoded_transaction.hash(), tx.hash());
+    }
 
-    // #[test]
-    // fn recover_from() {
-    //     let tx = Transaction {
-    //         hash: H256::from_str(
-    //             "3a4e3aa4e85771e92fceec0195b13db70c0c52442733c74d41af13c907692849",
-    //         )
-    //         .unwrap(),
-    //         nonce: 65.into(),
-    //         block_hash: Some(
-    //
-    // H256::from_str("f43869e67c02c57d1f9a07bb897b54bec1cfa1feb704d91a2ee087566de5df2c")
-    //                 .unwrap(),
-    //         ),
-    //         block_number: Some(6203173.into()),
-    //         transaction_index: Some(10.into()),
-    //         from: Address::from_str("0000e66b278fa9fbb181522f6916ec2f6d66ab846e04").unwrap(),
-    //         to: Some(Address::from_str("000011d7c2ab0d4aa26b7d8502f6a7ef6844908495c2").unwrap()),
-    //         value: 0.into(),
-    //         energy_price: 1500000007.into(),
-    //         energy: 106703.into(),
-    //         input: hex::decode("e5225381").unwrap().into(),
-    //         v: 1.into(),
-    //         r: U256::from_str_radix(
-    //             "12010114865104992543118914714169554862963471200433926679648874237672573604889",
-    //             10,
-    //         )
-    //         .unwrap(),
-    //         s: U256::from_str_radix(
-    //             "22830728216401371437656932733690354795366167672037272747970692473382669718804",
-    //             10,
-    //         )
-    //         .unwrap(),
-    //         network_id: None,
-    //     };
+    #[test]
+    fn recover_from() {
+        let tx = Transaction {
+            block_hash: Some(
+                H256::from_str("fd00e39f9b15db30a53e9768efade8191dafa5dd8b4791a4ea607e02435755fb")
+                .unwrap(),
+            ),
+            block_number: Some(534366.into()),
+            nonce: U256::from_str("d9c").unwrap(),
+            energy_price: U256::from_str("3b9aca00").unwrap(),
+            energy: U256::from_str("f4239").unwrap(),
+            to: Some(Address::from_str("ab258a97844448023d9cada0811bade35a7865985739").unwrap()),
+            input: Bytes::from(hex::decode("ca725b7e0000000000000000000000000000000000000000000000000027f29a27e63800").unwrap()),
+            value: U256::from_str("0").unwrap(),
+            network_id: Some(U256::from(3)),
+            from: Address::from_str("ab660ef5114ad53a9fd106b72a260ba5b055a9aeca3c").unwrap(),
+            hash:
+                H256::from_str("8b59298c5c748bf4e2bd84a00aae809f9b6d8c41a5571d47679b5a39041f56ec").unwrap(),
+            sig: H1368::from_str("0xf7571bfb2b44b2f1e48c64f75430a22202f6592969655704218ce35f1aeb10bf7228d89871a24ff23ebe6bc66a75bbf0b831a4c57c3dc779005b62713cb0b70c960da8bc81a37f9551b632ce902df309ca4229d7dc4a4179b05800eede1766b8a0ab0d63032d7ba990197374ab786d832f008f3572f16fbefbb5a85f9eed54c77db3d4269b2c64e5d56a5174c19b35d292941d40505063351ce79852053062cdf8d74f3db2d5bebe7b3500").unwrap(),
+        };
 
-    //     assert_eq!(tx.hash, tx.hash());
-    //     // assert_eq!(tx.from, tx.recover_from().unwrap());
-    // }
+        assert_eq!(tx.from, tx.recover_from().unwrap());
+        assert_eq!(tx.hash, tx.hash());
+    }
 
     #[test]
     fn decode_transaction_receipt() {
@@ -523,27 +489,6 @@ mod tests {
         a.transaction_index = 1u64.into();
         assert!(a > b);
     }
-
-    // from https://github.com/gakonst/ethers-rs/issues/1762
-    // CORETODO: Fix after ED448
-    // #[test]
-    // fn test_rlp_decoding_type_2() {
-    //     use crate::types::*;
-
-    //     let raw_tx =
-    // "0x02f906f20103843b9aca0085049465153e830afdd19468b3465833fb72a70ecdf485e0e4c7bd8665fc4580b906845ae401dc00000000000000000000000000000000000000000000000000000000633c4c730000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000000500000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000001c000000000000000000000000000000000000000000000000000000000000003200000000000000000000000000000000000000000000000000000000000000460000000000000000000000000000000000000000000000000000000000000058000000000000000000000000000000000000000000000000000000000000000e404e45aaf000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec700000000000000000000000012b6893ce26ea6341919fe289212ef77e51688c800000000000000000000000000000000000000000000000000000000000027100000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000017754984000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000124b858183f000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000017754984000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000042dac17f958d2ee523a2206206994597c13d831ec7000bb8c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200271012b6893ce26ea6341919fe289212ef77e51688c8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000104b858183f00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000006d78ac6800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002bdac17f958d2ee523a2206206994597c13d831ec70001f4c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e4472b43f30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001f8aa12f280116c88954000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000002000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc200000000000000000000000012b6893ce26ea6341919fe289212ef77e51688c8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000064df2ab5bb00000000000000000000000012b6893ce26ea6341919fe289212ef77e51688c8000000000000000000000000000000000000000000002d092097defac5b7a01a000000000000000000000000f69a7cd9649a5b5477fa0e5395385fad03ac639f00000000000000000000000000000000000000000000000000000000c001a0127484994706ff8605f1da80e7bdf0efa3e26192a094413e58d409551398b0b5a06fd706e38eebeba2f235e37ceb0acb426f1e6c91702add97810ee677a15d1980"
-    // ;     let mut decoded_tx = crate::utils::rlp::decode::<Transaction>(
-    //         &raw_tx.parse::<Bytes>().expect("unable to parse raw tx"),
-    //     )
-    //     .expect("unable to decode raw tx");
-    //     decoded_tx.recover_from_mut().unwrap();
-    //     decoded_tx.hash = decoded_tx.hash();
-    //     assert_eq!(
-    //         H256::from_str("0xeae304417079580c334ccc07e3933a906699461802a17b722034a8191c4a38ea")
-    //             .unwrap(),
-    //         decoded_tx.hash
-    //     );
-    // }
 
     #[test]
     fn test_rlp_decoding_create_roundtrip() {
