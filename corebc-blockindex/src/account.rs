@@ -23,7 +23,7 @@ pub struct Token {
     pub name: String,
     pub contract: Address,
     pub transfers: u64,
-    pub symbol: String,
+    pub symbol: Option<String>,
     pub decimals: u64,
     pub balance: String,
 }

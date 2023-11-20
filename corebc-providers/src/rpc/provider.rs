@@ -1375,13 +1375,13 @@ mod tests {
         assert_eq!(format!("{quantity:#x}"), "0x0");
         assert_eq!(utils::serialize(&quantity).to_string(), "\"0x0\"");
 
-        let address: Address = "0x0000295a70b2de5e3953354a6a8344e616ed314d7251".parse().unwrap();
+        let address: Address = "0000295a70b2de5e3953354a6a8344e616ed314d7251".parse().unwrap();
         let block = BlockNumber::Latest;
         let params =
             [utils::serialize(&address), utils::serialize(&quantity), utils::serialize(&block)];
 
         let params = serde_json::to_string(&params).unwrap();
-        assert_eq!(params, r#"["0x0000295a70b2de5e3953354a6a8344e616ed314d7251","0x0","latest"]"#);
+        assert_eq!(params, r#"["0000295a70b2de5e3953354a6a8344e616ed314d7251","0x0","latest"]"#);
     }
 
     // CORETODO: This test is impossible without modifying anvil in the first place

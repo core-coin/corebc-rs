@@ -39,9 +39,9 @@ async fn mock_with_middleware() {
     provider.get_block_number().await.unwrap_err();
 
     // 2 calls were made
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap_err();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap_err();
 }
 
 // CORETODO: Needs Anvil
