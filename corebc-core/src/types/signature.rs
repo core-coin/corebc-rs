@@ -183,9 +183,7 @@ impl FromStr for Signature {
 
 impl From<&Signature> for [u8; 171] {
     fn from(src: &Signature) -> [u8; 171] {
-        let sig = src.sig.to_fixed_bytes();
-
-        sig
+        src.sig.to_fixed_bytes()
     }
 }
 

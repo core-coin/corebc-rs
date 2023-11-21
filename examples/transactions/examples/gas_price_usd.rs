@@ -35,7 +35,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let usd_per_eth: I256 = oracle.latest_answer().call().await?;
     let usd_per_eth: U256 = U256::from(usd_per_eth.as_u128());
-    let wei_per_gas: U256 = client.get_gas_price().await?;
+    let wei_per_gas: U256 = client.get_energy_price().await?;
 
     // Gas stations use to report gas price in gwei units (1 gwei = 10^9 wei)
     let gwei: f64 = format_units(wei_per_gas, "gwei")?.parse::<f64>()?;

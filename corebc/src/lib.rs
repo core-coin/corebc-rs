@@ -93,11 +93,14 @@ pub use corebc_contract as contract;
 #[doc(inline)]
 pub use corebc_core as core;
 #[doc(inline)]
+pub use corebc_keystore as keystore;
+#[doc(inline)]
 pub use corebc_middleware as middleware;
 #[doc(inline)]
 pub use corebc_providers as providers;
 #[doc(inline)]
 pub use corebc_signers as signers;
+
 #[doc(inline)]
 #[cfg(feature = "corebc-ylem")]
 pub use corebc_ylem as ylem;
@@ -123,6 +126,8 @@ pub mod prelude {
 
     pub use super::signers::*;
 
+    pub use super::keystore::*;
+
     #[cfg(feature = "corebc-ylem")]
     pub use super::ylem::*;
 }
@@ -130,4 +135,4 @@ pub mod prelude {
 // For macro expansions only, not public API.
 #[doc(hidden)]
 #[allow(unused_extern_crates)]
-extern crate self as ethers;
+extern crate self as corebc;

@@ -11,9 +11,9 @@ use corebc_core::{
     utils::secret_key_to_address,
 };
 #[cfg(not(target_arch = "wasm32"))]
-use elliptic_curve::rand_core;
+use corebc_keystore::KeystoreError;
 #[cfg(not(target_arch = "wasm32"))]
-use eth_keystore::KeystoreError;
+use elliptic_curve::rand_core;
 #[cfg(not(target_arch = "wasm32"))]
 use std::path::Path;
 use std::str::FromStr;
@@ -67,7 +67,13 @@ impl Wallet<SigningKey> {
         R: Rng + CryptoRng + rand_core::CryptoRng,
         S: AsRef<[u8]>,
     {
-        let (secret, uuid) = eth_keystore::new(dir, rng, password, name)?;
+        let (secret, uuid) = corebc_keystore::new(
+            dir,
+            rng,
+            password,
+            name,
+            &corebc_core::types::Network::from(network),
+        )?;
         let signer = SigningKey::from_bytes(secret.as_slice().into())?;
         let address = secret_key_to_address(&signer, &network);
         Ok((Self { signer, address, network_id: 1 }, uuid))
@@ -84,7 +90,7 @@ impl Wallet<SigningKey> {
         P: AsRef<Path>,
         S: AsRef<[u8]>,
     {
-        let secret = eth_keystore::decrypt_key(keypath, password)?;
+        let secret = corebc_keystore::decrypt_key(keypath, password)?;
         let signer = SigningKey::from_bytes(secret.as_slice().into())?;
         let address = secret_key_to_address(&signer, &network);
         Ok(Self { signer, address, network_id: 1 })
