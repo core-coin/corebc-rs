@@ -16,7 +16,7 @@ pub fn hash_message<T: AsRef<[u8]>>(message: T) -> H256 {
     eth_message.extend_from_slice(PREFIX.as_bytes());
     eth_message.extend_from_slice(len_string.as_bytes());
     eth_message.extend_from_slice(message);
-
+    println!("{:?}, {:0x?}, {:0x?}", eth_message, eth_message, sha3(&eth_message));
     H256(sha3(&eth_message))
 }
 
