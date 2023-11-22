@@ -3597,15 +3597,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-<<<<<<< HEAD
-version = "1.0.192"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d6c7207fbec9faa48073f3e3074cbe553af6ea512d7c21ba46e434e70ea9fbc1"
-=======
 version = "1.0.193"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "43576ca501357b9b071ac53cdc7da8ef0cbd9493d8df094cd821777ea6e894d3"
->>>>>>> development
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4440,18 +4434,6 @@ dependencies = [
 ]
 
 [[package]]
-<<<<<<< HEAD
-name = "uuid"
-version = "1.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c58fe91d841bc04822c9801002db4ea904b9e4b8e6bbad25127b46eff8dc516b"
-dependencies = [
- "serde",
-]
-
-[[package]]
-=======
->>>>>>> development
 name = "valuable"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4817,11 +4799,7 @@ dependencies = [
  "subtle",
  "thiserror",
  "time",
-<<<<<<< HEAD
- "uuid 1.6.0",
-=======
  "uuid",
->>>>>>> development
  "zeroize",
 ]
 
