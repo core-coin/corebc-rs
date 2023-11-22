@@ -21,7 +21,7 @@ mod eth_tests {
             .client_version()
             .await
             .expect("Could not make web3_clientVersion call to provider")
-            .starts_with("Geth/v"));
+            .starts_with("Gocore/v"));
     }
 
     // Without TLS this would error with "TLS Support not compiled in"
