@@ -30,12 +30,7 @@ pub use hex;
 use crate::types::{Address, Bytes, Network, ParseI256Error, H160, H256, I256, U256, U64};
 use ethabi::ethereum_types::FromDecStrErr;
 use libgoldilocks::SigningKey;
-use std::{
-    collections::HashMap,
-    convert::{TryFrom, TryInto},
-    fmt,
-    str::FromStr,
-};
+use std::{collections::HashMap, convert::TryInto, fmt, str::FromStr};
 use thiserror::Error;
 
 /// I256 overflows for numbers wider than 77 units.
@@ -426,7 +421,7 @@ fn construct_ican_address(prefix: &str, checksum: &u64, addr: &H160) -> Address 
 pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Address {
     let public_key = secret_key.verifying_key();
     let public_key = public_key.as_bytes();
-    let hash = sha3(&public_key[..]);
+    let hash = sha3(public_key);
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
@@ -439,7 +434,7 @@ pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Addr
 pub fn secret_key_to_h160_address(secret_key: &SigningKey) -> H160 {
     let public_key = secret_key.verifying_key();
     let public_key = public_key.as_bytes();
-    let hash = sha3(&public_key[..]);
+    let hash = sha3(public_key);
 
     let mut bytes = [0u8; 20];
     bytes.copy_from_slice(&hash[12..]);
@@ -968,7 +963,6 @@ mod tests {
             ConversionError::TextTooLong
         ));
     }
-
 
     #[test]
     fn int_or_hex_combinations() {

@@ -74,5 +74,6 @@ corebc-blockindex.workspace = true
 corebc-middleware.workspace = true
 corebc-providers.workspace = true
 corebc-signers.workspace = true
+corebc-keystore.workspace = true
 corebc-ylem = { workspace = true, optional = true }
 
