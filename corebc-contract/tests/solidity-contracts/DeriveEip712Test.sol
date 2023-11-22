@@ -2,13 +2,13 @@
 pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
-// note that this file is not synced with DeriveEip712Test.json
-contract DeriveEip712Test {
+// note that this file is not synced with DeriveCip712Test.json
+contract DeriveCip712Test {
     uint256 constant networkId = 1;
-    bytes32 constant salt = keccak256("eip712-test-75F0CCte");
-    bytes32 constant EIP712_DOMAIN_TYPEHASH =
+    bytes32 constant salt = keccak256("cip712-test-75F0CCte");
+    bytes32 constant CIP712_DOMAIN_TYPEHASH =
         keccak256(
-            "EIP712Domain(string name,string version,uint256 networkId,address verifyingContract,bytes32 salt)"
+            "CIP712Domain(string name,string version,uint256 networkId,address verifyingContract,bytes32 salt)"
         );
 
     bytes32 constant FOOBAR_DOMAIN_TYPEHASH =
@@ -31,8 +31,8 @@ contract DeriveEip712Test {
         return
             keccak256(
                 abi.encode(
-                    EIP712_DOMAIN_TYPEHASH,
-                    keccak256("Eip712Test"),
+                    CIP712_DOMAIN_TYPEHASH,
+                    keccak256("Cip712Test"),
                     keccak256("1"),
                     networkId,
                     address(0x0000000000000000000000000000000000000001),
@@ -60,7 +60,7 @@ contract DeriveEip712Test {
             );
     }
 
-    function encodeEip712(FooBar memory fooBar) public pure returns (bytes32) {
+    function encodeCip712(FooBar memory fooBar) public pure returns (bytes32) {
         return
             keccak256(
                 abi.encodePacked(
@@ -78,6 +78,6 @@ contract DeriveEip712Test {
         bytes32 s,
         uint8 v
     ) public pure returns (bool) {
-        return signer == ecrecover(encodeEip712(fooBar), v, r, s);
+        return signer == ecrecover(encodeCip712(fooBar), v, r, s);
     }
 }

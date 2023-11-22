@@ -3,7 +3,7 @@
 // use corebc_core::{
 //     k256::ecdsa::{Error as K256Error, Signature as KSig, VerifyingKey},
 //     types::{
-//         transaction::{eip2718::TypedTransaction, eip712::Eip712},
+//         transaction::{eip2718::TypedTransaction, cip712::Cip712},
 //         Address, Network, Signature as EthSig, H256,
 //     },
 //     utils::hash_message,
@@ -89,9 +89,9 @@
 //     #[error(transparent)]
 //     /// Error when converting from a hex string
 //     HexError(#[from] hex::FromHexError),
-//     /// Error type from Eip712Error message
-//     #[error("error encoding eip712 struct: {0:?}")]
-//     Eip712Error(String),
+//     /// Error type from Cip712Error message
+//     #[error("error encoding cip712 struct: {0:?}")]
+//     Cip712Error(String),
 // }
 
 // impl From<String> for AwsSignerError {
@@ -123,8 +123,8 @@
 //     resp
 // }
 
-// #[instrument(err, skip(kms, digest, key_id), fields(digest = %hex::encode(digest), key_id = %key_id.as_ref()))]
-// async fn request_sign_digest<T>(
+// #[instrument(err, skip(kms, digest, key_id), fields(digest = %hex::encode(digest), key_id =
+// %key_id.as_ref()))] async fn request_sign_digest<T>(
 //     kms: &KmsClient,
 //     key_id: T,
 //     digest: [u8; 32],
@@ -247,12 +247,12 @@
 //         self.sign_digest_with_eip155(sighash, network_id).await
 //     }
 
-//     async fn sign_typed_data<T: Eip712 + Send + Sync>(
+//     async fn sign_typed_data<T: Cip712 + Send + Sync>(
 //         &self,
 //         payload: &T,
 //     ) -> Result<EthSig, Self::Error> {
 //         let digest =
-//             payload.encode_eip712().map_err(|e| Self::Error::Eip712Error(e.to_string()))?;
+//             payload.encode_cip712().map_err(|e| Self::Error::Cip712Error(e.to_string()))?;
 
 //         let sig = self.sign_digest(digest).await?;
 //         let sig = utils::sig_from_digest_bytes_trial_recovery(&sig, digest, &self.pubkey);
@@ -299,8 +299,8 @@
 
 //     #[allow(dead_code)]
 //     fn env_client() -> KmsClient {
-//         let client = Client::new_with(EnvironmentProvider::default(), HttpClient::new().unwrap());
-//         KmsClient::new_with_client(client, Region::UsWest1)
+//         let client = Client::new_with(EnvironmentProvider::default(),
+// HttpClient::new().unwrap());         KmsClient::new_with_client(client, Region::UsWest1)
 //     }
 
 //     #[tokio::test]

@@ -44,15 +44,15 @@
 //     #[error(transparent)]
 //     /// Error when converting a semver requirement
 //     SemVerError(#[from] semver::Error),
-//     /// Error type from Eip712Error message
-//     #[error("error encoding eip712 struct: {0:?}")]
-//     Eip712Error(String),
-//     /// Error when signing EIP712 struct with not compatible Ledger ETH app
+//     /// Error type from Cip712Error message
+//     #[error("error encoding cip712 struct: {0:?}")]
+//     Cip712Error(String),
+//     /// Error when signing CIP712 struct with not compatible Ledger ETH app
 //     #[error("Ledger ethereum app requires at least version: {0:?}")]
 //     UnsupportedAppVersion(String),
 //     /// Got a response, but it didn't contain as much data as expected
-//     #[error("Cannot deserialize ledger response, insufficient bytes. Got {got} expected at least {at_least}")]
-//     ShortResponse { got: usize, at_least: usize },
+//     #[error("Cannot deserialize ledger response, insufficient bytes. Got {got} expected at least
+// {at_least}")]     ShortResponse { got: usize, at_least: usize },
 //     /// Payload is empty
 //     #[error("Payload must not be empty")]
 //     EmptyPayload,

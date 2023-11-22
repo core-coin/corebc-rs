@@ -71,4 +71,4 @@ legacy = []
 macros = ["syn", "cargo_metadata", "once_cell"]
 
 # Deprecated
-eip712 = []
+cip712 = []

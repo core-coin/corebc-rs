@@ -3,7 +3,7 @@ pub mod response;
 
 pub mod eip2718;
 
-pub mod eip712;
+pub mod cip712;
 
 pub(crate) const BASE_NUM_TX_FIELDS: usize = 9;
 

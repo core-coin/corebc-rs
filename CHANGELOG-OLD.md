@@ -44,7 +44,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - Use H64 for Block Nonce [#1396](https://github.com/gakonst/ethers-rs/pull/1396)
 - Add `as_*_mut` methods on `TypedTransaction`
   [#1310](https://github.com/gakonst/ethers-rs/pull/1310)
-- AWS EIP712 data signing no longer signs with EIP155
+- AWS CIP712 data signing no longer signs with EIP155
 - Added Cronos testnet to etherscan options [#1276](https://github.com/gakonst/ethers-rs/pull/1276)
 - Fix parsing of a pending block
   [#1272](https://github.com/gakonst/ethers-rs/pull/1272)
@@ -218,7 +218,7 @@ The new one is located [here](./CHANGELOG.md), which is automatically generated 
 - move `AbiEncode` `AbiDecode` trait to ethers-core and implement for core types
   [#531](https://github.com/gakonst/ethers-rs/pull/531)
 - Add EIP-712 `sign_typed_data` signer method; add ethers-core type `Eip712`
-  trait and derive macro in ethers-derive-eip712
+  trait and derive macro in ethers-derive-cip712
   [#481](https://github.com/gakonst/ethers-rs/pull/481)
 
 ### 0.5.3

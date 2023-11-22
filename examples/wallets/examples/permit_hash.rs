@@ -1,16 +1,16 @@
 use corebc::{
-    contract::{Eip712, EthAbiType},
+    contract::{Cip712, EthAbiType},
     core::{
-        types::{transaction::eip712::Eip712, Address, U256},
+        types::{transaction::cip712::Cip712, Address, U256},
         utils::hex,
     },
 };
 
-// Generate the EIP712 permit hash to sign for a Uniswap V2 pair.
-// <https://eips.ethereum.org/EIPS/eip-712>
+// Generate the CIP712 permit hash to sign for a Uniswap V2 pair.
+// <https://eips.ethereum.org/EIPS/Cip-712>
 // <https://eips.ethereum.org/EIPS/eip-2612>
-#[derive(Eip712, EthAbiType, Clone)]
-#[eip712(
+#[derive(Cip712, EthAbiType, Clone)]
+#[cip712(
     name = "Uniswap V2",
     version = "1",
     network_id = 1,
@@ -32,6 +32,6 @@ fn main() {
         nonce: 0.into(),
         deadline: U256::MAX,
     };
-    let permit_hash = permit.encode_eip712().unwrap();
+    let permit_hash = permit.encode_cip712().unwrap();
     println!("Permit hash: 0x{}", hex::encode(permit_hash));
 }

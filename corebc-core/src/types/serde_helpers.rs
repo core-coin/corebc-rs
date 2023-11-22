@@ -259,9 +259,9 @@ where
 mod tests {
 
     #[test]
-    #[cfg(feature = "eip712")]
+    #[cfg(feature = "cip712")]
     fn test_deserialize_string_network_id() {
-        use crate::types::transaction::eip712::EIP712Domain;
+        use crate::types::transaction::cip712::CIP712Domain;
 
         let val = serde_json::json!(
                   {
@@ -272,7 +272,7 @@ mod tests {
         }
               );
 
-        let domain: EIP712Domain = serde_json::from_value(val).unwrap();
+        let domain: CIP712Domain = serde_json::from_value(val).unwrap();
         assert_eq!(domain.network_id, Some(137u64.into()));
     }
 }

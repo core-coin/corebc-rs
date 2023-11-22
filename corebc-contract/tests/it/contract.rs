@@ -1,14 +1,14 @@
 // CORETODO: All tests require either solc or anvil. Fix once Anvil and Solc are availible.
 // use crate::common::*;
 // use corebc_contract::{
-//     abigen, ContractFactory, ContractInstance, Eip712, EthAbiType, EthEvent,
+//     abigen, ContractFactory, ContractInstance, Cip712, EthAbiType, EthEvent,
 //     LogMeta, /* Multicall,
 //             MulticallError, MulticallVersion */
 // };
 // use corebc_core::{
 //     abi::{encode, AbiEncode, Token, Tokenizable},
 //     types::{
-//         transaction::eip712::*, Address, BlockId, Bytes, Filter, ValueOrArray, H176, H256, I256,
+//         transaction::cip712::*, Address, BlockId, Bytes, Filter, ValueOrArray, H176, H256, I256,
 //         U256,
 //     },
 //     utils::sha3,
@@ -792,25 +792,25 @@
 // // }
 
 // #[tokio::test]
-// async fn test_derive_eip712() {
+// async fn test_derive_cip712() {
 //     // Generate Contract ABI Bindings
 //     mod contract {
 //         corebc_contract::abigen!(
-//             DeriveEip712Test,
-//             "./corebc-contract/tests/solidity-contracts/DeriveEip712Test.json",
+//             DeriveCip712Test,
+//             "./corebc-contract/tests/solidity-contracts/DeriveCip712Test.json",
 //             derives(serde::Deserialize, serde::Serialize)
 //         );
 //     }
 
 //     // Create derived structs
 
-//     #[derive(Debug, Clone, Eip712, EthAbiType)]
-//     #[eip712(
-//         name = "Eip712Test",
+//     #[derive(Debug, Clone, Cip712, EthAbiType)]
+//     #[cip712(
+//         name = "Cip712Test",
 //         version = "1",
 //         network_id = 1,
 //         verifying_contract = "0x00000000000000000000000000000000000000000001",
-//         salt = "eip712-test-75F0CCte"
+//         salt = "cip712-test-75F0CCte"
 //     )]
 //     struct FooBar {
 //         foo: I256,
@@ -830,8 +830,8 @@
 //         .interval(std::time::Duration::from_millis(10));
 //     let client = Arc::new(provider);
 
-//     let contract: contract::DeriveEip712Test<_> =
-//         contract::DeriveEip712Test::deploy(client.clone(), ()).unwrap().send().await.unwrap();
+//     let contract: contract::DeriveCip712Test<_> =
+//         contract::DeriveCip712Test::deploy(client.clone(), ()).unwrap().send().await.unwrap();
 
 //     let foo_bar = FooBar {
 //         foo: I256::from(10u64),
@@ -875,25 +875,25 @@
 //         .encode_eip_712(derived_foo_bar.clone())
 //         .call()
 //         .await
-//         .expect("failed to retrieve eip712 encoded hash from contract");
+//         .expect("failed to retrieve cip712 encoded hash from contract");
 //     let verify = contract
 //         .verify_foo_bar(wallet.address(), derived_foo_bar, r, s, v)
 //         .call()
 //         .await
-//         .expect("failed to verify signed typed data eip712 payload");
+//         .expect("failed to verify signed typed data cip712 payload");
 
 //     assert_eq!(
 //         domain_separator,
 //         foo_bar
 //             .domain()
-//             .expect("failed to return domain_separator from Eip712 implemented struct")
+//             .expect("failed to return domain_separator from Cip712 implemented struct")
 //             .separator(),
 //         "domain separator does not match contract domain separator!"
 //     );
 
 //     assert_eq!(
 //         type_hash,
-//         FooBar::type_hash().expect("failed to return type_hash from Eip712 implemented struct"),
+//         FooBar::type_hash().expect("failed to return type_hash from Cip712 implemented struct"),
 //         "type hash does not match contract struct type hash!"
 //     );
 
@@ -902,15 +902,15 @@
 //         foo_bar
 //             .clone()
 //             .struct_hash()
-//             .expect("failed to return struct_hash from Eip712 implemented struct"),
+//             .expect("failed to return struct_hash from Cip712 implemented struct"),
 //         "struct hash does not match contract struct hash!"
 //     );
 
 //     assert_eq!(
 //         encoded,
 //         foo_bar
-//             .encode_eip712()
-//             .expect("failed to return domain_separator from Eip712 implemented struct"),
+//             .encode_cip712()
+//             .expect("failed to return domain_separator from Cip712 implemented struct"),
 //         "Encoded value does not match!"
 //     );
 
