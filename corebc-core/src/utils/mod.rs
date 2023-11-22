@@ -424,13 +424,6 @@ fn construct_ican_address(prefix: &str, checksum: &u64, addr: &H160) -> Address 
 /// Converts a K256 SigningKey to an Ethereum Address
 /// CORETODO: FIX ASAP ICAN ADDRESSES
 pub fn secret_key_to_address(secret_key: &SigningKey, network: &Network) -> Address {
-    // let public_key = secret_key.verifying_key();
-    // let public_key = public_key.as_bytes();
-    // let hash = sha3(&public_key[..]);
-
-    // let mut bytes = [0u8; 20];
-    // bytes.copy_from_slice(&hash[12..]);
-    // let addr = H160::from(bytes);
     to_ican(&secret_key_to_h160_address(secret_key), network)
 }
 
