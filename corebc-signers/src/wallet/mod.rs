@@ -104,7 +104,6 @@ impl<D: Sync + Send + PrehashSigner<RecoverableSignature>> Signer for Wallet<D> 
     ) -> Result<Signature, Self::Error> {
         let encoded =
             payload.encode_cip712().map_err(|e| Self::Error::Cip712Error(e.to_string()))?;
-        println!("encoded: {:0x?}", encoded);
         self.sign_hash(H256::from(encoded))
     }
 
