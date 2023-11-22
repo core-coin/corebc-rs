@@ -275,13 +275,14 @@ impl Anvil {
             if line.contains("Listening on") {
                 break
             }
-
+            
             if line.starts_with("Private Keys") {
                 is_private_key = true;
             }
 
             if is_private_key && line.starts_with('(') {
                 let key_str = &line[6..line.len() - 1];
+                println!("{:?}", key_str);
                 let key = SigningKey::from_str(key_str);
                 // CORETODO: Attention, must work but take care
                 // let key_hex = hex::decode(key_str).expect("could not parse as hex");
@@ -301,8 +302,8 @@ mod tests {
     use super::*;
 
     // CORETODO: Uncomment test after fix
-    // #[test]
-    // fn can_launch_anvil() {
-    //     let _ = Anvil::new().spawn();
-    // }
+    #[test]
+    fn can_launch_anvil() {
+        let _ = Anvil::new().spawn();
+    }
 }
