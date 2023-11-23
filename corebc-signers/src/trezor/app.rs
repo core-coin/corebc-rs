@@ -6,7 +6,7 @@
 
 // use corebc_core::{
 //     types::{
-//         transaction::{eip2718::TypedTransaction, eip712::Eip712},
+//         transaction::{eip2718::TypedTransaction, cip712::Cip712},
 //         Address, NameOrAddress, Signature, Transaction, TransactionRequest, TxHash, H256, U256,
 //     },
 //     utils::sha3,
@@ -164,8 +164,8 @@
 //         let network_id = tx.network_id().map(|id| id.as_u64()).unwrap_or(self.network_id);
 
 //         let signature = match tx {
-//             TypedTransaction::Eip2930(_) | TypedTransaction::Legacy(_) => client.ethereum_sign_tx(
-//                 arr_path,
+//             TypedTransaction::Eip2930(_) | TypedTransaction::Legacy(_) =>
+// client.ethereum_sign_tx(                 arr_path,
 //                 transaction.nonce,
 //                 transaction.gas_price,
 //                 transaction.gas,
@@ -195,8 +195,8 @@
 //     }
 
 //     /// Signs an ethereum personal message
-//     pub async fn sign_message<S: AsRef<[u8]>>(&self, message: S) -> Result<Signature, TrezorError> {
-//         let message = message.as_ref();
+//     pub async fn sign_message<S: AsRef<[u8]>>(&self, message: S) -> Result<Signature,
+// TrezorError> {         let message = message.as_ref();
 //         let mut client = self.get_client(self.session_id.clone())?;
 //         let apath = Self::convert_path(&self.derivation);
 
@@ -208,10 +208,10 @@
 //         Ok(Signature { r: signature_r, s: signature_s, v: signature.v })
 //     }
 
-//     /// Signs an EIP712 encoded domain separator and message
+//     /// Signs an CIP712 encoded domain separator and message
 //     pub async fn sign_typed_struct<T>(&self, payload: &T) -> Result<Signature, TrezorError>
 //     where
-//         T: Eip712,
+//         T: Cip712,
 //     {
 //         unimplemented!()
 //     }
@@ -240,23 +240,23 @@
 // mod tests {
 //     use super::*;
 //     use crate::Signer;
-//     use corebc_contract_derive::{Eip712, EthAbiType};
+//     use corebc_contract_derive::{Cip712, EthAbiType};
 //     use corebc_core::types::{
 //         transaction::{
 //             eip2930::{AccessList, AccessListItem},
-//             eip712::Eip712,
+//             cip712::Cip712,
 //         },
 //         Address, Eip1559TransactionRequest, TransactionRequest, I256, U256,
 //     };
 //     use std::str::FromStr;
 
 //     #[derive(Debug, Clone)]
-//     #[eip712(
-//         name = "Eip712Test",
+//     #[cip712(
+//         name = "Cip712Test",
 //         version = "1",
 //         network_id = 1,
 //         verifying_contract = "0x0000000000000000000000000000000000000001",
-//         salt = "eip712-test-75F0CCte"
+//         salt = "cip712-test-75F0CCte"
 //     )]
 //     struct FooBar {
 //         foo: I256,
@@ -273,8 +273,8 @@
 //     async fn test_get_address() {
 //         // Instantiate it with the default trezor derivation path
 //         let trezor =
-//             TrezorEthereum::new(DerivationType::TrezorLive(1), 1, Some(PathBuf::from("randomdir")))
-//                 .await
+//             TrezorEthereum::new(DerivationType::TrezorLive(1), 1,
+// Some(PathBuf::from("randomdir")))                 .await
 //                 .unwrap();
 //         assert_eq!(
 //             trezor.get_address().await.unwrap(),
@@ -292,7 +292,10 @@
 //         let trezor = TrezorEthereum::new(DerivationType::TrezorLive(0), 1, None).await.unwrap();
 
 //         // approve uni v2 router 0xff
-//         let data = hex::decode("095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").unwrap();
+//         let data =
+// hex::decode("
+// 095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+// ).unwrap();
 
 //         let tx_req = TransactionRequest::new()
 //             .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
@@ -311,11 +314,13 @@
 //         let trezor = TrezorEthereum::new(DerivationType::TrezorLive(0), 1, None).await.unwrap();
 
 //         // invalid data
-//         let big_data = hex::decode("095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff".to_string()+ &"ff".repeat(1032*2) + "aa").unwrap();
-//         let tx_req = TransactionRequest::new()
-//             .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
-//             .gas(1000000)
-//             .gas_price(400e9 as u64)
+//         let big_data =
+// hex::decode("
+// 095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+// .to_string()+ &"ff".repeat(1032*2) + "aa").unwrap();         let tx_req =
+// TransactionRequest::new()
+// .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
+// .gas(1000000)             .gas_price(400e9 as u64)
 //             .nonce(5)
 //             .data(big_data)
 //             .value(corebc_core::utils::parse_ether(100).unwrap())
@@ -342,7 +347,10 @@
 //             let tx = trezor.sign_transaction(&tx_req).await.unwrap();
 //         }
 
-//         let data = hex::decode("095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").unwrap();
+//         let data =
+// hex::decode("
+// 095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+// ).unwrap();
 
 //         // Contract creation (empty `to`, with data) should show on the trezor device as:
 //         //  ` "0 Wei ETH
@@ -364,7 +372,10 @@
 //         let trezor = TrezorEthereum::new(DerivationType::TrezorLive(0), 1, None).await.unwrap();
 
 //         // approve uni v2 router 0xff
-//         let data = hex::decode("095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").unwrap();
+//         let data =
+// hex::decode("
+// 095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+// ).unwrap();
 
 //         let lst = AccessList(vec![
 //             AccessListItem {
@@ -417,8 +428,9 @@
 
 //     #[tokio::test]
 //     #[ignore]
-//     async fn test_sign_eip712_struct() {
-//         let trezor = TrezorEthereum::new(DerivationType::TrezorLive(0), 1u64, None).await.unwrap();
+//     async fn test_sign_cip712_struct() {
+//         let trezor = TrezorEthereum::new(DerivationType::TrezorLive(0), 1u64,
+// None).await.unwrap();
 
 //         let foo_bar = FooBar {
 //             foo: I256::from(10),
@@ -430,7 +442,7 @@
 //         };
 
 //         let sig = trezor.sign_typed_struct(&foo_bar).await.expect("failed to sign typed data");
-//         let foo_bar_hash = foo_bar.encode_eip712().unwrap();
+//         let foo_bar_hash = foo_bar.encode_cip712().unwrap();
 //         sig.verify(foo_bar_hash, trezor.address).unwrap();
 //     }
 // }

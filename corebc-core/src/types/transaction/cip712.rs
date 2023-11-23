@@ -12,29 +12,29 @@ use std::{
 };
 
 /// Custom types for `TypedData`
-pub type Types = BTreeMap<String, Vec<Eip712DomainType>>;
+pub type Types = BTreeMap<String, Vec<Cip712DomainType>>;
 
 /// Pre-computed value of the following expression:
 ///
-/// `sha3("EIP712Domain(string name,string version,uint256 networkId,address
+/// `sha3("CIP712Domain(string name,string version,uint256 networkId,address
 /// verifyingContract)")`
-pub const EIP712_DOMAIN_TYPE_HASH: [u8; 32] = [
-    173, 152, 130, 199, 155, 92, 66, 128, 155, 120, 160, 131, 57, 68, 58, 214, 51, 166, 212, 202,
-    3, 214, 35, 133, 205, 152, 92, 134, 0, 148, 169, 250,
+pub const CIP712_DOMAIN_TYPE_HASH: [u8; 32] = [
+    162, 229, 72, 105, 148, 140, 223, 104, 71, 122, 43, 183, 198, 72, 193, 11, 194, 1, 21, 23, 40,
+    112, 203, 153, 13, 147, 51, 150, 174, 89, 111, 26,
 ];
 
 /// Pre-computed value of the following expression:
 ///
-/// `sha3("EIP712Domain(string name,string version,uint256 networkId,address
+/// `sha3("CIP712Domain(string name,string version,uint256 networkId,address
 /// verifyingContract,bytes32 salt)")`
-pub const EIP712_DOMAIN_TYPE_HASH_WITH_SALT: [u8; 32] = [
-    55, 43, 197, 127, 183, 123, 53, 155, 202, 118, 174, 162, 75, 68, 251, 117, 97, 40, 173, 101,
-    21, 177, 9, 50, 129, 57, 165, 121, 182, 153, 218, 199,
+pub const CIP712_DOMAIN_TYPE_HASH_WITH_SALT: [u8; 32] = [
+    231, 87, 194, 233, 12, 24, 34, 99, 78, 156, 213, 237, 146, 147, 55, 152, 28, 171, 134, 203, 13,
+    133, 198, 216, 51, 14, 9, 1, 6, 56, 63, 5,
 ];
 
-/// An EIP-712 error.
+/// An Cip-712 error.
 #[derive(Debug, thiserror::Error)]
-pub enum Eip712Error {
+pub enum Cip712Error {
     #[error("Failed to serialize serde JSON object")]
     SerdeJsonError(#[from] serde_json::Error),
     #[error("Failed to decode hex value")]
@@ -43,24 +43,24 @@ pub enum Eip712Error {
     FailedToEncodeStruct,
     #[error("Failed to convert slice into byte array")]
     TryFromSliceError(#[from] std::array::TryFromSliceError),
-    #[error("Nested Eip712 struct not implemented. Failed to parse.")]
-    NestedEip712StructNotImplemented,
-    #[error("Error from Eip712 struct: {0:?}")]
+    #[error("Nested Cip712 struct not implemented. Failed to parse.")]
+    NestedCip712StructNotImplemented,
+    #[error("Error from Cip712 struct: {0:?}")]
     Message(String),
 }
 
 /// Helper methods for computing the typed data hash used in `eth_signTypedData`.
 ///
-/// The ethers-rs `derive_eip712` crate provides a derive macro to
+/// The ethers-rs `derive_cip712` crate provides a derive macro to
 /// implement the trait for a given struct. See documentation
-/// for `derive_eip712` for more information and example usage.
+/// for `derive_cip712` for more information and example usage.
 ///
 /// For those who wish to manually implement this trait, see:
-/// <https://eips.ethereum.org/EIPS/eip-712>
+/// <https://eips.ethereum.org/EIPS/Cip-712>
 ///
-/// Any rust struct implementing Eip712 must also have a corresponding
+/// Any rust struct implementing Cip712 must also have a corresponding
 /// struct in the verifying ethereum contract that matches its signature.
-pub trait Eip712 {
+pub trait Cip712 {
     /// User defined error type;
     type Error: std::error::Error + Send + Sync + std::fmt::Debug;
 
@@ -74,20 +74,20 @@ pub trait Eip712 {
     /// are passed in as arguments to the macro. When manually deriving, the user
     /// will need to know the name of the domain, version of the contract, network ID of
     /// where the contract lives and the address of the verifying contract.
-    fn domain(&self) -> Result<EIP712Domain, Self::Error>;
+    fn domain(&self) -> Result<CIP712Domain, Self::Error>;
 
     /// This method is used for calculating the hash of the type signature of the
     /// struct. The field types of the struct must map to primitive
     /// ethereum types or custom types defined in the contract.
     fn type_hash() -> Result<[u8; 32], Self::Error>;
 
-    /// Hash of the struct, according to EIP-712 definition of `hashStruct`
+    /// Hash of the struct, according to Cip-712 definition of `hashStruct`
     fn struct_hash(&self) -> Result<[u8; 32], Self::Error>;
 
     /// When using the derive macro, this is the primary method used for computing the final
-    /// EIP-712 encoded payload. This method relies on the aforementioned methods for computing
+    /// Cip-712 encoded payload. This method relies on the aforementioned methods for computing
     /// the final encoded payload.
-    fn encode_eip712(&self) -> Result<[u8; 32], Self::Error> {
+    fn encode_cip712(&self) -> Result<[u8; 32], Self::Error> {
         // encode the digest to be compatible with solidity abi.encodePacked()
         // See: https://github.com/gakonst/ethers-rs/blob/master/examples/permit_hash.rs#L72
 
@@ -100,14 +100,14 @@ pub trait Eip712 {
     }
 }
 
-/// Eip712 Domain attributes used in determining the domain separator;
+/// Cip712 Domain attributes used in determining the domain separator;
 /// Unused fields are left out of the struct type.
 ///
 /// Protocol designers only need to include the fields that make sense for their signing domain.
 /// Unused fields are left out of the struct type.
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct EIP712Domain {
+pub struct CIP712Domain {
     ///  The user readable name of signing domain, i.e. the name of the DApp or the protocol.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -136,13 +136,13 @@ pub struct EIP712Domain {
     pub salt: Option<[u8; 32]>,
 }
 
-impl EIP712Domain {
+impl CIP712Domain {
     // Compute the domain separator;
     // See: https://github.com/gakonst/ethers-rs/blob/master/examples/permit_hash.rs#L41
     pub fn separator(&self) -> [u8; 32] {
-        // full name is `EIP712Domain(string name,string version,uint256 networkId,address
+        // full name is `CIP712Domain(string name,string version,uint256 networkId,address
         // verifyingContract,bytes32 salt)`
-        let mut ty = "EIP712Domain(".to_string();
+        let mut ty = "CIP712Domain(".to_string();
 
         let mut tokens = Vec::new();
         let mut needs_comma = false;
@@ -196,31 +196,31 @@ impl EIP712Domain {
 }
 
 #[derive(Debug, Clone)]
-pub struct EIP712WithDomain<T>
+pub struct CIP712WithDomain<T>
 where
-    T: Clone + Eip712,
+    T: Clone + Cip712,
 {
-    pub domain: EIP712Domain,
+    pub domain: CIP712Domain,
     pub inner: T,
 }
 
-impl<T: Eip712 + Clone> EIP712WithDomain<T> {
-    pub fn new(inner: T) -> Result<Self, Eip712Error> {
-        let domain = inner.domain().map_err(|e| Eip712Error::Message(e.to_string()))?;
+impl<T: Cip712 + Clone> CIP712WithDomain<T> {
+    pub fn new(inner: T) -> Result<Self, Cip712Error> {
+        let domain = inner.domain().map_err(|e| Cip712Error::Message(e.to_string()))?;
 
         Ok(Self { domain, inner })
     }
 
     #[must_use]
-    pub fn set_domain(self, domain: EIP712Domain) -> Self {
+    pub fn set_domain(self, domain: CIP712Domain) -> Self {
         Self { domain, inner: self.inner }
     }
 }
 
-impl<T: Eip712 + Clone> Eip712 for EIP712WithDomain<T> {
-    type Error = Eip712Error;
+impl<T: Cip712 + Clone> Cip712 for CIP712WithDomain<T> {
+    type Error = Cip712Error;
 
-    fn domain(&self) -> Result<EIP712Domain, Self::Error> {
+    fn domain(&self) -> Result<CIP712Domain, Self::Error> {
         Ok(self.domain.clone())
     }
 
@@ -236,7 +236,7 @@ impl<T: Eip712 + Clone> Eip712 for EIP712WithDomain<T> {
     }
 }
 
-/// Represents the [EIP-712](https://eips.ethereum.org/EIPS/eip-712) typed data object.
+/// Represents the [Cip-712](https://eips.ethereum.org/EIPS/Cip-712) typed data object.
 ///
 /// Typed data is a JSON object containing type information, domain separator parameters and the
 /// message object which has the following schema
@@ -248,7 +248,7 @@ impl<T: Eip712 + Clone> Eip712 for EIP712WithDomain<T> {
 ///         "types": {
 ///             "type": "object",
 ///             "properties": {
-///                 "EIP712Domain": { "type": "array" }
+///                 "CIP712Domain": { "type": "array" }
 ///             },
 ///             "additionalProperties": {
 ///                 "type": "array",
@@ -261,7 +261,7 @@ impl<T: Eip712 + Clone> Eip712 for EIP712WithDomain<T> {
 ///                     "required": ["name", "type"]
 ///                 }
 ///             },
-///             "required": ["EIP712Domain"]
+///             "required": ["CIP712Domain"]
 ///         },
 ///         "primaryType": { "type": "string" },
 ///         "domain": { "type": "object" },
@@ -276,7 +276,7 @@ pub struct TypedData {
     /// Signing domain metadata. The signing domain is the intended context for the signature (e.g.
     /// the dapp, protocol, etc. that it's intended for). This data is used to construct the domain
     /// seperator of the message.
-    pub domain: EIP712Domain,
+    pub domain: CIP712Domain,
     /// The custom types used by this message.
     pub types: Types,
     #[serde(rename = "primaryType")]
@@ -297,7 +297,7 @@ impl<'de> Deserialize<'de> for TypedData {
     {
         #[derive(Deserialize)]
         struct TypedDataHelper {
-            domain: EIP712Domain,
+            domain: CIP712Domain,
             types: Types,
             #[serde(rename = "primaryType")]
             primary_type: String,
@@ -327,15 +327,15 @@ impl<'de> Deserialize<'de> for TypedData {
 
 // === impl TypedData ===
 
-impl Eip712 for TypedData {
-    type Error = Eip712Error;
+impl Cip712 for TypedData {
+    type Error = Cip712Error;
 
-    fn domain(&self) -> Result<EIP712Domain, Self::Error> {
+    fn domain(&self) -> Result<CIP712Domain, Self::Error> {
         Ok(self.domain.clone())
     }
 
     fn type_hash() -> Result<[u8; 32], Self::Error> {
-        Err(Eip712Error::Message("dynamic type".to_string()))
+        Err(Cip712Error::Message("dynamic type".to_string()))
     }
 
     fn struct_hash(&self) -> Result<[u8; 32], Self::Error> {
@@ -347,14 +347,14 @@ impl Eip712 for TypedData {
         Ok(sha3(encode(&tokens)))
     }
 
-    /// Hash a typed message according to EIP-712. The returned message starts with the EIP-712
+    /// Hash a typed message according to Cip-712. The returned message starts with the Cip-712
     /// prefix, which is "1901", followed by the hash of the domain separator, then the data (if
     /// any). The result is hashed again and returned.
-    fn encode_eip712(&self) -> Result<[u8; 32], Self::Error> {
+    fn encode_cip712(&self) -> Result<[u8; 32], Self::Error> {
         let domain_separator = self.domain.separator();
         let mut digest_input = [&[0x19, 0x01], &domain_separator[..]].concat().to_vec();
 
-        if self.primary_type != "EIP712Domain" {
+        if self.primary_type != "CIP712Domain" {
             // compatibility with <https://github.com/MetaMask/eth-sig-util>
             digest_input.extend(&self.struct_hash()?[..])
         }
@@ -365,7 +365,7 @@ impl Eip712 for TypedData {
 /// Represents the name and type pair
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct Eip712DomainType {
+pub struct Cip712DomainType {
     pub name: String,
     #[serde(rename = "type")]
     pub r#type: String,
@@ -386,7 +386,7 @@ pub fn encode_data(
     primary_type: &str,
     data: &serde_json::Value,
     types: &Types,
-) -> Result<Vec<Token>, Eip712Error> {
+) -> Result<Vec<Token>, Cip712Error> {
     let hash = hash_type(primary_type, types)?;
     let mut tokens = vec![Token::Uint(U256::from(hash))];
 
@@ -399,7 +399,7 @@ pub fn encode_data(
             } else if types.contains_key(&field.r#type) {
                 tokens.push(Token::Uint(U256::zero()));
             } else {
-                return Err(Eip712Error::Message(format!("No data found for: `{}`", field.name)))
+                return Err(Cip712Error::Message(format!("No data found for: `{}`", field.name)))
             }
         }
     }
@@ -418,14 +418,14 @@ pub fn hash_struct(
     primary_type: &str,
     data: &serde_json::Value,
     types: &Types,
-) -> Result<[u8; 32], Eip712Error> {
+) -> Result<[u8; 32], Cip712Error> {
     let tokens = encode_data(primary_type, data, types)?;
     let encoded = encode(&tokens);
     Ok(sha3(encoded))
 }
 
 /// Returns the hashed encoded type of `primary_type`
-pub fn hash_type(primary_type: &str, types: &Types) -> Result<[u8; 32], Eip712Error> {
+pub fn hash_type(primary_type: &str, types: &Types) -> Result<[u8; 32], Cip712Error> {
     encode_type(primary_type, types).map(sha3)
 }
 
@@ -435,7 +435,7 @@ pub fn hash_type(primary_type: &str, types: &Types) -> Result<[u8; 32], Eip712Er
 ///   - `types`: All type definitions.
 ///
 /// Returns the encoded representation of the field.
-pub fn encode_type(primary_type: &str, types: &Types) -> Result<String, Eip712Error> {
+pub fn encode_type(primary_type: &str, types: &Types) -> Result<String, Cip712Error> {
     let mut names = HashSet::new();
     find_type_dependencies(primary_type, types, &mut names);
     // need to ensure primary_type is first in the list
@@ -448,7 +448,7 @@ pub fn encode_type(primary_type: &str, types: &Types) -> Result<String, Eip712Er
 
     for dep in deps.into_iter() {
         let fields = types.get(dep).ok_or_else(|| {
-            Eip712Error::Message(format!("No type definition found for: `{dep}`"))
+            Cip712Error::Message(format!("No type definition found for: `{dep}`"))
         })?;
 
         res += dep;
@@ -495,20 +495,20 @@ pub fn encode_field(
     _field_name: &str,
     field_type: &str,
     value: &serde_json::Value,
-) -> Result<Token, Eip712Error> {
+) -> Result<Token, Cip712Error> {
     let token = {
         // check if field is custom data type
         if types.contains_key(field_type) {
             let tokens = encode_data(field_type, value, types)?;
             let encoded = encode(&tokens);
-            encode_eip712_type(Token::Bytes(encoded.to_vec()))
+            encode_cip712_type(Token::Bytes(encoded.to_vec()))
         } else {
             match field_type {
                 s if s.contains('[') => {
                     let (stripped_type, _) = s.rsplit_once('[').unwrap();
                     // ensure value is an array
                     let values = value.as_array().ok_or_else(|| {
-                        Eip712Error::Message(format!(
+                        Cip712Error::Message(format!(
                             "Expected array for type `{s}`, but got `{value}`",
                         ))
                     })?;
@@ -518,12 +518,12 @@ pub fn encode_field(
                         .collect::<Result<Vec<_>, _>>()?;
 
                     let encoded = encode(&tokens);
-                    encode_eip712_type(Token::Bytes(encoded))
+                    encode_cip712_type(Token::Bytes(encoded))
                 }
                 s => {
                     // parse as param type
                     let param = HumanReadableParser::parse_type(s).map_err(|err| {
-                        Eip712Error::Message(format!("Failed to parse type {s}: {err}",))
+                        Cip712Error::Message(format!("Failed to parse type {s}: {err}",))
                     })?;
 
                     match param {
@@ -532,34 +532,34 @@ pub fn encode_field(
                         }
                         ParamType::Bytes => {
                             let data: Bytes = serde_json::from_value(value.clone())?;
-                            encode_eip712_type(Token::Bytes(data.to_vec()))
+                            encode_cip712_type(Token::Bytes(data.to_vec()))
                         }
                         ParamType::Int(_) => Token::Uint(serde_json::from_value(value.clone())?),
                         ParamType::Uint(_) => {
                             // uints are commonly stringified due to how ethers-js encodes
                             let val: StringifiedNumeric = serde_json::from_value(value.clone())?;
                             let val = val.try_into().map_err(|err| {
-                                Eip712Error::Message(format!("Failed to parse uint {err}"))
+                                Cip712Error::Message(format!("Failed to parse uint {err}"))
                             })?;
 
                             Token::Uint(val)
                         }
                         ParamType::Bool => {
-                            encode_eip712_type(Token::Bool(serde_json::from_value(value.clone())?))
+                            encode_cip712_type(Token::Bool(serde_json::from_value(value.clone())?))
                         }
                         ParamType::String => {
                             let s: String = serde_json::from_value(value.clone())?;
-                            encode_eip712_type(Token::String(s))
+                            encode_cip712_type(Token::String(s))
                         }
                         ParamType::FixedArray(_, _) | ParamType::Array(_) => {
                             unreachable!("is handled in separate arm")
                         }
                         ParamType::FixedBytes(_) => {
                             let data: Bytes = serde_json::from_value(value.clone())?;
-                            encode_eip712_type(Token::FixedBytes(data.to_vec()))
+                            encode_cip712_type(Token::FixedBytes(data.to_vec()))
                         }
                         ParamType::Tuple(_) => {
-                            return Err(Eip712Error::Message(format!("Unexpected tuple type {s}",)))
+                            return Err(Cip712Error::Message(format!("Unexpected tuple type {s}",)))
                         }
                     }
                 }
@@ -580,8 +580,8 @@ pub fn make_type_hash(primary_type: String, fields: &[(String, ParamType)]) -> [
     sha3(sig)
 }
 
-/// Parse token into Eip712 compliant ABI encoding
-pub fn encode_eip712_type(token: Token) -> Token {
+/// Parse token into Cip712 compliant ABI encoding
+pub fn encode_cip712_type(token: Token) -> Token {
     match token {
         Token::Bytes(t) => Token::Uint(U256::from(sha3(t))),
         Token::FixedBytes(t) => Token::Uint(U256::from(&t[..])),
@@ -595,13 +595,13 @@ pub fn encode_eip712_type(token: Token) -> Token {
             Token::Uint(t)
         }
         Token::Array(tokens) => Token::Uint(U256::from(sha3(abi::encode(
-            &tokens.into_iter().map(encode_eip712_type).collect::<Vec<Token>>(),
+            &tokens.into_iter().map(encode_cip712_type).collect::<Vec<Token>>(),
         )))),
         Token::FixedArray(tokens) => Token::Uint(U256::from(sha3(abi::encode(
-            &tokens.into_iter().map(encode_eip712_type).collect::<Vec<Token>>(),
+            &tokens.into_iter().map(encode_cip712_type).collect::<Vec<Token>>(),
         )))),
         Token::Tuple(tuple) => {
-            let tokens = tuple.into_iter().map(encode_eip712_type).collect::<Vec<Token>>();
+            let tokens = tuple.into_iter().map(encode_cip712_type).collect::<Vec<Token>>();
             let encoded = encode(&tokens);
             Token::Uint(U256::from(sha3(encoded)))
         }
@@ -612,7 +612,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
     }
 }
 
-// CORETODO: Eip712 was implemented after the Istanbul hardfork so we don't need to fix these tests.
+// CORETODO: Cip712 was implemented after the Istanbul hardfork so we don't need to fix these tests.
 // I left it here in case we want to use it in the future
 // Adapted tests from <https://github.com/MetaMask/eth-sig-util/blob/main/src/sign-typed-data.test.ts>
 // #[cfg(test)]
@@ -623,7 +623,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //     fn test_full_domain() {
 //         let json = serde_json::json!({
 //           "types": {
-//             "EIP712Domain": [
+//             "CIP712Domain": [
 //               {
 //                 "name": "name",
 //                 "type": "string"
@@ -646,7 +646,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //               }
 //             ]
 //           },
-//           "primaryType": "EIP712Domain",
+//           "primaryType": "CIP712Domain",
 //           "domain": {
 //             "name": "example.metamask.io",
 //             "version": "1",
@@ -658,7 +658,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 
 //         let typed_data: TypedData = serde_json::from_value(json).unwrap();
 
-//         let hash = typed_data.encode_eip712().unwrap();
+//         let hash = typed_data.encode_cip712().unwrap();
 //         assert_eq!(
 //             "122d1c8ef94b76dad44dcb03fa772361e20855c63311a15d5afe02d1b38f6077",
 //             hex::encode(&hash[..])
@@ -668,11 +668,11 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //     #[test]
 //     fn test_minimal_message() {
 //         let json = serde_json::json!(
-// {"types":{"EIP712Domain":[]},"primaryType":"EIP712Domain","domain":{},"message":{}});
+// {"types":{"CIP712Domain":[]},"primaryType":"CIP712Domain","domain":{},"message":{}});
 
 //         let typed_data: TypedData = serde_json::from_value(json).unwrap();
 
-//         let hash = typed_data.encode_eip712().unwrap();
+//         let hash = typed_data.encode_cip712().unwrap();
 //         assert_eq!(
 //             "8d4a3f4082945b7879e2b55f181c31a77c8c0a464b70669458abbaaf99de4c38",
 //             hex::encode(&hash[..])
@@ -682,7 +682,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //     #[test]
 //     fn test_encode_custom_array_type() {
 //         let json =
-// serde_json::json!({"domain":{},"types":{"EIP712Domain":[],"Person":[{"name":"name","type":"
+// serde_json::json!({"domain":{},"types":{"CIP712Domain":[],"Person":[{"name":"name","type":"
 // string"},{"name":"wallet","type":"address[]"}],"Mail":[{"name":"from","type":"Person"},{"name":"
 // to","type":"Person[]"},{"name":"contents","type":"string"}]},"primaryType":"Mail","message":{"
 // from":{"name":"Cow","wallet":["0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826","
@@ -691,7 +691,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 
 //         let typed_data: TypedData = serde_json::from_value(json).unwrap();
 
-//         let hash = typed_data.encode_eip712().unwrap();
+//         let hash = typed_data.encode_cip712().unwrap();
 //         assert_eq!(
 //             "80a3aeb51161cfc47884ddf8eac0d2343d6ae640efe78b6a69be65e3045c1321",
 //             hex::encode(&hash[..])
@@ -702,7 +702,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //     fn test_hash_typed_message_with_data() {
 //         let json = serde_json::json!( {
 //           "types": {
-//             "EIP712Domain": [
+//             "CIP712Domain": [
 //               {
 //                 "name": "name",
 //                 "type": "string"
@@ -741,7 +741,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 
 //         let typed_data: TypedData = serde_json::from_value(json).unwrap();
 
-//         let hash = typed_data.encode_eip712().unwrap();
+//         let hash = typed_data.encode_cip712().unwrap();
 //         assert_eq!(
 //             "232cd3ec058eb935a709f093e3536ce26cc9e8e193584b0881992525f6236eef",
 //             hex::encode(&hash[..])
@@ -751,7 +751,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //     #[test]
 //     fn test_hash_custom_data_type() {
 //         let json = serde_json::json!(
-// {"domain":{},"types":{"EIP712Domain":[],"Person":[{"name":"name","type":"string"},{"name":"
+// {"domain":{},"types":{"CIP712Domain":[],"Person":[{"name":"name","type":"string"},{"name":"
 // wallet","type":"address"}],"Mail":[{"name":"from","type":"Person"},{"name":"to","type":"Person"},
 // {"name":"contents","type":"string"}]},"primaryType":"Mail","message":{"from":{"name":"Cow","
 // wallet":"0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"},"to":{"name":"Bob","wallet":"
@@ -759,7 +759,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 
 //         let typed_data: TypedData = serde_json::from_value(json).unwrap();
 
-//         let hash = typed_data.encode_eip712().unwrap();
+//         let hash = typed_data.encode_cip712().unwrap();
 //         assert_eq!(
 //             "25c3d40a39e639a4d0b6e4d2ace5e1281e039c88494d97d8d08f99a6ea75d775",
 //             hex::encode(&hash[..])
@@ -771,7 +771,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //         let json = serde_json::json!( {
 //           "domain": {},
 //           "types": {
-//             "EIP712Domain": [],
+//             "CIP712Domain": [],
 //             "Person": [
 //               {
 //                 "name": "name",
@@ -828,7 +828,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 
 //         let typed_data: TypedData = serde_json::from_value(json).unwrap();
 
-//         let hash = typed_data.encode_eip712().unwrap();
+//         let hash = typed_data.encode_cip712().unwrap();
 //         assert_eq!(
 //             "0808c17abba0aef844b0470b77df9c994bc0fa3e244dc718afd66a3901c4bd7b",
 //             hex::encode(&hash[..])
@@ -839,7 +839,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 //     fn test_hash_nested_struct_array() {
 //         let json = serde_json::json!({
 //           "types": {
-//             "EIP712Domain": [
+//             "CIP712Domain": [
 //               {
 //                 "name": "name",
 //                 "type": "string"
@@ -952,7 +952,7 @@ pub fn encode_eip712_type(token: Token) -> Token {
 
 //         let typed_data: TypedData = serde_json::from_value(json).unwrap();
 
-//         let hash = typed_data.encode_eip712().unwrap();
+//         let hash = typed_data.encode_cip712().unwrap();
 //         assert_eq!(
 //             "0b8aa9f3712df0034bc29fe5b24dd88cfdba02c7f499856ab24632e2969709a8",
 //             hex::encode(&hash[..])

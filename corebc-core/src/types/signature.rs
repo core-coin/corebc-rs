@@ -58,18 +58,18 @@ impl fmt::Display for Signature {
     }
 }
 
-// #[cfg(feature = "eip712")]
+// #[cfg(feature = "cip712")]
 // impl Signature {
-//     /// Recovers the ethereum address which was used to sign a given EIP712
+//     /// Recovers the ethereum address which was used to sign a given CIP712
 //     /// typed data payload.
 //     ///
 //     /// Recovery signature data uses 'Electrum' notation, this means the `v`
 //     /// value is expected to be either `27` or `28`.
 //     pub fn recover_typed_data<T>(&self, payload: T) -> Result<Address, SignatureError>
 //     where
-//         T: super::transaction::eip712::Eip712,
+//         T: super::transaction::cip712::Cip712,
 //     {
-//         let encoded = payload.encode_eip712().map_err(|_| SignatureError::RecoveryError)?;
+//         let encoded = payload.encode_cip712().map_err(|_| SignatureError::RecoveryError)?;
 //         self.recover(encoded)
 //     }
 // }

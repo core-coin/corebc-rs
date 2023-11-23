@@ -9,7 +9,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // the wallet's index. You may also provide the network_id.
     // (here: mainnet) for EIP155 support.
     // EIP1559 support
-    // No EIP712 support yet.
+    // No CIP712 support yet.
     let trezor = Trezor::new(TrezorHDPath::TrezorLive(0), 1, None).await?;
     let client = SignerMiddleware::new(provider, trezor);
 

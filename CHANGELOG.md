@@ -40,7 +40,7 @@ Please do not manually edit this file.
 
 - Add Base Goerli chain ([#2338](https://github.com/gakonst/ethers-rs/issues/2338))
 - Very permissive etherscan gwei deser ([#2327](https://github.com/gakonst/ethers-rs/issues/2327))
-- Syn 2.0, merge eip712 crate into corebc-contract-derive ([#2279](https://github.com/gakonst/ethers-rs/issues/2279))
+- Syn 2.0, merge cip712 crate into corebc-contract-derive ([#2279](https://github.com/gakonst/ethers-rs/issues/2279))
 - Add Settings sanitize ([#2329](https://github.com/gakonst/ethers-rs/issues/2329))
 - `Transaction::decode()` sets the hash ([#2303](https://github.com/gakonst/ethers-rs/issues/2303))
 
@@ -507,7 +507,7 @@ Please do not manually edit this file.
 - Remove trailing test,script markers ([#1776](https://github.com/gakonst/ethers-rs/issues/1776))
 - Skip json abi formatting ([#1777](https://github.com/gakonst/ethers-rs/issues/1777))
 - RawAbi and Abi ([#1757](https://github.com/gakonst/ethers-rs/issues/1757))
-- Support eip712 domain chain ids as string ([#1756](https://github.com/gakonst/ethers-rs/issues/1756))
+- Support cip712 domain chain ids as string ([#1756](https://github.com/gakonst/ethers-rs/issues/1756))
 - Use empty bytecode as default instead unlinked ([#1743](https://github.com/gakonst/ethers-rs/issues/1743))
 - Transaction object rlp decoding ([#1740](https://github.com/gakonst/ethers-rs/issues/1740))
 - Use correct tx field const ([#1735](https://github.com/gakonst/ethers-rs/issues/1735))
@@ -582,7 +582,7 @@ Please do not manually edit this file.
 - Emit empty bytecode objects for standalone sol files ([#1327](https://github.com/gakonst/ethers-rs/issues/1327))
 - Improve contract metadata bindings ([#1326](https://github.com/gakonst/ethers-rs/issues/1326))
 - Clippy warnings on solidity bindings ([#1319](https://github.com/gakonst/ethers-rs/issues/1319))
-- Aws eip712 does not use eip155 ([#1309](https://github.com/gakonst/ethers-rs/issues/1309))
+- Aws cip712 does not use eip155 ([#1309](https://github.com/gakonst/ethers-rs/issues/1309))
 - Use wallet chainid for tx signing ([#1308](https://github.com/gakonst/ethers-rs/issues/1308))
 - Correctly serialize TxPoolInspectSummary ([#1305](https://github.com/gakonst/ethers-rs/issues/1305))
 - Remove viaIR for older versions ([#1304](https://github.com/gakonst/ethers-rs/issues/1304))
@@ -760,7 +760,7 @@ Please do not manually edit this file.
 - Bump syn from 1.0.99 to 1.0.100 ([#1717](https://github.com/gakonst/ethers-rs/issues/1717))
 - Bump solang-parser from 0.1.17 to 0.1.18 ([#1716](https://github.com/gakonst/ethers-rs/issues/1716))
 - Bump svm-rs 0.2.18 ([#1715](https://github.com/gakonst/ethers-rs/issues/1715))
-- Trim eip712 deps ([#1714](https://github.com/gakonst/ethers-rs/issues/1714))
+- Trim cip712 deps ([#1714](https://github.com/gakonst/ethers-rs/issues/1714))
 - Bump semver from 1.0.13 to 1.0.14 ([#1708](https://github.com/gakonst/ethers-rs/issues/1708))
 - Bump unicode-xid from 0.2.3 to 0.2.4 ([#1707](https://github.com/gakonst/ethers-rs/issues/1707))
 - Bump k256 from 0.11.4 to 0.11.5 ([#1701](https://github.com/gakonst/ethers-rs/issues/1701))
@@ -1463,7 +1463,7 @@ Please do not manually edit this file.
 - Create decode_tx_input.rs ([#1054](https://github.com/gakonst/ethers-rs/issues/1054))
 - Add capture test for curly bracket imports ([#956](https://github.com/gakonst/ethers-rs/issues/956))
 - Add ENS avatar and TXT records resolution ([#889](https://github.com/gakonst/ethers-rs/issues/889))
-- Fixes a parsing issue of EIP712 chain_id (chain_id = 80001 parsed as chain_id = 0x80001) ([#892](https://github.com/gakonst/ethers-rs/issues/892))
+- Fixes a parsing issue of CIP712 chain_id (chain_id = 80001 parsed as chain_id = 0x80001) ([#892](https://github.com/gakonst/ethers-rs/issues/892))
 - Add pub fn initialize_nonce in NonceMiddleManager ([#840](https://github.com/gakonst/ethers-rs/issues/840))
 - Fmt
 - Make it work with latest solang ([#776](https://github.com/gakonst/ethers-rs/issues/776))
@@ -1547,7 +1547,7 @@ Please do not manually edit this file.
 - Bump proc-macro2 from 1.0.29 to 1.0.30 ([#504](https://github.com/gakonst/ethers-rs/issues/504))
 - Bump thiserror from 1.0.29 to 1.0.30 ([#500](https://github.com/gakonst/ethers-rs/issues/500))
 - Bump syn from 1.0.78 to 1.0.80 ([#499](https://github.com/gakonst/ethers-rs/issues/499))
-- Initial implementation of eip712 derive macro ([#481](https://github.com/gakonst/ethers-rs/issues/481))
+- Initial implementation of cip712 derive macro ([#481](https://github.com/gakonst/ethers-rs/issues/481))
 - Bump reqwest from 0.11.4 to 0.11.5 ([#490](https://github.com/gakonst/ethers-rs/issues/490))
 - Bump tracing from 0.1.28 to 0.1.29 ([#488](https://github.com/gakonst/ethers-rs/issues/488))
 - Bump tracing-subscriber from 0.2.24 to 0.2.25 ([#487](https://github.com/gakonst/ethers-rs/issues/487))
@@ -1678,7 +1678,7 @@ Please do not manually edit this file.
 - (fix): new_keystore returns uuid as well ([#559](https://github.com/gakonst/ethers-rs/issues/559))
 - Fix missing fmt argument in error message ([#552](https://github.com/gakonst/ethers-rs/issues/552))
 - Add rustfmt.toml ([#537](https://github.com/gakonst/ethers-rs/issues/537))
-- Simplify eip712 example ([#492](https://github.com/gakonst/ethers-rs/issues/492))
+- Simplify cip712 example ([#492](https://github.com/gakonst/ethers-rs/issues/492))
 - Cargo fmt
 
 ### Testing

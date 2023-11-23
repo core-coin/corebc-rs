@@ -64,7 +64,7 @@ ylem-tests = ["corebc-ylem?/tests"]
 
 # Deprecated
 ylem-sha2-asm = []
-eip712 = []
+cip712 = []
 
 [dependencies]
 corebc-addressbook.workspace = true

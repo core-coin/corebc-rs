@@ -11,7 +11,7 @@ use crate::Signer;
 use corebc_core::{
     libgoldilocks::{PrehashSigner, Signature as RecoverableSignature},
     types::{
-        transaction::{eip2718::TypedTransaction, eip712::Eip712},
+        transaction::{cip712::Cip712, eip2718::TypedTransaction},
         Address, Network, Signature, H1368, H160, H256,
     },
     utils::{hash_message, to_ican},
@@ -98,13 +98,12 @@ impl<D: Sync + Send + PrehashSigner<RecoverableSignature>> Signer for Wallet<D> 
         self.sign_transaction_sync(&tx_with_network)
     }
 
-    async fn sign_typed_data<T: Eip712 + Send + Sync>(
+    async fn sign_typed_data<T: Cip712 + Send + Sync>(
         &self,
         payload: &T,
     ) -> Result<Signature, Self::Error> {
         let encoded =
-            payload.encode_eip712().map_err(|e| Self::Error::Eip712Error(e.to_string()))?;
-
+            payload.encode_cip712().map_err(|e| Self::Error::Cip712Error(e.to_string()))?;
         self.sign_hash(H256::from(encoded))
     }
 

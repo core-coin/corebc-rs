@@ -7,7 +7,7 @@ mod derive;
 
 mod contract_call;
 
-mod eip712;
+mod cip712;
 
 #[cfg(all(not(target_arch = "wasm32")))]
 mod common;

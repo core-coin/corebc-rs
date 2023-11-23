@@ -12,9 +12,9 @@ pub(crate) mod abi_ty;
 mod abigen;
 mod call;
 pub(crate) mod calllike;
+mod cip712;
 mod codec;
 mod display;
-mod eip712;
 mod error;
 mod event;
 mod spanned;
@@ -364,21 +364,21 @@ pub fn derive_abi_error(input: TokenStream) -> TokenStream {
     .into()
 }
 
-/// EIP-712 derive macro.
+/// CIP-712 derive macro.
 ///
-/// This crate provides a derive macro `Eip712` that is used to encode a rust struct
-/// into a payload hash, according to <https://eips.ethereum.org/EIPS/eip-712>
+/// This crate provides a derive macro `Cip712` that is used to encode a rust struct
+/// into a payload hash, according to <https://eips.ethereum.org/EIPS/CIP-712>
 ///
-/// The trait used to derive the macro is found in `corebc_core::transaction::eip712::Eip712`
+/// The trait used to derive the macro is found in `corebc_core::transaction::cip712::Cip712`
 /// Both the derive macro and the trait must be in context when using
 ///
-/// This derive macro requires the `#[eip712]` attributes to be included
+/// This derive macro requires the `#[cip712]` attributes to be included
 /// for specifying the domain separator used in encoding the hash.
 ///
-/// NOTE: In addition to deriving `Eip712` trait, the `EthAbiType` trait must also be derived.
+/// NOTE: In addition to deriving `Cip712` trait, the `EthAbiType` trait must also be derived.
 /// This allows the struct to be parsed into `corebc_core::abi::Token` for encoding.
 ///
-/// # Optional Eip712 Parameters
+/// # Optional Cip712 Parameters
 ///
 /// The only optional parameter is `salt`, which accepts a string
 /// that is hashed using sha3 and stored as bytes.
@@ -387,11 +387,11 @@ pub fn derive_abi_error(input: TokenStream) -> TokenStream {
 ///
 /// ```ignore
 /// use corebc_contract::EthAbiType;
-/// use ethers_derive_eip712::*;
-/// use corebc_core::types::{transaction::eip712::Eip712, H160};
+/// use ethers_derive_cip712::*;
+/// use corebc_core::types::{transaction::cip712::Cip712, H160};
 ///
-/// #[derive(Debug, Eip712, EthAbiType)]
-/// #[eip712(
+/// #[derive(Debug, Cip712, EthAbiType)]
+/// #[cip712(
 ///     name = "Radicle",
 ///     version = "1",
 ///     network_id = 1,
@@ -417,19 +417,19 @@ pub fn derive_abi_error(input: TokenStream) -> TokenStream {
 ///     project: "radicle-reward".to_string(),
 /// };
 ///
-/// let hash = puzzle.encode_eip712().unwrap();
+/// let hash = puzzle.encode_cip712().unwrap();
 /// ```
 ///
 /// # Limitations
 ///
-/// At the moment, the derive macro does not recursively encode nested Eip712 structs.
+/// At the moment, the derive macro does not recursively encode nested Cip712 structs.
 ///
-/// There is an Inner helper attribute `#[eip712]` for fields that will eventually be used to
-/// determine if there is a nested eip712 struct. However, this work is not yet complete.
-#[proc_macro_derive(Eip712, attributes(eip712))]
-pub fn derive_eip712(input: TokenStream) -> TokenStream {
+/// There is an Inner helper attribute `#[cip712]` for fields that will eventually be used to
+/// determine if there is a nested cip712 struct. However, this work is not yet complete.
+#[proc_macro_derive(Cip712, attributes(cip712))]
+pub fn derive_cip712(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    match eip712::impl_derive_eip712(&input) {
+    match cip712::impl_derive_cip712(&input) {
         Ok(tokens) => tokens,
         Err(e) => e.to_compile_error(),
     }
