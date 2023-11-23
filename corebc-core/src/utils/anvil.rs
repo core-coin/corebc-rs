@@ -300,9 +300,9 @@ impl Anvil {
 mod tests {
     use super::*;
 
-    // CORETODO: Uncomment test after fix
-    // #[test]
-    // fn can_launch_anvil() {
-    //     let _ = Anvil::new().spawn();
-    // }
+    #[ignore = "Won't work until anvil is fixed"]
+    #[test]
+    fn can_launch_anvil() {
+        let _ = Anvil::new().spawn();
+    }
 }

@@ -177,7 +177,7 @@ mod tests {
 
     #[test]
     fn parse_pk() {
-        let s = "6f142508b4eea641e33cb2a0161221105086a84584c74245ca463a49effea30b";
+        let s = "c6447b83ce0fd138cea4574d35edba162e57f8762935e6652d63805253860a254ef9199ad708423c2ab1434f5e5dac43014ddc5daa88c99b1f";
         let _pk: Wallet<SigningKey> = s.parse().unwrap();
     }
 
@@ -237,7 +237,7 @@ mod tests {
         let tx: TypedTransaction = TransactionRequest {
             from: None,
             to: Some(
-                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+                "cb15d3649d846a2bd426c0ceaca24fab50f7cba8f839".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000.into()),
             energy: Some(2_000_000.into()),
@@ -248,7 +248,7 @@ mod tests {
         }
         .into();
         let wallet: Wallet<SigningKey> =
-            "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318".parse().unwrap();
+            "c6447b83ce0fd138cea4574d35edba162e57f8762935e6652d63805253860a254ef9199ad708423c2ab1434f5e5dac43014ddc5daa88c99b1f".parse().unwrap();
         let wallet = wallet.with_network_id(tx.network_id().unwrap().as_u64());
 
         let sig = wallet.sign_transaction(&tx).await.unwrap();
@@ -265,7 +265,7 @@ mod tests {
         let tx: TypedTransaction = TransactionRequest {
             from: None,
             to: Some(
-                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+                "cb15d3649d846a2bd426c0ceaca24fab50f7cba8f839".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000.into()),
             energy: Some(2_000_000.into()),
@@ -276,7 +276,7 @@ mod tests {
         }
         .into();
         let wallet: Wallet<SigningKey> =
-            "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318".parse().unwrap();
+            "c6447b83ce0fd138cea4574d35edba162e57f8762935e6652d63805253860a254ef9199ad708423c2ab1434f5e5dac43014ddc5daa88c99b1f".parse().unwrap();
         let wallet = wallet.with_network_id(1u64);
 
         // this should populate the tx network_id as the signer's network_id (1) before signing
@@ -301,7 +301,7 @@ mod tests {
         let tx: TypedTransaction = TransactionRequest {
             from: None,
             to: Some(
-                "0000F0109fC8DF283027b6285cc889F5aA624EaC1F55".parse::<Address>().unwrap().into(),
+                "ce15d3649d846a2bd426c0ceaca24fab50f7cba8f839".parse::<Address>().unwrap().into(),
             ),
             value: Some(1_000_000_000u64.into()),
             energy: Some(2_000_000u64.into()),
@@ -312,7 +312,7 @@ mod tests {
         }
         .into();
         let wallet: Wallet<SigningKey> =
-            "4c0883a69102937d6231471b5dbb6204fe5129617082792ae468d01a3f362318".parse().unwrap();
+            "c6447b83ce0fd138cea4574d35edba162e57f8762935e6652d63805253860a254ef9199ad708423c2ab1434f5e5dac43014ddc5daa88c99b1f".parse().unwrap();
         let wallet = wallet.with_network_id(network_id);
 
         // this should populate the tx network_id as the signer's network_id (1337) before signing
@@ -324,32 +324,33 @@ mod tests {
         let mut tx = tx;
         tx.set_network_id(network_id);
         let sighash = tx.sighash();
-        sig.verify(sighash, &Network::Mainnet, wallet.address).unwrap();
+        let network = Network::try_from(network_id).unwrap();
+        sig.verify(sighash, &network, wallet.address).unwrap();
     }
 
     #[test]
     fn key_to_address() {
         let wallet: Wallet<SigningKey> =
-            "0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
+            "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
         assert_eq!(
             wallet.address,
-            Address::from_str("0xcb350502987e630ea7ebb2bf1d84a65a727109385bcf")
+            Address::from_str("0xcb58e5dd06163a480c22d540ec763325a0b5860fb56c")
                 .expect("Decoding failed")
         );
 
         let wallet: Wallet<SigningKey> =
-            "0000000000000000000000000000000000000000000000000000000000000002".parse().unwrap();
+            "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002".parse().unwrap();
         assert_eq!(
             wallet.address,
-            Address::from_str("0xcb325b97bc7e0a18d4a7a825e150ae59ef4e5c9fba2e")
+            Address::from_str("0xcb732536ad1a311f40a2f2cd1871246685d572afe700")
                 .expect("Decoding failed")
         );
 
         let wallet: Wallet<SigningKey> =
-            "0000000000000000000000000000000000000000000000000000000000000003".parse().unwrap();
+            "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003".parse().unwrap();
         assert_eq!(
             wallet.address,
-            Address::from_str("0xcb82bc920e7a7a4dc01e204cd0e75c379429ae58b9e8")
+            Address::from_str("0xcb671298e5136e4f115805d292170a8c66b4d595fda9")
                 .expect("Decoding failed")
         );
     }
@@ -357,7 +358,7 @@ mod tests {
     #[test]
     fn key_from_bytes() {
         let wallet: Wallet<SigningKey> =
-            "0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
+            "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
 
         let key_as_bytes = wallet.signer.to_bytes();
         let wallet_from_bytes = Wallet::from_bytes(&key_as_bytes, Network::Mainnet).unwrap();
@@ -370,25 +371,25 @@ mod tests {
     #[test]
     fn key_from_str() {
         let wallet: Wallet<SigningKey> =
-            "0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
+            "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
 
         // Check FromStr and `0x`
         let wallet_0x: Wallet<SigningKey> =
-            "0x0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
+            "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
         assert_eq!(wallet.address, wallet_0x.address);
         assert_eq!(wallet.network_id, wallet_0x.network_id);
         assert_eq!(wallet.signer, wallet_0x.signer);
 
         // Check FromStr and `0X`
         let wallet_0x_cap: Wallet<SigningKey> =
-            "0X0000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
+            "0X000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001".parse().unwrap();
         assert_eq!(wallet.address, wallet_0x_cap.address);
         assert_eq!(wallet.network_id, wallet_0x_cap.network_id);
         assert_eq!(wallet.signer, wallet_0x_cap.signer);
 
         // Check TryFrom<&str>
         let wallet_0x_tryfrom_str: Wallet<SigningKey> =
-            "0x0000000000000000000000000000000000000000000000000000000000000001"
+            "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
                 .try_into()
                 .unwrap();
         assert_eq!(wallet.address, wallet_0x_tryfrom_str.address);
@@ -397,7 +398,7 @@ mod tests {
 
         // Check TryFrom<String>
         let wallet_0x_tryfrom_string: Wallet<SigningKey> =
-            "0x0000000000000000000000000000000000000000000000000000000000000001"
+            "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
                 .to_string()
                 .try_into()
                 .unwrap();
@@ -406,7 +407,7 @@ mod tests {
         assert_eq!(wallet.signer, wallet_0x_tryfrom_string.signer);
 
         // Must fail because of `0z`
-        "0z0000000000000000000000000000000000000000000000000000000000000001"
+        "0z000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
             .parse::<Wallet<SigningKey>>()
             .unwrap_err();
     }
