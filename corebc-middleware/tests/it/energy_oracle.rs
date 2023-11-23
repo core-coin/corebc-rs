@@ -44,6 +44,7 @@ impl EneryOracle for FakeEneryOracle {
 //     assert_eq!(tx.energy_price, Some(expected_energy_price));
 // }
 
+#[ignore = "Won't work until anvil is fixed"]
 #[tokio::test]
 async fn provider_oracle() {
     // spawn anvil and connect to it
