@@ -1,4 +1,4 @@
-use super::{EneryOracle, EneryOracleError, Result};
+use super::{EnergyOracle, EnergyOracleError, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use corebc_providers::Middleware;
@@ -20,7 +20,7 @@ impl<M: Middleware> ProviderOracle<M> {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<M: Middleware> EneryOracle for ProviderOracle<M>
+impl<M: Middleware> EnergyOracle for ProviderOracle<M>
 where
     M::Error: 'static,
 {
@@ -28,6 +28,6 @@ where
         self.provider
             .get_energy_price()
             .await
-            .map_err(|err| EneryOracleError::ProviderError(Box::new(err)))
+            .map_err(|err| EnergyOracleError::ProviderError(Box::new(err)))
     }
 }

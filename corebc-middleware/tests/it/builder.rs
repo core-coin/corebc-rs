@@ -5,7 +5,7 @@ use corebc_core::{
 use corebc_middleware::{
     builder::MiddlewareBuilder,
     energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    energy_oracle::EneryOracleMiddleware,
+    energy_oracle::EnergyOracleMiddleware,
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };

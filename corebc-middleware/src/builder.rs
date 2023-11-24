@@ -1,5 +1,5 @@
 use crate::{
-    energy_oracle::{EneryOracle, EneryOracleMiddleware},
+    energy_oracle::{EnergyOracle, EnergyOracleMiddleware},
     NonceManagerMiddleware, SignerMiddleware,
 };
 use corebc_core::types::Address;
@@ -43,7 +43,7 @@ use corebc_signers::Signer;
 ///         .unwrap()
 ///         .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
 ///         .wrap_into(|p| SignerMiddleware::new(p, signer))
-///         .wrap_into(|p| EneryOracleMiddleware::new(p, GasNow::new()))
+///         .wrap_into(|p| EnergyOracleMiddleware::new(p, GasNow::new()))
 ///         .wrap_into(|p| NonceManagerMiddleware::new(p, address)); // Outermost layer
 /// }
 /// ```
@@ -78,14 +78,14 @@ pub trait MiddlewareBuilder: Middleware + Sized + 'static {
     }
 
     /// Wraps `self` inside a
-    /// [`EneryOracleMiddleware`](crate::energy_oracle::EneryOracleMiddleware).
+    /// [`EnergyOracleMiddleware`](crate::energy_oracle::EnergyOracleMiddleware).
     ///
-    /// [`EneryOracle`](crate::energy_oracle::EneryOracle)
-    fn energy_oracle<G>(self, energy_oracle: G) -> EneryOracleMiddleware<Self, G>
+    /// [`EnergyOracle`](crate::energy_oracle::EnergyOracle)
+    fn energy_oracle<G>(self, energy_oracle: G) -> EnergyOracleMiddleware<Self, G>
     where
-        G: EneryOracle,
+        G: EnergyOracle,
     {
-        EneryOracleMiddleware::new(self, energy_oracle)
+        EnergyOracleMiddleware::new(self, energy_oracle)
     }
 }
 

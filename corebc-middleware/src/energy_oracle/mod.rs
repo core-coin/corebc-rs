@@ -2,7 +2,7 @@ pub mod etherchain;
 pub use etherchain::Etherchain;
 
 pub mod middleware;
-pub use middleware::{EneryOracleMiddleware, MiddlewareError};
+pub use middleware::{EnergyOracleMiddleware, MiddlewareError};
 
 pub mod median;
 pub use median::Median;
@@ -23,9 +23,9 @@ use thiserror::Error;
 pub(crate) const GWEI_TO_WEI: u64 = 1_000_000_000;
 pub(crate) const GWEI_TO_WEI_U256: U256 = U256([GWEI_TO_WEI, 0, 0, 0]);
 
-pub type Result<T, E = EneryOracleError> = std::result::Result<T, E>;
+pub type Result<T, E = EnergyOracleError> = std::result::Result<T, E>;
 
-/// Generic [`EneryOracle`] gas price categories.
+/// Generic [`EnergyOracle`] gas price categories.
 #[derive(Clone, Copy, Default, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum GasCategory {
     SafeLow,
@@ -35,9 +35,9 @@ pub enum GasCategory {
     Fastest,
 }
 
-/// Error thrown by a [`EneryOracle`].
+/// Error thrown by a [`EnergyOracle`].
 #[derive(Debug, Error)]
-pub enum EneryOracleError {
+pub enum EnergyOracleError {
     /// An internal error in the HTTP request made from the underlying
     /// gas oracle
     #[error(transparent)]
@@ -80,7 +80,7 @@ pub enum EneryOracleError {
 ///
 /// ```no_run
 /// use corebc_core::types::U256;
-/// use corebc_middleware::energy_oracle::{GasCategory, GasNow, EneryOracle};
+/// use corebc_middleware::energy_oracle::{GasCategory, GasNow, EnergyOracle};
 ///
 /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
 /// let oracle = GasNow::default().category(GasCategory::SafeLow);
@@ -92,15 +92,15 @@ pub enum EneryOracleError {
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 #[auto_impl(&, Box, Arc)]
-pub trait EneryOracle: Send + Sync + Debug {
-    /// Makes an asynchronous HTTP query to the underlying [`EneryOracle`] to fetch the current gas
+pub trait EnergyOracle: Send + Sync + Debug {
+    /// Makes an asynchronous HTTP query to the underlying [`EnergyOracle`] to fetch the current gas
     /// price estimate.
     ///
     /// # Example
     ///
     /// ```no_run
     /// use corebc_core::types::U256;
-    /// use corebc_middleware::energy_oracle::{GasCategory, GasNow, EneryOracle};
+    /// use corebc_middleware::energy_oracle::{GasCategory, GasNow, EnergyOracle};
     ///
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// let oracle = GasNow::default().category(GasCategory::SafeLow);

@@ -1,4 +1,4 @@
-use super::{EneryOracle, EneryOracleError, Result};
+use super::{EnergyOracle, EnergyOracleError, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use futures_util::future::join_all;
@@ -7,7 +7,7 @@ use tracing::warn;
 
 #[derive(Default, Debug)]
 pub struct Median {
-    oracles: Vec<(f32, Box<dyn EneryOracle>)>,
+    oracles: Vec<(f32, Box<dyn EnergyOracle>)>,
 }
 
 /// Computes the median gas price from a selection of oracles.
@@ -19,18 +19,18 @@ impl Median {
         Self::default()
     }
 
-    pub fn add<T: 'static + EneryOracle>(&mut self, oracle: T) {
+    pub fn add<T: 'static + EnergyOracle>(&mut self, oracle: T) {
         self.add_weighted(1.0, oracle)
     }
 
-    pub fn add_weighted<T: 'static + EneryOracle>(&mut self, weight: f32, oracle: T) {
+    pub fn add_weighted<T: 'static + EnergyOracle>(&mut self, weight: f32, oracle: T) {
         assert!(weight > 0.0);
         self.oracles.push((weight, Box::new(oracle)));
     }
 
     pub async fn query_all<'a, Fn, Fut, O>(&'a self, mut f: Fn) -> Result<Vec<(f32, O)>>
     where
-        Fn: FnMut(&'a dyn EneryOracle) -> Fut,
+        Fn: FnMut(&'a dyn EnergyOracle) -> Fut,
         Fut: Future<Output = Result<O>>,
     {
         // Process the oracles in parallel
@@ -50,7 +50,7 @@ impl Median {
             );
         let values = values.collect::<Vec<_>>();
         if values.is_empty() {
-            return Err(EneryOracleError::NoValues)
+            return Err(EnergyOracleError::NoValues)
         }
         Ok(values)
     }
@@ -58,7 +58,7 @@ impl Median {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl EneryOracle for Median {
+impl EnergyOracle for Median {
     async fn fetch(&self) -> Result<U256> {
         let mut values = self.query_all(|oracle| oracle.fetch()).await?;
         // `query_all` guarantees `values` is not empty
