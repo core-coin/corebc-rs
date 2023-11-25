@@ -2,7 +2,7 @@ use corebc::{
     contract::abigen,
     core::{
         types::{Address, TransactionRequest, H256},
-        utils::{parse_ether, Geth},
+        utils::{parse_core, Geth},
     },
     providers::{
         call_raw::{self, RawCall},
@@ -40,7 +40,7 @@ async fn main() -> Result<()> {
     let from: Address = "0x295a70b2de5e3953354a6a8344e616ed314d7251".parse()?;
 
     // Override the sender's balance for the call
-    let pay_amt = parse_ether(1u64)?;
+    let pay_amt = parse_core(1u64)?;
     let tx = TransactionRequest::pay(target, pay_amt).from(from);
     let state = call_raw::balance(from, pay_amt * 2);
 

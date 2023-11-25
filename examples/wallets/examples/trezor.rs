@@ -1,7 +1,7 @@
 #[tokio::main]
 #[cfg(feature = "trezor")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    use corebc::{prelude::*, utils::parse_ether};
+    use corebc::{prelude::*, utils::parse_core};
 
     // Connect over websockets
     let provider = Provider::new(Ws::connect("ws://localhost:8545").await?);
@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // (this will require confirming the tx on the device)
     let tx = TransactionRequest::new()
         .to("0x99E2B13A8Ea8b00C68FA017ee250E98e870D8241")
-        .value(parse_ether(10)?);
+        .value(parse_core(10)?);
     let pending_tx = client.send_transaction(tx, None).await?;
 
     // Get the receipt

@@ -552,7 +552,7 @@ mod tests {
     //     provider
     //         .send_transaction(
     //             TransactionRequest::pay(key.address(),
-    // utils::parse_ether(1u64).unwrap()).from(acc),             None,
+    // utils::parse_core(1u64).unwrap()).from(acc),             None,
     //         )
     //         .await
     //         .unwrap()

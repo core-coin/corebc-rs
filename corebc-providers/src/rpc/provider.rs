@@ -200,7 +200,7 @@ impl<P: JsonRpcClient> Provider<P> {
     /// ```no_run
     /// # use corebc_core::{
     /// #     types::{Address, TransactionRequest, H256},
-    /// #     utils::{parse_ether, GoCore},
+    /// #     utils::{parse_core, GoCore},
     /// # };
     /// # use corebc_providers::{Provider, Http, Middleware, call_raw::{RawCall, spoof}};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
@@ -209,7 +209,7 @@ impl<P: JsonRpcClient> Provider<P> {
     ///
     /// let adr1: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     /// let adr2: Address = "0x0000295a70b2de5e3953354a6a8344e616ed314d7251".parse()?;
-    /// let pay_amt = parse_ether(1u64)?;
+    /// let pay_amt = parse_core(1u64)?;
     ///
     /// // Not enough ether to pay for the transaction
     /// let tx = TransactionRequest::pay(adr2, pay_amt).from(adr1).into();
@@ -1457,14 +1457,14 @@ mod tests {
     // async fn receipt_on_unmined_tx() {
     //     use corebc_core::{
     //         types::TransactionRequest,
-    //         utils::{parse_ether, Anvil},
+    //         utils::{parse_core, Anvil},
     //     };
     //     let anvil = Anvil::new().block_time(2u64).spawn();
     //     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
 
     //     let accounts = provider.get_accounts().await.unwrap();
     //     let tx = TransactionRequest::pay(accounts[0],
-    // parse_ether(1u64).unwrap()).from(accounts[0]);     let pending_tx =
+    // parse_core(1u64).unwrap()).from(accounts[0]);     let pending_tx =
     // provider.send_transaction(tx, None).await.unwrap();
 
     //     assert!(provider.get_transaction_receipt(*pending_tx).await.unwrap().is_none());
