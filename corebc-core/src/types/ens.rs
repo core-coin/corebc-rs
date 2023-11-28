@@ -102,7 +102,7 @@ impl FromStr for NameOrAddress {
     type Err = <Address as FromStr>::Err;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.starts_with("0x") {
+        if s.len() == 44 && (s.starts_with("cb") || s.starts_with("ab") || s.starts_with("ce")) {
             s.parse().map(Self::Address)
         } else {
             Ok(Self::Name(s.to_string()))

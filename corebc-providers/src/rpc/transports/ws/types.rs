@@ -259,20 +259,14 @@ mod aliases {
 
 #[cfg(not(target_arch = "wasm32"))]
 mod aliases {
-    pub use tokio_tungstenite::{
-        connect_async,
-        tungstenite::{self, protocol::CloseFrame},
-    };
+    pub use tokio_tungstenite::{connect_async, tungstenite};
     use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};
     pub type Message = tungstenite::protocol::Message;
     pub type WsError = tungstenite::Error;
     pub type WsStreamItem = Result<Message, WsError>;
 
     pub use http::Request as HttpRequest;
-    pub use tracing::{debug, error, trace, warn};
     pub use tungstenite::client::IntoClientRequest;
-
-    pub use tokio::time::sleep;
 
     pub type InternalStream =
         futures_util::stream::Fuse<WebSocketStream<MaybeTlsStream<tokio::net::TcpStream>>>;

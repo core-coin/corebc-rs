@@ -288,7 +288,7 @@ impl Anvil {
                 // let key = K256SecretKey::from_bytes(&GenericArray::clone_from_slice(&key_hex))
                 //     .expect("did not get private key");
                 addresses.push(secret_key_to_address(&key, &network));
-                private_keys.push(key.secret_key().clone());
+                private_keys.push(*key.secret_key());
             }
         }
 

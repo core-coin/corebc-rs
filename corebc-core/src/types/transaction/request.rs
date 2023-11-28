@@ -442,7 +442,7 @@ mod tests {
         let expected_signed_bytes =
             hex::decode(
                 "f8ce030a82c3500396ab33d3649d846a2bd426c0ceaca24fab50f7cba8f8390a821123b8ab9e73edbc2506ab6805794c3bc45509713493f34eab8e62d2e75ebf9af7346fa85ad0d86c5c116366667b853f63e143943195602bd3cce8078008f9e95d6febd1b3909be9e4e2b1d5090a295c7dccfa28a3a8cc242ec8da680a77901a75c3e97e8c4a73552d09504432157a9d18aa08052700ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
-            ).unwrap();     
+            ).unwrap();
         let expected_signed_rlp = rlp::Rlp::new(expected_signed_bytes.as_slice());
         let (decoded_tx, decoded_sig) =
             TransactionRequest::decode_signed_rlp(&expected_signed_rlp).unwrap();

@@ -332,11 +332,7 @@ where
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
-    use super::*;
-    use corebc_core::{
-        types::TransactionRequest,
-        utils::{self, sha3, Anvil},
-    };
+    use corebc_core::utils::{self, sha3, Anvil};
     use corebc_providers::Provider;
     use corebc_signers::LocalWallet;
     use std::convert::TryFrom;

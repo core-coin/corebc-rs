@@ -1,5 +1,5 @@
 mod mnemonic;
-pub use mnemonic::{MnemonicBuilder, MnemonicBuilderError};
+pub use mnemonic::MnemonicBuilder;
 
 mod private_key;
 pub use private_key::WalletError;
@@ -12,7 +12,7 @@ use corebc_core::{
     libgoldilocks::{PrehashSigner, Signature as RecoverableSignature},
     types::{
         transaction::{cip712::Cip712, eip2718::TypedTransaction},
-        Address, Network, Signature, H1368, H160, H256,
+        Address, Signature, H1368, H160, H256,
     },
     utils::{hash_message, to_ican},
 };
@@ -120,7 +120,7 @@ impl<D: Sync + Send + PrehashSigner<RecoverableSignature>> Signer for Wallet<D> 
     // CORETODO: Move setting of network_id to the point of wallet creation
     fn with_network_id<T: Into<u64>>(mut self, network_id: T) -> Self {
         self.network_id = network_id.into();
-        let network = Network::try_from(self.network_id).unwrap();
+        let network = From::from(self.network_id);
 
         let mut bytes = [0u8; 20];
         bytes.copy_from_slice(&self.address[2..]);

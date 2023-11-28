@@ -1305,9 +1305,7 @@ impl ProviderExt for Provider<HttpProvider> {
         let mut provider = Provider::try_from(url)?;
         if is_local_endpoint(url) {
             provider.set_interval(DEFAULT_LOCAL_POLL_INTERVAL);
-        } else if let Some(network) =
-            provider.get_networkid().await.ok().and_then(|id| Network::try_from(id).ok())
-        {
+        } else if let Some(network) = provider.get_networkid().await.ok().and_then(From::from) {
             provider.set_network(network);
         }
 
