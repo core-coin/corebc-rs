@@ -168,9 +168,9 @@ impl_from_numeric!(u8 u16 u32 u64 usize; U128 U256 U512);
 impl fmt::Display for Network {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Network::Mainnet => write!(f, "mainnet"),
-            Network::Devin => write!(f, "devin"),
-            Network::Private(id) => write!(f, "private-{}", id),
+            Network::Mainnet => write!(f, "1"),
+            Network::Devin => write!(f, "3"),
+            Network::Private(id) => write!(f, "{}", id),
         }
     }
 }
