@@ -67,14 +67,8 @@ impl Wallet<SigningKey> {
         R: Rng + CryptoRng + rand_core::CryptoRng,
         S: AsRef<[u8]>,
     {
-        let (secret, uuid) = corebc_keystore::new(
-            dir,
-            rng,
-            password,
-            name,
-            &corebc_core::types::Network::from(network),
-        )?;
-        let signer = SigningKey::from_bytes(secret.as_slice().into())?;
+        let (secret, uuid) = corebc_keystore::new(dir, rng, password, name, &network)?;
+        let signer = SigningKey::from_bytes(secret.as_slice())?;
         let address = secret_key_to_address(&signer, &network);
         Ok((Self { signer, address, network_id: 1 }, uuid))
     }
@@ -91,7 +85,7 @@ impl Wallet<SigningKey> {
         S: AsRef<[u8]>,
     {
         let secret = corebc_keystore::decrypt_key(keypath, password)?;
-        let signer = SigningKey::from_bytes(secret.as_slice().into())?;
+        let signer = SigningKey::from_bytes(secret.as_slice())?;
         let address = secret_key_to_address(&signer, &network);
         Ok(Self { signer, address, network_id: 1 })
     }
@@ -105,7 +99,7 @@ impl Wallet<SigningKey> {
 
     /// Creates a new Wallet instance from a raw scalar value (big endian).
     pub fn from_bytes(bytes: &[u8], network: Network) -> Result<Self, WalletError> {
-        let signer = SigningKey::from_bytes(bytes.into())?;
+        let signer = SigningKey::from_bytes(bytes)?;
         let address = secret_key_to_address(&signer, &network);
         Ok(Self { signer, address, network_id: 1 })
     }
@@ -146,7 +140,7 @@ impl FromStr for Wallet<SigningKey> {
     fn from_str(src: &str) -> Result<Self, Self::Err> {
         let src = src.strip_prefix("0x").or_else(|| src.strip_prefix("0X")).unwrap_or(src);
         let src = hex::decode(src)?;
-        let sk = SigningKey::from_bytes(src.as_slice().into())?;
+        let sk = SigningKey::from_bytes(src.as_slice())?;
         Ok(sk.into())
     }
 }

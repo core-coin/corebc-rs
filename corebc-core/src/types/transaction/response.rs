@@ -27,6 +27,10 @@ pub struct Transaction {
     #[serde(default, rename = "blockNumber")]
     pub block_number: Option<U64>,
 
+    /// Transaction Index. None when pending.
+    #[serde(default, rename = "transactionIndex")]
+    pub transaction_index: Option<U64>,
+
     /// Sender
     #[serde(default = "crate::types::Address::zero")]
     pub from: Address,
@@ -271,7 +275,7 @@ mod tests {
 
     #[test]
     fn tx_roundtrip() {
-        let json = serde_json::json!({"blockHash":"0x31ee73b1cf9ae3adc850c84aa22ed9ce9186f8b927ceeba48a04a56085b38664","blockNumber":"0x68cd2","network_id":"0x3","from":"ab59796210a3fe3c24d433197af05ef54c33279ba80d","energy":"0xf4239","energyPrice":"0x3b9aca00","hash":"0x8305e1f16cd0355d3ba79d604a49d2c707fb87c8a4632814bff00a914b1a87fe","input":"0xca725b7e00000000000000000000000000000000000000000000000000277a879f176600","nonce":"0x11d7","signature": "0xd8dd78f3cb29f8cd26596756ee3df34b3cdb65e9273179e2cd9e2cd325b24e2dea7ab7b640e6569bc5a17028d7f440df0da309e3322d708e00a756221e41ae5538e710199dc2ad67477dfceece9153260e0ee72481e35b3da35d85491cd25bc7d875d48ce98141b65a79ee6598862038210072e307abe34426234c4dd7bee1880a46920fadcebcba5d16e440a2621ad211d0da6155d8be811768141cd9b303ed7c1a4a814c1ae79fb1a780","to":"ab4184ac3f29bedfab8a76895b87564289cd5a962542","value":"0x0"});
+        let json = serde_json::json!({"blockHash":"0x31ee73b1cf9ae3adc850c84aa22ed9ce9186f8b927ceeba48a04a56085b38664", "transactionIndex":"0x0", "blockNumber":"0x68cd2","network_id":"0x3","from":"ab59796210a3fe3c24d433197af05ef54c33279ba80d","energy":"0xf4239","energyPrice":"0x3b9aca00","hash":"0x8305e1f16cd0355d3ba79d604a49d2c707fb87c8a4632814bff00a914b1a87fe","input":"0xca725b7e00000000000000000000000000000000000000000000000000277a879f176600","nonce":"0x11d7","signature": "0xd8dd78f3cb29f8cd26596756ee3df34b3cdb65e9273179e2cd9e2cd325b24e2dea7ab7b640e6569bc5a17028d7f440df0da309e3322d708e00a756221e41ae5538e710199dc2ad67477dfceece9153260e0ee72481e35b3da35d85491cd25bc7d875d48ce98141b65a79ee6598862038210072e307abe34426234c4dd7bee1880a46920fadcebcba5d16e440a2621ad211d0da6155d8be811768141cd9b303ed7c1a4a814c1ae79fb1a780","to":"ab4184ac3f29bedfab8a76895b87564289cd5a962542","value":"0x0"});
         let tx: Transaction = serde_json::from_value(json.clone()).unwrap();
 
         assert_eq!(tx.nonce, 4567u64.into());
@@ -297,6 +301,7 @@ mod tests {
             value: U256::from_dec_str("10").unwrap(),
             sig: H1368::from_str("0x4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580").unwrap(),
             network_id: Some(U256::from(1)),
+            transaction_index: None,
         };
 
         assert_eq!(
@@ -324,6 +329,7 @@ mod tests {
             value: U256::from_dec_str("10").unwrap(),
             sig: H1368::from_str("0x4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580").unwrap(),
             network_id: Some(U256::from(1)),
+            transaction_index: None,
         };
 
         let rlp_bytes =
@@ -354,6 +360,7 @@ mod tests {
             hash:
                 H256::from_str("8b59298c5c748bf4e2bd84a00aae809f9b6d8c41a5571d47679b5a39041f56ec").unwrap(),
             sig: H1368::from_str("0xf7571bfb2b44b2f1e48c64f75430a22202f6592969655704218ce35f1aeb10bf7228d89871a24ff23ebe6bc66a75bbf0b831a4c57c3dc779005b62713cb0b70c960da8bc81a37f9551b632ce902df309ca4229d7dc4a4179b05800eede1766b8a0ab0d63032d7ba990197374ab786d832f008f3572f16fbefbb5a85f9eed54c77db3d4269b2c64e5d56a5174c19b35d292941d40505063351ce79852053062cdf8d74f3db2d5bebe7b3500").unwrap(),
+            transaction_index: None,
         };
 
         assert_eq!(tx.from, tx.recover_from().unwrap());
@@ -502,6 +509,7 @@ mod tests {
             input: Bytes::from(
                 hex::decode("a9059cbb000000000000000000000000fdae129ecc2c27d166a3131098bc05d143fa258e0000000000000000000000000000000000000000000000000000000002faf080").unwrap()
             ),
+            transaction_index: None,
             nonce: U256::zero(),
             value: U256::zero(),
             ..Default::default()
