@@ -435,7 +435,6 @@ impl Graph {
 
     /// Resolves the dependencies of a project's source contracts
     pub fn resolve(paths: &ProjectPathsConfig) -> Result<Graph> {
-        println!("{:#?}", paths);
         Self::resolve_sources(paths, paths.read_input_files()?)
     }
 }
