@@ -22,7 +22,7 @@ use std::collections::BTreeMap;
 pub struct DefaultFrame {
     pub failed: bool,
     #[serde(deserialize_with = "from_int_or_hex")]
-    pub gas: U256,
+    pub energy: U256,
     #[serde(rename = "returnValue")]
     pub return_value: Bytes,
     #[serde(rename = "structLogs")]
@@ -35,9 +35,9 @@ pub struct StructLog {
     pub depth: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
-    pub gas: u64,
-    #[serde(rename = "gasCost")]
-    pub gas_cost: u64,
+    pub energy: u64,
+    #[serde(rename = "energyCost")]
+    pub energy_cost: u64,
     /// ref <https://github.com/ethereum/go-ethereum/blob/366d2169fbc0e0f803b68c042b77b6b480836dbc/eth/tracers/logger/logger.go#L450-L452>
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub memory: Option<Vec<String>>,

@@ -3,7 +3,7 @@ use crate::{
     types::{Bytes, Network, H256},
     utils::secret_key_to_address,
 };
-use k256::ecdsa::SigningKey;
+use libgoldilocks::SigningKey;
 use std::{
     fs::{create_dir, File},
     io::{BufRead, BufReader},

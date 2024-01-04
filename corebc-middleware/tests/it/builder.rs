@@ -5,7 +5,7 @@ use corebc_core::{
 use corebc_middleware::{
     builder::MiddlewareBuilder,
     energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    energy_oracle::EneryOracleMiddleware,
+    energy_oracle::EnergyOracleMiddleware,
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
@@ -33,9 +33,9 @@ async fn build_raw_middleware_stack() {
     provider.get_block_number().await.unwrap_err();
 
     // 2 calls were made
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap_err();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap_err();
 }
 
 #[tokio::test]
@@ -59,7 +59,7 @@ async fn build_declarative_middleware_stack() {
     provider.get_block_number().await.unwrap_err();
 
     // 2 calls were made
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap_err();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap_err();
 }

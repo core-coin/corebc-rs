@@ -200,7 +200,7 @@ impl<P: JsonRpcClient> Provider<P> {
     /// ```no_run
     /// # use corebc_core::{
     /// #     types::{Address, TransactionRequest, H256},
-    /// #     utils::{parse_ether, GoCore},
+    /// #     utils::{parse_core, GoCore},
     /// # };
     /// # use corebc_providers::{Provider, Http, Middleware, call_raw::{RawCall, spoof}};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
@@ -209,7 +209,7 @@ impl<P: JsonRpcClient> Provider<P> {
     ///
     /// let adr1: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     /// let adr2: Address = "0x0000295a70b2de5e3953354a6a8344e616ed314d7251".parse()?;
-    /// let pay_amt = parse_ether(1u64)?;
+    /// let pay_amt = parse_core(1u64)?;
     ///
     /// // Not enough ether to pay for the transaction
     /// let tx = TransactionRequest::pay(adr2, pay_amt).from(adr1).into();
@@ -412,7 +412,7 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
     }
 
     async fn get_networkid(&self) -> Result<U256, ProviderError> {
-        self.request("xcb_chainId", ()).await
+        self.request("xcb_networkId", ()).await
     }
 
     async fn syncing(&self) -> Result<SyncingStatus, Self::Error> {
@@ -1305,9 +1305,7 @@ impl ProviderExt for Provider<HttpProvider> {
         let mut provider = Provider::try_from(url)?;
         if is_local_endpoint(url) {
             provider.set_interval(DEFAULT_LOCAL_POLL_INTERVAL);
-        } else if let Some(network) =
-            provider.get_networkid().await.ok().and_then(|id| Network::try_from(id).ok())
-        {
+        } else if let Some(network) = provider.get_networkid().await.ok().and_then(From::from) {
             provider.set_network(network);
         }
 
@@ -1349,6 +1347,25 @@ mod tests {
     };
     use std::path::PathBuf;
 
+    // #[tokio::test]
+    // async fn test_provider() {
+    //     // let provider = Provider::<Http>::try_from("https://xcbapi.coreblockchain.net/")
+    //     let provider = Provider::<Http>::try_from("https://xcbapi.corecoin.cc/")
+    //         .unwrap()
+    //         .interval(Duration::from_millis(1000));
+
+    //     let mut block_number = provider.get_block_number().await.unwrap();
+    //     block_number = U64::from(429266);
+    //     // block_number = U64::from(179040);
+    //     let current_block = provider.get_block(block_number).await.unwrap().unwrap();
+    //     println!("{:?}", current_block);
+    //     // println!("{:?}", current_block.transactions[0]);
+    //     let tx = provider.get_transaction(current_block.transactions[0]).await.unwrap().unwrap();
+    //     println!("{:?}", tx);
+    //     println!("{:?}", tx.from);
+    //     println!("{:?}", tx.recover_from().unwrap());
+    // }
+
     #[test]
     fn convert_h256_u256_quantity() {
         let hash: H256 = H256::zero();
@@ -1356,13 +1373,13 @@ mod tests {
         assert_eq!(format!("{quantity:#x}"), "0x0");
         assert_eq!(utils::serialize(&quantity).to_string(), "\"0x0\"");
 
-        let address: Address = "0x0000295a70b2de5e3953354a6a8344e616ed314d7251".parse().unwrap();
+        let address: Address = "0000295a70b2de5e3953354a6a8344e616ed314d7251".parse().unwrap();
         let block = BlockNumber::Latest;
         let params =
             [utils::serialize(&address), utils::serialize(&quantity), utils::serialize(&block)];
 
         let params = serde_json::to_string(&params).unwrap();
-        assert_eq!(params, r#"["0x0000295a70b2de5e3953354a6a8344e616ed314d7251","0x0","latest"]"#);
+        assert_eq!(params, r#"["0000295a70b2de5e3953354a6a8344e616ed314d7251","0x0","latest"]"#);
     }
 
     // CORETODO: This test is impossible without modifying anvil in the first place
@@ -1438,14 +1455,14 @@ mod tests {
     // async fn receipt_on_unmined_tx() {
     //     use corebc_core::{
     //         types::TransactionRequest,
-    //         utils::{parse_ether, Anvil},
+    //         utils::{parse_core, Anvil},
     //     };
     //     let anvil = Anvil::new().block_time(2u64).spawn();
     //     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
 
     //     let accounts = provider.get_accounts().await.unwrap();
     //     let tx = TransactionRequest::pay(accounts[0],
-    // parse_ether(1u64).unwrap()).from(accounts[0]);     let pending_tx =
+    // parse_core(1u64).unwrap()).from(accounts[0]);     let pending_tx =
     // provider.send_transaction(tx, None).await.unwrap();
 
     //     assert!(provider.get_transaction_receipt(*pending_tx).await.unwrap().is_none());

@@ -390,7 +390,7 @@ fn eth_display_works() {
     };
 
     let val = format!(
-        "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, 50, 100, 0x{}, {}, 0x{}, {:?}, 0x{}",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, 50, 100, 0x{}, {}, 0x{}, {:?}, 0x{}",
         hex::encode(item.h),
         item.i,
         hex::encode(item.arr_u8),

@@ -58,4 +58,4 @@ rustls = ["corebc-contract-abigen/rustls"]
 openssl = ["corebc-contract-abigen/openssl"]
 
 # Deprecated
-eip712 = []
+cip712 = []

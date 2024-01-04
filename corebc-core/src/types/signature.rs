@@ -1,18 +1,10 @@
 // Code adapted from: https://github.com/tomusdrw/rust-web3/blob/master/src/api/accounts.rs
 use crate::{
-    types::{Address, Network, H256, U256},
+    types::{Address, Network, H1368, H256},
     utils::{hash_message, to_ican},
 };
-use elliptic_curve::{consts::U32, sec1::ToEncodedPoint};
 use ethabi::ethereum_types::H160;
-use generic_array::GenericArray;
-use k256::{
-    ecdsa::{
-        Error as K256SignatureError, RecoveryId, Signature as RecoverableSignature,
-        Signature as K256Signature, VerifyingKey,
-    },
-    PublicKey as K256PublicKey,
-};
+use libgoldilocks::{errors::LibgoldilockErrors, goldilocks::ed448_verify_with_error};
 use open_fastrlp::Decodable;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, fmt, str::FromStr};
@@ -33,7 +25,7 @@ pub enum SignatureError {
     VerificationError(Address, Address),
     /// Internal error during signature recovery
     #[error(transparent)]
-    K256Error(#[from] K256SignatureError),
+    ED448Error(#[from] LibgoldilockErrors),
     /// Error in recovering public key from signature
     #[error("Public key recovery error")]
     RecoveryError,
@@ -55,46 +47,48 @@ pub enum RecoveryMessage {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, Copy, Hash)]
 /// An ECDSA signature
 pub struct Signature {
-    /// R value
-    pub r: U256,
-    /// S Value
-    pub s: U256,
-    /// V value
-    pub v: u64,
+    /// Sig value
+    pub sig: H1368,
 }
 
 impl fmt::Display for Signature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let sig = <[u8; 65]>::from(self);
+        let sig = <[u8; 171]>::from(self);
         write!(f, "{}", hex::encode(&sig[..]))
     }
 }
 
-#[cfg(feature = "eip712")]
-impl Signature {
-    /// Recovers the ethereum address which was used to sign a given EIP712
-    /// typed data payload.
-    ///
-    /// Recovery signature data uses 'Electrum' notation, this means the `v`
-    /// value is expected to be either `27` or `28`.
-    pub fn recover_typed_data<T>(&self, payload: T) -> Result<Address, SignatureError>
-    where
-        T: super::transaction::eip712::Eip712,
-    {
-        let encoded = payload.encode_eip712().map_err(|_| SignatureError::RecoveryError)?;
-        self.recover(encoded)
-    }
-}
+// CORETODO: Implement typed data
+// #[cfg(feature = "cip712")]
+// impl Signature {
+//     /// Recovers the ethereum address which was used to sign a given CIP712
+//     /// typed data payload.
+//     ///
+//     /// Recovery signature data uses 'Electrum' notation, this means the `v`
+//     /// value is expected to be either `27` or `28`.
+//     pub fn recover_typed_data<T>(&self, payload: T) -> Result<Address, SignatureError>
+//     where
+//         T: super::transaction::cip712::Cip712,
+//     {
+//         let encoded = payload.encode_cip712().map_err(|_| SignatureError::RecoveryError)?;
+//         self.recover(encoded)
+//     }
+// }
 
 impl Signature {
     /// Verifies that signature on `message` was produced by `address`
-    pub fn verify<M, A>(&self, message: M, address: A) -> Result<(), SignatureError>
+    pub fn verify<M, A>(
+        &self,
+        message: M,
+        network: &Network,
+        address: A,
+    ) -> Result<(), SignatureError>
     where
         M: Into<RecoveryMessage>,
         A: Into<Address>,
     {
         let address = address.into();
-        let recovered = self.recover(message)?;
+        let recovered = self.recover(message, network)?;
         if recovered != address {
             return Err(SignatureError::VerificationError(address, recovered))
         }
@@ -106,7 +100,7 @@ impl Signature {
     ///
     /// Recovery signature data uses 'Electrum' notation, this means the `v`
     /// value is expected to be either `27` or `28`.
-    pub fn recover<M>(&self, message: M) -> Result<Address, SignatureError>
+    pub fn recover<M>(&self, message: M, network: &Network) -> Result<Address, SignatureError>
     where
         M: Into<RecoveryMessage>,
     {
@@ -116,46 +110,21 @@ impl Signature {
             RecoveryMessage::Hash(hash) => hash,
         };
 
-        let (recoverable_sig, recovery_id) = self.as_signature()?;
-        let verify_key = VerifyingKey::recover_from_prehash(
-            message_hash.as_ref(),
-            &recoverable_sig,
-            recovery_id,
-        )?;
+        let sig_pub_bytes = self.sig.to_fixed_bytes();
+        let mut sig_bytes = [0u8; 114];
+        let mut pub_bytes = [0u8; 57];
+        sig_bytes.copy_from_slice(&sig_pub_bytes[0..114]);
+        pub_bytes.copy_from_slice(&sig_pub_bytes[114..171]);
 
-        let public_key = K256PublicKey::from(&verify_key);
-        let public_key = public_key.to_encoded_point(/* compress = */ false);
-        let public_key = public_key.as_bytes();
-        debug_assert_eq!(public_key[0], 0x04);
-        let hash = crate::utils::sha3(&public_key[1..]);
+        ed448_verify_with_error(&pub_bytes, &sig_bytes, message_hash.as_ref())?;
+
+        let hash = crate::utils::sha3(&pub_bytes[..]);
 
         let mut bytes = [0u8; 20];
         bytes.copy_from_slice(&hash[12..]);
         let addr = H160::from(bytes);
         // CORETODO: Change the networktype logic
-        Ok(to_ican(&addr, &Network::Mainnet))
-    }
-
-    /// Retrieves the recovery signature.
-    fn as_signature(&self) -> Result<(RecoverableSignature, RecoveryId), SignatureError> {
-        let recovery_id = self.recovery_id()?;
-        let signature = {
-            let mut r_bytes = [0u8; 32];
-            let mut s_bytes = [0u8; 32];
-            self.r.to_big_endian(&mut r_bytes);
-            self.s.to_big_endian(&mut s_bytes);
-            let gar: &GenericArray<u8, U32> = GenericArray::from_slice(&r_bytes);
-            let gas: &GenericArray<u8, U32> = GenericArray::from_slice(&s_bytes);
-            K256Signature::from_scalars(*gar, *gas)?
-        };
-
-        Ok((signature, recovery_id))
-    }
-
-    /// Retrieve the recovery ID.
-    pub fn recovery_id(&self) -> Result<RecoveryId, SignatureError> {
-        let standard_v = normalize_recovery_id(self.v);
-        Ok(RecoveryId::from_byte(standard_v).expect("normalized recovery id always valid"))
+        Ok(to_ican(&addr, network))
     }
 
     /// Copies and serializes `self` into a new `Vec` with the recovery id included
@@ -166,8 +135,8 @@ impl Signature {
 
     /// Decodes a signature from RLP bytes, assuming no RLP header
     pub(crate) fn decode_signature(buf: &mut &[u8]) -> Result<Self, open_fastrlp::DecodeError> {
-        let v = u64::decode(buf)?;
-        Ok(Self { r: U256::decode(buf)?, s: U256::decode(buf)?, v })
+        let sig = H1368::decode(buf)?;
+        Ok(Self { sig })
     }
 }
 
@@ -179,23 +148,10 @@ impl open_fastrlp::Decodable for Signature {
 
 impl open_fastrlp::Encodable for Signature {
     fn length(&self) -> usize {
-        self.r.length() + self.s.length() + self.v.length()
+        self.sig.length()
     }
     fn encode(&self, out: &mut dyn bytes::BufMut) {
-        self.v.encode(out);
-        self.r.encode(out);
-        self.s.encode(out);
-    }
-}
-
-fn normalize_recovery_id(v: u64) -> u8 {
-    match v {
-        0 => 0,
-        1 => 1,
-        27 => 0,
-        28 => 1,
-        v if v >= 35 => ((v - 1) % 2) as _,
-        _ => 4,
+        self.sig.encode(out);
     }
 }
 
@@ -205,16 +161,14 @@ impl<'a> TryFrom<&'a [u8]> for Signature {
     /// Parses a raw signature which is expected to be 65 bytes long where
     /// the first 32 bytes is the `r` value, the second 32 bytes the `s` value
     /// and the final byte is the `v` value in 'Electrum' notation.
-    fn try_from(bytes: &'a [u8]) -> Result<Self, Self::Error> {
-        if bytes.len() != 65 {
+    fn try_from(bytes: &[u8]) -> Result<Self, Self::Error> {
+        if bytes.len() != 171 {
             return Err(SignatureError::InvalidLength(bytes.len()))
         }
 
-        let v = bytes[64];
-        let r = U256::from_big_endian(&bytes[0..32]);
-        let s = U256::from_big_endian(&bytes[32..64]);
+        let sig = H1368::from_slice(bytes);
 
-        Ok(Signature { r, s, v: v.into() })
+        Ok(Signature { sig })
     }
 }
 
@@ -228,42 +182,27 @@ impl FromStr for Signature {
     }
 }
 
-impl From<&Signature> for [u8; 65] {
-    fn from(src: &Signature) -> [u8; 65] {
-        let mut sig = [0u8; 65];
-        let mut r_bytes = [0u8; 32];
-        let mut s_bytes = [0u8; 32];
-        src.r.to_big_endian(&mut r_bytes);
-        src.s.to_big_endian(&mut s_bytes);
-        sig[..32].copy_from_slice(&r_bytes);
-        sig[32..64].copy_from_slice(&s_bytes);
-        // TODO: What if we try to serialize a signature where
-        // the `v` is not normalized?
-
-        // The u64 to u8 cast is safe because `sig.v` can only ever be 27 or 28
-        // here. Regarding EIP-155, the modification to `v` happens during tx
-        // creation only _after_ the transaction is signed using
-        // `corebc_signers::to_eip155_v`.
-        sig[64] = src.v as u8;
-        sig
+impl From<&Signature> for [u8; 171] {
+    fn from(src: &Signature) -> [u8; 171] {
+        src.sig.to_fixed_bytes()
     }
 }
 
-impl From<Signature> for [u8; 65] {
-    fn from(src: Signature) -> [u8; 65] {
-        <[u8; 65]>::from(&src)
+impl From<Signature> for [u8; 171] {
+    fn from(src: Signature) -> [u8; 171] {
+        <[u8; 171]>::from(&src)
     }
 }
 
 impl From<&Signature> for Vec<u8> {
     fn from(src: &Signature) -> Vec<u8> {
-        <[u8; 65]>::from(src).to_vec()
+        <[u8; 171]>::from(src).to_vec()
     }
 }
 
 impl From<Signature> for Vec<u8> {
     fn from(src: Signature) -> Vec<u8> {
-        <[u8; 65]>::from(&src).to_vec()
+        <[u8; 171]>::from(&src).to_vec()
     }
 }
 
@@ -307,27 +246,27 @@ impl From<H256> for RecoveryMessage {
 mod tests {
     use super::*;
 
-    // #[test]
-    // fn recover_web3_signature() {
-    //     // https://web3js.readthedocs.io/en/v1.2.2/web3-eth-accounts.html#sign
-    //     // CORETODO: To Fix this test we will need to create a library
-    //     let signature = Signature::from_str(
-    //         "b91467e570a6466aa9e9876cbcd013baba02900b8979d43fe208a4a4f339f5fd6007e74cd82e037b800186422fc2da167c747ef045e5d18a5f5d4300f8e1a0291c"
-    //     ).expect("could not parse signature");
-    //     assert_eq!(
-    //         signature.recover("Some data").unwrap(),
-    //         Address::from_str("00002c7536E3605D9C16a7a3D7b1898e529396a65c23").unwrap()
-    //     );
-    // }
+    #[test]
+    fn recover_web3_signature() {
+        // https://web3js.readthedocs.io/en/v1.2.2/web3-eth-accounts.html#sign
+        // CORETODO: To Fix this test we will need to create a library
+        let signature = Signature::from_str(
+            "0x611d178b128095022653965eb0ed3bc8bbea8e7891b5a121a102a5b29bb895770d204354dbbc67c5567186f92cdb58a601397dfe0022e0ce002c1333b6829c37c732fb909501f719df200ceaaa0e0a1533dc22e4c9c999406c071fee2858bc7c76c66d113ff1ac739564d465cd541b0d1e003761457fcdd53dba3dea5848c43aa54fe468284319f032945a3acb9bd4cd0fa7b7c901d978e9acd9eca43fa5b3c32b648c33dcc3f3169e8080"
+        ).expect("could not parse signature");
+        assert_eq!(
+            signature.recover("Some data", &Network::Devin).unwrap(),
+            Address::from_str("ab76fc37a3b370a1f22e2fe2f819c210895e098845ed").unwrap()
+        );
+    }
 
     #[test]
     fn signature_from_str() {
         let s1 = Signature::from_str(
-            "0xaa231fbe0ed2b5418e6ba7c19bee2522852955ec50996c02a2fe3e71d30ddaf1645baf4823fea7cb4fcc7150842493847cfb6a6d63ab93e8ee928ee3f61f503500"
+            "0xda7c602b1be1d7d2d1cef75c4c299cc60fa92ce91504b793df5e522de40a762142c143efc91d963c83981dccc1ba443a82430ee1b9800b61804d1b78e8eb7f642c6cea29daced23fd52087f0c3f8b58c15e252152eb36376aa8298ddfa672ed140ae1dcf2d6a0a352ce08249f4cea93c17009700d3af503d84bc4187ba8c1943ac5553f6d2a5ab68af25a43c4fd436f9a5a2e3c9ac711c90e9cb57bf84f73093906fc331e58647b974b300"
         ).expect("could not parse 0x-prefixed signature");
 
         let s2 = Signature::from_str(
-            "aa231fbe0ed2b5418e6ba7c19bee2522852955ec50996c02a2fe3e71d30ddaf1645baf4823fea7cb4fcc7150842493847cfb6a6d63ab93e8ee928ee3f61f503500"
+            "da7c602b1be1d7d2d1cef75c4c299cc60fa92ce91504b793df5e522de40a762142c143efc91d963c83981dccc1ba443a82430ee1b9800b61804d1b78e8eb7f642c6cea29daced23fd52087f0c3f8b58c15e252152eb36376aa8298ddfa672ed140ae1dcf2d6a0a352ce08249f4cea93c17009700d3af503d84bc4187ba8c1943ac5553f6d2a5ab68af25a43c4fd436f9a5a2e3c9ac711c90e9cb57bf84f73093906fc331e58647b974b300"
         ).expect("could not parse non-prefixed signature");
 
         assert_eq!(s1, s2);

@@ -11,7 +11,7 @@ use once_cell::sync::Lazy;
 use regex::{Match, Regex};
 use semver::Version;
 use serde::de::DeserializeOwned;
-use tiny_keccak::{Hasher, Keccak};
+use tiny_keccak::{Hasher, Sha3};
 use walkdir::WalkDir;
 
 /// A regex that matches the import path and identifier of a solidity import
@@ -294,7 +294,7 @@ pub fn library_hash_placeholder(name: impl AsRef<[u8]>) -> String {
 /// See also <https://docs.soliditylang.org/en/develop/using-the-compiler.html#library-linking>
 pub fn library_hash(name: impl AsRef<[u8]>) -> [u8; 17] {
     let mut output = [0u8; 17];
-    let mut hasher = Keccak::v256();
+    let mut hasher = Sha3::v256();
     hasher.update(name.as_ref());
     hasher.finalize(&mut output);
     output

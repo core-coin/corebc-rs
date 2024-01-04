@@ -8,7 +8,7 @@
 
 // use corebc_core::{
 //     types::{
-//         transaction::{eip2718::TypedTransaction, eip712::Eip712},
+//         transaction::{eip2718::TypedTransaction, cip712::Cip712},
 //         Address, NameOrAddress, Signature, Transaction, TransactionRequest, TxHash, H256, U256,
 //     },
 //     utils::sha3,
@@ -39,7 +39,7 @@
 //     }
 // }
 
-// const EIP712_MIN_VERSION: &str = ">=1.6.0";
+// const CIP712_MIN_VERSION: &str = ">=1.6.0";
 
 // impl LedgerEthereum {
 //     /// Instantiate the application by acquiring a lock on the ledger device.
@@ -168,8 +168,8 @@
 //     }
 
 //     /// Signs an ethereum personal message
-//     pub async fn sign_message<S: AsRef<[u8]>>(&self, message: S) -> Result<Signature, LedgerError> {
-//         let message = message.as_ref();
+//     pub async fn sign_message<S: AsRef<[u8]>>(&self, message: S) -> Result<Signature,
+// LedgerError> {         let message = message.as_ref();
 
 //         let mut payload = Self::path_to_bytes(&self.derivation);
 //         payload.extend_from_slice(&(message.len() as u32).to_be_bytes());
@@ -178,25 +178,25 @@
 //         self.sign_payload(INS::SIGN_PERSONAL_MESSAGE, &payload).await
 //     }
 
-//     /// Signs an EIP712 encoded domain separator and message
+//     /// Signs an CIP712 encoded domain separator and message
 //     pub async fn sign_typed_struct<T>(&self, payload: &T) -> Result<Signature, LedgerError>
 //     where
-//         T: Eip712,
+//         T: Cip712,
 //     {
 //         // See comment for v1.6.0 requirement
 //         // https://github.com/LedgerHQ/app-ethereum/issues/105#issuecomment-765316999
-//         let req = semver::VersionReq::parse(EIP712_MIN_VERSION)?;
+//         let req = semver::VersionReq::parse(CIP712_MIN_VERSION)?;
 //         let version = semver::Version::parse(&self.version().await?)?;
 
-//         // Enforce app version is greater than EIP712_MIN_VERSION
+//         // Enforce app version is greater than CIP712_MIN_VERSION
 //         if !req.matches(&version) {
-//             return Err(LedgerError::UnsupportedAppVersion(EIP712_MIN_VERSION.to_string()))
+//             return Err(LedgerError::UnsupportedAppVersion(CIP712_MIN_VERSION.to_string()))
 //         }
 
 //         let domain_separator =
-//             payload.domain_separator().map_err(|e| LedgerError::Eip712Error(e.to_string()))?;
+//             payload.domain_separator().map_err(|e| LedgerError::Cip712Error(e.to_string()))?;
 //         let struct_hash =
-//             payload.struct_hash().map_err(|e| LedgerError::Eip712Error(e.to_string()))?;
+//             payload.struct_hash().map_err(|e| LedgerError::Cip712Error(e.to_string()))?;
 
 //         let mut payload = Self::path_to_bytes(&self.derivation);
 //         payload.extend_from_slice(&domain_separator);
@@ -205,9 +205,9 @@
 //         self.sign_payload(INS::SIGN_ETH_EIP_712, &payload).await
 //     }
 
-//     #[tracing::instrument(err, skip_all, fields(command = %command, payload = hex::encode(payload)))]
-//     // Helper function for signing either transaction data, personal messages or EIP712 derived
-//     // structs
+//     #[tracing::instrument(err, skip_all, fields(command = %command, payload =
+// hex::encode(payload)))]     // Helper function for signing either transaction data, personal
+// messages or CIP712 derived     // structs
 //     pub async fn sign_payload(
 //         &self,
 //         command: INS,
@@ -293,19 +293,19 @@
 // mod tests {
 //     use super::*;
 //     use crate::Signer;
-//     use corebc_contract_derive::{Eip712, EthAbiType};
+//     use corebc_contract_derive::{Cip712, EthAbiType};
 //     use corebc_core::types::{
-//         transaction::eip712::Eip712, Address, TransactionRequest, I256, U256,
+//         transaction::cip712::Cip712, Address, TransactionRequest, I256, U256,
 //     };
 //     use std::str::FromStr;
 
 //     #[derive(Debug, Clone)]
-//     #[eip712(
-//         name = "Eip712Test",
+//     #[cip712(
+//         name = "Cip712Test",
 //         version = "1",
 //         network_id = 1,
 //         verifying_contract = "0x0000000000000000000000000000000000000001",
-//         salt = "eip712-test-75F0CCte"
+//         salt = "cip712-test-75F0CCte"
 //     )]
 //     struct FooBar {
 //         foo: I256,
@@ -338,7 +338,10 @@
 //         let ledger = LedgerEthereum::new(DerivationType::LedgerLive(0), 1).await.unwrap();
 
 //         // approve uni v2 router 0xff
-//         let data = hex::decode("095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff").unwrap();
+//         let data =
+// hex::decode("
+// 095ea7b30000000000000000000000007a250d5630b4cf539739df2c5dacb4c659f2488dffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+// ).unwrap();
 
 //         let tx_req = TransactionRequest::new()
 //             .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
@@ -346,7 +349,7 @@
 //             .gas_price(400e9 as u64)
 //             .nonce(5)
 //             .data(data)
-//             .value(corebc_core::utils::parse_ether(100).unwrap())
+//             .value(corebc_core::utils::parse_core(100).unwrap())
 //             .into();
 //         let tx = ledger.sign_transaction(&tx_req).await.unwrap();
 //     }
@@ -372,7 +375,7 @@
 
 //     #[tokio::test]
 //     #[ignore]
-//     async fn test_sign_eip712_struct() {
+//     async fn test_sign_cip712_struct() {
 //         let ledger = LedgerEthereum::new(DerivationType::LedgerLive(0), 1u64).await.unwrap();
 
 //         let foo_bar = FooBar {
@@ -385,7 +388,7 @@
 //         };
 
 //         let sig = ledger.sign_typed_struct(&foo_bar).await.expect("failed to sign typed data");
-//         let foo_bar_hash = foo_bar.encode_eip712().unwrap();
+//         let foo_bar_hash = foo_bar.encode_cip712().unwrap();
 //         sig.verify(foo_bar_hash, ledger.address).unwrap();
 //     }
 // }

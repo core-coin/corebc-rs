@@ -58,7 +58,7 @@ impl<'de> Deserialize<'de> for SyncingStatus {
 ///
 /// > startingBlock: QUANTITY - The block at which the import started (will only be reset, after the
 /// > sync reached his head)
-/// > currentBlock: QUANTITY - The current block, same as eth_blockNumber
+/// > currentBlock: QUANTITY - The current block, same as xcb_blockNumber
 /// > highestBlock: QUANTITY - The estimated highest block
 ///
 /// Geth returns additional fields: <https://github.com/ethereum/go-ethereum/blob/0ce494b60cd00d70f1f9f2dd0b9bfbd76204168a/ethclient/ethclient.go#L597-L617>

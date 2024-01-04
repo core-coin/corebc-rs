@@ -1,9 +1,9 @@
-use corebc_contract_derive::{Eip712, EthAbiType};
+use corebc_contract_derive::{Cip712, EthAbiType};
 use corebc_core::{
     types::{
-        transaction::eip712::{
-            EIP712Domain as Domain, Eip712, EIP712_DOMAIN_TYPE_HASH,
-            EIP712_DOMAIN_TYPE_HASH_WITH_SALT,
+        transaction::cip712::{
+            CIP712Domain as Domain, Cip712, CIP712_DOMAIN_TYPE_HASH,
+            CIP712_DOMAIN_TYPE_HASH_WITH_SALT,
         },
         Address, H176, U256,
     },
@@ -11,9 +11,9 @@ use corebc_core::{
 };
 
 #[test]
-fn derive_eip712() {
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
-    #[eip712(
+fn derive_cip712() {
+    #[derive(Debug, Clone, Cip712, EthAbiType)]
+    #[cip712(
         name = "Radicle",
         version = "1",
         network_id = 1,
@@ -38,22 +38,22 @@ fn derive_eip712() {
         project: "radicle-reward".to_string(),
     };
 
-    let hash = puzzle.encode_eip712().expect("failed to encode struct");
+    let hash = puzzle.encode_cip712().expect("failed to encode struct");
 
     assert_eq!(hash.len(), 32)
 }
 
 #[test]
 fn struct_hash() {
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
-    #[eip712(
+    #[derive(Debug, Clone, Cip712, EthAbiType)]
+    #[cip712(
         name = "Radicle",
         version = "1",
         network_id = 1,
         verifying_contract = "0x00000000000000000000000000000000000000000001",
         salt = "1234567890"
     )]
-    pub struct EIP712Domain {
+    pub struct CIP712Domain {
         name: String,
         version: String,
         network_id: U256,
@@ -68,22 +68,22 @@ fn struct_hash() {
         salt: None,
     };
 
-    let domain_test = EIP712Domain {
+    let domain_test = CIP712Domain {
         name: "Radicle".to_string(),
         version: "1".to_string(),
         network_id: U256::from(1),
         verifying_contract: H176::from(&[0; 22]),
     };
 
-    assert_eq!(EIP712_DOMAIN_TYPE_HASH, EIP712Domain::type_hash().unwrap());
+    assert_eq!(CIP712_DOMAIN_TYPE_HASH, CIP712Domain::type_hash().unwrap());
 
     assert_eq!(domain.separator(), domain_test.struct_hash().unwrap());
 }
 
 #[test]
-fn derive_eip712_nested() {
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
-    #[eip712(
+fn derive_cip712_nested() {
+    #[derive(Debug, Clone, Cip712, EthAbiType)]
+    #[cip712(
         name = "MyDomain",
         version = "1",
         network_id = 1,
@@ -93,12 +93,12 @@ fn derive_eip712_nested() {
         foo: String,
         bar: U256,
         addr: Address,
-        /* #[eip712] // Todo: Support nested Eip712 structs
+        /* #[cip712] // Todo: Support nested Cip712 structs
          * nested: MyNestedStruct, */
     }
 
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
-    #[eip712(
+    #[derive(Debug, Clone, Cip712, EthAbiType)]
+    #[cip712(
         name = "MyDomain",
         version = "1",
         network_id = 1,
@@ -131,8 +131,8 @@ fn uniswap_v2_permit_hash() {
     // See examples/permit_hash.rs for comparison
     // the following produces the same permit_hash as in the example
 
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
-    #[eip712(
+    #[derive(Debug, Clone, Cip712, EthAbiType)]
+    #[cip712(
         name = "Uniswap V2",
         version = "1",
         network_id = 1,
@@ -154,33 +154,33 @@ fn uniswap_v2_permit_hash() {
         deadline: U256::from(3133728498_u32),
     };
 
-    let permit_hash = permit.encode_eip712().unwrap();
+    let permit_hash = permit.encode_cip712().unwrap();
 
     assert_eq!(
         hex::encode(permit_hash),
-        "b9275172f7e4d27aa835c9325fd58ac609ed6d2802054c2778279d21c134809a"
+        "7511de75cfe7c3de726371ad9f0a703f8b9f0bac0354676114cc5a90f21dc7a8"
     );
 }
 
 #[test]
 fn domain_hash_constants() {
     assert_eq!(
-        EIP712_DOMAIN_TYPE_HASH,
+        CIP712_DOMAIN_TYPE_HASH,
         sha3(
-            "EIP712Domain(string name,string version,uint256 networkId,address verifyingContract)"
+            "CIP712Domain(string name,string version,uint256 networkId,address verifyingContract)"
         )
     );
     assert_eq!(
-        EIP712_DOMAIN_TYPE_HASH_WITH_SALT,
-        sha3("EIP712Domain(string name,string version,uint256 networkId,address verifyingContract,bytes32 salt)")
+        CIP712_DOMAIN_TYPE_HASH_WITH_SALT,
+        sha3("CIP712Domain(string name,string version,uint256 networkId,address verifyingContract,bytes32 salt)")
     );
 }
 
 // https://t.me/ethers_rs/26844
 #[test]
 fn raw_ident_fields() {
-    #[derive(Debug, Clone, Eip712, EthAbiType)]
-    #[eip712(name = "replica", version = "1", network_id = 6666)]
+    #[derive(Debug, Clone, Cip712, EthAbiType)]
+    #[cip712(name = "replica", version = "1", network_id = 6666)]
     pub struct Message {
         pub title: String,
         pub href: String,

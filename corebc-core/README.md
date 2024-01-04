@@ -10,7 +10,7 @@ other utilities for interacting with the Core ecosystem
 
 ## Feature flags
 
-- `eip712`: Provides the `Eip712` trait and derive procedural macro for EIP-712 encoding of typed data.
+- `cip712`: Provides the `Cip712` trait and derive procedural macro for Cip-712 encoding of typed data.
 
 ## ABI
 

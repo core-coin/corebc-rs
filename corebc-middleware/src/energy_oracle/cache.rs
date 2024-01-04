@@ -1,4 +1,4 @@
-use super::{EneryOracle, Result};
+use super::{EnergyOracle, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use futures_locks::RwLock;
@@ -6,7 +6,7 @@ use instant::{Duration, Instant};
 use std::{fmt::Debug, future::Future};
 
 #[derive(Debug)]
-pub struct Cache<T: EneryOracle> {
+pub struct Cache<T: EnergyOracle> {
     inner: T,
     validity: Duration,
     fee: Cached<U256>,
@@ -17,13 +17,13 @@ struct Cached<T: Clone>(RwLock<Option<(Instant, T)>>);
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<T: EneryOracle> EneryOracle for Cache<T> {
+impl<T: EnergyOracle> EnergyOracle for Cache<T> {
     async fn fetch(&self) -> Result<U256> {
         self.fee.get(self.validity, || self.inner.fetch()).await
     }
 }
 
-impl<T: EneryOracle> Cache<T> {
+impl<T: EnergyOracle> Cache<T> {
     pub fn new(validity: Duration, inner: T) -> Self {
         Self { inner, validity, fee: Cached::default() }
     }

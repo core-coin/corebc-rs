@@ -1,8 +1,9 @@
 //! Transaction types
-use super::{decode_to, extract_network_id, rlp_opt, NUM_TX_FIELDS};
+use super::{decode_to, rlp_opt, NUM_TX_FIELDS};
 use crate::{
     types::{
-        Address, Bytes, NameOrAddress, Signature, SignatureError, Transaction, H256, U256, U64,
+        Address, Bytes, NameOrAddress, Network, Signature, SignatureError, Transaction, H256, U256,
+        U64,
     },
     utils::sha3,
 };
@@ -176,14 +177,12 @@ impl TransactionRequest {
     /// Produces the RLP encoding of the transaction with the provided signature
     pub fn rlp_signed(&self, signature: &Signature) -> Bytes {
         let mut rlp = RlpStream::new();
-        rlp.begin_list(NUM_TX_FIELDS + 1);
+        rlp.begin_list(NUM_TX_FIELDS - 1);
 
         self.rlp_base(&mut rlp);
 
         // append the signature
-        rlp.append(&signature.v);
-        rlp.append(&signature.r);
-        rlp.append(&signature.s);
+        rlp.append(&signature.sig);
         rlp.out().freeze().into()
     }
 
@@ -262,16 +261,13 @@ impl TransactionRequest {
         let mut offset = 0;
         let mut txn = Self::decode_unsigned_rlp_base(rlp, &mut offset)?;
 
-        let v = rlp.at(offset)?.as_val()?;
-        // populate networkid from v in case the signature follows EIP155
-        txn.network_id = extract_network_id(v);
-        offset += 1;
-        let r = rlp.at(offset)?.as_val()?;
-        offset += 1;
-        let s = rlp.at(offset)?.as_val()?;
+        let sig = rlp.at(offset)?.as_val()?;
 
-        let sig = Signature { r, s, v };
-        txn.from = Some(sig.recover(txn.sighash())?);
+        let sig = Signature { sig };
+
+        // CORETODO: Please find a way to unwrap it more naturally
+        let network = Network::try_from(txn.network_id.unwrap()).unwrap();
+        txn.from = Some(sig.recover(txn.sighash(), &network)?);
 
         Ok((txn, sig))
     }
@@ -302,9 +298,8 @@ impl From<&Transaction> for TransactionRequest {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::Bytes;
+    use ethabi::ethereum_types::H1368;
     use rlp::{Decodable, Rlp};
-    use std::str::FromStr;
 
     #[test]
     fn encode_decode_rlp() {
@@ -328,15 +323,16 @@ mod tests {
     }
 
     #[test]
-    // test data from https://github.com/ethereum/go-ethereum/blob/b1e72f7ea998ad662166bcf23705ca59cf81e925/core/types/transaction_test.go#L40
+    // test data from https://github.com/core-coin/go-core/blob/41c152fffa96b6488feb1d7fa878addc30def5b3/core/types/transaction_test.go#L58
     fn empty_sighash_check() {
         let tx = TransactionRequest::new()
             .nonce(0)
-            .to("0000095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
+            .to("cb08095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
             .value(0)
             .energy(0)
-            .energy_price(0);
-        let expected_sighash = "ec08902c56d6df8797a282763e4871a2b69dbb210b5390e7babbf1cebe59a23d";
+            .energy_price(0)
+            .network_id(0);
+        let expected_sighash = "0064d7a2aa08686b4f36a2188352ba162ff2b5bdce72335f4a0e25a6c5f47af7";
         let got_sighash = hex::encode(tx.sighash().as_bytes());
         assert_eq!(expected_sighash, got_sighash);
     }
@@ -358,127 +354,122 @@ mod tests {
         .unwrap();
     }
 
-    // CORETODO: This tests a signed transaction. First implement ED448, then fix the test.
-    // #[test]
-    // fn decode_known_rlp_devin() {
-    //     let tx = TransactionRequest::new()
-    //         .nonce(70272)
-    //         .from("0000fab2b4b677a4e104759d378ea25504862150256e".parse::<Address>().unwrap())
-    //         .to("0000d1f23226fb4d2b7d2f3bcdd99381b038de705a64".parse::<Address>().unwrap())
-    //         .value(0)
-    //         .energy_price(1940000007)
-    //         .energy(21000);
+    #[test]
+    fn decode_known_rlp_mainnet() {
+        let tx = TransactionRequest::new()
+            .nonce(3)
+            .from("cb8238748ee459bc0c1d86eab1d3f6d83bb433cdad9c".parse::<Address>().unwrap())
+            .to("cb08095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
+            .value(10)
+            .energy_price(10)
+            .energy(50000)
+            .data(vec![0x11, 0x23])
+            .network_id(1);
 
-    //     let expected_rlp =
-    // hex::decode("
-    // f866830112808473a20d0782520894d1f23226fb4d2b7d2f3bcdd99381b038de705a6480801ca04bc89d41c954168afb4cbd01fe2e0f9fe12e3aa4665eefcee8c4a208df044b5da05d410fd85a2e31870ea6d6af53fafc8e3c1ae1859717c863cac5cff40fee8da4"
-    // ).unwrap();     let (got_tx, _signature) =
-    //         TransactionRequest::decode_signed_rlp(&Rlp::new(&expected_rlp)).unwrap();
+        let expected_rlp =
+    hex::decode("f8ce030a82c3500196cb08095e7baea6a6c7c4c2dfeb977efac326af552d870a821123b8ab4baaafc44c4cc23a5ba831b9a89eb823bb965f62de3eeccdaac2a516b6ca4f7ab3e728f8b791d02bca9c5c3b8dd9bfa73c550dfcb63fef4400fa4d5aa5f132ba3932b99ceb8c9014640a77ad022ee6379f3299f060feab4e785650ec3878cb46748f8e15a5473c696cf95c5ede5225312800ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
+    ).unwrap();
+        let (got_tx, _signature) =
+            TransactionRequest::decode_signed_rlp(&Rlp::new(&expected_rlp)).unwrap();
 
-    //     // intialization of TransactionRequests using new() uses the Default trait, so we just
-    //     // compare the sighash and signed encoding instead.
-    //     assert_eq!(got_tx.sighash(), tx.sighash());
-    // }
+        // intialization of TransactionRequests using new() uses the Default trait, so we just
+        // compare the sighash and signed encoding instead.
+        assert_eq!(got_tx.sighash(), tx.sighash());
+    }
 
     #[test]
-    fn decode_unsigned_rlp_no_networkid() {
-        // unlike the corresponding transaction
-        // 0x02c563d96acaf8c157d08db2228c84836faaf3dd513fc959a54ed4ca6c72573e, this doesn't have a
-        // `from` field because the `from` field is only obtained via signature recovery
-        let expected_tx = TransactionRequest::new()
-            .to(Address::from_str("0x0000c7696b27830dd8aa4823a1cba8440c27c36adec4").unwrap())
-            .energy(3_000_000)
-            .energy_price(20_000_000_000u64)
-            .value(0)
-            .nonce(6306u64)
-            .data(
-                Bytes::from_str(
-                    "0x91b7f5ed0000000000000000000000000000000000000000000000000000000000000372",
-                )
-                .unwrap(),
-            );
+    fn decode_known_rlp_devin() {
+        let tx = TransactionRequest::new()
+            .nonce(3)
+            .from("0xab0338748ee459bc0c1d86eab1d3f6d83bb433cdad9c".parse::<Address>().unwrap())
+            .to("ab33d3649d846a2bd426c0ceaca24fab50f7cba8f839".parse::<Address>().unwrap())
+            .value(10)
+            .energy_price(10)
+            .energy(50000)
+            .data(vec![0x11, 0x23])
+            .network_id(3);
 
-        // manually stripped the signature off the end and modified length
-        let expected_rlp = hex::decode("f84a8218a28504a817c800832dc6c0960000c7696b27830dd8aa4823a1cba8440c27c36adec480a491b7f5ed0000000000000000000000000000000000000000000000000000000000000372").unwrap();
-        let real_tx = TransactionRequest::decode(&Rlp::new(&expected_rlp)).unwrap();
+        let expected_rlp =
+    hex::decode("f8ce030a82c3500396ab33d3649d846a2bd426c0ceaca24fab50f7cba8f8390a821123b8ab9e73edbc2506ab6805794c3bc45509713493f34eab8e62d2e75ebf9af7346fa85ad0d86c5c116366667b853f63e143943195602bd3cce8078008f9e95d6febd1b3909be9e4e2b1d5090a295c7dccfa28a3a8cc242ec8da680a77901a75c3e97e8c4a73552d09504432157a9d18aa08052700ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
+    ).unwrap();
+        let (got_tx, _signature) =
+            TransactionRequest::decode_signed_rlp(&Rlp::new(&expected_rlp)).unwrap();
 
-        assert_eq!(real_tx, expected_tx);
+        // intialization of TransactionRequests using new() uses the Default trait, so we just
+        // compare the sighash and signed encoding instead.
+        assert_eq!(got_tx.sighash(), tx.sighash());
     }
 
     #[test]
     fn test_eip155_encode() {
         let tx = TransactionRequest::new()
-            .nonce(9)
-            .to("35353535353535353535353535353535353535353535".parse::<Address>().unwrap())
-            .value(1000000000000000000u64)
-            .energy_price(20000000000u64)
-            .energy(21000)
+            .nonce(3)
+            .from("cb8238748ee459bc0c1d86eab1d3f6d83bb433cdad9c".parse::<Address>().unwrap())
+            .to("cb08095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
+            .value(10)
+            .energy_price(10)
+            .energy(50000)
+            .data(vec![0x11, 0x23])
             .network_id(1);
 
-        let expected_rlp = hex::decode("ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").unwrap();
-        assert_eq!(expected_rlp, tx.rlp().to_vec());
-
-        let expected_sighash =
-            hex::decode("2e71f6c2963fa9e8ded46264e0be28402944a5f9e78d62e9de18c4df76bb2421")
+        let expected_rlp =
+            hex::decode("e1030a82c3500196cb08095e7baea6a6c7c4c2dfeb977efac326af552d870a821123")
                 .unwrap();
-
-        assert_eq!(expected_sighash, tx.sighash().as_bytes().to_vec());
+        assert_eq!(expected_rlp, tx.rlp().to_vec());
     }
 
     #[test]
     fn test_eip155_decode() {
         let tx = TransactionRequest::new()
-            .nonce(9)
-            .to("35353535353535353535353535353535353535353535".parse::<Address>().unwrap())
-            .value(1000000000000000000u64)
-            .energy_price(20000000000u64)
-            .energy(21000)
+            .nonce(3)
+            .to("cb08095e7baea6a6c7c4c2dfeb977efac326af552d87".parse::<Address>().unwrap())
+            .value(10)
+            .energy_price(10)
+            .energy(50000)
+            .data(vec![0x11, 0x23])
             .network_id(1);
 
-        let expected_hex = hex::decode("ee098504a817c8008252089635353535353535353535353535353535353535353535880de0b6b3a764000080018080").unwrap();
+        let expected_hex =
+            hex::decode("e1030a82c3500196cb08095e7baea6a6c7c4c2dfeb977efac326af552d870a821123")
+                .unwrap();
         let expected_rlp = rlp::Rlp::new(expected_hex.as_slice());
         let decoded_transaction = TransactionRequest::decode(&expected_rlp).unwrap();
         assert_eq!(tx, decoded_transaction);
     }
 
-    // CORETODO: Implement ED448 then fix this test
-    // #[test]
-    // fn test_eip155_decode_signed() {
-    //     let expected_signed_bytes =
-    // hex::decode("
-    // f86c098504a817c800825208943535353535353535353535353535353535353535880de0b6b3a76400008025a028ef61340bd939bc2195fe537567866003e1a15d3c71ff63e1590620aa636276a067cbe9d8997f761aecb703304b3800ccf555c9f3dc64214b297fb1966a3b6d83"
-    // ).unwrap();     let expected_signed_rlp =
-    // rlp::Rlp::new(expected_signed_bytes.as_slice());     let (decoded_tx, decoded_sig) =
-    //         TransactionRequest::decode_signed_rlp(&expected_signed_rlp).unwrap();
+    #[test]
+    fn test_eip155_decode_signed() {
+        let expected_signed_bytes =
+            hex::decode(
+                "f8ce030a82c3500396ab33d3649d846a2bd426c0ceaca24fab50f7cba8f8390a821123b8ab9e73edbc2506ab6805794c3bc45509713493f34eab8e62d2e75ebf9af7346fa85ad0d86c5c116366667b853f63e143943195602bd3cce8078008f9e95d6febd1b3909be9e4e2b1d5090a295c7dccfa28a3a8cc242ec8da680a77901a75c3e97e8c4a73552d09504432157a9d18aa08052700ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
+            ).unwrap();
+        let expected_signed_rlp = rlp::Rlp::new(expected_signed_bytes.as_slice());
+        let (decoded_tx, decoded_sig) =
+            TransactionRequest::decode_signed_rlp(&expected_signed_rlp).unwrap();
 
-    //     let expected_sig = Signature {
-    //         v: 37,
-    //         r: U256::from_dec_str(
-    //             "18515461264373351373200002665853028612451056578545711640558177340181847433846",
-    //         )
-    //         .unwrap(),
-    //         s: U256::from_dec_str(
-    //             "46948507304638947509940763649030358759909902576025900602547168820602576006531",
-    //         )
-    //         .unwrap(),
-    //     };
-    //     assert_eq!(expected_sig, decoded_sig);
-    //     assert_eq!(decoded_tx.network_id, Some(U64::from(1)));
-    // }
+        let expected_sig = Signature {
+            sig: H1368::from_slice(
+                hex::decode(
+                    "9e73edbc2506ab6805794c3bc45509713493f34eab8e62d2e75ebf9af7346fa85ad0d86c5c116366667b853f63e143943195602bd3cce8078008f9e95d6febd1b3909be9e4e2b1d5090a295c7dccfa28a3a8cc242ec8da680a77901a75c3e97e8c4a73552d09504432157a9d18aa08052700ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580"
+                ).unwrap().as_slice()
+            ),
+        };
+        assert_eq!(expected_sig, decoded_sig);
+        assert_eq!(decoded_tx.network_id, Some(U64::from(3)));
+    }
 
-    // CORETODO: Implement ED448 then fix this test
-    // #[test]
-    // fn test_recover_legacy_tx() {
-    //     let raw_tx =
-    // "f9015482078b8505d21dba0083022ef1947a250d5630b4cf539739df2c5dacb4c659f2488d880c46549a521b13d8b8e47ff36ab50000000000000000000000000000000000000000000066ab5a608bd00a23f2fe000000000000000000000000000000000000000000000000000000000000008000000000000000000000000048c04ed5691981c42154c6167398f95e8f38a7ff00000000000000000000000000000000000000000000000000000000632ceac70000000000000000000000000000000000000000000000000000000000000002000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc20000000000000000000000006c6ee5e31d828de241282b9606c8e98ea48526e225a0c9077369501641a92ef7399ff81c21639ed4fd8fc69cb793cfa1dbfab342e10aa0615facb2f1bcf3274a354cfe384a38d0cc008a11c2dd23a69111bc6930ba27a8"
-    // ;
+    #[test]
+    fn test_recover_legacy_tx() {
+        let raw_tx =
+            "f8ce030a82c3500396ab33d3649d846a2bd426c0ceaca24fab50f7cba8f8390a821123b8ab9e73edbc2506ab6805794c3bc45509713493f34eab8e62d2e75ebf9af7346fa85ad0d86c5c116366667b853f63e143943195602bd3cce8078008f9e95d6febd1b3909be9e4e2b1d5090a295c7dccfa28a3a8cc242ec8da680a77901a75c3e97e8c4a73552d09504432157a9d18aa08052700ba277941fcb9ac8063a9b6ed64fbc86c51dd5ae6cf1f01f7bcf533cf0b0cfc5dc3fdc5bc7eaa99366ada5e7127331b862586a46c12a85f9580";
 
-    //     let data = hex::decode(raw_tx).unwrap();
-    //     let rlp = Rlp::new(&data);
-    //     let (tx, sig) = TypedTransaction::decode_signed(&rlp).unwrap();
-    //     let recovered = sig.recover(tx.sighash()).unwrap();
+        let data = hex::decode(raw_tx).unwrap();
+        let rlp = Rlp::new(&data);
+        let (tx, sig) = TransactionRequest::decode_signed_rlp(&rlp).unwrap();
+        let network = Network::try_from(tx.network_id.unwrap()).unwrap();
+        let recovered = sig.recover(tx.sighash(), &network).unwrap();
 
-    //     let expected: Address = "0xa12e1462d0ced572f396f58b6e2d03894cd7c8a4".parse().unwrap();
-    //     assert_eq!(expected, recovered);
-    // }
+        let expected: Address = "0xab0338748ee459bc0c1d86eab1d3f6d83bb433cdad9c".parse().unwrap();
+        assert_eq!(expected, recovered);
+    }
 }

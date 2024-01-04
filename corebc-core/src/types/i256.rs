@@ -1080,6 +1080,7 @@ impl I256 {
     /// the number is positive this is the same as logic shift right.
     #[inline(always)]
     #[must_use]
+    #[allow(unreachable_patterns)]
     pub fn asr(self, rhs: usize) -> Self {
         // Avoid shifting if we are going to know the result regardless of the value.
         match (rhs, self.sign()) {

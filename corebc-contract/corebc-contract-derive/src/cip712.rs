@@ -2,7 +2,7 @@ use crate::utils;
 use corebc_core::{
     abi::{Address, ParamType},
     macros::corebc_core_crate,
-    types::{transaction::eip712::EIP712Domain, H256},
+    types::{transaction::cip712::CIP712Domain, H256},
     utils::sha3,
 };
 use inflector::Inflector;
@@ -10,7 +10,7 @@ use proc_macro2::{Literal, TokenStream};
 use quote::quote;
 use syn::{spanned::Spanned, Data, DeriveInput, Error, Fields, LitInt, LitStr, Result, Token};
 
-pub(crate) fn impl_derive_eip712(input: &DeriveInput) -> Result<TokenStream> {
+pub(crate) fn impl_derive_cip712(input: &DeriveInput) -> Result<TokenStream> {
     // Primary type should match the type in the ethereum verifying contract;
     let primary_type = &input.ident;
 
@@ -31,8 +31,8 @@ pub(crate) fn impl_derive_eip712(input: &DeriveInput) -> Result<TokenStream> {
     let corebc_core = corebc_core_crate();
 
     let tokens = quote! {
-        impl #corebc_core::types::transaction::eip712::Eip712 for #primary_type {
-            type Error = #corebc_core::types::transaction::eip712::Eip712Error;
+        impl #corebc_core::types::transaction::cip712::Cip712 for #primary_type {
+            type Error = #corebc_core::types::transaction::cip712::Cip712Error;
 
             #[inline]
             fn type_hash() -> ::core::result::Result<[u8; 32], Self::Error> {
@@ -44,7 +44,7 @@ pub(crate) fn impl_derive_eip712(input: &DeriveInput) -> Result<TokenStream> {
                 Ok([#(#domain_separator),*])
             }
 
-            fn domain(&self) -> ::core::result::Result<#corebc_core::types::transaction::eip712::EIP712Domain, Self::Error> {
+            fn domain(&self) -> ::core::result::Result<#corebc_core::types::transaction::cip712::CIP712Domain, Self::Error> {
                 #corebc_core::utils::__serde_json::from_str(#domain_str).map_err(::core::convert::Into::into)
             }
 
@@ -60,12 +60,12 @@ pub(crate) fn impl_derive_eip712(input: &DeriveInput) -> Result<TokenStream> {
                     for token in tokens {
                         match &token {
                             #corebc_core::abi::Token::Tuple(t) => {
-                                // TODO: check for nested Eip712 Type;
+                                // TODO: check for nested Cip712 Type;
                                 // Challenge is determining the type hash
-                                return Err(Self::Error::NestedEip712StructNotImplemented);
+                                return Err(Self::Error::NestedCip712StructNotImplemented);
                             },
                             _ => {
-                                items.push(#corebc_core::types::transaction::eip712::encode_eip712_type(token));
+                                items.push(#corebc_core::types::transaction::cip712::encode_cip712_type(token));
                             }
                         }
                     }
@@ -83,9 +83,9 @@ pub(crate) fn impl_derive_eip712(input: &DeriveInput) -> Result<TokenStream> {
     Ok(tokens)
 }
 
-fn parse_attributes(input: &DeriveInput) -> Result<EIP712Domain> {
-    let mut domain = EIP712Domain::default();
-    utils::parse_attributes!(input.attrs.iter(), "eip712", meta,
+fn parse_attributes(input: &DeriveInput) -> Result<CIP712Domain> {
+    let mut domain = CIP712Domain::default();
+    utils::parse_attributes!(input.attrs.iter(), "cip712", meta,
         "name", domain.name => {
             meta.input.parse::<Token![=]>()?;
             let litstr: LitStr = meta.input.parse()?;
@@ -132,10 +132,10 @@ fn parse_fields(input: &DeriveInput) -> Result<Vec<(String, ParamType)>> {
     let data = match &input.data {
         Data::Struct(s) => s,
         Data::Enum(e) => {
-            return Err(Error::new(e.enum_token.span, "Eip712 is not derivable for enums"))
+            return Err(Error::new(e.enum_token.span, "Cip712 is not derivable for enums"))
         }
         Data::Union(u) => {
-            return Err(Error::new(u.union_token.span, "Eip712 is not derivable for unions"))
+            return Err(Error::new(u.union_token.span, "Cip712 is not derivable for unions"))
         }
     };
 
@@ -152,13 +152,13 @@ fn parse_fields(input: &DeriveInput) -> Result<Vec<(String, ParamType)>> {
         let name = s.to_camel_case();
 
         let ty =
-            match f.attrs.iter().find(|a| a.path().segments.iter().any(|s| s.ident == "eip712")) {
-                // Found nested Eip712 Struct
+            match f.attrs.iter().find(|a| a.path().segments.iter().any(|s| s.ident == "cip712")) {
+                // Found nested Cip712 Struct
                 // TODO: Implement custom
                 Some(a) => {
-                    return Err(Error::new(a.span(), "nested Eip712 struct are not yet supported"))
+                    return Err(Error::new(a.span(), "nested Cip712 struct are not yet supported"))
                 }
-                // Not a nested eip712 struct, return the field param type;
+                // Not a nested cip712 struct, return the field param type;
                 None => crate::utils::find_parameter_type(&f.ty)?,
             };
 

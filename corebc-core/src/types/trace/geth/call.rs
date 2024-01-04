@@ -15,9 +15,9 @@ pub struct CallFrame {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub value: Option<U256>,
     #[serde(default, deserialize_with = "from_int_or_hex")]
-    pub gas: U256,
-    #[serde(default, deserialize_with = "from_int_or_hex", rename = "gasUsed")]
-    pub gas_used: U256,
+    pub energy: U256,
+    #[serde(default, deserialize_with = "from_int_or_hex", rename = "energyUsed")]
+    pub energy_used: U256,
     pub input: Bytes,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output: Option<Bytes>,

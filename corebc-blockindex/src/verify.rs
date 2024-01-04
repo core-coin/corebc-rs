@@ -1,4 +1,4 @@
-use crate::{Client, ResponseData, Result};
+use crate::{Client, Result};
 use corebc_core::types::Address;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

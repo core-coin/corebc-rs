@@ -70,7 +70,14 @@ pub mod test_provider {
 
         #[cfg(feature = "ws")]
         pub async fn ws(&self) -> Provider<crate::Ws> {
-            Provider::connect("wss://xcbapi.coreblockchain.net").await.unwrap()
+            let Self { network } = self;
+
+            let ws_url = match network.as_str() {
+                "devin" => String::from("wss://xcbapi.corecoin.cc/ws/"),
+                "mainnet" => String::from("wss://xcbws.coreblockchain.net/"),
+                _ => panic!("Invalid Network. Only devin and mainnet are availible"),
+            };
+            Provider::connect(ws_url).await.unwrap()
         }
     }
 }

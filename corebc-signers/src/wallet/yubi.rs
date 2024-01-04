@@ -51,8 +51,7 @@
 //         let public_key = PublicKey::from_encoded_point(signer.public_key()).unwrap();
 //         let public_key = public_key.to_encoded_point(/* compress = */ false);
 //         let public_key = public_key.as_bytes();
-//         debug_assert_eq!(public_key[0], 0x04);
-//         let hash = sha3(&public_key[1..]);
+//         let hash = sha3(&public_key[..]);
 
 //         let mut bytes = [0u8; 20];
 //         bytes.copy_from_slice(&hash[12..]);

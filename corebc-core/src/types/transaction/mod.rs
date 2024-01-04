@@ -3,7 +3,7 @@ pub mod response;
 
 pub mod eip2718;
 
-pub mod eip712;
+pub mod cip712;
 
 pub(crate) const BASE_NUM_TX_FIELDS: usize = 9;
 
@@ -38,16 +38,6 @@ pub(crate) fn normalize_v(v: u64, network_id: crate::types::U64) -> u64 {
     }
 }
 
-/// extracts the networkid from the signature v value based on EIP-155
-pub(crate) fn extract_network_id(v: u64) -> Option<crate::types::U64> {
-    // https://eips.ethereum.org/EIPS/eip-155
-    // if networkid is available, v = {0, 1} + NETWORK_ID * 2 + 35
-    if v >= 35 {
-        return Some(crate::types::U64::from((v - 35) >> 1))
-    }
-    None
-}
-
 /// Decodes the signature portion of the RLP encoding based on the RLP offset passed.
 /// Increments the offset for each element parsed.
 #[inline]
@@ -55,12 +45,8 @@ fn decode_signature(
     rlp: &rlp::Rlp,
     offset: &mut usize,
 ) -> Result<super::Signature, rlp::DecoderError> {
-    let sig = super::Signature {
-        v: rlp.val_at(*offset)?,
-        r: rlp.val_at(*offset + 1)?,
-        s: rlp.val_at(*offset + 2)?,
-    };
-    *offset += 3;
+    let sig = super::Signature { sig: rlp.val_at(*offset)? };
+    *offset += 1;
     Ok(sig)
 }
 

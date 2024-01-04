@@ -34,10 +34,6 @@ pub struct Genesis {
     #[serde(deserialize_with = "from_int_or_hex")]
     pub difficulty: U256,
 
-    /// The genesis header mix hash.
-    #[serde(default)]
-    pub mix_hash: H256,
-
     /// The genesis header coinbase address.
     #[serde(default)]
     pub coinbase: Address,
@@ -202,7 +198,6 @@ mod tests {
           "difficulty": "0x1",
           "energyLimit": "0x400000",
           "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000658bdf435d810c91414ec09147daa6db624063790000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-          "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "nonce": "0x0",
           "timestamp": "0x5c51a607",
           "alloc": {}
@@ -219,7 +214,6 @@ mod tests {
         {
             "nonce": "0x0000000000000042",
             "difficulty": "34747478",
-            "mixHash": "0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234",
             "coinbase": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "timestamp": "0x123456",
             "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -335,7 +329,6 @@ mod tests {
             "difficulty" : "0x020000",
             "extraData"  : "0x42",
             "energyLimit"   : "0x2fefd8",
-            "mixHash"    : "0x2c85bcbce56429100b2108254bb56906257582aeafcbd682bc9af67a9f5aee46",
             "nonce"      : "0x78cc16f7b4f65485",
             "parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
             "timestamp"  : "0x54c98c81",
@@ -438,7 +431,6 @@ mod tests {
             "extraData": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "energyLimit": "0x80000000",
             "difficulty": "0x20000",
-            "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
             "coinbase": "0x00000000000000000000000000000000000000000000",
             "alloc": {
                 "000071562b71999873db5b286df957af199ec94617f7": {
@@ -467,7 +459,6 @@ mod tests {
           "extraData": "0x",
           "energyLimit": "0x4c4b40",
           "difficulty": "0x1",
-          "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "coinbase": "0x00000000000000000000000000000000000000000000",
           "alloc": {
             "0000658bdf435d810c91414ec09147daa6db62406379": {
@@ -559,7 +550,6 @@ mod tests {
               "code": "0x60606040526000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168063ef2769ca1461003e575b610000565b3461000057610078600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190803590602001909190505061007a565b005b8173ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051809050600060405180830381858888f1935050505015610106578173ffffffffffffffffffffffffffffffffffffffff167f30a3c50752f2552dcc2b93f5b96866280816a986c0c0408cb6778b9fa198288f826040518082815260200191505060405180910390a25b5b50505600a165627a7a72305820637991fabcc8abad4294bf2bb615db78fbec4edff1635a2647d3894e2daf6a610029"
             }
           },
-          "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
           "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
         }
         "#;
@@ -605,7 +595,6 @@ mod tests {
         {
             "nonce": "0x0000000000000042",
             "difficulty": "0x2123456",
-            "mixHash": "0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234",
             "coinbase": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "timestamp": "0x123456",
             "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -660,7 +649,6 @@ mod tests {
         let expected_genesis = Genesis {
             nonce: 0x0000000000000042.into(),
             difficulty: 0x2123456.into(),
-            mix_hash: H256::from_str("0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234").unwrap(),
             coinbase: Address::from_str("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").unwrap(),
             timestamp: 0x123456.into(),
             parent_hash: Some(H256::from_str("0x0000000000000000000000000000000000000000000000000000000000000000").unwrap()),

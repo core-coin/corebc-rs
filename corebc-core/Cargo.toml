@@ -26,14 +26,13 @@ all-features = true
 [dependencies]
 # abi
 open-fastrlp = { git = "https://github.com/Kuly14/open-fastrlp", version = "*", features = ["std", "derive", "ethereum-types"] }
-rlp = { git = "https://github.com/core-coin/core-common", version = "0.5", features = ["derive"] }
+rlp = { git = "https://github.com/core-coin/core-common", version = "0.5", default-features = true, features = ["derive"] }
 ethabi = { git = "https://github.com/core-coin/coreabi", rev = "17563d16987f21ea5a3f470583a4853fc6ce6958", default-features = false, features = ["full-serde", "rlp"] }
 arrayvec = { version = "0.7", default-features = false }
 
 # crypto
-elliptic-curve.workspace = true
-generic-array.workspace = true
 k256 = { workspace = true, features = ["ecdsa", "std"] }
+libgoldilocks = { workspace = true }
 # tiny-keccak.workspace = true
 rand.workspace = true
 tiny-keccak = { version = "2.0.2", features = ["sha3"] }
@@ -41,7 +40,7 @@ tiny-keccak = { version = "2.0.2", features = ["sha3"] }
 # misc
 chrono = { version = "0.4", default-features = false }
 serde.workspace = true
-serde_json = { workspace = true, features = ["arbitrary_precision"] }
+serde_json = { workspace = true, features = ["arbitrary_precision"]}
 thiserror.workspace = true
 bytes = { workspace = true, features = ["serde"] }
 hex.workspace = true
@@ -72,4 +71,4 @@ legacy = []
 macros = ["syn", "cargo_metadata", "once_cell"]
 
 # Deprecated
-eip712 = []
+cip712 = []

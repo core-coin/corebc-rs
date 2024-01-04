@@ -5,7 +5,7 @@
 // use app::TrezorEthereum;
 // use async_trait::async_trait;
 // use corebc_core::types::{
-//     transaction::{eip2718::TypedTransaction, eip712::Eip712},
+//     transaction::{eip2718::TypedTransaction, cip712::Cip712},
 //     Address, Signature,
 // };
 // use types::TrezorError;
@@ -24,8 +24,8 @@
 //     }
 
 //     /// Signs the transaction
-//     async fn sign_transaction(&self, message: &TypedTransaction) -> Result<Signature, Self::Error> {
-//         let mut tx_with_network = message.clone();
+//     async fn sign_transaction(&self, message: &TypedTransaction) -> Result<Signature,
+// Self::Error> {         let mut tx_with_network = message.clone();
 //         if tx_with_network.network_id().is_none() {
 //             // in the case we don't have a network_id, let's use the signer network id instead
 //             tx_with_network.set_network_id(self.network_id);
@@ -33,8 +33,8 @@
 //         self.sign_tx(&tx_with_network).await
 //     }
 
-//     /// Signs a EIP712 derived struct
-//     async fn sign_typed_data<T: Eip712 + Send + Sync>(
+//     /// Signs a CIP712 derived struct
+//     async fn sign_typed_data<T: Cip712 + Send + Sync>(
 //         &self,
 //         payload: &T,
 //     ) -> Result<Signature, Self::Error> {

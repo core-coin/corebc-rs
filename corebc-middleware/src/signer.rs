@@ -332,14 +332,74 @@ where
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
-    use super::*;
-    use corebc_core::{
-        types::TransactionRequest,
-        utils::{self, sha3, Anvil},
-    };
+    use corebc_core::utils::{self, sha3, Anvil};
     use corebc_providers::Provider;
     use corebc_signers::LocalWallet;
     use std::convert::TryFrom;
+
+    // #[tokio::test]
+    // async fn test_signer() {
+    //     let provider = Provider::try_from("http://127.0.0.1:8545/").unwrap();
+
+    //     let network_id = 1u64;
+
+    //     let key =
+    // "9d8230420100cee4caee63d7385e6a784baa228efcceabdfed8d04f9705cdbe1f3fabf8295d89e8a79c235ab11b5aaff830b0569936afd254c"
+    //     .parse::<LocalWallet>()
+    //     .unwrap()
+    //     .with_network_id(network_id);
+
+    //     let client = SignerMiddleware::new(provider, key);
+
+    //     let tx: TypedTransaction = TransactionRequest {
+    //         from: None,
+    //         to: Some(
+    //
+    // "cb81a111da2c7ec8cee4baa791504379a6230fd1c7af".parse::<Address>().unwrap().into(),
+    //         ),
+    //         value: Some(1_000_000_000.into()),
+    //         energy: Some(2_000_000.into()),
+    //         nonce: Some(0.into()),
+    //         energy_price: Some(21_000_000_000u128.into()),
+    //         data: None,
+    //         network_id: Some(1u8.into()),
+    //     }
+    //     .into();
+
+    //     let hash = client.send_transaction(tx, None).await;
+    //     println!("{:?}", hash);
+
+    // }
+
+    //     #[tokio::test]
+    //     async fn test_signer() -> Result<(), Box<dyn std::error::Error>> {
+    //         // let provider = Provider::try_from("http://127.0.0.1:8545/").unwrap();
+    //         let provider = Provider::try_from("https://xcbapi.corecoin.cc/").unwrap();
+    //         let network_id = 3u64;
+
+    //         // let key =
+    // "9d8230420100cee4caee63d7385e6a784baa228efcceabdfed8d04f9705cdbe1f3fabf8295d89e8a79c235ab11b5aaff830b0569936afd254c"
+    //         let key =
+    // "9d8230420100cee4caee63d7385e6a784baa228efcceabdfed8d04f9705cdbe1f3fabf8295d89e8a79c235ab11b5aaff830b0569936afd254c"
+    //         .parse::<LocalWallet>()
+    //         .unwrap()
+    //         .with_network_id(network_id);
+
+    //         println!("{:?}", key);
+
+    //         let client = SignerMiddleware::new(provider, key);
+
+    //         // let address_to =
+    // "cb81a111da2c7ec8cee4baa791504379a6230fd1c7af".parse::<Address>()?;         let
+    // address_to = "ab36393ecaa2d3209cee16ce9b2360e327ed3c923346".parse::<Address>()?;
+
+    //         let tx = TransactionRequest::new()
+    //         .to(address_to)
+    //         .value(U256::from(utils::parse_units("1", "wei")?));
+
+    //         let receipt = client.send_transaction(tx, None).await?.await?;
+    //         Ok(())
+    // }
 
     // CORETODO: Needs Anvil
     // #[tokio::test]
@@ -488,7 +548,7 @@ mod tests {
     //     provider
     //         .send_transaction(
     //             TransactionRequest::pay(key.address(),
-    // utils::parse_ether(1u64).unwrap()).from(acc),             None,
+    // utils::parse_core(1u64).unwrap()).from(acc),             None,
     //         )
     //         .await
     //         .unwrap()

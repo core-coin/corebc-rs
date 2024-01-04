@@ -30,9 +30,9 @@ async fn mocked_block_number() -> eyre::Result<()> {
     mock.push(block_num_3)?;
 
     // Act
-    let ret_block_3: U64 = JsonRpcClient::request(&mock, "eth_blockNumber", ()).await?;
-    let ret_block_2: U64 = JsonRpcClient::request(&mock, "eth_blockNumber", ()).await?;
-    let ret_block_1: U64 = JsonRpcClient::request(&mock, "eth_blockNumber", ()).await?;
+    let ret_block_3: U64 = JsonRpcClient::request(&mock, "xcb_blockNumber", ()).await?;
+    let ret_block_2: U64 = JsonRpcClient::request(&mock, "xcb_blockNumber", ()).await?;
+    let ret_block_1: U64 = JsonRpcClient::request(&mock, "xcb_blockNumber", ()).await?;
 
     // Assert
     assert_eq!(block_num_1, ret_block_1);

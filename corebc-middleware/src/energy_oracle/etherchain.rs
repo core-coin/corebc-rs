@@ -1,4 +1,4 @@
-use super::{from_gwei_f64, EneryOracle, GasCategory, Result};
+use super::{from_gwei_f64, EnergyOracle, GasCategory, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use reqwest::Client;
@@ -8,7 +8,7 @@ use url::Url;
 const URL: &str = "https://www.etherchain.org/api/gasPriceOracle";
 
 /// A client over HTTP for the [Etherchain](https://www.etherchain.org/api/gasPriceOracle) gas tracker API
-/// that implements the `EneryOracle` trait.
+/// that implements the `EnergyOracle` trait.
 #[derive(Clone, Debug)]
 #[must_use]
 pub struct Etherchain {
@@ -48,7 +48,7 @@ impl Default for Etherchain {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl EneryOracle for Etherchain {
+impl EnergyOracle for Etherchain {
     async fn fetch(&self) -> Result<U256> {
         let res = self.query().await?;
         let energy_price = res.gas_from_category(self.gas_category);

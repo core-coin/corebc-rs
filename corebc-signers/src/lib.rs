@@ -9,7 +9,7 @@ pub use wallet::{MnemonicBuilder, Wallet, WalletError};
 pub use coins_bip39;
 
 /// A wallet instantiated with a locally stored private key
-pub type LocalWallet = Wallet<corebc_core::k256::ecdsa::SigningKey>;
+pub type LocalWallet = Wallet<corebc_core::libgoldilocks::SigningKey>;
 
 #[cfg(all(feature = "yubihsm", not(target_arch = "wasm32")))]
 /// A wallet instantiated with a YubiHSM
@@ -41,7 +41,7 @@ pub use yubihsm;
 
 use async_trait::async_trait;
 use corebc_core::types::{
-    transaction::{eip2718::TypedTransaction, eip712::Eip712},
+    transaction::{cip712::Cip712, eip2718::TypedTransaction},
     Address, Signature,
 };
 use std::error::Error;
@@ -67,9 +67,9 @@ pub trait Signer: std::fmt::Debug + Send + Sync {
     /// Signs the transaction
     async fn sign_transaction(&self, message: &TypedTransaction) -> Result<Signature, Self::Error>;
 
-    /// Encodes and signs the typed data according EIP-712.
-    /// Payload must implement Eip712 trait.
-    async fn sign_typed_data<T: Eip712 + Send + Sync>(
+    /// Encodes and signs the typed data according Cip-712.
+    /// Payload must implement Cip712 trait.
+    async fn sign_typed_data<T: Cip712 + Send + Sync>(
         &self,
         payload: &T,
     ) -> Result<Signature, Self::Error>;

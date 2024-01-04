@@ -333,12 +333,12 @@ pub mod spoof {
     /// ```no_run
     /// # use corebc_core::{
     /// #     types::{Address, TransactionRequest, H256},
-    /// #     utils::{parse_ether, Geth},
+    /// #     utils::{parse_core, GoCore},
     /// # };
     /// # use corebc_providers::{Provider, Http, Middleware, call_raw::{spoof, RawCall}};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// let geth = Geth::new().spawn();
-    /// let provider = Provider::<Http>::try_from(geth.endpoint()).unwrap();
+    /// let gocore = GoCore::new().spawn();
+    /// let provider = Provider::<Http>::try_from(gocore.endpoint()).unwrap();
     ///
     /// let adr1: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     /// let adr2: Address = "0x0000295a70b2de5e3953354a6a8344e616ed314d7251".parse()?;
@@ -368,16 +368,16 @@ pub mod spoof {
     /// ```no_run
     /// # use corebc_core::{
     /// #     types::{Address, TransactionRequest, H256},
-    /// #     utils::{parse_ether, Geth},
+    /// #     utils::{parse_core, GoCore},
     /// # };
     /// # use corebc_providers::{Provider, Http, Middleware, call_raw::{RawCall, spoof}};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// let geth = Geth::new().spawn();
-    /// let provider = Provider::<Http>::try_from(geth.endpoint()).unwrap();
+    /// let gocore = GoCore::new().spawn();
+    /// let provider = Provider::<Http>::try_from(gocore.endpoint()).unwrap();
     ///
     /// let adr1: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     /// let adr2: Address = "0x0000295a70b2de5e3953354a6a8344e616ed314d7251".parse()?;
-    /// let pay_amt = parse_ether(1u64)?;
+    /// let pay_amt = parse_core(1u64)?;
     ///
     /// // Not enough ether to pay for the transaction
     /// let tx = TransactionRequest::pay(adr2, pay_amt).from(adr1).into();
@@ -400,15 +400,15 @@ pub mod spoof {
     /// ```no_run
     /// # use corebc_core::{
     /// #     types::{Address, TransactionRequest, H256},
-    /// #     utils::{parse_ether, Geth},
+    /// #     utils::{parse_core, GoCore},
     /// # };
     /// # use corebc_providers::{Provider, Http, Middleware, call_raw::{RawCall, spoof}};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// let geth = Geth::new().spawn();
-    /// let provider = Provider::<Http>::try_from(geth.endpoint()).unwrap();
+    /// let gocore = GoCore::new().spawn();
+    /// let provider = Provider::<Http>::try_from(gocore.endpoint()).unwrap();
     ///
     /// let adr: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
-    /// let pay_amt = parse_ether(1u64)?;
+    /// let pay_amt = parse_core(1u64)?;
     ///
     /// let tx = TransactionRequest::default().from(adr).into();
     ///
@@ -430,15 +430,15 @@ pub mod spoof {
     /// ```no_run
     /// # use corebc_core::{
     /// #     types::{Address, TransactionRequest, H256},
-    /// #     utils::{parse_ether, Geth},
+    /// #     utils::{parse_core, GoCore},
     /// # };
     /// # use corebc_providers::{Provider, Http, Middleware, call_raw::{RawCall, spoof}};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// let geth = Geth::new().spawn();
-    /// let provider = Provider::<Http>::try_from(geth.endpoint()).unwrap();
-    ///
+    /// let gocore = GoCore::new().spawn();
+    /// let provider = Provider::<Http>::try_from(gocore.endpoint()).unwrap();
+    /// 
     /// let adr: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
-    /// let pay_amt = parse_ether(1u64)?;
+    /// let pay_amt = parse_core(1u64)?;
     ///
     /// let tx = TransactionRequest::default().to(adr).into();
     ///
@@ -462,12 +462,12 @@ pub mod spoof {
     /// ```no_run
     /// # use corebc_core::{
     /// #     types::{Address, TransactionRequest, H256},
-    /// #     utils::{parse_ether, Geth},
+    /// #     utils::{parse_core, GoCore},
     /// # };
     /// # use corebc_providers::{Provider, Http, Middleware, call_raw::{RawCall, spoof}};
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    /// let geth = Geth::new().spawn();
-    /// let provider = Provider::<Http>::try_from(geth.endpoint()).unwrap();
+    /// let gocore = GoCore::new().spawn();
+    /// let provider = Provider::<Http>::try_from(gocore.endpoint()).unwrap();
     ///
     /// let adr: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     /// let key = H256::from_low_u64_be(1);
@@ -555,12 +555,12 @@ mod tests {
 
     // #[tokio::test]
     // async fn test_state_overrides() {
-    //     let geth = Geth::new().spawn();
-    //     let provider = Provider::<Http>::try_from(geth.endpoint()).unwrap();
+    //     let gocore = GoCore::new().spawn();
+    //     let provider = Provider::<Http>::try_from(gocore.endpoint()).unwrap();
 
     //     let adr1: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse().unwrap();
     //     let adr2: Address = "0x0000295a70b2de5e3953354a6a8344e616ed314d7251".parse().unwrap();
-    //     let pay_amt = parse_ether(1u64).unwrap();
+    //     let pay_amt = parse_core(1u64).unwrap();
 
     //     // Not enough ether to pay for the transaction
     //     let tx = TransactionRequest::pay(adr2, pay_amt).from(adr1).into();

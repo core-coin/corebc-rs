@@ -18,3 +18,6 @@ pub use rand;
 
 // re-export k256
 pub use k256;
+
+// re-export ed448
+pub use libgoldilocks;

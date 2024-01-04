@@ -1,5 +1,8 @@
 use super::{U128, U256, U512, U64};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{
+    de::{self, Deserialize, Deserializer, Visitor},
+    ser::{Serialize, Serializer},
+};
 use std::{convert::TryFrom, fmt, str::FromStr, time::Duration};
 use strum::{EnumCount, EnumIter, EnumVariantNames};
 
@@ -62,40 +65,71 @@ macro_rules! impl_into_numeric {
     )+};
 }
 
-macro_rules! impl_try_from_numeric {
+macro_rules! impl_from_numeric {
     ($($native:ty)+ ; $($primitive:ty)*) => {
         $(
-            impl TryFrom<$native> for Network {
-                type Error = ParseNetworkError;
-
-                fn try_from(value: $native) -> Result<Self, Self::Error> {
+            impl From<$native> for Network {
+                fn from(value: $native) -> Self {
                     match value as u64 {
-                        1 => Ok(Network::Mainnet),
-                        3 => Ok(Network::Devin),
-                        n => Ok(Network::Private(n)),
+                        1 => Network::Mainnet,
+                        3 => Network::Devin,
+                        n => Network::Private(n),
                     }
                 }
             }
         )+
 
         $(
-            impl TryFrom<$primitive> for Network {
-                type Error = ParseNetworkError;
-
-                fn try_from(value: $primitive) -> Result<Self, Self::Error> {
+            impl From<$primitive> for Network {
+                fn from(value: $primitive) -> Self {
                     if value.bits() > 64 {
-                        return Err(ParseNetworkError { number: value.low_u64() })
+                        panic!("{:?}",  ParseNetworkError { number: value.low_u64() });
                     }
                     match value.low_u64() {
-                        1 => Ok(Network::Mainnet),
-                        3 => Ok(Network::Devin),
-                        n => Ok(Network::Private(n)),
+                        1 => Network::Mainnet,
+                        3 => Network::Devin,
+                        n => Network::Private(n),
                     }
                 }
             }
         )*
     };
 }
+
+// macro_rules! impl_try_from_numeric {
+//     ($($native:ty)+ ; $($primitive:ty)*) => {
+//         $(
+//             impl TryFrom<$native> for Network {
+//                 type Error = ParseNetworkError;
+
+//                 fn try_from(value: $native) -> Result<Self, Self::Error> {
+//                     match value as u64 {
+//                         1 => Ok(Network::Mainnet),
+//                         3 => Ok(Network::Devin),
+//                         n => Ok(Network::Private(n)),
+//                     }
+//                 }
+//             }
+//         )+
+
+//         $(
+//             impl TryFrom<$primitive> for Network {
+//                 type Error = ParseNetworkError;
+
+//                 fn try_from(value: $primitive) -> Result<Self, Self::Error> {
+//                     if value.bits() > 64 {
+//                         return Err(ParseNetworkError { number: value.low_u64() })
+//                     }
+//                     match value.low_u64() {
+//                         1 => Ok(Network::Mainnet),
+//                         3 => Ok(Network::Devin),
+//                         n => Ok(Network::Private(n)),
+//                     }
+//                 }
+//             }
+//         )*
+//     };
+// }
 
 impl From<Network> for u64 {
     fn from(network: Network) -> Self {
@@ -129,7 +163,7 @@ impl TryFrom<&str> for Network {
     }
 }
 
-impl_try_from_numeric!(u8 u16 u32 u64 usize; U128 U256 U512);
+impl_from_numeric!(u8 u16 u32 u64 usize; U128 U256 U512);
 
 impl fmt::Display for Network {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -155,21 +189,58 @@ impl<'de> Deserialize<'de> for Network {
     where
         D: Deserializer<'de>,
     {
-        let s = String::deserialize(deserializer)?;
-        Ok(Network::from(s))
+        struct NetworkVisitor;
+
+        impl<'de> Visitor<'de> for NetworkVisitor {
+            type Value = Network;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("network (mainnet, devin or private-<id>))")
+            }
+
+            fn visit_i64<E>(self, value: i64) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                if value <= 0 {
+                    return Err(de::Error::invalid_value(de::Unexpected::Signed(value), &self))
+                }
+                Ok(Network::from(value as u64))
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                Ok(Network::from(value))
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Network, E>
+            where
+                E: de::Error,
+            {
+                Ok(Network::from(value.to_string()))
+            }
+        }
+
+        let r = Deserializer::deserialize_any(deserializer, NetworkVisitor)?;
+        Ok(r)
     }
 }
 
 impl From<String> for Network {
     fn from(s: String) -> Network {
         match s.as_str() {
-            "mainnet" => Network::Mainnet,
-            "devin" => Network::Devin,
+            "mainnet" | "1" => Network::Mainnet,
+            "devin" | "3" => Network::Devin,
             unknown => {
                 if let ["private", id_str] = unknown.split('-').collect::<Vec<_>>().as_slice() {
                     if let Ok(id) = id_str.parse::<u64>() {
                         return Network::Private(id)
                     }
+                }
+                if let Ok(id) = unknown.parse::<u64>() {
+                    return Network::Private(id)
                 }
                 panic!("Unknown network: {}", unknown);
             }
@@ -327,5 +398,20 @@ mod tests {
             let network = Network::try_from(network_id).expect("cannot parse u64 as network_id");
             assert_eq!(u64::from(network), network_id);
         }
+    }
+
+    #[test]
+    fn parse_networks_as_number_strings() {
+        let mut private = Network::try_from("6").expect("cannot parse private network_id 6");
+        assert_eq!(private, Network::Private(6));
+
+        private = Network::try_from("private-4").expect("cannot parse private network_id 4");
+        assert_eq!(private, Network::Private(4));
+
+        let mainnet = Network::try_from("1").expect("cannot parse mainnet network_id");
+        assert_eq!(mainnet, Network::Mainnet);
+
+        let devin = Network::try_from("3").expect("cannot parse devin network_id");
+        assert_eq!(devin, Network::Devin);
     }
 }

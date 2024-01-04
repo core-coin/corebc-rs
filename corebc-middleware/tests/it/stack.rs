@@ -1,7 +1,7 @@
 use corebc_core::{rand::thread_rng, types::Network};
 use corebc_middleware::{
     energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    energy_oracle::{EneryOracleMiddleware, GasCategory},
+    energy_oracle::{EnergyOracleMiddleware, GasCategory},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
@@ -39,9 +39,9 @@ async fn mock_with_middleware() {
     provider.get_block_number().await.unwrap_err();
 
     // 2 calls were made
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap();
-    mock.assert_request("eth_blockNumber", ()).unwrap_err();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap();
+    mock.assert_request("xcb_blockNumber", ()).unwrap_err();
 }
 
 // CORETODO: Needs Anvil

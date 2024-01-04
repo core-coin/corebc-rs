@@ -46,7 +46,7 @@
 //     #[error(transparent)]
 //     /// Error when converting a semver requirement
 //     SemVerError(#[from] semver::Error),
-//     /// Error when signing EIP712 struct with not compatible Trezor ETH app
+//     /// Error when signing CIP712 struct with not compatible Trezor ETH app
 //     #[error("Trezor ethereum app requires at least version: {0:?}")]
 //     UnsupportedFirmwareVersion(String),
 //     #[error("Does not support ENS.")]
@@ -105,7 +105,8 @@
 //             }),
 //             TypedTransaction::Eip1559(eip1559_tx) => {
 //                 let max_fee_per_gas =
-//                     eip1559_tx.max_fee_per_gas.map_or(vec![], |v| Self::to_trimmed_big_endian(&v));
+//                     eip1559_tx.max_fee_per_gas.map_or(vec![], |v|
+// Self::to_trimmed_big_endian(&v));
 
 //                 let max_priority_fee_per_gas = eip1559_tx
 //                     .max_priority_fee_per_gas

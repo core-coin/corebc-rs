@@ -1,4 +1,4 @@
-use super::{EneryOracle, EneryOracleError};
+use super::{EnergyOracle, EnergyOracleError};
 use async_trait::async_trait;
 use corebc_core::types::{transaction::eip2718::TypedTransaction, *};
 use corebc_providers::{Middleware, MiddlewareError as METrait, PendingTransaction};
@@ -6,15 +6,15 @@ use thiserror::Error;
 
 /// Middleware used for fetching gas prices over an API instead of `eth_gasPrice`.
 #[derive(Debug)]
-pub struct EneryOracleMiddleware<M, G> {
+pub struct EnergyOracleMiddleware<M, G> {
     inner: M,
     energy_oracle: G,
 }
 
-impl<M, G> EneryOracleMiddleware<M, G>
+impl<M, G> EnergyOracleMiddleware<M, G>
 where
     M: Middleware,
-    G: EneryOracle,
+    G: EnergyOracle,
 {
     pub fn new(inner: M, energy_oracle: G) -> Self {
         Self { inner, energy_oracle }
@@ -24,7 +24,7 @@ where
 #[derive(Debug, Error)]
 pub enum MiddlewareError<M: Middleware> {
     #[error(transparent)]
-    EneryOracleError(#[from] EneryOracleError),
+    EnergyOracleError(#[from] EnergyOracleError),
 
     #[error("{0}")]
     MiddlewareError(M::Error),
@@ -47,10 +47,10 @@ impl<M: Middleware> METrait for MiddlewareError<M> {
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<M, G> Middleware for EneryOracleMiddleware<M, G>
+impl<M, G> Middleware for EnergyOracleMiddleware<M, G>
 where
     M: Middleware,
-    G: EneryOracle,
+    G: EnergyOracle,
 {
     type Error = MiddlewareError<M>;
     type Provider = M::Provider;
