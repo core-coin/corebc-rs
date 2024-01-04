@@ -1,7 +1,7 @@
 #[tokio::main]
 #[cfg(feature = "ledger")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    use corebc::{prelude::*, utils::parse_ether};
+    use corebc::{prelude::*, utils::parse_core};
 
     // Connect over websockets
     let provider = Provider::new(Ws::connect("ws://localhost:8545").await?);
@@ -14,7 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create and broadcast a transaction (ENS enabled!)
     // (this will require confirming the tx on the device)
-    let tx = TransactionRequest::new().to("vitalik.eth").value(parse_ether(10)?);
+    let tx = TransactionRequest::new().to("vitalik.eth").value(parse_core(10)?);
     let pending_tx = client.send_transaction(tx, None).await?;
 
     // Get the receipt

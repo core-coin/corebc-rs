@@ -1337,7 +1337,7 @@ contract Enum {
     }
 
     #[test]
-    fn parse_ethers_crate() {
+    fn parse_cores_crate() {
         // gotta bunch these all together as we are overwriting env vars
         run_test(|context| {
             let Context { multi_gen, mod_root } = context;

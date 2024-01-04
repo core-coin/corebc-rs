@@ -2,43 +2,43 @@
 #![deny(unsafe_code, rustdoc::broken_intra_doc_links)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-/// The [Gas Escalator middleware](crate::energy_escalator::GasEscalatorMiddleware)
-/// is used to re-broadcast transactions with an increasing gas price to guarantee
-/// their timely inclusion.
+// The [Gas Escalator middleware](crate::energy_escalator::GasEscalatorMiddleware)
+// is used to re-broadcast transactions with an increasing gas price to guarantee
+// their timely inclusion.
 pub mod energy_escalator;
 
-/// The gas oracle middleware is used to get the gas price from a list of gas oracles
-/// instead of using eth_gasPrice. For usage examples, refer to the
-/// [`EneryOracle`](crate::energy_oracle::EneryOracle) trait.
+// The gas oracle middleware is used to get the gas price from a list of gas oracles
+// instead of using eth_gasPrice. For usage examples, refer to the
+// [`EnergyOracle`](crate::energy_oracle::EnergyOracle) trait.
 pub mod energy_oracle;
 
-/// The [Nonce Manager](crate::NonceManagerMiddleware) is used to locally calculate nonces instead
-/// of using eth_getTransactionCount
+// The [Nonce Manager](crate::NonceManagerMiddleware) is used to locally calculate nonces instead
+// of using eth_getTransactionCount
 pub mod nonce_manager;
 pub use nonce_manager::NonceManagerMiddleware;
 
-/// The [Transformer](crate::transformer::TransformerMiddleware) is used to intercept transactions
-/// and transform them to be sent via various supported transformers, e.g.,
-/// [DSProxy](crate::transformer::DsProxy)
+// The [Transformer](crate::transformer::TransformerMiddleware) is used to intercept transactions
+// and transform them to be sent via various supported transformers, e.g.,
+// [DSProxy](crate::transformer::DsProxy)
 pub mod transformer;
 
-/// The [Signer](crate::SignerMiddleware) is used to locally sign transactions and messages
-/// instead of using eth_sendTransaction and eth_sign
+// The [Signer](crate::SignerMiddleware) is used to locally sign transactions and messages
+// instead of using eth_sendTransaction and eth_sign
 pub mod signer;
 pub use signer::SignerMiddleware;
 
-/// The [Policy](crate::PolicyMiddleware) is used to ensure transactions comply with the rules
-/// configured in the `PolicyMiddleware` before sending them.
+// The [Policy](crate::PolicyMiddleware) is used to ensure transactions comply with the rules
+// configured in the `PolicyMiddleware` before sending them.
 pub mod policy;
 pub use policy::PolicyMiddleware;
 
-/// The [TimeLag](crate::TimeLag) provides safety against reorgs by querying state N blocks
-/// before the network tip
+// The [TimeLag](crate::TimeLag) provides safety against reorgs by querying state N blocks
+// before the network tip
 pub mod timelag;
 pub use timelag::TimeLag;
 
-/// The [MiddlewareBuilder](crate::MiddlewareBuilder) provides a way to compose many
-/// [`Middleware`](corebc_providers::Middleware) in a concise way
+// The [MiddlewareBuilder](crate::MiddlewareBuilder) provides a way to compose many
+// [`Middleware`](corebc_providers::Middleware) in a concise way
 pub mod builder;
 pub use builder::MiddlewareBuilder;
 

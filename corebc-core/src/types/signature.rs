@@ -58,6 +58,7 @@ impl fmt::Display for Signature {
     }
 }
 
+// CORETODO: Implement typed data
 // #[cfg(feature = "cip712")]
 // impl Signature {
 //     /// Recovers the ethereum address which was used to sign a given CIP712

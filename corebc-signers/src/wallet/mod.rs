@@ -45,7 +45,8 @@ use std::fmt;
 /// // The wallet can be used to sign messages
 /// let message = b"hello";
 /// let signature = wallet.sign_message(message).await?;
-/// assert_eq!(signature.recover(&message[..]).unwrap(), wallet.address());
+/// let network = Network::try_from(wallet.network_id()).unwrap();
+/// assert_eq!(signature.recover(&message[..], &network).unwrap(), wallet.address());
 ///
 /// // LocalWallet is clonable:
 /// let wallet_clone = wallet.clone();

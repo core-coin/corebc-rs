@@ -28,19 +28,19 @@ type WatcherFuture<'a> = Pin<Box<dyn futures_util::stream::Stream<Item = ()> + '
 #[cfg(not(target_arch = "wasm32"))]
 type WatcherFuture<'a> = Pin<Box<dyn futures_util::stream::Stream<Item = ()> + Send + 'a>>;
 
-/// Trait for fetching updated gas prices after a transaction has been first
-/// broadcast
+// Trait for fetching updated gas prices after a transaction has been first
+// broadcast
 pub trait GasEscalator: Send + Sync + std::fmt::Debug {
-    /// Given the initial gas price and the time elapsed since the transaction's
-    /// first broadcast, it returns the new gas price
+    // Given the initial gas price and the time elapsed since the transaction's
+    // first broadcast, it returns the new gas price
     fn get_energy_price(&self, initial_price: U256, time_elapsed: u64) -> U256;
 }
 
 #[derive(Error, Debug)]
-/// Error thrown when the GasEscalator interacts with the blockchain
+// Error thrown when the GasEscalator interacts with the blockchain
 pub enum GasEscalatorError<M: Middleware> {
     #[error("{0}")]
-    /// Thrown when an internal middleware errors
+    // Thrown when an internal middleware errors
     MiddlewareError(M::Error),
 
     #[error("Gas escalation is only supported for Legacy transactions")]
@@ -64,79 +64,79 @@ impl<M: Middleware> MiddlewareError for GasEscalatorError<M> {
 }
 
 #[derive(Debug, Clone, Copy)]
-/// The frequency at which transactions will be bumped
+// The frequency at which transactions will be bumped
 pub enum Frequency {
-    /// On a per block basis using the eth_newBlock filter
+    // On a per block basis using the eth_newBlock filter
     PerBlock,
-    /// On a duration basis (in milliseconds)
+    // On a duration basis (in milliseconds)
     Duration(u64),
 }
 
 #[derive(Debug)]
 pub(crate) struct GasEscalatorMiddlewareInternal<M> {
     pub(crate) inner: Arc<M>,
-    /// The transactions which are currently being monitored for escalation
+    // The transactions which are currently being monitored for escalation
     #[allow(clippy::type_complexity)]
     pub txs: ToEscalate,
     _background: oneshot::Sender<()>,
 }
 
 #[derive(Debug, Clone)]
-/// A Gas escalator allows bumping transactions' gas price to avoid getting them
-/// stuck in the memory pool.
-///
-/// GasEscalator runs a background task which monitors the blockchain for tx
-/// confirmation, and bumps fees over time if txns do not occur. This task
-/// periodically loops over a stored history of sent transactions, and checks
-/// if any require fee bumps. If so, it will resend the same transaction with a
-/// higher fee.
-///
-/// Using [`GasEscalatorMiddleware::new`] will create a new instance of the
-/// background task. Using [`GasEscalatorMiddleware::clone`] will crate a new
-/// instance of the middleware, but will not create a new background task. The
-/// background task is shared among all clones.
-///
-/// ## Footgun
-///
-/// If you drop the middleware, the background task will be dropped as well,
-/// and any transactions you have sent will stop escalating. We recommend
-/// holding an instance of the middleware throughout your application's
-/// lifecycle, or leaking an `Arc` of it so that it is never dropped.
-///
-/// ## Outstanding issue
-///
-/// This task is fallible, and will stop if the provider's connection is lost.
-/// If this happens, the middleware will become unable to properly escalate gas
-/// prices. Transactions will still be dispatched, but no fee-bumping will
-/// happen. This will also cause a memory leak, as the middleware will keep
-/// appending to the list of transactions to escalate (and nothing will ever
-/// clear that list).
-///
-/// We intend to fix this issue in a future release.
-///
-/// ## Example
-///
-/// ```no_run
-/// use corebc_providers::{Provider, Http};
-/// use corebc_middleware::{
-///     energy_escalator::{GeometricGasPrice, Frequency, GasEscalatorMiddleware},
-///     energy_oracle::{GasNow, GasCategory, EneryOracleMiddleware},
-/// };
-/// use std::{convert::TryFrom, time::Duration, sync::Arc};
-///
-/// let provider = Provider::try_from("http://localhost:8545")
-///     .unwrap()
-///     .interval(Duration::from_millis(2000u64));
-///
-/// let provider = {
-///     let escalator = GeometricGasPrice::new(5.0, 10u64, None::<u64>);
-///     GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock)
-/// };
-///
-/// // ... proceed to wrap it in other middleware
-/// let energy_oracle = GasNow::new().category(GasCategory::SafeLow);
-/// let provider = EneryOracleMiddleware::new(provider, energy_oracle);
-/// ```
+// A Gas escalator allows bumping transactions' gas price to avoid getting them
+// stuck in the memory pool.
+//
+// GasEscalator runs a background task which monitors the blockchain for tx
+// confirmation, and bumps fees over time if txns do not occur. This task
+// periodically loops over a stored history of sent transactions, and checks
+// if any require fee bumps. If so, it will resend the same transaction with a
+// higher fee.
+//
+// Using [`GasEscalatorMiddleware::new`] will create a new instance of the
+// background task. Using [`GasEscalatorMiddleware::clone`] will crate a new
+// instance of the middleware, but will not create a new background task. The
+// background task is shared among all clones.
+//
+// ## Footgun
+//
+// If you drop the middleware, the background task will be dropped as well,
+// and any transactions you have sent will stop escalating. We recommend
+// holding an instance of the middleware throughout your application's
+// lifecycle, or leaking an `Arc` of it so that it is never dropped.
+//
+// ## Outstanding issue
+//
+// This task is fallible, and will stop if the provider's connection is lost.
+// If this happens, the middleware will become unable to properly escalate gas
+// prices. Transactions will still be dispatched, but no fee-bumping will
+// happen. This will also cause a memory leak, as the middleware will keep
+// appending to the list of transactions to escalate (and nothing will ever
+// clear that list).
+//
+// We intend to fix this issue in a future release.
+//
+// ## Example
+//
+// ```no_run
+// use corebc_providers::{Provider, Http};
+// use corebc_middleware::{
+//     energy_escalator::{GeometricGasPrice, Frequency, GasEscalatorMiddleware},
+//     energy_oracle::{GasNow, GasCategory, EnergyOracleMiddleware},
+// };
+// use std::{convert::TryFrom, time::Duration, sync::Arc};
+//
+// let provider = Provider::try_from("http://localhost:8545")
+//     .unwrap()
+//     .interval(Duration::from_millis(2000u64));
+//
+// let provider = {
+//     let escalator = GeometricGasPrice::new(5.0, 10u64, None::<u64>);
+//     GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock)
+// };
+//
+// // ... proceed to wrap it in other middleware
+// let energy_oracle = GasNow::new().category(GasCategory::SafeLow);
+// let provider = EnergyOracleMiddleware::new(provider, energy_oracle);
+// ```
 pub struct GasEscalatorMiddleware<M> {
     pub(crate) inner: Arc<GasEscalatorMiddlewareInternal<M>>,
 }
@@ -195,8 +195,8 @@ impl<M> GasEscalatorMiddleware<M>
 where
     M: Middleware,
 {
-    /// Initializes the middleware with the provided gas escalator and the chosen
-    /// escalation frequency (per block or per second)
+    // Initializes the middleware with the provided gas escalator and the chosen
+    // escalation frequency (per block or per second)
     #[allow(clippy::let_and_return)]
     #[cfg(not(target_arch = "wasm32"))]
     pub fn new<E>(inner: M, escalator: E, frequency: Frequency) -> Self

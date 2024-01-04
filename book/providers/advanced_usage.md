@@ -10,7 +10,7 @@ Lets take a quick look at how to use the `CallBuilder`.
 use corebc::{
     providers::{ Http, Provider},
     types::{TransactionRequest, H160},
-    utils::parse_ether,
+    utils::parse_core,
 };
 use std::sync::Arc;
 
@@ -21,7 +21,7 @@ async fn main() -> eyre::Result<()> {
 
     let from_adr: H160 = "0x6fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     let to_adr: H160 = "0x000000000000000000000000000000000000dead".parse()?;
-    let val = parse_ether(1u64)?;
+    let val = parse_core(1u64)?;
 
     let tx = TransactionRequest::default()
         .from(from_adr)
@@ -44,7 +44,7 @@ Here is an example with the exact same raw call, but executed on the previous bl
 use {
     providers::{call_raw::RawCall, Http, Middleware, Provider},
     types::{BlockId, TransactionRequest, H160},
-    utils::parse_ether,
+    utils::parse_core,
 };
 use std::sync::Arc;
 
@@ -55,7 +55,7 @@ async fn main() -> eyre::Result<()> {
 
     let from_adr: H160 = "0x6fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     let to_adr: H160 = "0x000000000000000000000000000000000000dead".parse()?;
-    let val = parse_ether(1u64)?;
+    let val = parse_core(1u64)?;
 
     let tx = TransactionRequest::default()
         .from(from_adr)
@@ -79,7 +79,7 @@ use {
         Http, Provider,
     },
     types::{TransactionRequest, H160, U256, U64},
-    utils::parse_ether,
+    utils::parse_core,
 };
 use std::sync::Arc;
 
@@ -90,7 +90,7 @@ async fn main() -> eyre::Result<()> {
 
     let from_adr: H160 = "0x6fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     let to_adr: H160 = "0x000000000000000000000000000000000000dead".parse()?;
-    let val = parse_ether(1u64)?;
+    let val = parse_core(1u64)?;
 
     let tx = TransactionRequest::default()
         .from(from_adr)

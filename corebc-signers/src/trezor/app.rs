@@ -303,7 +303,7 @@
 //             .gas_price(400e9 as u64)
 //             .nonce(5)
 //             .data(data)
-//             .value(corebc_core::utils::parse_ether(100).unwrap())
+//             .value(corebc_core::utils::parse_core(100).unwrap())
 //             .into();
 //         let tx = trezor.sign_transaction(&tx_req).await.unwrap();
 //     }
@@ -323,7 +323,7 @@
 // .gas(1000000)             .gas_price(400e9 as u64)
 //             .nonce(5)
 //             .data(big_data)
-//             .value(corebc_core::utils::parse_ether(100).unwrap())
+//             .value(corebc_core::utils::parse_core(100).unwrap())
 //             .into();
 //         let tx = trezor.sign_transaction(&tx_req).await.unwrap();
 //     }
@@ -410,7 +410,7 @@
 //             .nonce(5)
 //             .data(data)
 //             .access_list(lst)
-//             .value(corebc_core::utils::parse_ether(100).unwrap())
+//             .value(corebc_core::utils::parse_core(100).unwrap())
 //             .into();
 
 //         let tx = trezor.sign_transaction(&tx_req).await.unwrap();

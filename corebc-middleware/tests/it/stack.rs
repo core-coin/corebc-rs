@@ -1,7 +1,7 @@
 use corebc_core::{rand::thread_rng, types::Network};
 use corebc_middleware::{
     energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    energy_oracle::{EneryOracleMiddleware, GasCategory},
+    energy_oracle::{EnergyOracleMiddleware, GasCategory},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
