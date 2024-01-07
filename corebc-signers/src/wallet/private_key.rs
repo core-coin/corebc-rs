@@ -70,7 +70,7 @@ impl Wallet<SigningKey> {
         let (secret, uuid) = corebc_keystore::new(dir, rng, password, name, &network)?;
         let signer = SigningKey::from_bytes(secret.as_slice())?;
         let address = secret_key_to_address(&signer, &network);
-        Ok((Self { signer, address, network_id: 1 }, uuid))
+        Ok((Self { signer, address, network_id: u64::from(network) }, uuid))
     }
 
     /// Decrypts an encrypted JSON from the provided path to construct a Wallet instance
@@ -87,21 +87,21 @@ impl Wallet<SigningKey> {
         let secret = corebc_keystore::decrypt_key(keypath, password)?;
         let signer = SigningKey::from_bytes(secret.as_slice())?;
         let address = secret_key_to_address(&signer, &network);
-        Ok(Self { signer, address, network_id: 1 })
+        Ok(Self { signer, address, network_id: u64::from(network) })
     }
 
     /// Creates a new random keypair seeded with the provided Network
     pub fn new<R: Rng + CryptoRng>(rng: &mut R, network: Network) -> Self {
         let signer = SigningKey::random(rng);
         let address = secret_key_to_address(&signer, &network);
-        Self { signer, address, network_id: 1 }
+        Self { signer, address, network_id: u64::from(network) }
     }
 
     /// Creates a new Wallet instance from a raw scalar value (big endian).
     pub fn from_bytes(bytes: &[u8], network: Network) -> Result<Self, WalletError> {
         let signer = SigningKey::from_bytes(bytes)?;
         let address = secret_key_to_address(&signer, &network);
-        Ok(Self { signer, address, network_id: 1 })
+        Ok(Self { signer, address, network_id: u64::from(network) })
     }
 }
 
