@@ -1327,7 +1327,7 @@ dependencies = [
 [[package]]
 name = "ethabi"
 version = "18.0.0"
-source = "git+https://github.com/core-coin/coreabi#9c7a2f277d5794f4aafa71d4d867740e2942cdf7"
+source = "git+https://github.com/core-coin/coreabi#ff9eab39a6a6e407a550e8c49b28ceb415aafcf2"
 dependencies = [
  "ethereum-types",
  "hex",
