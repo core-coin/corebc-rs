@@ -5,17 +5,17 @@ use std::{convert::TryFrom, fmt, str::FromStr};
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Units {
     /// Wei is equivalent to 1 wei.
-    Wei,
+    Ore,
     /// Kwei is equivalent to 1e3 wei.
-    Kwei,
+    Wav,
     /// Mwei is equivalent to 1e6 wei.
-    Mwei,
+    Grav,
     /// Gwei is equivalent to 1e9 wei.
-    Gwei,
+    Nucle,
     /// Twei is equivalent to 1e12 wei.
-    Twei,
+    Atom,
     /// Pwei is equivalent to 1e15 wei.
-    Pwei,
+    Moli,
     /// Ether is equivalent to 1e18 wei.
     Core,
     /// Other less frequent unit sizes, equivalent to 1e{0} wei.
@@ -82,12 +82,12 @@ impl FromStr for Units {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(match s.to_lowercase().as_str() {
             "xcb" | "core" => Units::Core,
-            "pwei" | "milli" | "milliether" | "finney" => Units::Pwei,
-            "twei" | "micro" | "microether" | "szabo" => Units::Twei,
-            "gwei" | "nano" | "nanoether" | "shannon" => Units::Gwei,
-            "mwei" | "pico" | "picoether" | "lovelace" => Units::Mwei,
-            "kwei" | "femto" | "femtoether" | "babbage" => Units::Kwei,
-            "wei" => Units::Wei,
+            "moli" | "milli" | "milliether" | "finney" => Units::Moli,
+            "atom" | "micro" | "microether" | "szabo" => Units::Atom,
+            "nucle" | "nano" | "nanoether" | "shannon" => Units::Nucle,
+            "grav" | "pico" | "picoether" | "lovelace" => Units::Grav,
+            "wav" | "femto" | "femtoether" | "babbage" => Units::Wav,
+            "ore" => Units::Ore,
             _ => return Err(ConversionError::UnrecognizedUnits(s.to_string())),
         })
     }
@@ -114,12 +114,12 @@ impl From<Units> for usize {
 impl Units {
     pub fn as_num(&self) -> u32 {
         match self {
-            Units::Wei => 0,
-            Units::Kwei => 3,
-            Units::Mwei => 6,
-            Units::Gwei => 9,
-            Units::Twei => 12,
-            Units::Pwei => 15,
+            Units::Ore => 0,
+            Units::Wav => 3,
+            Units::Grav => 6,
+            Units::Nucle => 9,
+            Units::Atom => 12,
+            Units::Moli => 15,
             Units::Core => 18,
             Units::Other(inner) => *inner,
         }
@@ -133,12 +133,12 @@ mod tests {
 
     #[test]
     fn test_units() {
-        assert_eq!(Wei.as_num(), 0);
-        assert_eq!(Kwei.as_num(), 3);
-        assert_eq!(Mwei.as_num(), 6);
-        assert_eq!(Gwei.as_num(), 9);
-        assert_eq!(Twei.as_num(), 12);
-        assert_eq!(Pwei.as_num(), 15);
+        assert_eq!(Ore.as_num(), 0);
+        assert_eq!(Wav.as_num(), 3);
+        assert_eq!(Grav.as_num(), 6);
+        assert_eq!(Nucle.as_num(), 9);
+        assert_eq!(Atom.as_num(), 12);
+        assert_eq!(Moli.as_num(), 15);
         assert_eq!(Core.as_num(), 18);
         assert_eq!(Other(10).as_num(), 10);
         assert_eq!(Other(20).as_num(), 20);
@@ -146,28 +146,28 @@ mod tests {
 
     #[test]
     fn test_into() {
-        assert_eq!(Units::try_from("wei").unwrap(), Wei);
-        assert_eq!(Units::try_from("kwei").unwrap(), Kwei);
-        assert_eq!(Units::try_from("mwei").unwrap(), Mwei);
-        assert_eq!(Units::try_from("gwei").unwrap(), Gwei);
-        assert_eq!(Units::try_from("twei").unwrap(), Twei);
-        assert_eq!(Units::try_from("pwei").unwrap(), Pwei);
+        assert_eq!(Units::try_from("ore").unwrap(), Ore);
+        assert_eq!(Units::try_from("wav").unwrap(), Wav);
+        assert_eq!(Units::try_from("grav").unwrap(), Grav);
+        assert_eq!(Units::try_from("nucle").unwrap(), Nucle);
+        assert_eq!(Units::try_from("atom").unwrap(), Atom);
+        assert_eq!(Units::try_from("moli").unwrap(), Moli);
         assert_eq!(Units::try_from("core").unwrap(), Core);
 
-        assert_eq!(Units::try_from("wei".to_string()).unwrap(), Wei);
-        assert_eq!(Units::try_from("kwei".to_string()).unwrap(), Kwei);
-        assert_eq!(Units::try_from("mwei".to_string()).unwrap(), Mwei);
-        assert_eq!(Units::try_from("gwei".to_string()).unwrap(), Gwei);
-        assert_eq!(Units::try_from("twei".to_string()).unwrap(), Twei);
-        assert_eq!(Units::try_from("pwei".to_string()).unwrap(), Pwei);
+        assert_eq!(Units::try_from("ore".to_string()).unwrap(), Ore);
+        assert_eq!(Units::try_from("wav".to_string()).unwrap(), Wav);
+        assert_eq!(Units::try_from("grav".to_string()).unwrap(), Grav);
+        assert_eq!(Units::try_from("nucle".to_string()).unwrap(), Nucle);
+        assert_eq!(Units::try_from("atom".to_string()).unwrap(), Atom);
+        assert_eq!(Units::try_from("moli".to_string()).unwrap(), Moli);
         assert_eq!(Units::try_from("core".to_string()).unwrap(), Core);
 
-        assert_eq!(Units::try_from(&"wei".to_string()).unwrap(), Wei);
-        assert_eq!(Units::try_from(&"kwei".to_string()).unwrap(), Kwei);
-        assert_eq!(Units::try_from(&"mwei".to_string()).unwrap(), Mwei);
-        assert_eq!(Units::try_from(&"gwei".to_string()).unwrap(), Gwei);
-        assert_eq!(Units::try_from(&"twei".to_string()).unwrap(), Twei);
-        assert_eq!(Units::try_from(&"pwei".to_string()).unwrap(), Pwei);
+        assert_eq!(Units::try_from(&"ore".to_string()).unwrap(), Ore);
+        assert_eq!(Units::try_from(&"wav".to_string()).unwrap(), Wav);
+        assert_eq!(Units::try_from(&"grav".to_string()).unwrap(), Grav);
+        assert_eq!(Units::try_from(&"nucle".to_string()).unwrap(), Nucle);
+        assert_eq!(Units::try_from(&"atom".to_string()).unwrap(), Atom);
+        assert_eq!(Units::try_from(&"moli".to_string()).unwrap(), Moli);
         assert_eq!(Units::try_from(&"core".to_string()).unwrap(), Core);
     }
 }

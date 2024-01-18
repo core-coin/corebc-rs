@@ -65,7 +65,7 @@ pub enum ConversionError {
 }
 
 /// 1 core = 1e18 Wei == 0x0de0b6b3a7640000 Wei
-pub const WEI_IN_CORE: U256 = U256([0x0de0b6b3a7640000, 0x0, 0x0, 0x0]);
+pub const ORE_IN_CORE: U256 = U256([0x0de0b6b3a7640000, 0x0, 0x0, 0x0]);
 
 /// The number of blocks from the past for which the fee rewards are fetched for fee estimation.
 pub const EIP1559_FEE_ESTIMATION_PAST_BLOCKS: u64 = 10;
@@ -129,7 +129,7 @@ construct_format_units_from! {
 ///
 /// Divides the input by 1e18
 pub fn format_core<T: Into<U256>>(amount: T) -> U256 {
-    amount.into() / WEI_IN_CORE
+    amount.into() / ORE_IN_CORE
 }
 
 /// Divides the provided amount with 10^{units} provided.
@@ -146,7 +146,7 @@ pub fn format_core<T: Into<U256>>(amount: T) -> U256 {
 /// let eth = format_units(U256::from_dec_str("1395633240123456789").unwrap(), "core").unwrap();
 /// assert_eq!(eth, "1.395633240123456789");
 ///
-/// let eth = format_units(i64::MIN, "gwei").unwrap();
+/// let eth = format_units(i64::MIN, "nucle").unwrap();
 /// assert_eq!(eth, "-9223372036.854775808");
 ///
 /// let eth = format_units(i128::MIN, 36).unwrap();
@@ -193,9 +193,9 @@ where
 /// Converts the input to a U256 and converts from Core to Wei.
 ///
 /// ```
-/// use corebc_core::{types::U256, utils::{parse_core, WEI_IN_CORE}};
+/// use corebc_core::{types::U256, utils::{parse_core, ORE_IN_CORE}};
 ///
-/// let eth = U256::from(WEI_IN_CORE);
+/// let eth = U256::from(ORE_IN_CORE);
 /// assert_eq!(eth, parse_core(1u8).unwrap());
 /// assert_eq!(eth, parse_core(1usize).unwrap());
 /// assert_eq!(eth, parse_core("1").unwrap());
@@ -212,8 +212,8 @@ pub fn parse_core<S: ToString>(core: S) -> Result<U256, ConversionError> {
 /// let amount_in_gwei = U256::from_dec_str("15230001000").unwrap();
 /// let amount_in_wei = U256::from_dec_str("15230001000").unwrap();
 /// assert_eq!(amount_in_eth, parse_units("15.230001000000000000", "core").unwrap().into());
-/// assert_eq!(amount_in_gwei, parse_units("15.230001000000000000", "gwei").unwrap().into());
-/// assert_eq!(amount_in_wei, parse_units("15230001000", "wei").unwrap().into());
+/// assert_eq!(amount_in_gwei, parse_units("15.230001000000000000", "nucle").unwrap().into());
+/// assert_eq!(amount_in_wei, parse_units("15230001000", "ore").unwrap().into());
 /// ```
 /// Example of trying to parse decimal WEI, which should fail, as WEI is the smallest
 /// ETH denominator. 1 ETH = 10^18 WEI.
@@ -622,16 +622,16 @@ mod tests {
     use hex_literal::hex;
 
     #[test]
-    fn wei_in_core() {
-        assert_eq!(WEI_IN_CORE.as_u64(), 1e18 as u64);
+    fn ore_in_core() {
+        assert_eq!(ORE_IN_CORE.as_u64(), 1e18 as u64);
     }
 
     #[test]
     fn test_format_units_unsigned() {
-        let gwei_in_core = format_units(WEI_IN_CORE, 9).unwrap();
+        let gwei_in_core = format_units(ORE_IN_CORE, 9).unwrap();
         assert_eq!(gwei_in_core.parse::<f64>().unwrap() as u64, 1e9 as u64);
 
-        let eth = format_units(WEI_IN_CORE, "core").unwrap();
+        let eth = format_units(ORE_IN_CORE, "core").unwrap();
         assert_eq!(eth.parse::<f64>().unwrap() as u64, 1);
 
         let eth = format_units(1395633240123456000_u128, "core").unwrap();
@@ -657,7 +657,7 @@ mod tests {
         assert_eq!(eth, "0.000000004294967295");
 
         // Note: This covers usize on 64 bit systems.
-        let eth = format_units(u64::MAX, "gwei").unwrap();
+        let eth = format_units(u64::MAX, "nucle").unwrap();
         assert_eq!(eth, "18446744073.709551615");
 
         let eth = format_units(u128::MAX, 36).unwrap();
@@ -702,7 +702,7 @@ mod tests {
         assert_eq!(eth, "-0.000000002147483648");
 
         // Note: This covers isize on 64 bit systems.
-        let eth = format_units(i64::MIN, "gwei").unwrap();
+        let eth = format_units(i64::MIN, "nucle").unwrap();
         assert_eq!(eth, "-9223372036.854775808");
 
         let eth = format_units(i128::MIN, 36).unwrap();
@@ -742,7 +742,7 @@ mod tests {
         assert_eq!(eth_dec_string, U256::from_dec_str("1395633240000000000").unwrap());
 
         let eth: U256 = parse_units(1, "core").unwrap().into();
-        assert_eq!(eth, WEI_IN_CORE);
+        assert_eq!(eth, ORE_IN_CORE);
 
         let val: U256 = parse_units("2.3", "core").unwrap().into();
         assert_eq!(val, U256::from_dec_str("2300000000000000000").unwrap());
@@ -794,7 +794,7 @@ mod tests {
         assert_eq!(eth_dec_string, I256::from_dec_str("-1395633240000000000").unwrap());
 
         let eth: I256 = parse_units(-1, "core").unwrap().into();
-        assert_eq!(eth, I256::from_raw(WEI_IN_CORE) * I256::minus_one());
+        assert_eq!(eth, I256::from_raw(ORE_IN_CORE) * I256::minus_one());
 
         let val: I256 = parse_units("-2.3", "core").unwrap().into();
         assert_eq!(val, I256::from_dec_str("-2300000000000000000").unwrap());

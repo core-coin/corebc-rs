@@ -27,8 +27,8 @@ all-features = true
 # abi
 open-fastrlp = { git = "https://github.com/Kuly14/open-fastrlp", version = "*", features = ["std", "derive", "ethereum-types"] }
 rlp = { git = "https://github.com/core-coin/core-common", version = "0.5", default-features = true, features = ["derive"] }
-ethabi = { git = "https://github.com/core-coin/coreabi", rev = "17563d16987f21ea5a3f470583a4853fc6ce6958", default-features = false, features = ["full-serde", "rlp"] }
 arrayvec = { version = "0.7", default-features = false }
+ethabi.workspace = true
 
 # crypto
 k256 = { workspace = true, features = ["ecdsa", "std"] }

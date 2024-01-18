@@ -106,6 +106,7 @@ libgoldilocks = { git = "https://github.com/core-coin/ed448-rs" }
 sha2 = { version = "0.10.6", default-features = false }
 tiny-keccak = { version = "2.0.2", default-features = false }
 spki = { version = "0.7.1", default-features = false }
+ethabi = { git = "https://github.com/core-coin/coreabi", default-features = false, features = ["full-serde", "rlp"] }
 
 # serde
 serde = "1.0"
