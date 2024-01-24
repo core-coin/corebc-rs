@@ -1,5 +1,5 @@
 use corebc::{
-    core::{types::TransactionRequest, utils::Anvil},
+    core::{types::TransactionRequest, utils::Shuttle},
     providers::{Http, Middleware, Provider},
 };
 use eyre::Result;
@@ -7,10 +7,10 @@ use std::convert::TryFrom;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let anvil = Anvil::new().spawn();
+    let shuttle = Shuttle::new().spawn();
 
     // connect to the network
-    let provider = Provider::<Http>::try_from(anvil.endpoint())?;
+    let provider = Provider::<Http>::try_from(shuttle.endpoint())?;
     let accounts = provider.get_accounts().await?;
     let from = accounts[0];
     let to = accounts[1];

@@ -6,7 +6,7 @@ use corebc::{
     contract::abigen,
     core::{
         types::{Address, U256},
-        utils::Anvil,
+        utils::Shuttle,
     },
     middleware::SignerMiddleware,
     providers::{Http, Provider},
@@ -19,10 +19,10 @@ abigen!(VerifierContract, "corebc-contract/tests/solidity-contracts/verifier_abi
 /// have structs as input.
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let anvil = Anvil::new().spawn();
+    let shuttle = Shuttle::new().spawn();
     let provider =
-        Provider::<Http>::try_from(anvil.endpoint())?.interval(Duration::from_millis(10u64));
-    let wallet: LocalWallet = anvil.keys()[0].clone().into();
+        Provider::<Http>::try_from(shuttle.endpoint())?.interval(Duration::from_millis(10u64));
+    let wallet: LocalWallet = shuttle.keys()[0].clone().into();
 
     let client = SignerMiddleware::new(provider, wallet);
     let client = Arc::new(client);

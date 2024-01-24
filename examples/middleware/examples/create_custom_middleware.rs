@@ -2,7 +2,7 @@ use async_trait::async_trait;
 use corebc::{
     core::{
         types::{transaction::eip2718::TypedTransaction, BlockId, TransactionRequest, U256},
-        utils::{parse_units, Anvil},
+        utils::{parse_units, Shuttle},
     },
     middleware::MiddlewareBuilder,
     providers::{Http, Middleware, MiddlewareError, PendingTransaction, Provider},
@@ -139,14 +139,14 @@ impl<M: Middleware> MiddlewareError for GasMiddlewareError<M> {
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
-    let anvil = Anvil::new().spawn();
+    let shuttle = Shuttle::new().spawn();
 
-    let wallet: LocalWallet = anvil.keys()[0].clone().into();
-    let wallet2: LocalWallet = anvil.keys()[1].clone().into();
-    let signer = wallet.with_network_id(anvil.network_id());
+    let wallet: LocalWallet = shuttle.keys()[0].clone().into();
+    let wallet2: LocalWallet = shuttle.keys()[1].clone().into();
+    let signer = wallet.with_network_id(shuttle.network_id());
 
     let gas_raise_perc = 50; // 50%;
-    let provider = Provider::<Http>::try_from(anvil.endpoint())?
+    let provider = Provider::<Http>::try_from(shuttle.endpoint())?
         .with_signer(signer)
         .wrap_into(|s| GasMiddleware::new(s, gas_raise_perc).unwrap());
 

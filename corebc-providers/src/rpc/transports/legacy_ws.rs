@@ -258,13 +258,13 @@ where
             loop {
                 if self.is_done() {
                     debug!("work complete");
-                    break
+                    break;
                 }
 
                 if let Err(e) = self.tick().await {
                     error!("Received a WebSocket error: {:?}", e);
                     self.close_all_subscriptions();
-                    break
+                    break;
                 }
             }
         };
@@ -361,7 +361,7 @@ where
                     // subscription channel was closed on the receiver end
                     stream.remove();
                 }
-                return Err(to_client_error(err))
+                return Err(to_client_error(err));
             }
         }
 
@@ -524,12 +524,12 @@ impl From<ClientError> for ProviderError {
 #[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
-    use corebc_core::{types::U256, utils::Anvil};
+    use corebc_core::{types::U256, utils::Shuttle};
 
     #[tokio::test]
     async fn request() {
-        let anvil = Anvil::new().block_time(1u64).spawn();
-        let ws = Ws::connect(anvil.ws_endpoint()).await.unwrap();
+        let shuttle = Shuttle::new().block_time(1u64).spawn();
+        let ws = Ws::connect(shuttle.ws_endpoint()).await.unwrap();
 
         let block_num: U256 = ws.request("xcb_blockNumber", ()).await.unwrap();
         tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -541,8 +541,8 @@ mod tests {
     async fn subscription() {
         use corebc_core::types::{Block, TxHash};
 
-        let anvil = Anvil::new().block_time(1u64).spawn();
-        let ws = Ws::connect(anvil.ws_endpoint()).await.unwrap();
+        let shuttle = Shuttle::new().block_time(1u64).spawn();
+        let ws = Ws::connect(shuttle.ws_endpoint()).await.unwrap();
 
         // Subscribing requires sending the sub request and then subscribing to
         // the returned sub_id
@@ -562,8 +562,8 @@ mod tests {
 
     #[tokio::test]
     async fn deserialization_fails() {
-        let anvil = Anvil::new().block_time(1u64).spawn();
-        let (ws, _) = tokio_tungstenite::connect_async(anvil.ws_endpoint()).await.unwrap();
+        let shuttle = Shuttle::new().block_time(1u64).spawn();
+        let (ws, _) = tokio_tungstenite::connect_async(shuttle.ws_endpoint()).await.unwrap();
         let malformed_data = String::from("not a valid message");
         let (_, stream) = mpsc::unbounded();
         let resp = WsServer::new(ws, stream).handle_text(malformed_data).await;

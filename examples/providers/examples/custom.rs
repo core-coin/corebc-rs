@@ -1,7 +1,7 @@
 //! Create a custom data transport to use with a Provider.
 
 use async_trait::async_trait;
-use corebc::{core::utils::Anvil, prelude::*};
+use corebc::{core::utils::Shuttle, prelude::*};
 use serde::{de::DeserializeOwned, Serialize};
 use std::fmt::Debug;
 use thiserror::Error;
@@ -135,11 +135,11 @@ impl PubsubClient for WsOrIpc {
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
-    // Spawn Anvil
-    let anvil = Anvil::new().block_time(1u64).spawn();
+    // Spawn Shuttle
+    let shuttle = Shuttle::new().block_time(1u64).spawn();
 
     // Connect to our transport
-    let transport = WsOrIpc::connect(&anvil.ws_endpoint()).await?;
+    let transport = WsOrIpc::connect(&shuttle.ws_endpoint()).await?;
 
     // Wrap the transport in a provider
     let provider = Provider::new(transport);

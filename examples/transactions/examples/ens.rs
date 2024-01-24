@@ -1,5 +1,5 @@
 use corebc::{
-    core::{types::TransactionRequest, utils::Anvil},
+    core::{types::TransactionRequest, utils::Shuttle},
     providers::{Http, Middleware, Provider},
 };
 use eyre::Result;
@@ -7,10 +7,10 @@ use eyre::Result;
 #[tokio::main]
 async fn main() -> Result<()> {
     // fork mainnet
-    let anvil = Anvil::new().fork("https://eth.llamarpc.com").spawn();
-    let from = anvil.addresses()[0];
+    let shuttle = Shuttle::new().fork("https://eth.llamarpc.com").spawn();
+    let from = shuttle.addresses()[0];
     // connect to the network
-    let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap().with_sender(from);
+    let provider = Provider::<Http>::try_from(shuttle.endpoint()).unwrap().with_sender(from);
 
     // craft the transaction
     let tx = TransactionRequest::new().to("vitalik.eth").value(100_000);

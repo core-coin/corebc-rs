@@ -177,7 +177,7 @@ jobs:
               working-directory: examples/wasm
               run: |
                   yarn
-                  yarn anvil &
+                  yarn shuttle &
                   wasm-pack test --headless --firefox
                   wasm-pack test --headless --chrome
 

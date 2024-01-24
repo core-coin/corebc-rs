@@ -1389,15 +1389,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "examples-anvil"
-version = "0.0.0"
-dependencies = [
- "corebc",
- "eyre",
- "tokio",
-]
-
-[[package]]
 name = "examples-big-numbers"
 version = "0.0.0"
 dependencies = [
@@ -1474,6 +1465,15 @@ dependencies = [
  "eyre",
  "serde",
  "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "examples-shuttle"
+version = "0.0.0"
+dependencies = [
+ "corebc",
+ "eyre",
  "tokio",
 ]
 

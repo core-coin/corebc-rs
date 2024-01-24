@@ -1,14 +1,14 @@
-//! Spawn an [anvil](https://github.com/foundry-rs/foundry/tree/master/anvil) instance in forking mode
+//! Spawn an [shuttle](https://github.com/foundry-rs/foundry/tree/master/shuttle) instance in forking mode
 
-use corebc::utils::Anvil;
+use corebc::utils::Shuttle;
 use eyre::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // ensure `anvil` is available in $PATH
-    let anvil = Anvil::new().fork("https://eth.llamarpc.com").spawn();
+    // ensure `shuttle` is available in $PATH
+    let shuttle = Shuttle::new().fork("https://eth.llamarpc.com").spawn();
 
-    println!("Anvil running at `{}`", anvil.endpoint());
+    println!("Shuttle running at `{}`", shuttle.endpoint());
 
     Ok(())
 }

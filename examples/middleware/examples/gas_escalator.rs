@@ -1,5 +1,5 @@
 use corebc::{
-    core::{types::TransactionRequest, utils::Anvil},
+    core::{types::TransactionRequest, utils::Shuttle},
     middleware::gas_escalator::*,
     providers::{Http, Middleware, Provider},
 };
@@ -37,8 +37,8 @@ where
     E: GasEscalator + Clone + 'static,
 {
     // Spawn local node
-    let anvil = Anvil::new().spawn();
-    let endpoint = anvil.endpoint();
+    let shuttle = Shuttle::new().spawn();
+    let endpoint = shuttle.endpoint();
 
     // Connect to the node
     let provider = Provider::<Http>::try_from(endpoint)?;

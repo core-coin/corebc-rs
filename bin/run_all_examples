@@ -23,7 +23,7 @@ for crate in $example_crates; do
     cratedir="${crate#examples-}"
     srcdir="examples/$cratedir/examples"
     # Retrieve all example files in crate:
-    # Transform the absolute path into the filename (e.g. some-path/deploy_anvil.rs => deploy_anvil)
+    # Transform the absolute path into the filename (e.g. some-path/deploy_shuttle.rs => deploy_shuttle)
     example_files=$(find $srcdir -type f -name '*.rs' -exec basename {} \; | sed 's/\.[^.]*$//')
 
     for file in $example_files; do

@@ -5,11 +5,11 @@
 //! ```no_run
 //! use corebc_providers::{Provider, Http, Middleware, DevRpcMiddleware};
 //! use corebc_core::types::TransactionRequest;
-//! use corebc_core::utils::Anvil;
+//! use corebc_core::utils::Shuttle;
 //!
 //! # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-//! let anvil = Anvil::new().spawn();
-//! let provider = Provider::<Http>::try_from(anvil.endpoint())?;
+//! let shuttle = Shuttle::new().spawn();
+//! let provider = Provider::<Http>::try_from(shuttle.endpoint())?;
 //! let client = DevRpcMiddleware::new(provider);
 //!
 //! // snapshot the initial state
@@ -105,7 +105,7 @@ impl<M: Middleware> DevRpcMiddleware<M> {
     ///
     /// ### Note
     ///
-    /// Ganache, Hardhat and Anvil increment snapshot ID even if no state has changed
+    /// Ganache, Hardhat and Shuttle increment snapshot ID even if no state has changed
     pub async fn snapshot(&self) -> Result<U256, DevRpcMiddlewareError<M>> {
         self.provider().request::<(), U256>("evm_snapshot", ()).await.map_err(From::from)
     }
@@ -129,13 +129,13 @@ impl<M: Middleware> DevRpcMiddleware<M> {
 mod tests {
     use super::*;
     use crate::{Http, Provider};
-    use corebc_core::utils::Anvil;
+    use corebc_core::utils::Shuttle;
     use std::convert::TryFrom;
 
     #[tokio::test]
     async fn test_snapshot() {
-        let anvil = Anvil::new().spawn();
-        let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
+        let shuttle = Shuttle::new().spawn();
+        let provider = Provider::<Http>::try_from(shuttle.endpoint()).unwrap();
         let client = DevRpcMiddleware::new(provider);
 
         // snapshot initial state

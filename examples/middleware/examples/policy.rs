@@ -1,5 +1,5 @@
 use corebc::{
-    core::{types::TransactionRequest, utils::Anvil},
+    core::{types::TransactionRequest, utils::Shuttle},
     middleware::{
         policy::{PolicyMiddlewareError, RejectEverything},
         MiddlewareBuilder, PolicyMiddleware,
@@ -14,8 +14,8 @@ use eyre::Result;
 /// library based on these policies.
 #[tokio::main]
 async fn main() -> Result<()> {
-    let anvil = Anvil::new().spawn();
-    let endpoint = anvil.endpoint();
+    let shuttle = Shuttle::new().spawn();
+    let endpoint = shuttle.endpoint();
 
     let provider = Provider::<Http>::try_from(endpoint)?;
 

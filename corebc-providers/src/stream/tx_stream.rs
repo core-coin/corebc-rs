@@ -101,7 +101,7 @@ where
             if let Some(tx) = this.buffered.pop_front() {
                 this.push_tx(tx);
             } else {
-                break
+                break;
             }
         }
 
@@ -117,7 +117,7 @@ where
                     }
                     Poll::Ready(None) => {
                         this.stream_done = true;
-                        break
+                        break;
                     }
                     _ => break,
                 }
@@ -126,12 +126,12 @@ where
 
         // poll running futures
         if let tx @ Poll::Ready(Some(_)) = this.pending.poll_next_unpin(cx) {
-            return tx
+            return tx;
         }
 
         if this.stream_done && this.pending.is_empty() {
             // all done
-            return Poll::Ready(None)
+            return Poll::Ready(None);
         }
 
         Poll::Pending
@@ -175,16 +175,16 @@ mod tests {
     // use crate::{stream::tx_stream, Http, Ws};
     // use corebc_core::{
     //     types::{Transaction, TransactionReceipt, TransactionRequest},
-    //     utils::Anvil,
+    //     utils::Shuttle,
     // };
     // use futures_util::{FutureExt, StreamExt};
     // use std::{collections::HashSet, time::Duration};
 
-    // CORETODO: Not possible to test this without anvil
+    // CORETODO: Not possible to test this without shuttle
     // #[tokio::test]
     // async fn can_stream_pending_transactions() {
     //     let num_txs = 5;
-    //     let geth = Anvil::new().block_time(2u64).spawn();
+    //     let geth = Shuttle::new().block_time(2u64).spawn();
     //     let provider = Provider::<Http>::try_from(geth.endpoint())
     //         .unwrap()
     //         .interval(Duration::from_millis(1000));
@@ -242,9 +242,9 @@ mod tests {
 
     // #[tokio::test]
     // async fn can_stream_transactions() {
-    //     let anvil = Anvil::new().block_time(2u64).spawn();
+    //     let shuttle = Shuttle::new().block_time(2u64).spawn();
     //     let provider =
-    //         Provider::<Http>::try_from(anvil.endpoint()).unwrap().with_sender(anvil.
+    //         Provider::<Http>::try_from(shuttle.endpoint()).unwrap().with_sender(shuttle.
     // addresses()[0]);
 
     //     let accounts = provider.get_accounts().await.unwrap();

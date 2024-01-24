@@ -1,4 +1,4 @@
-use corebc_core::{types::*, utils::Anvil};
+use corebc_core::{types::*, utils::Shuttle};
 use corebc_middleware::{
     energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
     MiddlewareBuilder,
@@ -6,16 +6,16 @@ use corebc_middleware::{
 use corebc_providers::{Http, Middleware, Provider};
 use corebc_signers::{LocalWallet, Signer};
 
-// CORETODO: Needs anvil
+// CORETODO: Needs shuttle
 // #[tokio::test]
 // #[ignore]
 // async fn energy_escalator() {
-//     let anvil = Anvil::new().block_time(2u64).spawn();
-//     let network_id = anvil.network_id();
-//     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
+//     let shuttle = Shuttle::new().block_time(2u64).spawn();
+//     let network_id = shuttle.network_id();
+//     let provider = Provider::<Http>::try_from(shuttle.endpoint()).unwrap();
 
 //     // wrap with signer
-//     let wallet: LocalWallet = anvil.keys().first().unwrap().clone().into();
+//     let wallet: LocalWallet = shuttle.keys().first().unwrap().clone().into();
 //     let wallet = wallet.with_network_id(network_id);
 //     let address = wallet.address();
 //     let provider = provider.with_signer(wallet);
