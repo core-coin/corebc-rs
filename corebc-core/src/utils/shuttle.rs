@@ -10,13 +10,13 @@ use std::{
     time::{Duration, Instant},
 };
 
-/// How long we will wait for anvil to indicate that it is ready.
-const ANVIL_STARTUP_TIMEOUT_MILLIS: u64 = 10_000;
+/// How long we will wait for shuttle to indicate that it is ready.
+const SHUTTLE_STARTUP_TIMEOUT_MILLIS: u64 = 10_000;
 
-/// An anvil CLI instance. Will close the instance when dropped.
+/// An shuttle CLI instance. Will close the instance when dropped.
 ///
-/// Construct this using [`Anvil`](crate::utils::Anvil)
-pub struct AnvilInstance {
+/// Construct this using [`Shuttle`](crate::utils::Shuttle)
+pub struct ShuttleInstance {
     pid: Child,
     private_keys: Vec<LibgoldilocksSecretKey>,
     addresses: Vec<Address>,
@@ -24,7 +24,7 @@ pub struct AnvilInstance {
     network_id: Option<u64>,
 }
 
-impl AnvilInstance {
+impl ShuttleInstance {
     /// Returns the private keys used to instantiate this instance
     pub fn keys(&self) -> &[LibgoldilocksSecretKey] {
         &self.private_keys
@@ -40,7 +40,7 @@ impl AnvilInstance {
         self.port
     }
 
-    /// Returns the network of the anvil instance
+    /// Returns the network of the shuttle instance
     //  CORETODO: Should be a local node instead of Devin
     pub fn network_id(&self) -> u64 {
         self.network_id.unwrap_or_else(|| Network::Devin.into())
@@ -57,36 +57,36 @@ impl AnvilInstance {
     }
 }
 
-impl Drop for AnvilInstance {
+impl Drop for ShuttleInstance {
     fn drop(&mut self) {
-        self.pid.kill().expect("could not kill anvil");
+        self.pid.kill().expect("could not kill shuttle");
     }
 }
 
-/// Builder for launching `anvil`.
+/// Builder for launching `shuttle`.
 ///
 /// # Panics
 ///
-/// If `spawn` is called without `anvil` being available in the user's $PATH
+/// If `spawn` is called without `shuttle` being available in the user's $PATH
 ///
 /// # Example
 ///
 /// ```no_run
-/// use corebc_core::utils::Anvil;
+/// use corebc_core::utils::Shuttle;
 ///
 /// let port = 8545u16;
 /// let url = format!("http://localhost:{}", port).to_string();
 ///
-/// let anvil = Anvil::new()
+/// let shuttle = Shuttle::new()
 ///     .port(port)
 ///     .mnemonic("abstract vacuum mammal awkward pudding scene penalty purchase dinner depart evoke puzzle")
 ///     .spawn();
 ///
-/// drop(anvil); // this will kill the instance
+/// drop(shuttle); // this will kill the instance
 /// ```
 #[derive(Debug, Clone, Default)]
 #[must_use = "This Builder struct does nothing unless it is `spawn`ed"]
-pub struct Anvil {
+pub struct Shuttle {
     program: Option<PathBuf>,
     port: Option<u16>,
     block_time: Option<u64>,
@@ -98,68 +98,68 @@ pub struct Anvil {
     timeout: Option<u64>,
 }
 
-impl Anvil {
-    /// Creates an empty Anvil builder.
+impl Shuttle {
+    /// Creates an empty Shuttle builder.
     /// The default port is 8545. The mnemonic is chosen randomly.
     ///
     /// # Example
     ///
     /// ```
-    /// # use corebc_core::utils::Anvil;
+    /// # use corebc_core::utils::Shuttle;
     /// fn a() {
-    ///  let anvil = Anvil::default().spawn();
+    ///  let shuttle = Shuttle::default().spawn();
     ///
-    ///  println!("Anvil running at `{}`", anvil.endpoint());
+    ///  println!("Shuttle running at `{}`", shuttle.endpoint());
     /// # }
     /// ```
     pub fn new() -> Self {
         Self::default()
     }
 
-    /// Creates an Anvil builder which will execute `anvil` at the given path.
+    /// Creates an Shuttle builder which will execute `shuttle` at the given path.
     ///
     /// # Example
     ///
     /// ```
-    /// # use corebc_core::utils::Anvil;
+    /// # use corebc_core::utils::Shuttle;
     /// fn a() {
-    ///  let anvil = Anvil::at("~/.foundry/bin/anvil").spawn();
+    ///  let shuttle = Shuttle::at("~/.foundry/bin/shuttle").spawn();
     ///
-    ///  println!("Anvil running at `{}`", anvil.endpoint());
+    ///  println!("Shuttle running at `{}`", shuttle.endpoint());
     /// # }
     /// ```
     pub fn at(path: impl Into<PathBuf>) -> Self {
         Self::new().path(path)
     }
 
-    /// Sets the `path` to the `anvil` cli
+    /// Sets the `path` to the `shuttle` cli
     ///
-    /// By default, it's expected that `anvil` is in `$PATH`, see also
+    /// By default, it's expected that `shuttle` is in `$PATH`, see also
     /// [`std::process::Command::new()`]
     pub fn path<T: Into<PathBuf>>(mut self, path: T) -> Self {
         self.program = Some(path.into());
         self
     }
 
-    /// Sets the port which will be used when the `anvil` instance is launched.
+    /// Sets the port which will be used when the `shuttle` instance is launched.
     pub fn port<T: Into<u16>>(mut self, port: T) -> Self {
         self.port = Some(port.into());
         self
     }
 
-    /// Sets the network_id the `anvil` instance will use.
+    /// Sets the network_id the `shuttle` instance will use.
     pub fn network_id<T: Into<u64>>(mut self, network_id: T) -> Self {
         self.network_id = Some(network_id.into());
         self
     }
 
-    /// Sets the mnemonic which will be used when the `anvil` instance is launched.
+    /// Sets the mnemonic which will be used when the `shuttle` instance is launched.
     pub fn mnemonic<T: Into<String>>(mut self, mnemonic: T) -> Self {
         self.mnemonic = Some(mnemonic.into());
         self
     }
 
-    /// Sets the block-time in seconds which will be used when the `anvil` instance is launched.
+    /// Sets the block-time in seconds which will be used when the `shuttle` instance is launched.
     pub fn block_time<T: Into<u64>>(mut self, block_time: T) -> Self {
         self.block_time = Some(block_time.into());
         self
@@ -182,13 +182,13 @@ impl Anvil {
         self
     }
 
-    /// Adds an argument to pass to the `anvil`.
+    /// Adds an argument to pass to the `shuttle`.
     pub fn arg<T: Into<String>>(mut self, arg: T) -> Self {
         self.args.push(arg.into());
         self
     }
 
-    /// Adds multiple arguments to pass to the `anvil`.
+    /// Adds multiple arguments to pass to the `shuttle`.
     pub fn args<I, S>(mut self, args: I) -> Self
     where
         I: IntoIterator<Item = S>,
@@ -200,23 +200,23 @@ impl Anvil {
         self
     }
 
-    /// Sets the timeout which will be used when the `anvil` instance is launched.
+    /// Sets the timeout which will be used when the `shuttle` instance is launched.
     pub fn timeout<T: Into<u64>>(mut self, timeout: T) -> Self {
         self.timeout = Some(timeout.into());
         self
     }
 
-    /// Consumes the builder and spawns `anvil`.
+    /// Consumes the builder and spawns `shuttle`.
     ///
     /// # Panics
     ///
     /// If spawning the instance fails at any point.
     #[track_caller]
-    pub fn spawn(self) -> AnvilInstance {
+    pub fn spawn(self) -> ShuttleInstance {
         let mut cmd = if let Some(ref prg) = self.program {
             Command::new(prg)
         } else {
-            Command::new("anvil")
+            Command::new("shuttle")
         };
         cmd.stdout(std::process::Stdio::piped()).stderr(std::process::Stdio::inherit());
         let port = if let Some(port) = self.port { port } else { unused_ports::<1>()[0] };
@@ -253,9 +253,9 @@ impl Anvil {
 
         cmd.args(self.args);
 
-        let mut child = cmd.spawn().expect("couldnt start anvil");
+        let mut child = cmd.spawn().expect("couldnt start shuttle");
 
-        let stdout = child.stdout.take().expect("Unable to get stdout for anvil child process");
+        let stdout = child.stdout.take().expect("Unable to get stdout for shuttle child process");
 
         let start = Instant::now();
         let mut reader = BufReader::new(stdout);
@@ -264,14 +264,14 @@ impl Anvil {
         let mut addresses = Vec::new();
         let mut is_private_key = false;
         loop {
-            if start + Duration::from_millis(self.timeout.unwrap_or(ANVIL_STARTUP_TIMEOUT_MILLIS)) <=
+            if start + Duration::from_millis(self.timeout.unwrap_or(SHUTTLE_STARTUP_TIMEOUT_MILLIS)) <=
                 Instant::now()
             {
-                panic!("Timed out waiting for anvil to start. Is anvil installed?")
+                panic!("Timed out waiting for shuttle to start. Is shuttle installed?")
             }
 
             let mut line = String::new();
-            reader.read_line(&mut line).expect("Failed to read line from anvil process");
+            reader.read_line(&mut line).expect("Failed to read line from shuttle process");
             if line.contains("Listening on") {
                 break
             }
@@ -292,7 +292,7 @@ impl Anvil {
             }
         }
 
-        AnvilInstance { pid: child, private_keys, addresses, port, network_id: self.network_id }
+        ShuttleInstance { pid: child, private_keys, addresses, port, network_id: self.network_id }
     }
 }
 
@@ -300,9 +300,8 @@ impl Anvil {
 mod tests {
     use super::*;
 
-    #[ignore = "Won't work until anvil is fixed"]
     #[test]
-    fn can_launch_anvil() {
-        let _ = Anvil::new().spawn();
+    fn can_launch_shuttle() {
+        let _ = Shuttle::new().spawn();
     }
 }

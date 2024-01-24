@@ -8,11 +8,11 @@ pub use gocore::{GoCore, GoCoreInstance};
 mod genesis;
 pub use genesis::{CliqueConfig, EthashConfig, Genesis, GenesisAccount, NetworkConfig};
 
-/// Utilities for launching an anvil instance
+/// Utilities for launching an shuttle instance
 #[cfg(not(target_arch = "wasm32"))]
-mod anvil;
+mod shuttle;
 #[cfg(not(target_arch = "wasm32"))]
-pub use anvil::{Anvil, AnvilInstance};
+pub use shuttle::{Shuttle, ShuttleInstance};
 
 mod hash;
 pub use hash::{hash_message, id, serialize, sha3};
@@ -468,7 +468,7 @@ pub fn to_checksum(addr: &Address, network_id: Option<u8>) -> String {
 pub fn format_bytes32_string(text: &str) -> Result<[u8; 32], ConversionError> {
     let str_bytes: &[u8] = text.as_bytes();
     if str_bytes.len() > 32 {
-        return Err(ConversionError::TextTooLong)
+        return Err(ConversionError::TextTooLong);
     }
 
     let mut bytes32: [u8; 32] = [0u8; 32];
@@ -494,7 +494,7 @@ where
     D: Deserializer<'de>,
 {
     if bytes.0.len() > 32 {
-        return Err(serde::de::Error::custom("input too long to be a H256"))
+        return Err(serde::de::Error::custom("input too long to be a H256"));
     }
 
     // left pad with zeros to 32 bytes
