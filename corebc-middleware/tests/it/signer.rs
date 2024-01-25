@@ -1,5 +1,5 @@
-// CORETODO: Needs Anvil
-// use crate::{get_wallet, spawn_anvil, spawn_anvil_ws};
+// CORETODO: Needs Shuttle
+// use crate::{get_wallet, spawn_shuttle, spawn_shuttle_ws};
 // use corebc_core::types::*;
 // use corebc_middleware::{signer::SignerMiddleware, MiddlewareBuilder};
 // use corebc_providers::{JsonRpcClient, Middleware};
@@ -7,12 +7,12 @@
 
 // #[tokio::test]
 // async fn send_eth() {
-//     let (provider, anvil) = spawn_anvil();
-//     let wallet = get_wallet(&anvil, 0);
+//     let (provider, shuttle) = spawn_shuttle();
+//     let wallet = get_wallet(&shuttle, 0);
 //     let address = wallet.address();
 //     let provider = provider.with_signer(wallet);
 
-//     let to = anvil.addresses()[1];
+//     let to = shuttle.addresses()[1];
 
 //     // craft the transaction
 //     let tx = TransactionRequest::new().to(to).value(10000);
@@ -29,12 +29,12 @@
 
 // #[tokio::test]
 // async fn send_transaction_handles_tx_from_field() {
-//     // launch anvil
-//     let (provider, anvil) = spawn_anvil_ws().await;
+//     // launch shuttle
+//     let (provider, shuttle) = spawn_shuttle_ws().await;
 
 //     // grab 2 wallets
-//     let signer: LocalWallet = anvil.keys()[0].clone().into();
-//     let other: LocalWallet = anvil.keys()[1].clone().into();
+//     let signer: LocalWallet = shuttle.keys()[0].clone().into();
+//     let other: LocalWallet = shuttle.keys()[1].clone().into();
 
 //     // connect to the network
 //     let provider =

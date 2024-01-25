@@ -4,7 +4,9 @@ use corebc_contract::{abigen, ContractError, EthCall, EthError, EthEvent};
 use corebc_core::{
     abi::{AbiDecode, AbiEncode, Address, Tokenizable},
     types::{Bytes, U256},
+    utils::Shuttle,
 };
+use corebc_ylem::Ylem;
 use corebc_providers::{MockProvider, Provider};
 use std::{fmt::Debug, hash::Hash, sync::Arc};
 
@@ -352,63 +354,52 @@ fn can_handle_even_more_overloaded_functions() {
     let _contract_call = ConsoleLogCalls::Log2(call);
 }
 
-// CORETODO: Needs Anvil and solc
-// #[tokio::test]
-// async fn can_handle_underscore_functions() {
-//     abigen!(
-//         SimpleStorage,
-//         r#"[
-//             _hashPuzzle() (uint256)
-//         ]"#;
+#[tokio::test]
+async fn can_handle_underscore_functions() {
+    abigen!(
+        SimpleStorage,
+        r#"[
+            _hashPuzzle() (uint256)
+        ]"#;
 
-//         SimpleStorage2,
-//         "corebc-contract/tests/solidity-contracts/simplestorage_abi.json",
-//     );
+        SimpleStorage2,
+        "corebc-contract/tests/solidity-contracts/simplestorage_abi.json",
+    );
 
-//     // launch the network & connect to it
-//     let anvil = Anvil::new().spawn();
-//     let from = anvil.addresses()[0];
-//     let provider = Provider::try_from(anvil.endpoint())
-//         .unwrap()
-//         .with_sender(from)
-//         .interval(std::time::Duration::from_millis(10));
-//     let client = Arc::new(provider);
+    // launch the network & connect to it
+    let shuttle = Shuttle::new().spawn();
+    let from = shuttle.addresses()[0];
+    let provider = Provider::try_from(shuttle.endpoint())
+        .unwrap()
+        .with_sender(from)
+        .interval(std::time::Duration::from_millis(10));
+    let client = Arc::new(provider);
 
-//     let contract = "SimpleStorage";
-//     let path = "./tests/solidity-contracts/SimpleStorage.sol";
-//     let compiled = Solc::default().compile_source(path).unwrap();
-//     let compiled = compiled.get(path, contract).unwrap();
-//     let factory = corebc_contract::ContractFactory::new(
-//         compiled.abi.unwrap().clone(),
-//         compiled.bytecode().unwrap().clone(),
-//         client.clone(),
-//     );
-//     let addr =
-// factory.deploy("hi".to_string()).unwrap().legacy().send().await.unwrap().address();
+    let contract = "SimpleStorage";
+    let path = "./tests/solidity-contracts/SimpleStorage.sol";
+    let compiled = Ylem::default().compile_source(path).unwrap();
+    let compiled = compiled.get(path, contract).unwrap();
+    let factory = corebc_contract::ContractFactory::new(
+        compiled.abi.unwrap().clone(),
+        compiled.bytecode().unwrap().clone(),
+        client.clone(),
+    );
+    let addr = factory.deploy("hi".to_string()).unwrap().send().await.unwrap().address();
 
-//     // connect to the contract
-//     let contract = SimpleStorage::new(addr, client.clone());
-//     let contract2 = SimpleStorage2::new(addr, client.clone());
+    // connect to the contract
+    let contract = SimpleStorage::new(addr, client.clone());
+    let contract2 = SimpleStorage2::new(addr, client.clone());
 
-//     let res = contract.hash_puzzle().call().await.unwrap();
-//     let res2 = contract2.hash_puzzle().call().await.unwrap();
-//     let res3 = contract.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
-//     let res4 = contract2.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
+    let res = contract.hash_puzzle().call().await.unwrap();
+    let res2 = contract2.hash_puzzle().call().await.unwrap();
+    let res3 = contract.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
+    let res4 = contract2.method::<_, U256>("_hashPuzzle", ()).unwrap().call().await.unwrap();
 
-//     // Manual call construction
-//     use corebc_providers::Middleware;
-//     // TODO: How do we handle underscores for calls here?
-//     let data = simple_storage::HashPuzzleCall.encode();
-//     let tx = Eip1559TransactionRequest::new().data(data).to(addr);
-//     let tx = TypedTransaction::Eip1559(tx);
-//     let res5 = client.call(&tx, None).await.unwrap();
-//     let res5 = U256::from(res5.as_ref());
-//     assert_eq!(res, 100.into());
-//     assert_eq!(res, res2);
-//     assert_eq!(res, res3);
-//     assert_eq!(res, res4);
-//     assert_eq!(res, res5);
-// }
+    assert_eq!(res, 100.into());
+    assert_eq!(res, res2);
+    assert_eq!(res, res3);
+    assert_eq!(res, res4);
+}
 
 #[test]
 fn can_handle_unique_underscore_functions() {
@@ -542,13 +533,13 @@ fn can_handle_case_sensitive_calls() {
     let _ = contract.INDEX();
 }
 
-// CORETODO: Needs anvil
+// CORETODO: Needs shuttle
 // #[tokio::test]
 // async fn can_deploy_greeter() {
 //     abigen!(Greeter, "corebc-contract/tests/solidity-contracts/greeter.json",);
-//     let anvil = Anvil::new().spawn();
-//     let from = anvil.addresses()[0];
-//     let provider = Provider::try_from(anvil.endpoint())
+//     let shuttle = Shuttle::new().spawn();
+//     let from = shuttle.addresses()[0];
+//     let provider = Provider::try_from(shuttle.endpoint())
 //         .unwrap()
 //         .with_sender(from)
 //         .interval(std::time::Duration::from_millis(10));
@@ -562,13 +553,13 @@ fn can_handle_case_sensitive_calls() {
 //     assert_eq!("Hello World!", greeting);
 // }
 
-// CORETODO: Needs solc and anvil
+// CORETODO: Needs solc and shuttle
 // #[tokio::test]
 // async fn can_abiencoderv2_output() {
 //     abigen!(AbiEncoderv2Test,
-// "corebc-contract/tests/solidity-contracts/abiencoderv2test_abi.json",);     let anvil =
-// Anvil::new().spawn();     let from = anvil.addresses()[0];
-//     let provider = Provider::try_from(anvil.endpoint())
+// "corebc-contract/tests/solidity-contracts/abiencoderv2test_abi.json",);     let shuttle =
+// Shuttle::new().spawn();     let from = shuttle.addresses()[0];
+//     let provider = Provider::try_from(shuttle.endpoint())
 //         .unwrap()
 //         .with_sender(from)
 //         .interval(std::time::Duration::from_millis(10));
@@ -635,16 +626,16 @@ fn can_handle_overloaded_events() {
     let _ev2 = ActionPaused2Filter { action: "action".to_string(), pause_state: false };
 }
 
-// CORETODO: Needs anvil
+// CORETODO: Needs shuttle
 // #[tokio::test]
 // #[cfg(not(feature = "celo"))]
 // async fn can_send_struct_param() {
 //     abigen!(StructContract, "./tests/solidity-contracts/StructContract.json");
 
 //     // launch the network & connect to it
-//     let anvil = Anvil::new().spawn();
-//     let from = anvil.addresses()[0];
-//     let provider = Provider::try_from(anvil.endpoint())
+//     let shuttle = Shuttle::new().spawn();
+//     let from = shuttle.addresses()[0];
+//     let provider = Provider::try_from(shuttle.endpoint())
 //         .unwrap()
 //         .with_sender(from)
 //         .interval(std::time::Duration::from_millis(10));

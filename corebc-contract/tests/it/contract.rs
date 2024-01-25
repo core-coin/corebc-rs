@@ -1,4 +1,4 @@
-// CORETODO: All tests require either solc or anvil. Fix once Anvil and Solc are availible.
+// CORETODO: All tests require either solc or shuttle. Fix once Shuttle and Solc are availible.
 // use crate::common::*;
 // use corebc_contract::{
 //     abigen, ContractFactory, ContractInstance, Cip712, EthAbiType, EthEvent,
@@ -62,14 +62,14 @@
 // // this is not a test. It is a compile check. :)
 // // It exists to ensure that trait bounds on contract internal behave as
 // // expected. It should not be run
-// // CORETODO: Needs anvil
+// // CORETODO: Needs shuttle
 // // fn _it_compiles() {
 // //     let (abi, _bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
 
-// //     // launch anvil
-// //     let anvil = Anvil::new().spawn();
+// //     // launch shuttle
+// //     let shuttle = Shuttle::new().spawn();
 
-// //     let client = Provider::<Http>::try_from(anvil.endpoint())
+// //     let client = Provider::<Http>::try_from(shuttle.endpoint())
 // //         .unwrap()
 // //         .interval(Duration::from_millis(10u64));
 
@@ -100,20 +100,20 @@
 // //     // let _ = c.method::<(), ()>("notARealMethod", ());
 // // }
 
-// // CORETODO: Needs anvil
+// // CORETODO: Needs shuttle
 // // #[tokio::test]
 // // async fn deploy_and_call_contract() {
 // //     let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
 
-// //     // launch anvil
-// //     let anvil = Anvil::new().spawn();
+// //     // launch shuttle
+// //     let shuttle = Shuttle::new().spawn();
 
 // //     // Instantiate the clients. We assume that clients consume the provider and the wallet
 // //     // (which makes sense), so for multi-client tests, you must clone the provider.
-// //     let addrs = anvil.addresses().to_vec();
+// //     let addrs = shuttle.addresses().to_vec();
 // //     let addr2 = addrs[1];
-// //     let client = connect(&anvil, 0);
-// //     let client2 = connect(&anvil, 1);
+// //     let client = connect(&shuttle, 0);
+// //     let client2 = connect(&shuttle, 1);
 
 // //     // create a factory which will be used to deploy instances of the contract
 // //     let factory = ContractFactory::new(abi, bytecode, client.clone());
@@ -177,8 +177,8 @@
 // #[cfg(feature = "abigen")]
 // async fn get_past_events() {
 //     let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
-//     let anvil = Anvil::new().spawn();
-//     let client = connect(&anvil, 0);
+//     let shuttle = Shuttle::new().spawn();
+//     let client = connect(&shuttle, 0);
 //     let address = client.get_accounts().await.unwrap()[0];
 //     let contract = deploy(client.clone(), abi, bytecode).await;
 
@@ -212,14 +212,14 @@
 //     assert_eq!(logs.len(), 1);
 // }
 
-// // CORETODO: Needs anvil and Solc
+// // CORETODO: Needs shuttle and Solc
 // // #[tokio::test]
 // // #[cfg(feature = "abigen")]
 // // async fn get_events_with_meta() {
 // //     let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
-// //     let anvil = Anvil::new().spawn();
-// //     let client = connect(&anvil, 0);
-// //     let address = anvil.addresses()[0];
+// //     let shuttle = Shuttle::new().spawn();
+// //     let client = connect(&shuttle, 0);
+// //     let address = shuttle.addresses()[0];
 // //     let contract = deploy(client.clone(), abi, bytecode).await;
 
 // //     // and we can fetch the events
@@ -246,12 +246,12 @@
 // //     assert_eq!(meta.transaction_index, 0.into());
 // // }
 
-// // CORETODO: Needs anvil
+// // CORETODO: Needs shuttle
 // // #[tokio::test]
 // // async fn call_past_state() {
 // //     let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
-// //     let anvil = Anvil::new().spawn();
-// //     let client = connect(&anvil, 0);
+// //     let shuttle = Shuttle::new().spawn();
+// //     let client = connect(&shuttle, 0);
 // //     let contract = deploy(client.clone(), abi, bytecode).await;
 // //     let deployed_block = client.get_block_number().await.unwrap();
 
@@ -338,8 +338,8 @@
 // #[tokio::test]
 // async fn watch_events() {
 //     let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
-//     let anvil = Anvil::new().spawn();
-//     let client = connect(&anvil, 0);
+//     let shuttle = Shuttle::new().spawn();
+//     let client = connect(&shuttle, 0);
 //     let contract = deploy(client.clone(), abi.clone(), bytecode).await;
 
 //     // We spawn the event listener:
@@ -347,7 +347,7 @@
 //     let mut stream = event.stream().await.unwrap();
 
 //     // Also set up a subscription for the same thing
-//     let ws = Provider::<Ws>::connect(anvil.ws_endpoint()).await.unwrap();
+//     let ws = Provider::<Ws>::connect(shuttle.ws_endpoint()).await.unwrap();
 //     let contract2 = corebc_contract::Contract::new(contract.address(), abi, ws.into());
 //     let event2 = contract2.event::<ValueChanged>();
 //     let mut subscription = event2.subscribe().await.unwrap();
@@ -378,16 +378,16 @@
 //     }
 // }
 
-// // CORETODO: Needs anvil
+// // CORETODO: Needs shuttle
 // // #[tokio::test]
 // // async fn watch_subscription_events_multiple_addresses() {
 // //     let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
-// //     let anvil = Anvil::new().spawn();
-// //     let client = connect(&anvil, 0);
+// //     let shuttle = Shuttle::new().spawn();
+// //     let client = connect(&shuttle, 0);
 // //     let contract_1 = deploy(client.clone(), abi.clone(), bytecode.clone()).await;
 // //     let contract_2 = deploy(client.clone(), abi.clone(), bytecode).await;
 
-// //     let ws = Provider::<Ws>::connect(anvil.ws_endpoint()).await.unwrap();
+// //     let ws = Provider::<Ws>::connect(shuttle.ws_endpoint()).await.unwrap();
 // //     let filter = Filter::new()
 // //         .address(ValueOrArray::Array(vec![contract_1.address(), contract_2.address()]));
 // //     let mut stream = ws.subscribe_logs(&filter).await.unwrap();
@@ -417,8 +417,8 @@
 // updatedAt)             ]"#,
 //     );
 
-//     let anvil = Anvil::new().spawn();
-//     let client = connect(&anvil, 0);
+//     let shuttle = Shuttle::new().spawn();
+//     let client = connect(&shuttle, 0);
 //     let event = corebc_contract::Contract::event_of_type::<AnswerUpdatedFilter>(client);
 //     assert_eq!(event.filter, Filter::new().event(&AnswerUpdatedFilter::abi_signature()));
 // }
@@ -426,11 +426,11 @@
 // #[tokio::test]
 // async fn signer_on_node() {
 //     let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
-//     // spawn anvil
-//     let anvil = Anvil::new().spawn();
+//     // spawn shuttle
+//     let shuttle = Shuttle::new().spawn();
 
 //     // connect
-//     let provider = Provider::<Http>::try_from(anvil.endpoint())
+//     let provider = Provider::<Http>::try_from(shuttle.endpoint())
 //         .unwrap()
 //         .interval(std::time::Duration::from_millis(50u64));
 
@@ -466,8 +466,8 @@
 // // // get ABI and bytecode for the SimpleStorage contract
 // // let (abi, bytecode) = compile_contract("SimpleStorage", "SimpleStorage.sol");
 
-// // // launch anvil
-// // let anvil = Anvil::new().spawn();
+// // // launch shuttle
+// // let shuttle = Shuttle::new().spawn();
 
 // // // Instantiate the clients. We assume that clients consume the provider and the wallet
 // // // (which makes sense), so for multi-client tests, you must clone the provider.
@@ -475,13 +475,13 @@
 // // // `client2` is used to deploy the first SimpleStorage contract
 // // // `client3` is used to deploy the second SimpleStorage contract
 // // // `client4` is used to make the aggregate call
-// // let addrs = anvil.addresses().to_vec();
+// // let addrs = shuttle.addresses().to_vec();
 // // let addr2 = addrs[1];
 // // let addr3 = addrs[2];
-// // let client = connect(&anvil, 0);
-// // let client2 = connect(&anvil, 1);
-// // let client3 = connect(&anvil, 2);
-// // let client4 = connect(&anvil, 3);
+// // let client = connect(&shuttle, 0);
+// // let client2 = connect(&shuttle, 1);
+// // let client3 = connect(&shuttle, 2);
+// // let client4 = connect(&shuttle, 3);
 
 // // // create a factory which will be used to deploy instances of the contract
 // // let multicall_factory = ContractFactory::new(multicall_abi, multicall_bytecode,
@@ -581,7 +581,7 @@
 // // assert_eq!(return_data.2, multicall_contract.address());
 // // assert_eq!(return_data.3, multicall_contract.address());
 
-// // let addrs = anvil.addresses();
+// // let addrs = shuttle.addresses();
 // // // query ETH balances of multiple addresses
 // // // these keys haven't been used to do any tx
 // // // so should have 100 ETH
@@ -822,9 +822,9 @@
 //     }
 
 //     // launch the network & connect to it
-//     let anvil = Anvil::new().spawn();
-//     let wallet: LocalWallet = anvil.keys()[0].clone().into();
-//     let provider = Provider::try_from(anvil.endpoint())
+//     let shuttle = Shuttle::new().spawn();
+//     let wallet: LocalWallet = shuttle.keys()[0].clone().into();
+//     let provider = Provider::try_from(shuttle.endpoint())
 //         .unwrap()
 //         .with_sender(wallet.address())
 //         .interval(std::time::Duration::from_millis(10));

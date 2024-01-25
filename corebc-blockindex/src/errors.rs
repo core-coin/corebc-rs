@@ -27,7 +27,7 @@ pub enum BlockindexError {
     RateLimitExceeded,
     #[error(transparent)]
     IO(#[from] std::io::Error),
-    #[error("Local networks (e.g. anvil, ganache, geth --dev) cannot be indexed by etherscan")]
+    #[error("Local networks (e.g. shuttle, ganache, geth --dev) cannot be indexed by etherscan")]
     LocalNetworksNotSupported,
     #[error("Received error response: {error}")]
     ErrorResponse { error: String },
@@ -55,8 +55,8 @@ pub(crate) fn is_blocked_by_cloudflare_response(txt: &str) -> bool {
 /// etherscan/polyscan is protected by cloudflare, which can require captchas to "review the
 /// security of your connection before proceeding"
 pub(crate) fn is_cloudflare_security_challenge(txt: &str) -> bool {
-    txt.contains("https://www.cloudflare.com?utm_source=challenge") ||
-        txt.to_lowercase().contains("checking if the site connection is secure")
+    txt.contains("https://www.cloudflare.com?utm_source=challenge")
+        || txt.to_lowercase().contains("checking if the site connection is secure")
 }
 
 #[cfg(test)]

@@ -2,7 +2,7 @@ use corebc_contract::{Contract, ContractFactory, EthEvent};
 use corebc_core::{
     abi::Abi,
     types::{Address, Bytes},
-    utils::AnvilInstance,
+    utils::ShuttleInstance,
 };
 use corebc_providers::{Http, Middleware, Provider};
 use corebc_ylem::Ylem;
@@ -32,16 +32,16 @@ pub fn compile_contract(name: &str, filename: &str) -> (Abi, Bytes) {
 }
 
 /// connects the private key to http://localhost:8545
-pub fn connect(anvil: &AnvilInstance, idx: usize) -> Arc<Provider<Http>> {
-    let sender = anvil.addresses()[idx];
-    let provider = Provider::<Http>::try_from(anvil.endpoint())
+pub fn connect(shuttle: &ShuttleInstance, idx: usize) -> Arc<Provider<Http>> {
+    let sender = shuttle.addresses()[idx];
+    let provider = Provider::<Http>::try_from(shuttle.endpoint())
         .unwrap()
         .interval(Duration::from_millis(10u64))
         .with_sender(sender);
     Arc::new(provider)
 }
 
-/// Launches a Anvil instance and deploys the SimpleStorage contract
+/// Launches a Shuttle instance and deploys the SimpleStorage contract
 pub async fn deploy<M: Middleware>(client: Arc<M>, abi: Abi, bytecode: Bytes) -> Contract<M> {
     let factory = ContractFactory::new(abi, bytecode, client);
     let deployer = factory.deploy("initial value".to_string()).unwrap();

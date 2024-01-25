@@ -1,5 +1,5 @@
 use corebc::{
-    core::{types::TransactionRequest, utils::Anvil},
+    core::{types::TransactionRequest, utils::Shuttle},
     middleware::SignerMiddleware,
     providers::{Http, Middleware, Provider},
     signers::{LocalWallet, Signer},
@@ -12,16 +12,16 @@ use std::convert::TryFrom;
 /// you to define a signer, called to sign transactions before they are sent.
 #[tokio::main]
 async fn main() -> Result<()> {
-    let anvil = Anvil::new().spawn();
+    let shuttle = Shuttle::new().spawn();
 
-    let wallet: LocalWallet = anvil.keys()[0].clone().into();
-    let wallet2: LocalWallet = anvil.keys()[1].clone().into();
+    let wallet: LocalWallet = shuttle.keys()[0].clone().into();
+    let wallet2: LocalWallet = shuttle.keys()[1].clone().into();
 
     // connect to the network
-    let provider = Provider::<Http>::try_from(anvil.endpoint())?;
+    let provider = Provider::<Http>::try_from(shuttle.endpoint())?;
 
     // connect the wallet to the provider
-    let client = SignerMiddleware::new(provider, wallet.with_network_id(anvil.network_id()));
+    let client = SignerMiddleware::new(provider, wallet.with_network_id(shuttle.network_id()));
 
     // craft the transaction
     let tx = TransactionRequest::new().to(wallet2.address()).value(10000);

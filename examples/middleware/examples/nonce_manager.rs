@@ -1,7 +1,7 @@
 use corebc::{
     core::{
         types::{BlockNumber, TransactionRequest},
-        utils::Anvil,
+        utils::Shuttle,
     },
     middleware::MiddlewareBuilder,
     providers::{Http, Middleware, Provider},
@@ -19,8 +19,8 @@ use eyre::Result;
 /// in the correct order, or if you want to avoid having to manually manage the nonce yourself.
 #[tokio::main]
 async fn main() -> Result<()> {
-    let anvil = Anvil::new().spawn();
-    let endpoint = anvil.endpoint();
+    let shuttle = Shuttle::new().spawn();
+    let endpoint = shuttle.endpoint();
 
     let provider = Provider::<Http>::try_from(endpoint)?;
     let accounts = provider.get_accounts().await?;

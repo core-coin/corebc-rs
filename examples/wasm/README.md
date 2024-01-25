@@ -6,9 +6,9 @@ Install wasm-pack with
 
     yarn install
 
-Start a local Anvil or Ganache instance
+Start a local Shuttle or Ganache instance
 
-    yarn anvil
+    yarn shuttle
     or
     yarn ganache
 

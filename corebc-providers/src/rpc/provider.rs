@@ -729,7 +729,7 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
                         };
                         let data = self.call(&tx.into(), None).await?;
                         if decode_bytes::<Address>(ParamType::Address, data) != owner {
-                            return Err(ProviderError::CustomError("Incorrect owner.".to_string()))
+                            return Err(ProviderError::CustomError("Incorrect owner.".to_string()));
                         }
                     }
                     erc::ERCNFTType::ERC1155 => {
@@ -749,7 +749,9 @@ impl<P: JsonRpcClient> Middleware for Provider<P> {
                         };
                         let data = self.call(&tx.into(), None).await?;
                         if decode_bytes::<u64>(ParamType::Uint(64), data) == 0 {
-                            return Err(ProviderError::CustomError("Incorrect balance.".to_string()))
+                            return Err(ProviderError::CustomError(
+                                "Incorrect balance.".to_string(),
+                            ));
                         }
                     }
                 }
@@ -1009,12 +1011,12 @@ impl<P: JsonRpcClient> Provider<P> {
 
         // otherwise, decode_bytes panics
         if data.0.is_empty() {
-            return Err(ProviderError::EnsError(ens_name.to_string()))
+            return Err(ProviderError::EnsError(ens_name.to_string()));
         }
 
         let resolver_address: Address = decode_bytes(ParamType::Address, data);
         if resolver_address == Address::zero() {
-            return Err(ProviderError::EnsError(ens_name.to_string()))
+            return Err(ProviderError::EnsError(ens_name.to_string()));
         }
 
         if let ParamType::Address = param {
@@ -1043,7 +1045,7 @@ impl<P: JsonRpcClient> Provider<P> {
         if data.is_empty() {
             return Err(ProviderError::EnsError(format!(
                 "`{ens_name}` resolver ({resolver_address:?}) is invalid."
-            )))
+            )));
         }
 
         let supports_selector = abi::decode(&[ParamType::Bool], data.as_ref())
@@ -1056,14 +1058,14 @@ impl<P: JsonRpcClient> Provider<P> {
                 ens_name,
                 resolver_address,
                 hex::encode(selector)
-            )))
+            )));
         }
 
         Ok(())
     }
 
     #[cfg(test)]
-    /// Anvil and Ganache-only function for mining empty blocks
+    /// Shuttle and Ganache-only function for mining empty blocks
     pub async fn mine(&self, num_blocks: usize) -> Result<(), ProviderError> {
         for _ in 0..num_blocks {
             self.inner.request::<_, U256>("evm_mine", None::<()>).await.map_err(Into::into)?;
@@ -1382,11 +1384,11 @@ mod tests {
         assert_eq!(params, r#"["0000295a70b2de5e3953354a6a8344e616ed314d7251","0x0","latest"]"#);
     }
 
-    // CORETODO: This test is impossible without modifying anvil in the first place
+    // CORETODO: This test is impossible without modifying shuttle in the first place
     // #[tokio::test]
     // async fn test_new_block_filter() {
     //     let num_blocks = 3;
-    //     let gocore = Anvil::new().block_time(2u64).spawn();
+    //     let gocore = Shuttle::new().block_time(2u64).spawn();
     //     let provider = Provider::<Http>::try_from(gocore.endpoint())
     //         .unwrap()
     //         .interval(Duration::from_millis(1000));
@@ -1402,18 +1404,18 @@ mod tests {
     //     }
     // }
 
-    // CORETODO: This test is impossible without modifying anvil in the first place
+    // CORETODO: This test is impossible without modifying shuttle in the first place
     // #[tokio::test]
     // async fn test_is_signer() {
-    //     use corebc_core::utils::Anvil;
+    //     use corebc_core::utils::Shuttle;
     //     use std::str::FromStr;
 
-    //     let anvil = Anvil::new().spawn();
+    //     let shuttle = Shuttle::new().spawn();
     //     let provider =
-    //         Provider::<Http>::try_from(anvil.endpoint()).unwrap().with_sender(anvil.
+    //         Provider::<Http>::try_from(shuttle.endpoint()).unwrap().with_sender(shuttle.
     // addresses()[0]);     assert!(provider.is_signer().await);
 
-    //     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
+    //     let provider = Provider::<Http>::try_from(shuttle.endpoint()).unwrap();
     //     assert!(!provider.is_signer().await);
 
     //     let sender = Address::from_str("0000635B4764D1939DfAcD3a8014726159abC277BecC")
@@ -1426,12 +1428,12 @@ mod tests {
     //     assert!(!provider.is_signer().await);
     // }
 
-    // CORETODO: This test is impossible without modifying anvil in the first place
+    // CORETODO: This test is impossible without modifying shuttle in the first place
     // #[tokio::test]
     // async fn test_new_pending_txs_filter() {
     //     let num_txs = 5;
 
-    //     let gocore = Anvil::new().block_time(2u64).spawn();
+    //     let gocore = Shuttle::new().block_time(2u64).spawn();
     //     let provider = Provider::<Http>::try_from(gocore.endpoint())
     //         .unwrap()
     //         .interval(Duration::from_millis(1000));
@@ -1450,15 +1452,15 @@ mod tests {
     //     assert_eq!(tx_hashes, hashes);
     // }
 
-    // CORETODO: This test is impossible without modifying anvil in the first place
+    // CORETODO: This test is impossible without modifying shuttle in the first place
     // #[tokio::test]
     // async fn receipt_on_unmined_tx() {
     //     use corebc_core::{
     //         types::TransactionRequest,
-    //         utils::{parse_core, Anvil},
+    //         utils::{parse_core, Shuttle},
     //     };
-    //     let anvil = Anvil::new().block_time(2u64).spawn();
-    //     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
+    //     let shuttle = Shuttle::new().block_time(2u64).spawn();
+    //     let provider = Provider::<Http>::try_from(shuttle.endpoint()).unwrap();
 
     //     let accounts = provider.get_accounts().await.unwrap();
     //     let tx = TransactionRequest::pay(accounts[0],

@@ -1,15 +1,15 @@
 // use corebc_core::{
 //     types::{TransactionRequest, U256},
-//     utils::Anvil,
+//     utils::Shuttle,
 // };
 // use corebc_providers::{Http, Middleware, Provider};
 // use std::convert::TryFrom;
 
-// CORETODO: Not possible to test this without anvil
+// CORETODO: Not possible to test this without shuttle
 // #[tokio::test]
 // async fn txpool() {
-//     let anvil = Anvil::new().block_time(5u64).spawn();
-//     let provider = Provider::<Http>::try_from(anvil.endpoint()).unwrap();
+//     let shuttle = Shuttle::new().block_time(5u64).spawn();
+//     let provider = Provider::<Http>::try_from(shuttle.endpoint()).unwrap();
 
 //     let account = provider.get_accounts().await.unwrap()[0];
 //     let value: u64 = 42;

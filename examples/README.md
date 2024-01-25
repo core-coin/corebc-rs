@@ -1,7 +1,7 @@
 # Examples
 - [ ] Address book
-- [ ] Anvil
-    - [ ] Boot anvil
+- [ ] Shuttle
+    - [ ] Boot shuttle
     - [ ] Deploy contracts
     - [x] Fork
     - [ ] Testing
@@ -15,7 +15,7 @@
     - [x] Abigen
     - [x] Compile
     - [ ] Creating Instances
-    - [x] Deploy Anvil
+    - [x] Deploy Shuttle
     - [x] Deploy from ABI and bytecode
     - [x] Deploy Moonbeam
     - [x] Events

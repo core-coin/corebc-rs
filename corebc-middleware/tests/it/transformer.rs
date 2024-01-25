@@ -1,4 +1,4 @@
-// use crate::{get_wallet, spawn_anvil};
+// use crate::{get_wallet, spawn_shuttle};
 // use corebc_contract::abigen;
 // use corebc_core::{abi::AbiEncode, types::*};
 // use corebc_middleware::{transformer::TransformerMiddleware, MiddlewareBuilder, SignerMiddleware};
@@ -17,9 +17,9 @@
 //     // randomness
 //     let mut rng = rand::thread_rng();
 
-//     // spawn anvil and instantiate a signer middleware.
-//     let (provider, anvil) = spawn_anvil();
-//     let wallet = get_wallet(&anvil, 0);
+//     // spawn shuttle and instantiate a signer middleware.
+//     let (provider, shuttle) = spawn_shuttle();
+//     let wallet = get_wallet(&shuttle, 0);
 //     let address = wallet.address();
 //     let provider = Arc::new(provider.with_signer(wallet));
 
@@ -68,9 +68,9 @@
 //     // randomness
 //     let mut rng = rand::thread_rng();
 
-//     // spawn anvil and instantiate a signer middleware.
-//     let (provider, anvil) = spawn_anvil();
-//     let wallet = get_wallet(&anvil, 0);
+//     // spawn shuttle and instantiate a signer middleware.
+//     let (provider, shuttle) = spawn_shuttle();
+//     let wallet = get_wallet(&shuttle, 0);
 //     let address = wallet.address();
 //     let provider = Arc::new(provider.with_signer(wallet));
 

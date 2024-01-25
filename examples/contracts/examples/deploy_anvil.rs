@@ -1,6 +1,6 @@
 use corebc::{
     contract::{abigen, ContractFactory},
-    core::utils::Anvil,
+    core::utils::Shuttle,
     middleware::SignerMiddleware,
     providers::{Http, Provider},
     signers::{LocalWallet, Signer},
@@ -36,16 +36,16 @@ async fn main() -> Result<()> {
     let contract = output.find_first("SimpleStorage").expect("could not find contract").clone();
     let (abi, bytecode, _) = contract.into_parts();
 
-    // 2. instantiate our wallet & anvil
-    let anvil = Anvil::new().spawn();
-    let wallet: LocalWallet = anvil.keys()[0].clone().into();
+    // 2. instantiate our wallet & shuttle
+    let shuttle = Shuttle::new().spawn();
+    let wallet: LocalWallet = shuttle.keys()[0].clone().into();
 
     // 3. connect to the network
     let provider =
-        Provider::<Http>::try_from(anvil.endpoint())?.interval(Duration::from_millis(10u64));
+        Provider::<Http>::try_from(shuttle.endpoint())?.interval(Duration::from_millis(10u64));
 
     // 4. instantiate the client with the wallet
-    let client = SignerMiddleware::new(provider, wallet.with_network_id(anvil.network_id()));
+    let client = SignerMiddleware::new(provider, wallet.with_network_id(shuttle.network_id()));
     let client = Arc::new(client);
 
     // 5. create a factory which will be used to deploy instances of the contract

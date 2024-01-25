@@ -32,24 +32,24 @@ mod eth_tests {
         assert_ne!(provider.get_block_number().await.unwrap(), 0.into());
     }
 
-    // CORETODO: Not possible to test this without anvil
+    // CORETODO: Not possible to test this without shuttle
     // #[tokio::test]
     // async fn watch_blocks_http() {
-    //     let (provider, _anvil) = spawn_anvil();
+    //     let (provider, _shuttle) = spawn_shuttle();
     //     generic_watch_blocks_test(provider).await;
     // }
 
     // #[tokio::test]
     // #[cfg(feature = "ws")]
     // async fn watch_blocks_ws() {
-    //     let (provider, _anvil) = crate::spawn_anvil_ws().await;
+    //     let (provider, _shuttle) = crate::spawn_shuttle_ws().await;
     //     generic_watch_blocks_test(provider).await;
     // }
 
     // #[tokio::test]
     // #[cfg(feature = "ipc")]
     // async fn watch_blocks_ipc() {
-    //     let (provider, _anvil, _ipc) = crate::spawn_anvil_ipc().await;
+    //     let (provider, _shuttle, _ipc) = crate::spawn_shuttle_ipc().await;
     //     generic_watch_blocks_test(provider).await;
     // }
 
@@ -60,19 +60,19 @@ mod eth_tests {
     //     assert_eq!(block.hash.unwrap(), *hashes.last().unwrap());
     // }
 
-    // CORETODO: Not possible to test this without anvil
+    // CORETODO: Not possible to test this without shuttle
     // #[tokio::test]
     // #[cfg(feature = "ws")]
     // async fn subscribe_blocks_ws() {
-    //     let (provider, _anvil) = crate::spawn_anvil_ws().await;
+    //     let (provider, _shuttle) = crate::spawn_shuttle_ws().await;
     //     generic_subscribe_blocks_test(provider).await;
     // }
 
-    // CORETODO: Not possible to test this without anvil
+    // CORETODO: Not possible to test this without shuttle
     // #[tokio::test]
     // #[cfg(feature = "ipc")]
     // async fn subscribe_blocks_ipc() {
-    //     let (provider, _anvil, _ipc) = crate::spawn_anvil_ipc().await;
+    //     let (provider, _shuttle, _ipc) = crate::spawn_shuttle_ipc().await;
     //     generic_subscribe_blocks_test(provider).await;
     // }
 
@@ -90,22 +90,22 @@ mod eth_tests {
 
     // #[tokio::test]
     // async fn send_tx_http() {
-    //     let (provider, anvil) = spawn_anvil();
-    //     generic_send_tx_test(provider, anvil.addresses()[0]).await;
+    //     let (provider, shuttle) = spawn_shuttle();
+    //     generic_send_tx_test(provider, shuttle.addresses()[0]).await;
     // }
 
     // #[tokio::test]
     // #[cfg(feature = "ws")]
     // async fn send_tx_ws() {
-    //     let (provider, anvil) = crate::spawn_anvil_ws().await;
-    //     generic_send_tx_test(provider, anvil.addresses()[0]).await;
+    //     let (provider, shuttle) = crate::spawn_shuttle_ws().await;
+    //     generic_send_tx_test(provider, shuttle.addresses()[0]).await;
     // }
 
     // #[tokio::test]
     // #[cfg(feature = "ipc")]
     // async fn send_tx_ipc() {
-    //     let (provider, anvil, _ipc) = crate::spawn_anvil_ipc().await;
-    //     generic_send_tx_test(provider, anvil.addresses()[0]).await;
+    //     let (provider, shuttle, _ipc) = crate::spawn_shuttle_ipc().await;
+    //     generic_send_tx_test(provider, shuttle.addresses()[0]).await;
     // }
 
     // async fn generic_send_tx_test<M: Middleware>(provider: M, who: Address) {
