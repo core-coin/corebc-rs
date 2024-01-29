@@ -9,7 +9,7 @@ For more information, please refer to the [book](https://gakonst.com/ethers-rs).
 ```rust
 use corebc_addressbook::{contract, Network};
 
-let weth = contract("weth").unwrap();
-let mainnet_address = weth.address(Network::Mainnet).unwrap();
-assert_eq!(mainnet_address, "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48".parse().unwrap());
+let ctn = contract("ctn").unwrap();
+let mainnet_address = ctn.address(Network::Mainnet).unwrap();
+assert_eq!(mainnet_address, "0xcb19c7acc4c292d2943ba23c2eaa5d9c5a6652a8710c".parse().unwrap());
 ```

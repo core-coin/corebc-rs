@@ -40,14 +40,13 @@ mod tests {
 
     #[test]
     fn test_tokens() {
-        assert!(contract("dai").is_some());
-        assert!(contract("usdc").is_some());
+        assert!(contract("ctn").is_some());
         assert!(contract("rand").is_none());
     }
 
     #[test]
     fn test_addrs() {
-        assert!(contract("dai").unwrap().address(Network::Mainnet).is_some());
-        assert!(contract("dai").unwrap().address(Network::Devin).is_none());
+        assert!(contract("ctn").unwrap().address(Network::Mainnet).is_some());
+        assert!(contract("ctn").unwrap().address(Network::Devin).is_none());
     }
 }

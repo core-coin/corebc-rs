@@ -1,36 +1,7 @@
 {
-	"dai": {
+	"ctn": {
 		"addresses": {
-			"mainnet": "0x00006b175474e89094c44da98b954eedeac495271d0f"
-		}
-	},
-	"usdc": {
-		"addresses": {
-			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-		}
-	},
-	"weth": {
-		"addresses": {
-			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-		}
-	},
-	"uniswapV3SwapRouter": {
-		"addresses": {
-			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-		}
-	},
-	"uniswapV3SwapRouter02": {
-		"addresses": {
-			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-		}
-	},
-	"uniswapV3Factory": {
-		"addresses": {
-			"mainnet": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-			"devin": "0x0000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+			"mainnet": "0xcb19c7acc4c292d2943ba23c2eaa5d9c5a6652a8710c"
 		}
 	}
 }
