@@ -436,7 +436,7 @@ pub mod spoof {
     /// # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
     /// let gocore = GoCore::new().spawn();
     /// let provider = Provider::<Http>::try_from(gocore.endpoint()).unwrap();
-    /// 
+    ///
     /// let adr: Address = "0x00006fC21092DA55B392b045eD78F4732bff3C580e2c".parse()?;
     /// let pay_amt = parse_core(1u64)?;
     ///
