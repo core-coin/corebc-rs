@@ -593,7 +593,7 @@ contract A {}
     fn can_find_single_quote_imports() {
         let content = r#"
 // SPDX-License-Identifier: MIT
-pragma solidity 1.1.0;
+pragma solidity >=1.1.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Address.sol';

@@ -310,8 +310,8 @@ impl Settings {
         //     once_cell::sync::Lazy::new(|| VersionReq::parse("<0.6.0").unwrap());
         // static PRE_V0_7_5: once_cell::sync::Lazy<VersionReq> =
         //     once_cell::sync::Lazy::new(|| VersionReq::parse("<0.7.5").unwrap());
-        static PRE_V1_0_1: once_cell::sync::Lazy<VersionReq> =
-            once_cell::sync::Lazy::new(|| VersionReq::parse("<1.1.0").unwrap());
+        static PRE_V1_1_2: once_cell::sync::Lazy<VersionReq> =
+            once_cell::sync::Lazy::new(|| VersionReq::parse("<1.1.2").unwrap());
         // static PRE_V0_8_10: once_cell::sync::Lazy<VersionReq> =
         //     once_cell::sync::Lazy::new(|| VersionReq::parse("<0.8.10").unwrap());
         // static PRE_V0_8_18: once_cell::sync::Lazy<VersionReq> =
@@ -332,7 +332,7 @@ impl Settings {
         //     self.via_ir.take();
         // }
 
-        if PRE_V1_0_1.matches(version) {
+        if PRE_V1_1_2.matches(version) {
             // lower the disable version from 0.8.10 to 0.8.7, due to `divModNoSlacks`,
             // `showUnproved` and `solvers` are implemented
             // introduced in <https://github.com/ethereum/solidity/releases/tag/v0.8.7>
@@ -746,7 +746,7 @@ pub enum CvmVersion {
 impl CvmVersion {
     // CORETODO: After the solc compiler will implement nucleus we can change it back
     pub fn normalize_version(self, version: &Version) -> Option<CvmVersion> {
-        if *version > Version::new(1, 1, 0) {
+        if *version > Version::new(1, 1, 2) {
             None
         } else {
             Some(CvmVersion::Istanbul)
@@ -2008,7 +2008,7 @@ mod tests {
         assert_eq!(out.errors.len(), 1);
 
         let mut aggregated = AggregatedCompilerOutput::default();
-        aggregated.extend("1.1.0".parse().unwrap(), out);
+        aggregated.extend("1.1.2".parse().unwrap(), out);
         assert!(!aggregated.is_unchanged());
     }
 
@@ -2109,7 +2109,7 @@ mod tests {
     #[test]
     fn test_evm_version_normalization() {
         for (ylem_version, evm_version, expected) in
-            &[("1.1.0", CvmVersion::Istanbul, Some(CvmVersion::Istanbul))]
+            &[("1.1.2", CvmVersion::Istanbul, Some(CvmVersion::Istanbul))]
         {
             assert_eq!(
                 &evm_version.normalize_version(&Version::from_str(ylem_version).unwrap()),
@@ -2120,7 +2120,7 @@ mod tests {
 
     #[test]
     fn can_sanitize_byte_code_hash() {
-        let version: Version = "1.1.0".parse().unwrap();
+        let version: Version = "1.1.2".parse().unwrap();
 
         let settings = Settings { metadata: Some(BytecodeHash::Ipfs.into()), ..Default::default() };
 
@@ -2136,7 +2136,7 @@ mod tests {
 
     #[test]
     fn can_sanitize_cbor_metadata() {
-        let version: Version = "1.1.0".parse().unwrap();
+        let version: Version = "1.1.2".parse().unwrap();
 
         let settings = Settings {
             metadata: Some(SettingsMetadata::new(BytecodeHash::Ipfs, true)),

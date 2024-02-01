@@ -1574,7 +1574,7 @@ fn can_compile_std_json_input() {
     assert!(input.sources.contains_key(Path::new("lib/ds-test/src/test.sol")));
 
     // should be installed
-    if let Some(ylem) = Ylem::find_yvm_installed_version("1.1.0").ok().flatten() {
+    if let Some(ylem) = Ylem::find_yvm_installed_version("1.1.2").ok().flatten() {
         let out = ylem.compile(&input).unwrap();
         assert!(!out.has_error());
         assert!(out.sources.contains_key("lib/ds-test/src/test.sol"));
@@ -1726,7 +1726,7 @@ async fn can_install_ylem_and_compile_std_json_input_async() {
 #[test]
 fn can_purge_obsolete_artifacts() {
     let mut project = TempProject::<ConfigurableArtifacts>::dapptools().unwrap();
-    project.set_ylem("1.1.0");
+    project.set_ylem("1.1.2");
     project
         .add_source(
             "Contract",

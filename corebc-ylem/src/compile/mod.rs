@@ -20,7 +20,7 @@ pub mod project;
 /// The name of the `ylem` binary on the system
 pub const YLEM: &str = "ylem";
 
-pub const NUCLEUS_YLEM: Version = Version::new(1, 1, 0);
+pub const NUCLEUS_YLEM: Version = Version::new(1, 1, 2);
 
 pub static SUPPORTS_BASE_PATH: once_cell::sync::Lazy<VersionReq> =
     once_cell::sync::Lazy::new(|| VersionReq::parse("^1.1.0").unwrap());
@@ -789,7 +789,7 @@ mod tests {
     fn test_detect_version() {
         for (pragma, expected) in [
             // pinned
-            ("^1.1.0", "1.1.0"),
+            ("^1.1.0", "1.1.2"),
             // pinned too
         ]
         .iter()
@@ -806,7 +806,7 @@ mod tests {
         // this test does not take the lock by default, so we need to manually
         // add it here.
         let _lock = LOCK.lock();
-        let ver = "1.1.0";
+        let ver = "1.1.2";
         let version = Version::from_str(ver).unwrap();
         if utils::installed_versions(yvm::YVM_DATA_DIR.as_path())
             .map(|versions| !versions.contains(&version))
@@ -822,7 +822,7 @@ mod tests {
     #[test]
     #[cfg(all(feature = "yvm-ylem", not(target_arch = "wasm32")))]
     fn can_install_ylem_in_tokio_rt() {
-        let version = Version::from_str("1.1.0").unwrap();
+        let version = Version::from_str("1.1.2").unwrap();
         let rt = tokio::runtime::Runtime::new().unwrap();
         let result = rt.block_on(async { Ylem::blocking_install(&version) });
         assert!(result.is_ok());
