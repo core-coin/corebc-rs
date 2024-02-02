@@ -1,3 +1,4 @@
+use corebc::types::Network;
 // use the eyre crate for easy idiomatic error handling
 use eyre::Result;
 // use the corebc_core rand for rng
@@ -9,7 +10,7 @@ use corebc::signers::{LocalWallet, Signer};
 #[tokio::main]
 async fn main() -> Result<()> {
     // Generate a random wallet
-    let wallet = LocalWallet::new(&mut thread_rng());
+    let wallet = LocalWallet::new(&mut thread_rng(), Network::Mainnet);
 
     // Declare the message you want to sign.
     let message = "Some data";
@@ -19,7 +20,7 @@ async fn main() -> Result<()> {
     println!("Produced signature {signature}");
 
     // verify the signature produced from your wallet.
-    signature.verify(message, wallet.address()).unwrap();
+    signature.verify(message, wallet.address(), &Network::Mainnet).unwrap();
     println!("Verified signature produced by {:?}!", wallet.address());
 
     Ok(())

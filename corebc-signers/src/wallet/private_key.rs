@@ -216,7 +216,7 @@ mod tests {
         let recovered2 = signature.recover(hash, &Network::Mainnet).unwrap();
 
         // verifies the signature is produced by `address`
-        signature.verify(message, &Network::Mainnet, address).unwrap();
+        signature.verify(message, address, &Network::Mainnet).unwrap();
 
         assert_eq!(recovered, address);
         assert_eq!(recovered2, address);
@@ -247,7 +247,7 @@ mod tests {
 
         let sig = wallet.sign_transaction(&tx).await.unwrap();
         let sighash = tx.sighash();
-        sig.verify(sighash, &Network::Mainnet, wallet.address).unwrap();
+        sig.verify(sighash, wallet.address, &Network::Mainnet).unwrap();
     }
 
     #[tokio::test]
@@ -281,7 +281,7 @@ mod tests {
         let mut tx = tx;
         tx.set_network_id(1);
         let sighash = tx.sighash();
-        sig.verify(sighash, &Network::Mainnet, wallet.address).unwrap();
+        sig.verify(sighash, wallet.address, &Network::Mainnet).unwrap();
     }
 
     #[test]
@@ -319,7 +319,7 @@ mod tests {
         tx.set_network_id(network_id);
         let sighash = tx.sighash();
         let network = Network::try_from(network_id).unwrap();
-        sig.verify(sighash, &network, wallet.address).unwrap();
+        sig.verify(sighash, wallet.address, &network).unwrap();
     }
 
     #[test]

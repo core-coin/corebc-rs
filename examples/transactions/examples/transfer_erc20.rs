@@ -4,7 +4,7 @@ use corebc::{
     middleware::SignerMiddleware,
     providers::{Http, Provider},
     signers::{LocalWallet, Signer},
-    solc::Solc,
+    ylem::Ylem,
     types::{Address, U256},
     utils::ShuttleInstance,
 };
@@ -75,7 +75,7 @@ async fn deploy_token_contract(
 ) -> Result<Address> {
     let source = Path::new(&env!("CARGO_MANIFEST_DIR"))
         .join("examples/contracts/erc20_example/ERC20Example.sol");
-    let compiled = Solc::default().compile_source(source).expect("Could not compile contract");
+    let compiled = Ylem::default().compile_source(source).expect("Could not compile contract");
     let (abi, bytecode, _runtime_bytecode) =
         compiled.find("ERC20Example").expect("could not find contract").into_parts_or_default();
 

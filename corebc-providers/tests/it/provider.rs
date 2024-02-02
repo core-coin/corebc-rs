@@ -16,7 +16,7 @@ mod eth_tests {
     async fn client_version() {
         let provider = DEVIN.provider();
 
-        // e.g., Geth/v1.10.6-omnibus-1af33248/linux-amd64/go1.16.6
+        // e.g., GoCore/v1.10.6-omnibus-1af33248/linux-amd64/go1.16.6
         assert!(provider
             .client_version()
             .await

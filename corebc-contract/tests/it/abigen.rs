@@ -6,8 +6,8 @@ use corebc_core::{
     types::{Bytes, U256},
     utils::Shuttle,
 };
-use corebc_ylem::Ylem;
 use corebc_providers::{MockProvider, Provider};
+use corebc_ylem::Ylem;
 use std::{fmt::Debug, hash::Hash, sync::Arc};
 
 const fn assert_codec<T: AbiDecode + AbiEncode>() {}
@@ -567,7 +567,7 @@ fn can_handle_case_sensitive_calls() {
 
 //     let contract = "AbiencoderV2Test";
 //     let path = "./tests/solidity-contracts/Abiencoderv2Test.sol";
-//     let compiled = Solc::default().compile_source(path).unwrap();
+//     let compiled = Ylem::default().compile_source(path).unwrap();
 //     let compiled = compiled.get(path, contract).unwrap();
 //     let factory = corebc_contract::ContractFactory::new(
 //         compiled.abi.unwrap().clone(),

@@ -1,4 +1,4 @@
-use corebc::{prelude::Abigen, solc::Solc};
+use corebc::{prelude::Abigen, ylem::Ylem};
 use eyre::Result;
 
 fn main() -> Result<()> {
@@ -14,7 +14,7 @@ fn main() -> Result<()> {
 
     // compile it
     let abi = if contract.ends_with(".sol") {
-        let contracts = Solc::default().compile_source(&contract)?;
+        let contracts = Ylem::default().compile_source(&contract)?;
         let abi = contracts.get(&contract, &contract_name).unwrap().abi.unwrap();
         serde_json::to_string(abi).unwrap()
     } else {

@@ -27,7 +27,7 @@ async fn main() -> eyre::Result<()> {
     // set the path to the contract, `CARGO_MANIFEST_DIR` points to the directory containing the
     // manifest of `corebc`. which will be `../` relative to this file
     let source = Path::new(&env!("CARGO_MANIFEST_DIR")).join("examples/contract.sol");
-    let compiled = Solc::default().compile_source(source).expect("Could not compile contracts");
+    let compiled = Ylem::default().compile_source(source).expect("Could not compile contracts");
     let (abi, bytecode, _runtime_bytecode) =
         compiled.find("SimpleStorage").expect("could not find contract").into_parts_or_default();
 

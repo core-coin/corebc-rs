@@ -4,7 +4,7 @@ use corebc_core::{
 };
 use corebc_middleware::{
     builder::MiddlewareBuilder,
-    energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
+    energy_escalator::{EnergyEscalatorMiddleware, Frequency, GeometricGasPrice},
     energy_oracle::EnergyOracleMiddleware,
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
@@ -21,7 +21,7 @@ async fn build_raw_middleware_stack() {
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
 
     let provider = provider
-        .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
+        .wrap_into(|p| EnergyEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
         .wrap_into(|p| SignerMiddleware::new(p, signer))
         .wrap_into(|p| NonceManagerMiddleware::new(p, address));
 
@@ -47,7 +47,7 @@ async fn build_declarative_middleware_stack() {
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
 
     let provider = provider
-        .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
+        .wrap_into(|p| EnergyEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
         .with_signer(signer)
         .nonce_manager(address);
 

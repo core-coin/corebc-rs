@@ -345,7 +345,7 @@
 
 //         let tx_req = TransactionRequest::new()
 //             .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
-//             .gas(1000000)
+//             .energy(1000000)
 //             .gas_price(400e9 as u64)
 //             .nonce(5)
 //             .data(data)

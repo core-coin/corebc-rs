@@ -1,6 +1,6 @@
 use corebc_core::{types::*, utils::Shuttle};
 use corebc_middleware::{
-    energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
+    energy_escalator::{EnergyEscalatorMiddleware, Frequency, GeometricGasPrice},
     MiddlewareBuilder,
 };
 use corebc_providers::{Http, Middleware, Provider};
@@ -22,7 +22,7 @@ use corebc_signers::{LocalWallet, Signer};
 
 //     // wrap with escalator
 //     let escalator = GeometricGasPrice::new(5.0, 10u64, Some(2_000_000_000_000u64));
-//     let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::Duration(300));
+//     let provider = EnergyEscalatorMiddleware::new(provider, escalator, Frequency::Duration(300));
 
 //     let nonce = provider.get_transaction_count(address, None).await.unwrap();
 //     // 1 gwei default base fee

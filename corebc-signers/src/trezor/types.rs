@@ -86,7 +86,7 @@
 //         };
 
 //         let nonce = tx.nonce().map_or(vec![], Self::to_trimmed_big_endian);
-//         let gas = tx.gas().map_or(vec![], Self::to_trimmed_big_endian);
+//         let gas = tx.energy().map_or(vec![], Self::to_trimmed_big_endian);
 //         let gas_price = tx.gas_price().map_or(vec![], |v| Self::to_trimmed_big_endian(&v));
 //         let value = tx.value().map_or(vec![], Self::to_trimmed_big_endian);
 //         let data = tx.data().map_or(vec![], |v| v.to_vec());

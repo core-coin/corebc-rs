@@ -126,7 +126,7 @@ macro_rules! completed {
 fn is_nonce_too_low(e: &ProviderError) -> bool {
     let debug_str = format!("{e:?}");
 
-    debug_str.contains("nonce too low") // Geth
+    debug_str.contains("nonce too low") // GoCore
             || debug_str.contains("nonce is too low") // Parity
             || debug_str.contains("invalid transaction nonce") // Arbitrum
 }
@@ -193,7 +193,7 @@ where
                         let fut = this.provider.send_raw_transaction(next_to_broadcast);
                         *this.state = BroadcastingNew(fut);
                         cx.waker().wake_by_ref();
-                        return Poll::Pending
+                        return Poll::Pending;
                     }
                 }
                 check_all_receipts!(cx, this);

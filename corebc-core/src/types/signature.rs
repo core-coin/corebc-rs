@@ -80,8 +80,8 @@ impl Signature {
     pub fn verify<M, A>(
         &self,
         message: M,
-        network: &Network,
         address: A,
+        network: &Network,
     ) -> Result<(), SignatureError>
     where
         M: Into<RecoveryMessage>,

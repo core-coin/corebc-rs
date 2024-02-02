@@ -25,9 +25,9 @@ pub(crate) const GWEI_TO_WEI_U256: U256 = U256([GWEI_TO_WEI, 0, 0, 0]);
 
 pub type Result<T, E = EnergyOracleError> = std::result::Result<T, E>;
 
-// Generic [`EnergyOracle`] gas price categories.
+// Generic [`EnergyOracle`] energy price categories.
 #[derive(Clone, Copy, Default, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
-pub enum GasCategory {
+pub enum EnergyCategory {
     SafeLow,
     #[default]
     Standard,
@@ -39,11 +39,11 @@ pub enum GasCategory {
 #[derive(Debug, Error)]
 pub enum EnergyOracleError {
     // An internal error in the HTTP request made from the underlying
-    // gas oracle
+    // energy oracle
     #[error(transparent)]
     HttpClientError(#[from] ReqwestError),
 
-    // An error decoding JSON response from gas oracle
+    // An error decoding JSON response from energy oracle
     #[error(transparent)]
     SerdeJsonError(#[from] serde_json::Error),
 
@@ -52,14 +52,14 @@ pub enum EnergyOracleError {
     InvalidResponse,
 
     // An internal error in the Blockindex client request made from the underlying
-    // gas oracle
+    // energy oracle
     #[error(transparent)]
     BlockindexError(#[from] corebc_blockindex::errors::BlockindexError),
 
-    // An internal error thrown when the required gas category is not
-    // supported by the gas oracle API
-    #[error("gas category not supported")]
-    GasCategoryNotSupported,
+    // An internal error thrown when the required energy category is not
+    // supported by the energy oracle API
+    #[error("energy category not supported")]
+    EnergyCategoryNotSupported,
 
     #[error("None of the oracles returned a value")]
     NoValues,
@@ -70,20 +70,20 @@ pub enum EnergyOracleError {
     // Error thrown when the provider failed.
     #[error("Provider error: {0}")]
     ProviderError(#[from] Box<dyn Error + Send + Sync>),
-    #[error("Failed to parse gas values: {0}")]
+    #[error("Failed to parse energy values: {0}")]
     ConversionError(#[from] corebc_core::utils::ConversionError),
 }
 
-// An Ethereum gas price oracle.
+// An Ethereum energy price oracle.
 //
 // # Example
 //
 // ```no_run
 // use corebc_core::types::U256;
-// use corebc_middleware::energy_oracle::{GasCategory, GasNow, EnergyOracle};
+// use corebc_middleware::energy_oracle::{EnergyCategory, GasNow, EnergyOracle};
 //
 // # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-// let oracle = GasNow::default().category(GasCategory::SafeLow);
+// let oracle = GasNow::default().category(EnergyCategory::SafeLow);
 // let energy_price = oracle.fetch().await?;
 // assert!(energy_price > U256::zero());
 // # Ok(())
@@ -93,17 +93,17 @@ pub enum EnergyOracleError {
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 #[auto_impl(&, Box, Arc)]
 pub trait EnergyOracle: Send + Sync + Debug {
-    // Makes an asynchronous HTTP query to the underlying [`EnergyOracle`] to fetch the current gas
+    // Makes an asynchronous HTTP query to the underlying [`EnergyOracle`] to fetch the current energy
     // price estimate.
     //
     // # Example
     //
     // ```no_run
     // use corebc_core::types::U256;
-    // use corebc_middleware::energy_oracle::{GasCategory, GasNow, EnergyOracle};
+    // use corebc_middleware::energy_oracle::{EnergyCategory, GasNow, EnergyOracle};
     //
     // # async fn foo() -> Result<(), Box<dyn std::error::Error>> {
-    // let oracle = GasNow::default().category(GasCategory::SafeLow);
+    // let oracle = GasNow::default().category(EnergyCategory::SafeLow);
     // let energy_price = oracle.fetch().await?;
     // assert!(energy_price > U256::zero());
     // # Ok(())

@@ -1,6 +1,6 @@
 use corebc::{
     core::{types::TransactionRequest, utils::Shuttle},
-    middleware::gas_escalator::*,
+    middleware::energy_escalator::*,
     providers::{Http, Middleware, Provider},
 };
 use eyre::Result;
@@ -42,7 +42,7 @@ where
 
     // Connect to the node
     let provider = Provider::<Http>::try_from(endpoint)?;
-    let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
+    let provider = EnergyEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
 
     let accounts = provider.get_accounts().await?;
     let from = accounts[0];

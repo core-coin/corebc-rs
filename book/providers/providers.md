@@ -33,7 +33,7 @@ pub struct Provider<P> {
 -   `ens`: optional override for the default ENS registry address;
 -   `interval`: optional value that defines the polling interval for `watch_*` streams;
 -   `from`: optional address that sets a default `from` address when constructing calls and transactions;
--   `node_client`: the type of node the provider is connected to, like Geth, Erigon, etc.
+-   `node_client`: the type of node the provider is connected to, like GoCore, Erigon, etc.
 
 Now that you have a basis for what the `Provider` type actually is, the next few sections will walk through each implementation of the `Provider`, starting with the HTTP provider.
 

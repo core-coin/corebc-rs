@@ -2,7 +2,7 @@ use corebc::{
     contract::abigen,
     core::{
         types::{Address, TransactionRequest, H256},
-        utils::{parse_core, Geth},
+        utils::{parse_core, GoCore},
     },
     providers::{
         call_raw::{self, RawCall},
@@ -26,12 +26,12 @@ async fn main() -> Result<()> {
                 eprint!(": {e}");
             }
             eprintln!();
-            return Ok(())
+            return Ok(());
         }
         Ok(true) => {}
     }
 
-    let geth = Geth::new().spawn();
+    let geth = GoCore::new().spawn();
     let provider = Provider::<Http>::try_from(geth.endpoint()).unwrap();
     let client = Arc::new(provider);
 

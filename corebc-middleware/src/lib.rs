@@ -2,7 +2,7 @@
 #![deny(unsafe_code, rustdoc::broken_intra_doc_links)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-// The [Gas Escalator middleware](crate::energy_escalator::GasEscalatorMiddleware)
+// The [Gas Escalator middleware](crate::energy_escalator::EnergyEscalatorMiddleware)
 // is used to re-broadcast transactions with an increasing gas price to guarantee
 // their timely inclusion.
 pub mod energy_escalator;

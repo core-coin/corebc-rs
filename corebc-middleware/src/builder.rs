@@ -27,7 +27,7 @@ use corebc_signers::Signer;
 //
 //     let provider = Provider::<Http>::try_from("http://localhost:8545")
 //         .unwrap()
-//         .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
+//         .wrap_into(|p| EnergyEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
 //         .energy_oracle(energy_oracle)
 //         .with_signer(signer)
 //         .nonce_manager(address); // Outermost layer
@@ -41,7 +41,7 @@ use corebc_signers::Signer;
 //
 //     let provider = Provider::<Http>::try_from("http://localhost:8545")
 //         .unwrap()
-//         .wrap_into(|p| GasEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
+//         .wrap_into(|p| EnergyEscalatorMiddleware::new(p, escalator, Frequency::PerBlock))
 //         .wrap_into(|p| SignerMiddleware::new(p, signer))
 //         .wrap_into(|p| EnergyOracleMiddleware::new(p, GasNow::new()))
 //         .wrap_into(|p| NonceManagerMiddleware::new(p, address)); // Outermost layer

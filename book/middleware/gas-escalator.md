@@ -1,5 +1,5 @@
 # Gas escalator
 
 ```rust
-{{#include ../../examples/middleware/examples/gas_escalator.rs}}
+{{#include ../../examples/middleware/examples/energy_escalator.rs}}
 ```

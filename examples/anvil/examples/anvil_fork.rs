@@ -6,7 +6,7 @@ use eyre::Result;
 #[tokio::main]
 async fn main() -> Result<()> {
     // ensure `shuttle` is available in $PATH
-    let shuttle = Shuttle::new().fork("https://eth.llamarpc.com").spawn();
+    let shuttle = Shuttle::new().fork("https://xcbapi-arch-devin.coreblockchain.net/").spawn();
 
     println!("Shuttle running at `{}`", shuttle.endpoint());
 

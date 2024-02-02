@@ -61,7 +61,7 @@ impl<'de> Deserialize<'de> for SyncingStatus {
 /// > currentBlock: QUANTITY - The current block, same as xcb_blockNumber
 /// > highestBlock: QUANTITY - The estimated highest block
 ///
-/// Geth returns additional fields: <https://github.com/ethereum/go-ethereum/blob/0ce494b60cd00d70f1f9f2dd0b9bfbd76204168a/ethclient/ethclient.go#L597-L617>
+/// GoCore returns additional fields: <https://github.com/ethereum/go-ethereum/blob/0ce494b60cd00d70f1f9f2dd0b9bfbd76204168a/ethclient/ethclient.go#L597-L617>
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SyncProgress {

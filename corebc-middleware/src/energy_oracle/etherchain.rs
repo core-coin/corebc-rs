@@ -1,4 +1,4 @@
-use super::{from_gwei_f64, EnergyOracle, GasCategory, Result};
+use super::{from_gwei_f64, EnergyCategory, EnergyOracle, Result};
 use async_trait::async_trait;
 use corebc_core::types::U256;
 use reqwest::Client;
@@ -14,7 +14,7 @@ const URL: &str = "https://www.etherchain.org/api/gasPriceOracle";
 pub struct Etherchain {
     client: Client,
     url: Url,
-    gas_category: GasCategory,
+    gas_category: EnergyCategory,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, PartialEq)]
@@ -30,12 +30,12 @@ pub struct Response {
 
 impl Response {
     #[inline]
-    pub fn gas_from_category(&self, gas_category: GasCategory) -> f64 {
+    pub fn gas_from_category(&self, gas_category: EnergyCategory) -> f64 {
         match gas_category {
-            GasCategory::SafeLow => self.safe_low,
-            GasCategory::Standard => self.standard,
-            GasCategory::Fast => self.fast,
-            GasCategory::Fastest => self.fastest,
+            EnergyCategory::SafeLow => self.safe_low,
+            EnergyCategory::Standard => self.standard,
+            EnergyCategory::Fast => self.fast,
+            EnergyCategory::Fastest => self.fastest,
         }
     }
 }
@@ -65,11 +65,11 @@ impl Etherchain {
     /// Same as [`Self::new`] but with a custom [`Client`].
     pub fn with_client(client: Client) -> Self {
         let url = Url::parse(URL).unwrap();
-        Etherchain { client, url, gas_category: GasCategory::Standard }
+        Etherchain { client, url, gas_category: EnergyCategory::Standard }
     }
 
     /// Sets the gas price category to be used when fetching the gas price.
-    pub fn category(mut self, gas_category: GasCategory) -> Self {
+    pub fn category(mut self, gas_category: EnergyCategory) -> Self {
         self.gas_category = gas_category;
         self
     }

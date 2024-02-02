@@ -86,7 +86,7 @@ where
     ) -> Result<PendingTransaction<'_, Self::Provider>, Self::Error> {
         let mut tx: TypedTransaction = tx.into();
 
-        let curr_gas: U256 = match tx.gas() {
+        let curr_gas: U256 = match tx.energy() {
             Some(gas) => gas.to_owned(),
             None => Err(GasMiddlewareError::NoGasSetForTransaction)?,
         };
@@ -94,7 +94,7 @@ where
         println!("Original transaction gas: {curr_gas:?} wei");
         let units: U256 = U256::exp10(CONTINGENCY_UNITS);
         let raised_gas: U256 = (curr_gas * self.contingency) / units;
-        tx.set_gas(raised_gas);
+        tx.set_energy(raised_gas);
         println!("Raised transaction gas: {raised_gas:?} wei");
 
         // Dispatch the call to the inner layer
@@ -151,7 +151,7 @@ async fn main() -> eyre::Result<()> {
         .wrap_into(|s| GasMiddleware::new(s, gas_raise_perc).unwrap());
 
     let gas = 15000;
-    let tx = TransactionRequest::new().to(wallet2.address()).value(10000).gas(gas);
+    let tx = TransactionRequest::new().to(wallet2.address()).value(10000).energy(gas);
 
     let pending_tx = provider.send_transaction(tx, None).await?;
 

@@ -73,7 +73,7 @@ pub enum Frequency {
 }
 
 #[derive(Debug)]
-pub(crate) struct GasEscalatorMiddlewareInternal<M> {
+pub(crate) struct EnergyEscalatorMiddlewareInternal<M> {
     pub(crate) inner: Arc<M>,
     // The transactions which are currently being monitored for escalation
     #[allow(clippy::type_complexity)]
@@ -91,8 +91,8 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 // if any require fee bumps. If so, it will resend the same transaction with a
 // higher fee.
 //
-// Using [`GasEscalatorMiddleware::new`] will create a new instance of the
-// background task. Using [`GasEscalatorMiddleware::clone`] will crate a new
+// Using [`EnergyEscalatorMiddleware::new`] will create a new instance of the
+// background task. Using [`EnergyEscalatorMiddleware::clone`] will crate a new
 // instance of the middleware, but will not create a new background task. The
 // background task is shared among all clones.
 //
@@ -119,8 +119,8 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 // ```no_run
 // use corebc_providers::{Provider, Http};
 // use corebc_middleware::{
-//     energy_escalator::{GeometricGasPrice, Frequency, GasEscalatorMiddleware},
-//     energy_oracle::{GasNow, GasCategory, EnergyOracleMiddleware},
+//     energy_escalator::{GeometricGasPrice, Frequency, EnergyEscalatorMiddleware},
+//     energy_oracle::{GasNow, EnergyCategory, EnergyOracleMiddleware},
 // };
 // use std::{convert::TryFrom, time::Duration, sync::Arc};
 //
@@ -130,20 +130,20 @@ pub(crate) struct GasEscalatorMiddlewareInternal<M> {
 //
 // let provider = {
 //     let escalator = GeometricGasPrice::new(5.0, 10u64, None::<u64>);
-//     GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock)
+//     EnergyEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock)
 // };
 //
 // // ... proceed to wrap it in other middleware
-// let energy_oracle = GasNow::new().category(GasCategory::SafeLow);
+// let energy_oracle = GasNow::new().category(EnergyCategory::SafeLow);
 // let provider = EnergyOracleMiddleware::new(provider, energy_oracle);
 // ```
-pub struct GasEscalatorMiddleware<M> {
-    pub(crate) inner: Arc<GasEscalatorMiddlewareInternal<M>>,
+pub struct EnergyEscalatorMiddleware<M> {
+    pub(crate) inner: Arc<EnergyEscalatorMiddlewareInternal<M>>,
 }
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
-impl<M> Middleware for GasEscalatorMiddleware<M>
+impl<M> Middleware for EnergyEscalatorMiddleware<M>
 where
     M: Middleware,
 {
@@ -164,7 +164,7 @@ where
     }
 }
 
-impl<M> GasEscalatorMiddlewareInternal<M>
+impl<M> EnergyEscalatorMiddlewareInternal<M>
 where
     M: Middleware,
 {
@@ -191,7 +191,7 @@ where
     }
 }
 
-impl<M> GasEscalatorMiddleware<M>
+impl<M> EnergyEscalatorMiddleware<M>
 where
     M: Middleware,
 {
@@ -209,7 +209,7 @@ where
 
         let txs: ToEscalate = Default::default();
 
-        let this = Arc::new(GasEscalatorMiddlewareInternal {
+        let this = Arc::new(EnergyEscalatorMiddlewareInternal {
             inner: inner.clone(),
             txs: txs.clone(),
             _background: tx,

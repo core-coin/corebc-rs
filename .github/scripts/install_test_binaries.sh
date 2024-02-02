@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Installs Solc and Geth binaries
+# Installs Ylem and GoCore binaries
 # Note: intended for use only with CI (x86_64 Ubuntu, MacOS or Windows)
 set -e
 
@@ -26,10 +26,10 @@ main() {
     wait $g $!
 
     echo ""
-    echo "Installed Geth:"
+    echo "Installed GoCore:"
     geth version
     echo ""
-    echo "Installed Solc:"
+    echo "Installed Ylem:"
     solc --version
 }
 
@@ -71,7 +71,7 @@ install_solc() {
     bin=$(echo "$list" | jq -r ".releases[\"$SOLC_VERSION\"]")
 
     if [ "$bin" = "null" ]; then
-        echo "Invalid Solc version: $SOLC_VERSION" 1>&2
+        echo "Invalid Ylem version: $SOLC_VERSION" 1>&2
         exit 1
     fi
 

@@ -1,4 +1,4 @@
-// CORETODO: All tests require either solc or shuttle. Fix once Shuttle and Solc are availible.
+// CORETODO: All tests require either solc or shuttle. Fix once Shuttle and Ylem are availible.
 // use crate::common::*;
 // use corebc_contract::{
 //     abigen, ContractFactory, ContractInstance, Cip712, EthAbiType, EthEvent,
@@ -212,7 +212,7 @@
 //     assert_eq!(logs.len(), 1);
 // }
 
-// // CORETODO: Needs shuttle and Solc
+// // CORETODO: Needs shuttle and Ylem
 // // #[tokio::test]
 // // #[cfg(feature = "abigen")]
 // // async fn get_events_with_meta() {

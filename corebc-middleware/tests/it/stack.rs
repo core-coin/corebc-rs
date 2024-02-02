@@ -1,7 +1,11 @@
-use corebc_core::{rand::thread_rng, types::{Network, TransactionRequest}, utils::Shuttle};
+use corebc_core::{
+    rand::thread_rng,
+    types::{Network, TransactionRequest},
+    utils::Shuttle,
+};
 use corebc_middleware::{
-    energy_escalator::{Frequency, GasEscalatorMiddleware, GeometricGasPrice},
-    energy_oracle::{EnergyOracleMiddleware, GasCategory},
+    energy_escalator::{EnergyEscalatorMiddleware, Frequency, GeometricGasPrice},
+    energy_oracle::{EnergyCategory, EnergyOracleMiddleware},
     nonce_manager::NonceManagerMiddleware,
     signer::SignerMiddleware,
 };
@@ -16,7 +20,7 @@ async fn mock_with_middleware() {
     let signer = LocalWallet::new(&mut thread_rng(), Network::Mainnet);
     let address = signer.address();
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
-    let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
+    let provider = EnergyEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
     let provider = SignerMiddleware::new(provider, signer);
     let provider = NonceManagerMiddleware::new(provider, address);
 
@@ -59,7 +63,7 @@ async fn can_stack_middlewares() {
     // so that it receives the transaction last, after all the other middleware
     // have modified it accordingly
     let escalator = GeometricGasPrice::new(1.125, 60u64, None::<u64>);
-    let provider = GasEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
+    let provider = EnergyEscalatorMiddleware::new(provider, escalator, Frequency::PerBlock);
 
     // The gas price middleware MUST be below the signing middleware for things to work
 

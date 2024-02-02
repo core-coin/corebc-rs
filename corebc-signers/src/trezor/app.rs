@@ -299,7 +299,7 @@
 
 //         let tx_req = TransactionRequest::new()
 //             .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
-//             .gas(1000000)
+//             .energy(1000000)
 //             .gas_price(400e9 as u64)
 //             .nonce(5)
 //             .data(data)
@@ -320,7 +320,7 @@
 // .to_string()+ &"ff".repeat(1032*2) + "aa").unwrap();         let tx_req =
 // TransactionRequest::new()
 // .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
-// .gas(1000000)             .gas_price(400e9 as u64)
+// .energy(1000000)             .gas_price(400e9 as u64)
 //             .nonce(5)
 //             .data(big_data)
 //             .value(corebc_core::utils::parse_core(100).unwrap())
@@ -404,7 +404,7 @@
 
 //         let tx_req = Eip1559TransactionRequest::new()
 //             .to("2ed7afa17473e17ac59908f088b4371d28585476".parse::<Address>().unwrap())
-//             .gas(1000000)
+//             .energy(1000000)
 //             .max_fee_per_gas(400e9 as u64)
 //             .max_priority_fee_per_gas(400e9 as u64)
 //             .nonce(5)

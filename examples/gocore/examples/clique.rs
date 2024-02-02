@@ -1,4 +1,4 @@
-//! Instantiate `Geth` with Clique enabled.
+//! Instantiate `GoCore` with Clique enabled.
 
 use corebc::{
     core::{rand::thread_rng, utils::GoCore},
@@ -8,7 +8,7 @@ use eyre::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Generate a random clique signer and set it on Geth.
+    // Generate a random clique signer and set it on GoCore.
     let data_dir = tempfile::tempdir().expect("should be able to create temp geth datadir");
     let dir_path = data_dir.into_path();
     println!("Using {}", dir_path.display());
@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
         // set the signer
         .set_clique_private_key(clique_key)
         // must always set the network id here
-        .network_id(1)
+        .network_id(1u64)
         // set the datadir to a temp dir
         .data_dir(dir_path)
         // spawn it
