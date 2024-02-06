@@ -538,26 +538,22 @@ dependencies = [
 
 [[package]]
 name = "coins-ledger"
-version = "0.8.7"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fa6094030951ce3efad50fdba0efe088a93ffe05ec58c2f47cc60d9e90c715d"
+checksum = "9e076e6e5d9708f0b90afe2dbe5a8ba406b5c794347661e6e44618388c7e3a31"
 dependencies = [
  "async-trait",
  "byteorder",
  "cfg-if",
- "futures",
  "getrandom",
  "hex",
  "hidapi-rusb",
  "js-sys",
- "lazy_static",
- "libc",
  "log",
- "matches",
  "nix",
- "serde",
- "tap",
+ "once_cell",
  "thiserror",
+ "tokio",
  "tracing",
  "wasm-bindgen",
  "wasm-bindgen-futures",
@@ -2317,12 +2313,6 @@ checksum = "8263075bb86c5a1b1427b5ae862e8889656f126e9f77c484496e8b47cf5c5558"
 dependencies = [
  "regex-automata 0.1.10",
 ]
-
-[[package]]
-name = "matches"
-version = "0.1.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2532096657941c2fea9c289d370a250971c689d4f143798ff67113ec042024a5"
 
 [[package]]
 name = "md-5"
