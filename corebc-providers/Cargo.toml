@@ -55,6 +55,7 @@ enr = { version = "0.8.0", default-features = false, features = ["k256", "serde"
 # tracing
 tracing = { workspace = true, features = ["attributes"] }
 tracing-futures = { workspace = true, features = ["std-future"] }
+tokio-tungstenite = "0.20"
 
 [target.'cfg(target_family = "windows")'.dependencies]
 winapi = { version = "0.3", optional = true }
