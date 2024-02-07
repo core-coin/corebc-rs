@@ -52,7 +52,7 @@ corebc-keystore = { workspace = true }
 home = { version = "0.5.4", optional = true }
 
 # ledger
-coins-ledger = { version = "0.8.3", default-features = false, optional = true }
+coins-ledger = { version = "0.10.1", default-features = false, optional = true }
 semver = { workspace = true, optional = true }
 
 # trezor
