@@ -749,7 +749,7 @@ dependencies = [
  "hex",
  "hmac 0.12.1",
  "libgoldilocks",
- "pbkdf2 0.11.0",
+ "pbkdf2 0.12.2",
  "rand",
  "scrypt",
  "serde",
